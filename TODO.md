@@ -1,4 +1,4 @@
-* Postive is never 100% normalized, but only 99%
+* Postive stick movement is never 100% normalized, but only 99%
 
 * Add sensible failsafe configuration
 

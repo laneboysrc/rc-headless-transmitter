@@ -113,3 +113,9 @@ int32_t INPUTS_get_input(label_t input);
 void INPUTS_filter_and_normalize(void);
 void INPUTS_dump_adc(void);
 uint32_t INPUTS_get_battery_voltage(void);
+
+
+// Include PCB specific configuration.
+// THIS MUST BE AT THE END SINCE IT RELIES ON EARLIER DECLARED TYPES
+#include <inputs_stm32f103c8t6.h>
+

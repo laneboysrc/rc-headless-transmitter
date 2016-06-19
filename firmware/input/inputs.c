@@ -8,7 +8,6 @@
 
 #include <config.h>
 #include <inputs.h>
-#include <inputs_stm32f103c8t6.h>
 #include <systick.h>
 
 #define WINDOW_SIZE 10

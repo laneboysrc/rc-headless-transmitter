@@ -5,7 +5,6 @@
 #include <libopencm3/stm32/gpio.h>
 
 #include <inputs.h>
-#include <inputs_stm32f103c8t6.h>
 
 
 const uint8_t adc_channel_selection[NUMBER_OF_ADC_CHANNELS] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 17};

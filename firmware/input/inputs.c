@@ -121,53 +121,47 @@ static uint8_t adc_channel_to_index(uint8_t adc_channel)
 
 
 // ****************************************************************************
+void INPUTS_configure(void)
+{
+    for (size_t i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
+        transmitter_input_t *t = &config.tx.transmitter_inputs[i];
+        uint32_t gpioport = t->pcb_input.gpioport;
+        uint16_t gpio = t->pcb_input.gpio;
+
+        if (t->pcb_input.type == PCB_INPUT_NOT_USED) {
+            continue;
+        }
+
+        switch (t->type) {
+            case ANALOG_WITH_CENTER:
+            case ANALOG_NO_CENTER:
+            case ANALOG_NO_CENTER_POSITIVE_ONLY:
+                gpio_set_mode(gpioport, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, gpio);
+                break;
+
+            case DIGITAL_ACTIVE_LOW:
+                gpio_set_mode(gpioport, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, gpio);
+                gpio_set(gpioport, gpio);
+                break;
+
+            case DIGITAL_ACTIVE_HIGH:
+            case TRANSMITTER_INPUT_NOT_USED:
+                gpio_set_mode(gpioport, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, gpio);
+                gpio_clear(gpioport, gpio);
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
+
+// ****************************************************************************
 void INPUTS_init(void)
 {
+    INPUTS_configure();
     adc_init();
-
-    // Configure the analog inputs
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO0);
-
-    // FIXME: this needs to be dynamically based on whether an input is
-    // used at all, used as analog input, or used as digital input.
-    // ADC1
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO1);
-    // ADC2
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO2);
-    // ADC3
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO3);
-    // ADC4
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO4);
-    // ADC5
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO5);
-    // ADC6
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO6);
-    // ADC7
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO7);
-    // ADC8
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO0);
-    // ADC9
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO1);
-
-    // SW1
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO11);
-    // SW2
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO10);
-    // SW3
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO3);
-    // SW4
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO4);
-    // SW5
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO5);
-    // SW6
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO6);
-    // SW7
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO7);
-    // SW8
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO8);
-    // SW9
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO9);
-
 }
 
 

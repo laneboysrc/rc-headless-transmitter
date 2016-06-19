@@ -209,14 +209,20 @@ void INPUTS_filter_and_normalize(void)
                 if (raw < t->calibration[0]) {
                     adc_array_calibrated[t->input] = 0;
                 }
-                else if (raw > t->calibration[2]) {
-                    adc_array_calibrated[t->input] = ADC_VALUE_MAX;
+                else if (raw >= t->calibration[2]) {
+                    // Note: we are clamping to (ADC_VALUE_MAX + 1) because
+                    // the positive range is only 2047, while the negative is
+                    // -2048. This has the effect that after calibration the
+                    // range is -100% .. 99%, instead of up to 100%. By adding
+                    // 1 we make the range to positive to 100%.
+                    adc_array_calibrated[t->input] = ADC_VALUE_MAX + 1;
                 }
                 else if (raw == t->calibration[1]) {
                     adc_array_calibrated[t->input] = ADC_VALUE_HALF;
                 }
                 else if (raw > t->calibration[1]) {
-                    adc_array_calibrated[t->input] = ADC_VALUE_HALF + (raw - t->calibration[1]) * ADC_VALUE_HALF / (t->calibration[2] - t->calibration[1]);
+                    // Note: As above, clamp to (ADC_VALUE_MAX + 1)
+                    adc_array_calibrated[t->input] = ADC_VALUE_HALF + (raw - t->calibration[1]) * (ADC_VALUE_HALF + 1) / (t->calibration[2] - t->calibration[1]);
                 }
                 else {
                     adc_array_calibrated[t->input] = (raw - t->calibration[0]) * ADC_VALUE_HALF / (t->calibration[1] - t->calibration[0]);

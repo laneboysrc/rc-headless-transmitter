@@ -76,10 +76,10 @@ int main(void)
     SPI_init();
     SOUND_init();
     NRF24_init();
-
     WATCHDOG_start();
 
     CONFIG_init();
+
     INPUTS_init();
     MIXER_init();
     PROTOCOL_HK310_init();
@@ -101,19 +101,20 @@ int main(void)
     printf("    sizeof(config.model.protocol_hk310)=%u\n", sizeof(config.model.protocol_hk310));
 
 
-// sizeof(config)=3096
-//   sizeof(config.tx)=548
-//     sizeof(config.tx.transmitter_inputs)=160
-//         sizeof(transmitter_input_t)=8
-//     sizeof(config.tx.logical_inputs)=380
+// sizeof(config)=3680
+//   sizeof(config.tx)=1128
+//     sizeof(config.tx.transmitter_inputs)=512
+//         sizeof(transmitter_input_t)=16
+//     sizeof(config.tx.logical_inputs)=608
 //       sizeof(logical_input_t)=19
-//   sizeof(config.model)=2532
+//   sizeof(config.model)=2548
 //     sizeof(config.model.name)=16
 //     sizeof(config.model.mixer_units)=2000
 //       sizeof(mixer_unit_t)=20
 //     sizeof(config.model.limits)=504
 //       sizeof(limits_t)=28
 //     sizeof(config.model.protocol_hk310)=25
+
 
     LED_on();
     SOUND_play(C5, 100, NULL);

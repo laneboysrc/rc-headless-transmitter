@@ -21,16 +21,20 @@ typedef uint8_t port_t;
 // Note that it does not describe whether those inputs are used or not, and to
 // which functions they are connected. That is described in input_map.
 typedef enum {
+    PCB_INPUT_NOT_USED = 0,
     ANALOG_DIGITAL,
     DIGITAL
 } pcb_input_type_t;
 
 typedef struct {
-    pcb_input_type_t *type;
-    port_t input;
+    uint32_t gpioport;          // GPIO port, e.g. GPIOA
+    uint16_t gpio;              // GPIO number, e.g. GPIO3
+    port_t adc_channel;         // ADC channel
+    pcb_input_type_t type;
 } pcb_input_t;
 
 extern const pcb_input_t pcb_inputs[];
+extern const uint8_t adc_channel_selection[];
 
 
 // Here we define the low-level properties of each input as it is utilized in
@@ -50,7 +54,11 @@ typedef enum {
 } transmitter_input_type_t;
 
 typedef struct {
+    pcb_input_t port;
+
+    // FIXME: this needs to be replaced by accessing the analog input number stored in pcb_input_t
     port_t input;
+
     transmitter_input_type_t type;
     uint16_t calibration[3];             // Left/Center/Right HW endpoint calibration values
 } transmitter_input_t;
@@ -62,10 +70,12 @@ typedef struct {
 typedef enum {
     ANALOG,
     SWITCH,
-    PUSH_BUTTON,
+    MOMENTARY,
+    MULTI_POSITION_SWITCH,
     BCD_ENCODER
 } input_type_t;
 
+// FIXME: add battery input
 typedef enum {
     NONE = 0,
     ST,
@@ -82,7 +92,9 @@ typedef enum {
     CH5,
     CH6,
     CH7,
-    CH8
+    CH8,
+
+    BATTERY
 } label_t;
 
 typedef struct {

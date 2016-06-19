@@ -45,6 +45,7 @@ OPENCM3_LIBNAME		:= opencm3_stm32f1
 C_SOURCE_FILES += $(abspath main.c)
 C_SOURCE_FILES += $(abspath configuration/config.c)
 C_SOURCE_FILES += $(abspath input/inputs.c)
+C_SOURCE_FILES += $(abspath input/inputs_stm32f103c8t6.c)
 C_SOURCE_FILES += $(abspath mixer/channels.c)
 C_SOURCE_FILES += $(abspath mixer/curves.c)
 C_SOURCE_FILES += $(abspath mixer/limits.c)

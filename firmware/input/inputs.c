@@ -8,7 +8,6 @@
 
 #include <config.h>
 #include <inputs.h>
-#include <inputs_stm32f103c8t6.h>
 #include <systick.h>
 
 
@@ -18,7 +17,6 @@
 static uint16_t adc_array_oversample[SAMPLE_COUNT];
 static uint16_t adc_array_raw[NUMBER_OF_ADC_CHANNELS];
 static uint16_t adc_array_calibrated[NUMBER_OF_ADC_CHANNELS];
-static uint8_t adc_channel_selection[NUMBER_OF_ADC_CHANNELS] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17};
 
 static int32_t normalized_inputs[NUMBER_OF_ADC_CHANNELS];
 

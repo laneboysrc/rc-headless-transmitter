@@ -4,7 +4,6 @@
 
 #include <libopencm3/stm32/flash.h>
 
-
 #include <config.h>
 #include <systick.h>
 
@@ -45,19 +44,23 @@ static const config_t config_flash = {
 
     .tx = {
         .transmitter_inputs = {
-            {.input = 1, .type = ANALOG_WITH_CENTER,        // Ailerons
-             .calibration = {510, 1962, 3380}},
+            {.type = ANALOG_WITH_CENTER,                    // Battery
+             .input = 0},
 
-            {.input = 2, .type = ANALOG_WITH_CENTER,        // Elevator
-             .calibration = {590, 1943, 3240}},
+            {.type = ANALOG_WITH_CENTER,                    // Ailerons
+             .calibration = {510, 1962, 3380}, .input = 1},
 
-            {.input = 3, .type = ANALOG_WITH_CENTER,        // Throttle
-             .calibration = {670, ADC_VALUE_HALF, 3370}},
+            {.type = ANALOG_WITH_CENTER,                    // Elevator
+             .calibration = {590, 1943, 3240}, .input = 2},
 
-            {.input = 4, .type = ANALOG_NO_CENTER,          // Rudder
-             .calibration = {580, 1874, 3410}},
+            {.type = ANALOG_WITH_CENTER,                    // Throttle
+             .calibration = {670, ADC_VALUE_HALF, 3370}, .input = 3},
+
+            {.type = ANALOG_NO_CENTER,                      // Rudder
+             .calibration = {580, 1874, 3410}, .input = 4},
         },
         .logical_inputs = {
+            {.type = ANALOG, .inputs = {0}, .labels = {BATTERY}},
             {.type = ANALOG, .inputs = {1}, .labels = {AIL}},
             {.type = ANALOG, .inputs = {2}, .labels = {ELE}},
             {.type = ANALOG, .inputs = {3}, .labels = {THR, TH}},

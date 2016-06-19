@@ -1,11 +1,12 @@
 #pragma once
 
+
 #include <stdint.h>
 
-#define NUMBER_OF_ADC_CHANNELS 11
+
 #define MAX_LABELS 5
-#define MAX_TRANSMITTER_INPUTS 20
-#define MAX_LOGICAL_INPUTS 20
+#define MAX_TRANSMITTER_INPUTS 32
+#define MAX_LOGICAL_INPUTS 32
 
 #define ADC_VALUE_MIN 0
 #define ADC_VALUE_HALF 0x800
@@ -13,6 +14,15 @@
 
 
 typedef uint8_t port_t;
+
+
+// Definition for a table element used to convert an adc channel number to the
+// index in the various adc arrays corresponding to the sequence in
+// adc_channel_selection
+typedef struct {
+    uint8_t adc_channel;
+    uint8_t index;
+} adc_channel_to_index_t;
 
 
 // This structure describes the inputs on the transmitter PCB. It describes
@@ -29,12 +39,10 @@ typedef enum {
 typedef struct {
     uint32_t gpioport;          // GPIO port, e.g. GPIOA
     uint16_t gpio;              // GPIO number, e.g. GPIO3
-    port_t adc_channel;         // ADC channel
+    uint8_t adc_channel;        // ADC channel
     pcb_input_type_t type;
 } pcb_input_t;
 
-extern const pcb_input_t pcb_inputs[];
-extern const uint8_t adc_channel_selection[];
 
 
 // Here we define the low-level properties of each input as it is utilized in
@@ -54,11 +62,7 @@ typedef enum {
 } transmitter_input_type_t;
 
 typedef struct {
-    pcb_input_t port;
-
-    // FIXME: this needs to be replaced by accessing the analog input number stored in pcb_input_t
-    port_t input;
-
+    pcb_input_t pcb_input;
     transmitter_input_type_t type;
     uint16_t calibration[3];             // Left/Center/Right HW endpoint calibration values
 } transmitter_input_t;
@@ -92,15 +96,13 @@ typedef enum {
     CH5,
     CH6,
     CH7,
-    CH8,
-
-    BATTERY
+    CH8
 } label_t;
 
 typedef struct {
     input_type_t type;
     uint8_t position_count;
-    port_t inputs[12];
+    port_t transmitter_inputs[12];
     label_t labels[MAX_LABELS];
 } logical_input_t;
 

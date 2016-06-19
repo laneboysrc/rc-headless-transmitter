@@ -5,16 +5,14 @@
 #include <libopencm3/stm32/gpio.h>
 
 #include <inputs.h>
+#include <inputs_stm32f103c8t6.h>
 
-// FIXME: Ideally we should have a table that converts ADC numbers to the
-// sequence index. This way pcb_input_t can hold the adc_channel, and input.c
-// can lookup the table to find the corresponding index in the adc array memory
-// for a given adc_channel.
-const uint8_t adc_channel_selection[NUMBER_OF_ADC_CHANNELS] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17};
+
+const uint8_t adc_channel_selection[NUMBER_OF_ADC_CHANNELS] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 17};
+
 
 const pcb_input_t pcb_inputs[MAX_TRANSMITTER_INPUTS] = {
                                                                                     // Schematic reference
-    {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO0, .adc_channel = 0},   // ADC0
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO1, .adc_channel = 1},   // ADC1
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO2, .adc_channel = 2},   // ADC2
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO3, .adc_channel = 3},   // ADC3
@@ -33,5 +31,8 @@ const pcb_input_t pcb_inputs[MAX_TRANSMITTER_INPUTS] = {
     {.type = DIGITAL, .gpioport = GPIOB, .gpio = GPIO7},                            // SW7
     {.type = DIGITAL, .gpioport = GPIOB, .gpio = GPIO8},                            // SW8
     {.type = DIGITAL, .gpioport = GPIOB, .gpio = GPIO9}                             // SW9
+
+    // Note: ADC0 is used for measuring the battery voltage, therefore it does
+    // not appear in this list
 };
 

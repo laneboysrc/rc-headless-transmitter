@@ -5,6 +5,8 @@
 #include <libopencm3/stm32/flash.h>
 
 #include <config.h>
+#include <inputs.h>
+#include <inputs_stm32f103c8t6.h>
 #include <systick.h>
 
 
@@ -44,27 +46,23 @@ static const config_t config_flash = {
 
     .tx = {
         .transmitter_inputs = {
-            {.type = ANALOG_WITH_CENTER,                    // Battery
-             .input = 0},
-
             {.type = ANALOG_WITH_CENTER,                    // Ailerons
-             .calibration = {510, 1962, 3380}, .input = 1},
+             .calibration = {510, 1962, 3380}},
 
             {.type = ANALOG_WITH_CENTER,                    // Elevator
-             .calibration = {590, 1943, 3240}, .input = 2},
+             .calibration = {590, 1943, 3240}},
 
             {.type = ANALOG_WITH_CENTER,                    // Throttle
-             .calibration = {670, ADC_VALUE_HALF, 3370}, .input = 3},
+             .calibration = {670, ADC_VALUE_HALF, 3370}},
 
             {.type = ANALOG_NO_CENTER,                      // Rudder
-             .calibration = {580, 1874, 3410}, .input = 4},
+             .calibration = {580, 1874, 3410}},
         },
         .logical_inputs = {
-            {.type = ANALOG, .inputs = {0}, .labels = {BATTERY}},
-            {.type = ANALOG, .inputs = {1}, .labels = {AIL}},
-            {.type = ANALOG, .inputs = {2}, .labels = {ELE}},
-            {.type = ANALOG, .inputs = {3}, .labels = {THR, TH}},
-            {.type = ANALOG, .inputs = {4}, .labels = {RUD, ST}}
+            {.type = ANALOG, .transmitter_inputs = {0}, .labels = {AIL}},
+            {.type = ANALOG, .transmitter_inputs = {1}, .labels = {ELE}},
+            {.type = ANALOG, .transmitter_inputs = {2}, .labels = {THR, TH}},
+            {.type = ANALOG, .transmitter_inputs = {3}, .labels = {RUD, ST}}
         },
         .led_pwm_percent = 30,
         .bind_timeout_ms = 10 * 1000
@@ -191,6 +189,21 @@ static const config_t config_flash = {
 
 
 // ****************************************************************************
+// The configuration contains read-only value describing the hardware inputs.
+// To ensure they are not accidentally overwritten this function sets the
+// values in the configuration to what was defined at compile time.
+static void load_pcb_inputs(void)
+{
+    for (size_t i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
+        pcb_input_t *dst = &config.tx.transmitter_inputs[i].pcb_input;
+        const pcb_input_t *src = &pcb_inputs[i];
+
+        memcpy(dst, src, sizeof(pcb_input_t));
+    }
+}
+
+
+// ****************************************************************************
 void CONFIG_background_flash_write(void)
 {
     static bool logged = false;
@@ -236,6 +249,8 @@ void CONFIG_save(void)
         return;
     }
 
+    load_pcb_inputs();
+
     store_config.active = true;
     store_config.version_src = (uint32_t *)(&config);
     store_config.version_dst = (uint32_t *)(&config_flash);
@@ -259,6 +274,8 @@ void CONFIG_load(void)
     if (config.version != CONFIG_VERSION) {
         memcpy(&config, &config_failsafe, sizeof(config_t));
     }
+
+    load_pcb_inputs();
 }
 
 

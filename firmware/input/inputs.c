@@ -8,8 +8,8 @@
 
 #include <config.h>
 #include <inputs.h>
+#include <inputs_stm32f103c8t6.h>
 #include <systick.h>
-
 
 #define WINDOW_SIZE 10
 #define SAMPLE_COUNT NUMBER_OF_ADC_CHANNELS * WINDOW_SIZE
@@ -106,6 +106,22 @@ static void adc_init(void)
 
 
 // ****************************************************************************
+static uint8_t adc_channel_to_index(uint8_t adc_channel)
+{
+    size_t number_of_elements = sizeof(adc_channel_selection) / sizeof(adc_channel_selection[0]);
+
+    for (size_t i = 0; i < number_of_elements; i++) {
+        if (adc_channel_selection[i] == adc_channel) {
+            return i;
+        }
+
+    }
+
+    return 0;
+}
+
+
+// ****************************************************************************
 void INPUTS_init(void)
 {
     adc_init();
@@ -175,7 +191,7 @@ void INPUTS_init(void)
 //
 uint32_t INPUTS_get_battery_voltage(void)
 {
-    return adc_array_raw[0] * (33 + 22) * 1200000 / adc_array_raw[10] / 33000;
+    return adc_array_raw[BATTERY_VOLTAGE_INDEX] * (33 + 22) * 1200000 / adc_array_raw[REFERENCE_VOLTAGE_INDEX] / 33000;
 }
 
 
@@ -197,15 +213,17 @@ void INPUTS_filter_and_normalize(void)
 
     for (int i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
         uint32_t raw;
-
+        uint8_t adc_index;
         transmitter_input_t *t = &config.tx.transmitter_inputs[i];
+
         switch (t->type) {
             case ANALOG_WITH_CENTER:
             case ANALOG_NO_CENTER:
             case ANALOG_NO_CENTER_POSITIVE_ONLY:
-                raw = adc_array_raw[t->input];
+                adc_index = adc_channel_to_index(t->pcb_input.adc_channel);
+                raw = adc_array_raw[adc_index];
                 if (raw < t->calibration[0]) {
-                    adc_array_calibrated[t->input] = 0;
+                    adc_array_calibrated[adc_index] = 0;
                 }
                 else if (raw >= t->calibration[2]) {
                     // Note: we are clamping to (ADC_VALUE_MAX + 1) because
@@ -213,20 +231,20 @@ void INPUTS_filter_and_normalize(void)
                     // -2048. This has the effect that after calibration the
                     // range is -100% .. 99%, instead of up to 100%. By adding
                     // 1 we make the range to positive to 100%.
-                    adc_array_calibrated[t->input] = ADC_VALUE_MAX + 1;
+                    adc_array_calibrated[adc_index] = ADC_VALUE_MAX + 1;
                 }
                 else if (raw == t->calibration[1]) {
-                    adc_array_calibrated[t->input] = ADC_VALUE_HALF;
+                    adc_array_calibrated[adc_index] = ADC_VALUE_HALF;
                 }
                 else if (raw > t->calibration[1]) {
                     // Note: As above, clamp to (ADC_VALUE_MAX + 1)
-                    adc_array_calibrated[t->input] = ADC_VALUE_HALF + (raw - t->calibration[1]) * (ADC_VALUE_HALF + 1) / (t->calibration[2] - t->calibration[1]);
+                    adc_array_calibrated[adc_index] = ADC_VALUE_HALF + (raw - t->calibration[1]) * (ADC_VALUE_HALF + 1) / (t->calibration[2] - t->calibration[1]);
                 }
                 else {
-                    adc_array_calibrated[t->input] = (raw - t->calibration[0]) * ADC_VALUE_HALF / (t->calibration[1] - t->calibration[0]);
+                    adc_array_calibrated[adc_index] = (raw - t->calibration[0]) * ADC_VALUE_HALF / (t->calibration[1] - t->calibration[0]);
                 }
 
-                normalized_inputs[t->input] = (adc_array_calibrated[t->input] - ADC_VALUE_HALF) * CHANNEL_100_PERCENT / ADC_VALUE_HALF;
+                normalized_inputs[adc_index] = (adc_array_calibrated[adc_index] - ADC_VALUE_HALF) * CHANNEL_100_PERCENT / ADC_VALUE_HALF;
                 break;
 
             case TRANSMITTER_INPUT_NOT_USED:
@@ -247,7 +265,12 @@ int32_t INPUTS_get_input(label_t input)
 
         for (unsigned j = 0; j < MAX_LABELS; j++) {
             if (li->labels[j] == input) {
-                return normalized_inputs[li->inputs[0]];
+                uint8_t tx_index = li->transmitter_inputs[0];
+                transmitter_input_t *t = &config.tx.transmitter_inputs[tx_index];
+                uint8_t adc_channel = t->pcb_input.adc_channel;
+                uint8_t adc_index = adc_channel_to_index(adc_channel);
+
+                return normalized_inputs[adc_index];
             }
         }
     }
@@ -260,11 +283,15 @@ int32_t INPUTS_get_input(label_t input)
 void INPUTS_dump_adc(void)
 {
     printf("BAT: %lumV  ", INPUTS_get_battery_voltage());
-    for (int i = 1; i <= 4; i++) {
+    for (int i = 0; i < 4; i++) {
         printf("CH%d:%4ld%% (%4u->%4u)  ", i, CHANNEL_TO_PERCENT(normalized_inputs[i]), adc_array_raw[i], adc_array_calibrated[i]);
     }
     printf("\n");
 
     // printf("%lu, %u, %u\n", INPUTS_get_battery_voltage(), adc_array_raw[0], adc_array_raw[10]);
 
+    // uint8_t adc_index;
+    // transmitter_input_t *t = &config.tx.transmitter_inputs[0];
+    // adc_index = adc_channel_to_index(t->input);
+    // printf("adc_index = %d\n", adc_index);
 }

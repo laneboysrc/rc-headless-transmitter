@@ -1,6 +1,6 @@
-update=Wed 27 Apr 2016 12:39:09 PM SGT
+update=Sun 19 Jun 2016 07:39:03 PM SGT
 version=1
-last_client=cvpcb
+last_client=eeschema
 [pcbnew]
 version=1
 LastNetListRead=
@@ -42,9 +42,14 @@ LibName18=valves
 LibDir=../../../kicad-libraries
 [general]
 version=1
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
 [eeschema]
 version=1
-LibDir=../../../kicad-libraries
+LibDir=../../kicad-libraries
 NetFmtName=
 RptD_X=0
 RptD_Y=100
@@ -68,8 +73,3 @@ LibName14=interface
 LibName15=logo
 LibName16=references
 LibName17=rfcom
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms

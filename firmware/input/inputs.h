@@ -82,6 +82,14 @@ typedef enum {
     TRIM
 } input_type_t;
 
+typedef enum {
+    SUB_TYPE_NOT_APPLICABLE = 0,
+    INCREMENT_AND_LOOP,
+    DECREMENT_AND_LOOP,
+    SAW_TOOTH,
+    DOUBLE_CLICK_DECREMENT
+} input_sub_type_t;
+
 // FIXME: add battery input
 typedef enum {
     NONE = 0,
@@ -104,6 +112,7 @@ typedef enum {
 
 typedef struct {
     input_type_t type;
+    input_sub_type_t sub_type;
     uint8_t position_count;
     port_t transmitter_inputs[MAX_POSITION_COUNT];
     label_t labels[MAX_LABELS];

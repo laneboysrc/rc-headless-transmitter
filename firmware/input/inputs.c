@@ -19,6 +19,7 @@
 typedef struct{
     int32_t value;
     uint8_t switch_value;
+    uint8_t state;          // State machine for momentary button handling
 } logical_input_value_t;
 
 
@@ -31,29 +32,6 @@ static uint8_t transmitter_digital_inputs[MAX_TRANSMITTER_INPUTS];
 
 
 static logical_input_value_t logical_inputs[MAX_LOGICAL_INPUTS];
-
-
-
-// ****************************************************************************
-// static uint32_t adc_read_channel(unsigned channel)
-// {
-//     uint8_t channel_array[1];
-//     // Select the channel we want to convert
-//     channel_array[0] = channel;
-//     adc_set_regular_sequence(ADC1, 1, channel_array);
-
-
-//     // If the ADC_CR2_ON bit is already set -> setting it another time
-//     // starts the conversion.
-
-//     adc_start_conversion_direct(ADC1);
-
-//     // Wait for end of conversion.
-//     while (! adc_eoc(ADC1));
-
-//     return adc_read_regular(ADC1);
-// }
-
 
 
 // ****************************************************************************
@@ -145,6 +123,16 @@ static int32_t get_normalized_input(uint8_t tx_index)
 
 
 // ****************************************************************************
+// Map n switch positions to the range of CHANNEL_N100_PERCENT..CHANNEL_100_PERCENT
+static int32_t calculate_value_for_switch_position(uint8_t value, uint8_t n)
+{
+    int32_t step = (2 * CHANNEL_100_PERCENT) / (n - 1);
+
+    return CHANNEL_N100_PERCENT + (step * value);
+}
+
+
+// ****************************************************************************
 static void read_switch(logical_input_t *li, logical_input_value_t *v)
 {
     port_t first_port = li->transmitter_inputs[0];
@@ -153,7 +141,34 @@ static void read_switch(logical_input_t *li, logical_input_value_t *v)
     switch (t->type) {
         case SWITCH_ON_OFF:
             // Generic multi-position switch; n=2, 4..12
-           break;
+            if (li->position_count == 2) {
+                v->switch_value = transmitter_digital_inputs[first_port];
+                v->value = v->switch_value ? CHANNEL_100_PERCENT : CHANNEL_N100_PERCENT;
+            }
+            else {
+                // n=4..12
+                bool found = false;
+                uint8_t value = 0;
+
+                // Test all inputs associated with this multi-position switch
+                for (int i = 0; i < li->position_count; i++) {
+                    port_t port = li->transmitter_inputs[i];
+                    if (transmitter_digital_inputs[port]) {
+                        if (found) {
+                            // More than one input set: illegal value, ignore!
+                            return;
+                        }
+
+                        found = true;
+                        value = i;
+                    }
+                }
+                if (found) {
+                    v->switch_value = value;
+                    v->value = calculate_value_for_switch_position(value, li->position_count);
+                }
+            }
+            break;
 
         case SWITCH_ON_OPEN_OFF:
             // Special case for 3-position switch using a single IO port
@@ -169,11 +184,7 @@ static void read_switch(logical_input_t *li, logical_input_value_t *v)
 
         case MOMENTARY_ON_OFF:
             // Virtual multi-position switch using momentary button(s); n=2..12
-            // FIXME: how to determine whether we need to
-            //      increment, loop
-            //      decrement, loop
-            //      saw-tooth
-            //      single-click increment, double-click decrement
+            // FIXME: implement
             break;
 
         default:
@@ -185,11 +196,16 @@ static void read_switch(logical_input_t *li, logical_input_value_t *v)
 // ****************************************************************************
 static void read_bcd_switch(logical_input_t *li, logical_input_value_t *v)
 {
-    port_t first_port = li->transmitter_inputs[0];
-    transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
+    uint8_t value = 0;
 
-    (void) t;
-    (void) v;
+    for (int i = 0; i < li->position_count; i++) {
+        port_t port = li->transmitter_inputs[i];
+        if (transmitter_digital_inputs[port]) {
+            value += 1 << i;
+        }
+    }
+    v->switch_value = value;
+    v->value = calculate_value_for_switch_position(value, 1 << li->position_count);
 }
 
 
@@ -253,7 +269,7 @@ void INPUTS_init(void)
 
 
 // ****************************************************************************
-// Returns the battery voltage in millivolts
+// This function returns the battery voltage in millivolts
 // Since the ADC uses VDD (3.3V) as reference, we measure the internal 1.2V
 // reference (ADC17) of the STM32 to determine how much voltage one bit
 // represents without having to rely on the 3.3V accuracy.
@@ -305,9 +321,11 @@ void INPUTS_filter_and_normalize(void)
 
 
         switch (t->type) {
-            case ANALOG_WITH_CENTER:
+            // FIXME: handle the various analog types properly
             case ANALOG_NO_CENTER:
             case ANALOG_NO_CENTER_POSITIVE_ONLY:
+
+            case ANALOG_WITH_CENTER:
                 adc_index = adc_channel_to_index(t->pcb_input.adc_channel);
                 raw = adc_array_raw[adc_index];
                 if (raw < t->calibration[0]) {

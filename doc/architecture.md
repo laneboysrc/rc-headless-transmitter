@@ -114,7 +114,7 @@ There are several types of *logical inputs* available
         * n=2,4..12 can have n on/off switch *Transmitter input* assigned
             * In theory we could do with n-1 digital inputs, using the state when all inputs are open as first position. However, this may cause issues that the first position is triggered when switching between the other positions, as contacts may temporarily open.
             * Therefore it is better to use n inputs and treat "all inputs open"as well as "more than one input closed" as error condition.
-* BCD switch n=4, 8, 16
+* BCD switch n=2..4
     * Must have n on/off switch switch *Transmitter input* assigned
     * Output values are 0..(2^n-1)
 * Trims

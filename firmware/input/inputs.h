@@ -57,8 +57,9 @@ typedef enum {
     ANALOG_WITH_CENTER,                 // CHANNEL_N100_PERCENT .. 0 .. CHANNEL_100_PERCENT
     ANALOG_NO_CENTER,                   // CHANNEL_N100_PERCENT .. CHANNEL_100_PERCENT
     ANALOG_NO_CENTER_POSITIVE_ONLY,     // 0 .. CHANNEL_100_PERCENT
-    DIGITAL_ACTIVE_LOW,
-    DIGITAL_ACTIVE_HIGH,
+    SWITCH_ON_OFF,                      // On / Off latching switch input
+    SWITCH_ON_OPEN_OFF,                 // GND / Open / VCC latching switch input
+    MOMENTARY_ON_OFF                    // On / Off momentary push-button input
 } transmitter_input_type_t;
 
 typedef struct {
@@ -75,8 +76,7 @@ typedef enum {
     ANALOG,
     SWITCH,
     MOMENTARY,
-    MULTI_POSITION_SWITCH,
-    BCD_ENCODER
+    TRIM
 } input_type_t;
 
 // FIXME: add battery input

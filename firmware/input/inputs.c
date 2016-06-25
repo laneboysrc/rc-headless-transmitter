@@ -113,7 +113,6 @@ static uint8_t adc_channel_to_index(uint8_t adc_channel)
         if (adc_channel_selection[i] == adc_channel) {
             return i;
         }
-
     }
 
     return 0;
@@ -139,12 +138,9 @@ void INPUTS_configure(void)
                 gpio_set_mode(gpioport, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, gpio);
                 break;
 
-            case DIGITAL_ACTIVE_LOW:
-                gpio_set_mode(gpioport, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, gpio);
-                gpio_set(gpioport, gpio);
-                break;
-
-            case DIGITAL_ACTIVE_HIGH:
+            case SWITCH_ON_OFF:
+            case SWITCH_ON_OPEN_OFF:
+            case MOMENTARY_ON_OFF:
             case TRANSMITTER_INPUT_NOT_USED:
                 gpio_set_mode(gpioport, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, gpio);
                 gpio_clear(gpioport, gpio);
@@ -172,11 +168,11 @@ void INPUTS_init(void)
 // represents without having to rely on the 3.3V accuracy.
 //
 // We then multiply the measured battery voltage on ADC0 by this value and
-// scale the result by the resistor divider (2k2 over 3k3).
+// scale the result by the resistor divider (22k over 33k).
 // The calulation is carried out in uV to get maximum resolution.
 //
 // one_bit_voltage = 1.2V / ADC(17)
-// battery_voltage = ADC(0) * one_bit_voltage * ((2200 + 3300) / 3300)
+// battery_voltage = ADC(0) * one_bit_voltage * ((22k + 33k) / 33k)
 //
 // This algorithm was verified with a Keithley 2700 6.5 digit DMM over the
 // whole discharge of a Li-Ion battery, from 4.15V down to 2.5V. It is
@@ -189,6 +185,8 @@ uint32_t INPUTS_get_battery_voltage(void)
 
 
 // ****************************************************************************
+// This function is called regularly to preprocess the inputs in order to
+// have the latest inputs available to the mixer.
 void INPUTS_filter_and_normalize(void)
 {
     for (int i = 0; i < NUMBER_OF_ADC_CHANNELS; i++) {
@@ -240,9 +238,10 @@ void INPUTS_filter_and_normalize(void)
                 normalized_inputs[adc_index] = (adc_array_calibrated[adc_index] - ADC_VALUE_HALF) * CHANNEL_100_PERCENT / ADC_VALUE_HALF;
                 break;
 
+            case SWITCH_ON_OFF:
+            case SWITCH_ON_OPEN_OFF:
+            case MOMENTARY_ON_OFF:
             case TRANSMITTER_INPUT_NOT_USED:
-            case DIGITAL_ACTIVE_LOW:
-            case DIGITAL_ACTIVE_HIGH:
             default:
                 break;
         }

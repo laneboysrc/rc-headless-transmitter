@@ -7,6 +7,7 @@
 #define MAX_LABELS 5
 #define MAX_TRANSMITTER_INPUTS 32
 #define MAX_LOGICAL_INPUTS 32
+#define MAX_POSITION_COUNT 12       // Number of supportd switch positions
 
 #define ADC_VALUE_MIN 0
 #define ADC_VALUE_HALF 0x800
@@ -73,8 +74,10 @@ typedef struct {
 // but also trims, dual-rate switches or pots, etc
 
 typedef enum {
+    LOGICAL_INPUT_NOT_USED = 0,
     ANALOG,
     SWITCH,
+    BCD_SWITCH,
     MOMENTARY,
     TRIM
 } input_type_t;
@@ -102,14 +105,16 @@ typedef enum {
 typedef struct {
     input_type_t type;
     uint8_t position_count;
-    port_t transmitter_inputs[12];
+    port_t transmitter_inputs[MAX_POSITION_COUNT];
     label_t labels[MAX_LABELS];
 } logical_input_t;
 
 
 
 void INPUTS_init(void);
-int32_t INPUTS_get_input(label_t input);
+int32_t INPUTS_get_value(label_t input);
+uint8_t INPUTS_get_switch_value(label_t input);
+int32_t INPUTS_get_trim(label_t input);
 void INPUTS_filter_and_normalize(void);
 void INPUTS_dump_adc(void);
 uint32_t INPUTS_get_battery_voltage(void);

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/dma.h>
@@ -10,14 +11,27 @@
 #include <inputs.h>
 #include <systick.h>
 
+
 #define WINDOW_SIZE 10
 #define SAMPLE_COUNT NUMBER_OF_ADC_CHANNELS * WINDOW_SIZE
+
+
+typedef struct{
+    int32_t value;
+    uint8_t switch_value;
+} logical_input_value_t;
+
 
 static uint16_t adc_array_oversample[SAMPLE_COUNT];
 static uint16_t adc_array_raw[NUMBER_OF_ADC_CHANNELS];
 static uint16_t adc_array_calibrated[NUMBER_OF_ADC_CHANNELS];
 
 static int32_t normalized_inputs[NUMBER_OF_ADC_CHANNELS];
+static uint8_t transmitter_digital_inputs[MAX_TRANSMITTER_INPUTS];
+
+
+static logical_input_value_t logical_inputs[MAX_LOGICAL_INPUTS];
+
 
 
 // ****************************************************************************
@@ -120,6 +134,83 @@ static uint8_t adc_channel_to_index(uint8_t adc_channel)
 
 
 // ****************************************************************************
+static int32_t get_normalized_input(uint8_t tx_index)
+{
+    transmitter_input_t *t = &config.tx.transmitter_inputs[tx_index];
+    uint8_t adc_channel = t->pcb_input.adc_channel;
+    uint8_t adc_index = adc_channel_to_index(adc_channel);
+
+    return normalized_inputs[adc_index];
+}
+
+
+// ****************************************************************************
+static void read_switch(logical_input_t *li, logical_input_value_t *v)
+{
+    port_t first_port = li->transmitter_inputs[0];
+    transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
+
+    switch (t->type) {
+        case SWITCH_ON_OFF:
+            // Generic multi-position switch; n=2, 4..12
+           break;
+
+        case SWITCH_ON_OPEN_OFF:
+            // Special case for 3-position switch using a single IO port
+            v->switch_value = transmitter_digital_inputs[first_port];
+            v->value = 0;
+            if (v->switch_value == 0) {
+                v->value = CHANNEL_N100_PERCENT;
+            }
+            else if (v->switch_value == 2) {
+                v->value = CHANNEL_100_PERCENT;
+            }
+            break;
+
+        case MOMENTARY_ON_OFF:
+            // Virtual multi-position switch using momentary button(s); n=2..12
+            // FIXME: how to determine whether we need to
+            //      increment, loop
+            //      decrement, loop
+            //      saw-tooth
+            //      single-click increment, double-click decrement
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+// ****************************************************************************
+static void read_bcd_switch(logical_input_t *li, logical_input_value_t *v)
+{
+    port_t first_port = li->transmitter_inputs[0];
+    transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
+
+    (void) t;
+    (void) v;
+}
+
+
+// ****************************************************************************
+static void read_trim(logical_input_t *li, logical_input_value_t *v)
+{
+    port_t first_port = li->transmitter_inputs[0];
+    transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
+
+    if (t->type == ANALOG_WITH_CENTER  ||  t->type == ANALOG_NO_CENTER) {
+        // FIXME: do we need to shrink this down or keep at 100%?
+        v->value = get_normalized_input(first_port);
+    }
+    else {
+        // Not analog, so must be two momentary buttons
+        // FIXME: implement momentary button state machine
+    }
+}
+
+
+// ****************************************************************************
 void INPUTS_configure(void)
 {
     for (size_t i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
@@ -189,6 +280,7 @@ uint32_t INPUTS_get_battery_voltage(void)
 // have the latest inputs available to the mixer.
 void INPUTS_filter_and_normalize(void)
 {
+    // STEP 1: average the ADC channels
     for (int i = 0; i < NUMBER_OF_ADC_CHANNELS; i++) {
         uint16_t filtered_result = 0;
         int idx = i;
@@ -202,10 +294,15 @@ void INPUTS_filter_and_normalize(void)
         adc_array_raw[i] = filtered_result;
     }
 
+    // STEP 2: Normalize the analog transmitter inputs; read the digital
+    //         transmitter inputs
     for (int i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
         uint32_t raw;
         uint8_t adc_index;
         transmitter_input_t *t = &config.tx.transmitter_inputs[i];
+        uint32_t gpioport = t->pcb_input.gpioport;
+        uint16_t gpio = t->pcb_input.gpio;
+
 
         switch (t->type) {
             case ANALOG_WITH_CENTER:
@@ -239,9 +336,58 @@ void INPUTS_filter_and_normalize(void)
                 break;
 
             case SWITCH_ON_OFF:
-            case SWITCH_ON_OPEN_OFF:
             case MOMENTARY_ON_OFF:
-            case TRANSMITTER_INPUT_NOT_USED:
+                transmitter_digital_inputs[i] = gpio_get(gpioport, gpio) ? 1 : 0;
+                break;
+
+            case SWITCH_ON_OPEN_OFF:
+                gpio_clear(gpioport, gpio);     // Pull down; just in case...
+                transmitter_digital_inputs[i] = 0;
+                if (gpio_get(gpioport, gpio)) {
+                    transmitter_digital_inputs[i] = 2;
+                    break;
+                }
+                gpio_set(gpioport, gpio);       // Pull up
+                if (gpio_get(gpioport, gpio)) {
+                    transmitter_digital_inputs[i] = 1;
+                }
+                gpio_clear(gpioport, gpio);     // Restpre pull down
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // STEP 3: Process the logical inputs using the new values obtained above
+    for (int i = 0; i < MAX_LOGICAL_INPUTS; i++) {
+        logical_input_t *li = &config.tx.logical_inputs[i];
+        port_t first_port = li->transmitter_inputs[0];
+        logical_input_value_t *v = &logical_inputs[i];
+
+        switch (li->type) {
+            case ANALOG:
+                v->value = get_normalized_input(first_port);
+                v->switch_value = (v->value > 0) ? 1 : 0;
+                break;
+
+            case MOMENTARY:
+                v->switch_value = transmitter_digital_inputs[first_port];
+                v->value = v->switch_value ? CHANNEL_100_PERCENT : CHANNEL_N100_PERCENT;
+                break;
+
+            case SWITCH:
+                read_switch(li, v);
+                break;
+
+            case BCD_SWITCH:
+                read_bcd_switch(li, v);
+                break;
+
+            case TRIM:
+                read_trim(li, v);
+                break;
+
             default:
                 break;
         }
@@ -250,19 +396,60 @@ void INPUTS_filter_and_normalize(void)
 
 
 // ****************************************************************************
-int32_t INPUTS_get_input(label_t input)
+int32_t INPUTS_get_value(label_t input)
 {
     for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
 
+        if (li->type == LOGICAL_INPUT_NOT_USED  ||  li->type == TRIM) {
+            continue;
+        }
+
         for (unsigned j = 0; j < MAX_LABELS; j++) {
             if (li->labels[j] == input) {
-                uint8_t tx_index = li->transmitter_inputs[0];
-                transmitter_input_t *t = &config.tx.transmitter_inputs[tx_index];
-                uint8_t adc_channel = t->pcb_input.adc_channel;
-                uint8_t adc_index = adc_channel_to_index(adc_channel);
+                return logical_inputs[i].value;
+            }
+        }
+    }
 
-                return normalized_inputs[adc_index];
+    return 0;
+}
+
+
+// ****************************************************************************
+uint8_t INPUTS_get_switch_value(label_t input)
+{
+    for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
+        logical_input_t *li = &config.tx.logical_inputs[i];
+
+        if (li->type == LOGICAL_INPUT_NOT_USED  ||  li->type == TRIM) {
+            continue;
+        }
+
+        for (unsigned j = 0; j < MAX_LABELS; j++) {
+            if (li->labels[j] == input) {
+                return logical_inputs[i].switch_value;
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+// ****************************************************************************
+int32_t INPUTS_get_trim(label_t input)
+{
+    for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
+        logical_input_t *li = &config.tx.logical_inputs[i];
+
+        if (li->type != TRIM) {
+            continue;
+        }
+
+        for (unsigned j = 0; j < MAX_LABELS; j++) {
+            if (li->labels[j] == input) {
+                return logical_inputs[i].value;
             }
         }
     }

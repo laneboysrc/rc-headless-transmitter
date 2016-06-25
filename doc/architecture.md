@@ -89,8 +89,6 @@ Like *Transmitter inputs*, *Logical inputs* are configured once for each physica
 
 Every logical input can have up to 5 *labels* that indicate the potential function of the input. This way one transmitter can have a Dual Rate switch, while another one can have a Dual Rate potentiometer. The mixers in the model configuration use the *labels* to retrieve the input values.
 
-The value for each logical input can be retrieved either as -100%..0..+100%, or as a *switch value*. The  *switch value* for Momentary and Switch functions is 0..n, where n is the number of positions the switch has. The  *switch value* for analog inputs is 0 or 1, depending whether the analog input is -100..0 or 0..100. The switch value is retrieved in mixer-units to bypass them.
-
 In software, we reference the *Logical inputs* as *config.tx.logical_inputs*.
 
 
@@ -110,38 +108,36 @@ There are several types of *logical inputs* available
                 * saw-tooth
                 * single-click increment, double-click decrement
             * Transmitter beeps the current number?
+        * Can have a two Momentary type *Transmitter input* assigned
+            * up/down
         * n=3: can have a single 3-position switch *Transmitter input* assigned
         * n=2,4..12 can have n on/off switch *Transmitter input* assigned
             * In theory we could do with n-1 digital inputs, using the state when all inputs are open as first position. However, this may cause issues that the first position is triggered when switching between the other positions, as contacts may temporarily open.
             * Therefore it is better to use n inputs and treat "all inputs open"as well as "more than one input closed" as error condition.
-    * BCD switch n=2..4
-        * Must have n on/off switch switch *Transmitter input* assigned
-        * Output values are 0..(2^n-1)
+* BCD switch n=4, 8, 16
+    * Must have n on/off switch switch *Transmitter input* assigned
+    * Output values are 0..(2^n-1)
 * Trims
     * Can have two Momentary type *Transmitter inputs* assigned (up/down)
     * Can have a single Analog type *Transmitter input* assigned (with or without detent, but must not be *Analog without center detent, positive only*)
 
 **Every *Switch* or *Trim* that uses a Momentary type *Transmitter input* must remember their state across power cycles**
 
-### RC transmitter modes:
+### Input API
+The mixer can acces the inputs by passing a *label* to one of the input functions.
+If no input with the label is configured, the value returned by any of the functions is '0'.
 
-http://www.rc-airplane-world.com/rc-transmitter-modes.html
+`INPUTS_get_value(label_t l)`
+Returns the value for the input with the label l in the range of
 
-Mode 1:
-    Left:   Elevator, Rudder
-    Right:  Throttle, Ailerons
+    CHANNEL_100_PERCENT .. CHANNEL_CENTER .. CHANNEL_N100_PERCENT
 
-Mode 2:
-    Left:   Throttle, Rudder
-    Right:  Elevator, Ailerons
+`INPUTS_get_switch_value(label_t l)`
+The  *switch value* for Momentary and Switch functions is 0..n, where n is the number of positions the switch has. The  *switch value* for analog inputs is 0 or 1, depending whether the analog input is -100..0 or 0..100.
+The switch value is retrieved in mixer-units to check whether a mixer-unit is enabled or disabled.
 
-Mode 3:
-    Left:   Elevator, Ailerons
-    Right:  Throttle, Rudder
-
-Mode 3:
-    Left:   Throttle, Ailerons
-    Right:  Elevator, Rudder
+`INPUTS_get_trim(label_t l)`
+Returns the trim value for the input corresponding to the label.
 
 
 

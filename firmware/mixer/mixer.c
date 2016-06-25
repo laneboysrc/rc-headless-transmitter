@@ -16,7 +16,7 @@ static void apply_mixer_unit(mixer_unit_t *m)
     int32_t value;
 
     // 1st: Get source value
-    value = INPUTS_get_input(m->src);
+    value = INPUTS_get_value(m->src);
 
     // Invert if necessary
     if (m->invert_source) {

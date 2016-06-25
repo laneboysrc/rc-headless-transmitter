@@ -119,7 +119,6 @@ CFLAGS += -Wparentheses
 CFLAGS += -Wshadow
 CFLAGS += -Wstrict-prototypes
 CFLAGS += -Wswitch-default
-CFLAGS += -Wswitch-enum
 CFLAGS += -Wundef
 CFLAGS += -Wwrite-strings
 # Keep every function in separate section. This will allow linker to dump unused functions

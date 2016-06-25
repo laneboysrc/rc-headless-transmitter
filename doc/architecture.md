@@ -1,91 +1,12 @@
 # STM32F1 NRF24L01+ Headless Transmitter Architecture
 
 
-## RF protocols
-
-### HK300 / HK310 / X3S protocol
-* 20 hop channels
-* 5 byte address
-* 3 servo channels
-* Stick data sent every 5 ms
-* Hop frequency changed every 5 ms
-* Failsafe sent
-
-### Other protocols
-* Based on HK300 protocol
-* 8 channels
-* signed 12 bit, corresponding to 476..1500..2523 us (500 ns resolution)
-    - 8 channels, 12 bits means 12 Bytes of data, plus one frame identifier
-    - More channels can be added by introducing multiple frames. The higher channels could be sent at a slower update rate
-
-
-## START SIMPLE
-
-* Basic 4 channel Tx; output to 3 channel receiver
-* Reversing
-* EPA
-* Sub-trim
-* Expo
-* Dual-rate
-* Battery state
-
-
-## Headless transmitter (Tx) and Programming Box (PB)
-
-* The PB allows live configuration of (sub)-trim values, end points, etc
-* The PB can display the live stick position and channel outputs
-* The PB shows the battery state of the Tx
-
-* Options:
-    * nRF24 based protocol
-        * requires custom programming box hardware
-    * Bluetooth SPP using the serial port
-        * To PC running Chrome app
-        * To Smartphone or tablet running custom app
-    * UART
-        * To PC running Chrome app
-
-## RC inputs
-
-* Up to 9 analog inputs
-    * Analog inputs can be used as switch inputs too
-    * Can be stick, steering wheel, trim, pot
-    * May or may not have a center point
-* Switch inputs
-    * Each input is on or off only
-    * Multiple inputs can be combined to form a multi-position switch
-        * A sub-type of this could be a BCD or binary encoded switch
-    * Two switches can be combined to form a trim function
-    * Have a pull-up programmed
-    * May be momentary or latching
-        * Momentary buttons can be configured to make a multi-position switch
-        * Transmitter beeps the current number
-* **Toggle switches and trims need to remember their state across power cycles**
-
-So we have the following logical input types:
-* Analog with center
-* Analog without center
-* Switch on/off (1 digital input)
-* Switch 3-position (1 digital input, switching between GND / open / Vcc)
-* Switch n-positions (n digital inputs)
-    * In theory we could do with n-1 digital inputs, using the state when
-      all inputs are open as first position. However, this may cause issues that the first position is triggered when switching between
-      the other positions, as contacts may temporarily open.
-    * Therefore it is better to use n inputs and treat "all inputs open"
-      as well as "more than one input closed" as error condition.
-* BCD switch 2^n-positions (n digital inputs)
-
-Having logical inputs allows us to setup multiple logical inputs for the same
-hardware input.
-
-
-
-### Model vs Transmitter hardware configuration
+## Model vs Transmitter hardware configuration
 
 * Ideally we are able to drive the same car with different transmitter hardware, with the system automatically adapting to the transmitter hardware
 * This implies that inputs are tagged (e.g. Aileron, Rudder, Elevator, Steering, Throttle, Gear, ST-Trim, ST-DR, TH-Hold ...) so that the mixer can read from the right values
 * An input may have multiple tags (Steering, Rudder) but each tag must only be assigned once
-* The inputs also have generic tags like A0, SW0... so that they can be used in mixers
+* The inputs also have generic tags like CH1, SW1... so that they can be used in mixers
 * Inputs may have 0..100 on one transmitter, and -100..0..100 on another one, i.e. they may be with or without center point!
 * If a mixer can not find its input, the input is considered value "0"
 * The direction is normalized: forward, more, right = positive; backward, less, left = negative
@@ -95,11 +16,13 @@ hardware input.
 * The PB can change mixer configuration as well as hardware configuration
 
 * The nRF24 address can serve as a unique model identifier so that the PB can find the corresponding model in its memory
+    * NOTE: this method will not work well once we support different RF protocols
 
 * Trims have to be assigneable to a specific input. Trims may be either a pair of push-buttons (option: support a separate centering button?) or a potentiometer, or be mechanical (i.e. not existant from a software point-of-view).
 
 
-## Overall architecture
+
+## Overall transmitter architecture
 
     +----------------+    +-----------------------------------+    +------------+   +--------+
     |                |    |                                   |    |            |   |        |
@@ -132,104 +55,67 @@ hardware input.
     (Diagram made with the awesome asciiflow.com)
 
 
-## Mixer
 
-* The mixer is derived from Deviation
-* The mixer calculates signed values with 100 corresponding to 10000
-* Internally the mixer calculates signed 32 bit
-* Support common templates like V-tail, Flaperons, 4-wheel steering
+## Inputs
+* In software we reference them as *pcb_inputs*. They describe all available input ports on the circuit board of the transmitter, and their potential function. Since *pcb_inputs* are determined by the hardware, they are a compile-time only configuration.
 
+The STM32F103C8T6 based hardware using the AliExpress board has the following *pcb_inputs*:
+* 9 analog/digital inputs
+    * Can be configured as analog or digital input (see *Logical inputs* below)
+* 9 digital inputs
 
-## RF protocol
-
-* Every 5 ms:
-    * Send stick data
-    * Send stick data again (after NRF24 IRQ)
-    * Send bind packet with fixed address at low power on channel 81
-        * *NOTE: Due to hardware differences the lowest power the nRF24 module with the PA can send is still very high compared to the HK310. As such we send bind packets only for the first 10 seconds after power on*
-    * If connected:
-        * Send setup packet using Enhanced Shockburst at 2 Mbps at lowest possible power
-    * else if first hop channel
-        * Send setup packet "free to connect" on a fixed channel (111?) using Enhanced Shockburst at 2 Mbps at lowest possible power
-    * Change to the next hop channel
-    * Sleep until the next 5 ms
-
-* Setup protocol:
-    * The Tx is the master on RF, but it is the slave regarding communication with the programming box (PB)
-    * The Tx has to poll the PB if it has a command for it to execute.
-    * The Tx must acknowledge each command in the next packet so that the PB knows the command was received and executed.
-    * The setup packet uses dynamic payload up to 32 bytes at 2 Mbps (ARD must be set to 500 us)
-
-* Establishing a connection:
-    * The Tx sends a 'free to connect' paket with address hop channel info every 100 ms on channel 111. (26 byte packet: 1 byte command, 5 bytes address, 20 bytes channels)
-    * The PB listens for Tx on channel 111 at 2Mbps and when receiving a "free to connect" packet it learns the address and hop channel sequence
-    * The PB ACKs if it wants to connect, with a unique address to use during the setup session
-    * When the Tx receives an answer it is now "connected" and starts sending setup packets using the hop frequencies every 5 ms, with the address received from the PB.
-    * Once the PB has the ACK being taken by the Tx (= it received the "Free to connect") it listens to the adress on the 2nd hop channel (since the 'free to connect' is sent during the first hop channel) with the address given to the Tx. The Tx and PB are now connected.
-        * Note that the PB may have taken the ACK, but the Tx may not have received it. In that case the PB would timeout after 600 ms as described in "Terminating a connection".
-
-* Terminating a connection
-    * If the Tx or the PB do not receive anything for 600 ms they consider the connection lost and terminate the connected state. The Tx returns to sending of "Free to connect" setup packets every 100 ms on channel 111.
-    * The PB can send the "Disconnect" command to the Tx. The Tx responds "Disconnecting now" and once it received the ACK from the PB it terminates the connection and returns sending "Free to connect" setup packets.
-    * The PB considers the connection terminated after it received the "Disconnecting now" from the Tx, or after 600 ms if not received.
-
-* PB -> Tx
-    * PB puts command as ACK payload
-    * Tx responds with "Acknowedledged"
-    * If PB does not receive "Acknowedledged" it knows that the Tx could not receive the command and it has to resend it with the next ACK
-
-* Commands
-    * Free-to-connect [Tx->PB]
-        - Only sent on channel 111, every 100 ms
-        - Sent on the vehicle address
-        - Only allows Connect command from PB
-
-    * Connect [PB->Tx]
-        - Only sent on channel 111
-        - Sent on the vehicle address
-        - Payload: address to use for the rest of the communication
-
-    * Tx->PB Inquiry
-        - Payload: stick data (raw? channel outputs? how to deal with multiple channels?)
-    * Tx->PB Acknowledged
-    * PB->Tx Disconnect
-    * Tx->PB Disconnecting-now
-
-    * PB->Tx Read data
-        - Payload: address (uint16_t), count (uint8__t)
-    * PB->Tx Write data
-        - Payload: address (uint16_t), up to 28 bytes data
+* Analog inputs are typically used for stick, steering wheel, trim, pot
+* Ditigal inputs can be used as:
+    * Switch inputs
+        * Open / Vcc (pull-down)
+        * GND / Open / Vcc (only for 3-position switch)
+    * Momentary push-button inputs
+        * Open / Vcc
 
 
-## Bandwidth
 
-- 32 bytes every packet
-- 1 packet every 5 ms -> 200 packets per second
+## Logical inputs
+In the configuration one or more *pcb_input* can be combined to form a *logical input* that can be referenced as mixer input. The *logical inputs* describes which control elements are present in the transmitter and reference the *pcb_inputs* used for each of these control elements.
 
-  => 6400 Bytes/s => 51200 Kbps (best case, realistically will be less than half due to having to wait for acks from the TX)
+*Logical inputs* are configured once for each physical transmitter hardware and do not need to be changed when configuring models.
 
-So uploading/reading Mixer data will take about 750 ms.
+Every logical input can have up to 5 *labels* that indicate the potential function of the input. This way one transmitter can have a Dual Rate switch, while another one can have a Dual Rate potentiometer. The mixers in the model configuration use the *labels* to retrieve the input values.
 
-
-## UART protocol
-
-Ideally we can use the same protocol as RF over the UART. Of course we don't need to establish a connection, the TX can see the UART as always being connected.
-
-One issue is that there is no way to automatically determine package boundaries over the UART. So we need to wrap the protocol.
-We could send the number of bytes in the packet (1 Byte), and add a checksum (2 Bytes) to the end of the packet. The receiving side would shift bytes until it finds a matching CRC, then removes that packet from the buffer.
-The STM32F103 supports CRC, but only 32 bit data words. Need to figure out how to deal with variable lengths packages yet still be able to use the hardware. Maybe we expand 8 bits with leading 0 to 32 bits? And use the lower 16 bits as result.
-
-The (UART based) PB shall only send 1 packet of data after receiving a packet from the TX. This way the TX can time a packet every 5 ms and we don't get an issue with swamping the TX.
+The value for each logical input can be retrieved either as -100%..0..+100%, or as a *switch value*. The  *switch value* for Momentary and Switch functions is 0..n, where n is the number of positions the switch has. The  *switch value* for analog inputs is 0 or 1, depending whether the analog input is -100..0 or 0..100. The switch value is retrieved in mixer-units to bypass them.
 
 
-## Battery indication:
+There are several types of *logical inputs* available
 
-* LED lights up when powered
-* LED blinks when battery is low
-* Regular beep when battery is low, getting more frequent the lower the battery gets
+* Analog
+    * With or without center detent
+        * The difference is that with center detent there three calibration points (low, center, high), without there are only two (low, high).
+    * Can only have a single analog pcb_input assigned
+* Momentary
+    * Can only have a single Momentary push-button *pcb_input* assigned
+* Switches
+    * n-position switch
+        * Can have a single Momentary push-button *pcb_input* assigned
+            * Each press toggles to the next position
+            * Can be configured to:
+                * increment, loop
+                * decrement, loop
+                * saw-tooth
+                * single-click increment, double-click decrement
+            * Transmitter beeps the current number?
+        * n=3: can have a single GND / Open / Vcc switch *pcb_input* assigned
+        * n=2,4..12 can have n Open / Vcc switch *pcb_input* assigned
+            * In theory we could do with n-1 digital inputs, using the state when all inputs are open as first position. However, this may cause issues that the first position is triggered when switching between the other positions, as contacts may temporarily open.
+            * Therefore it is better to use n inputs and treat "all inputs open"as well as "more than one input closed" as error condition.
+    * BCD switch n=2..4
+        * Must have n Open / Vcc switch *pcb_input* assigned
+        * Output values are 0..(2^n-1)
+* Trims
+    * Can have two single Momentary push-button *pcb_input* assigned (up/down)
+    * Can have one analog input assigned (with or without detent)
 
+**Every *Switch* or *Trim* that uses a Momentary push-button *pcb_input* must remember their state across power cycles**
 
-## RC transmitter modes:
+### RC transmitter modes:
 
 http://www.rc-airplane-world.com/rc-transmitter-modes.html
 
@@ -252,6 +138,11 @@ Mode 3:
 
 
 ## Mixer
+
+* The mixer is derived from Deviation
+* The mixer calculates signed values with 100 corresponding to 10000
+* Internally the mixer calculates signed 32 bit
+* Support common templates like V-tail, Flaperons, 4-wheel steering
 
 ### Mixer unit
 The mixer unit is derived from the DeviationTx project. Each unit performs a simple function:
@@ -351,8 +242,128 @@ So 100 mixers would be 2.2 KBytes
 
 The PB must align the mixers in the TX so that they can be processed in one loop.
 
+### Output channel configuration
 
-## What functions should the PB have access to when connected to a TX?
+- Normal/Reverse
+- Fail-safe value
+- *Safety None/switch and value (if switch is defined and on, override channel with value)*
+- Scale -/+ (end points)
+- Sub-trim (applied after scale/endpoints; We want this independent of scale)
+- *Speed (0..250, speed of output change in degrees per 100ms)*
+- Min/max limit (just hard limits, checked last)
+
+
+
+## Programming box
+
+* The PB allows live configuration of (sub)-trim values, end points, etc
+* The PB can display the live stick position and channel outputs
+* The PB shows the battery state of the Tx
+
+* Options:
+    * nRF24 based protocol
+        * requires custom programming box hardware
+    * Bluetooth SPP using the serial port
+        * To PC running Chrome app
+        * To Smartphone or tablet running custom app
+    * UART
+        * To PC running Chrome app
+
+### HK300 / HK310 / X3S RF protocol
+* 20 hop channels
+* 5 byte address
+* 3 servo channels
+* Stick data sent every 5 ms
+* Hop frequency changed every 5 ms
+* Failsafe sent
+
+### Other RF protocols
+* Based on HK300 protocol
+* 8 channels
+* signed 12 bit, corresponding to 476..1500..2523 us (500 ns resolution)
+    - 8 channels, 12 bits means 12 Bytes of data, plus one frame identifier
+    - More channels can be added by introducing multiple frames. The higher channels could be sent at a slower update rate
+
+### HK310 RF protocol modified for programming box use
+
+* Every 5 ms:
+    * Send stick data
+    * Send stick data again (after NRF24 IRQ)
+    * Send bind packet with fixed address at low power on channel 81
+        * *NOTE: Due to hardware differences the lowest power the nRF24 module with the PA can send is still very high compared to the HK310. As such we send bind packets only for the first 10 seconds after power on*
+    * If connected:
+        * Send setup packet using Enhanced Shockburst at 2 Mbps at lowest possible power
+    * else if first hop channel
+        * Send setup packet "free to connect" on a fixed channel (111?) using Enhanced Shockburst at 2 Mbps at lowest possible power
+    * Change to the next hop channel
+    * Sleep until the next 5 ms
+
+* Setup protocol:
+    * The Tx is the master on RF, but it is the slave regarding communication with the programming box (PB)
+    * The Tx has to poll the PB if it has a command for it to execute.
+    * The Tx must acknowledge each command in the next packet so that the PB knows the command was received and executed.
+    * The setup packet uses dynamic payload up to 32 bytes at 2 Mbps (ARD must be set to 500 us)
+
+* Establishing a connection:
+    * The Tx sends a 'free to connect' paket with address hop channel info every 100 ms on channel 111. (26 byte packet: 1 byte command, 5 bytes address, 20 bytes channels)
+    * The PB listens for Tx on channel 111 at 2Mbps and when receiving a "free to connect" packet it learns the address and hop channel sequence
+    * The PB ACKs if it wants to connect, with a unique address to use during the setup session
+    * When the Tx receives an answer it is now "connected" and starts sending setup packets using the hop frequencies every 5 ms, with the address received from the PB.
+    * Once the PB has the ACK being taken by the Tx (= it received the "Free to connect") it listens to the adress on the 2nd hop channel (since the 'free to connect' is sent during the first hop channel) with the address given to the Tx. The Tx and PB are now connected.
+        * Note that the PB may have taken the ACK, but the Tx may not have received it. In that case the PB would timeout after 600 ms as described in "Terminating a connection".
+
+* Terminating a connection
+    * If the Tx or the PB do not receive anything for 600 ms they consider the connection lost and terminate the connected state. The Tx returns to sending of "Free to connect" setup packets every 100 ms on channel 111.
+    * The PB can send the "Disconnect" command to the Tx. The Tx responds "Disconnecting now" and once it received the ACK from the PB it terminates the connection and returns sending "Free to connect" setup packets.
+    * The PB considers the connection terminated after it received the "Disconnecting now" from the Tx, or after 600 ms if not received.
+
+* PB -> Tx
+    * PB puts command as ACK payload
+    * Tx responds with "Acknowedledged"
+    * If PB does not receive "Acknowedledged" it knows that the Tx could not receive the command and it has to resend it with the next ACK
+
+* Commands
+    * Free-to-connect [Tx->PB]
+        - Only sent on channel 111, every 100 ms
+        - Sent on the vehicle address
+        - Only allows Connect command from PB
+
+    * Connect [PB->Tx]
+        - Only sent on channel 111
+        - Sent on the vehicle address
+        - Payload: address to use for the rest of the communication
+
+    * Tx->PB Inquiry
+        - Payload: stick data (raw? channel outputs? how to deal with multiple channels?)
+    * Tx->PB Acknowledged
+    * PB->Tx Disconnect
+    * Tx->PB Disconnecting-now
+
+    * PB->Tx Read data
+        - Payload: address (uint16_t), count (uint8__t)
+    * PB->Tx Write data
+        - Payload: address (uint16_t), up to 28 bytes data
+
+### Bandwidth
+
+- 32 bytes every packet
+- 1 packet every 5 ms -> 200 packets per second
+
+  => 6400 Bytes/s => 51200 Kbps (best case, realistically will be less than half due to having to wait for acks from the TX)
+
+So uploading/reading Mixer data will take about 750 ms.
+
+### UART protocol
+
+Ideally we can use the same protocol as RF over the UART. Of course we don't need to establish a connection, the TX can see the UART as always being connected.
+
+One issue is that there is no way to automatically determine package boundaries over the UART. So we need to wrap the protocol.
+We could send the number of bytes in the packet (1 Byte), and add a checksum (2 Bytes) to the end of the packet. The receiving side would shift bytes until it finds a matching CRC, then removes that packet from the buffer.
+The STM32F103 supports CRC, but only 32 bit data words. Need to figure out how to deal with variable lengths packages yet still be able to use the hardware. Maybe we expand 8 bits with leading 0 to 32 bits? And use the lower 16 bits as result.
+
+The (UART based) PB shall only send 1 packet of data after receiving a packet from the TX. This way the TX can time a packet every 5 ms and we don't get an issue with swamping the TX.
+
+### What functions should the PB have access to when connected to a TX?
 
 - TX hardware configuration (which inputs, their names and types, trims, invert)
     - Function to calibrate the sticks, pots
@@ -362,14 +373,10 @@ The PB must align the mixers in the TX so that they can be processed in one loop
 - Battery state
 
 
-## Output channel configuration
 
-- *Normal/Reverse*
-- Fail-safe value
-- *Safety None/switch and value (if switch is defined and on, override channel with value)*
-- Scale -/+ (end points)
-- Sub-trim (applied after scale/endpoints; We want this independent of scale)
-- *Speed (0..250, speed of output change in degrees per 100ms)*
-- Min/max limit (just hard limits, checked last)
+## Battery indication:
 
+* LED lights up when powered
+* LED blinks when battery is low
+* Regular beep when battery is low, getting more frequent the lower the battery gets
 

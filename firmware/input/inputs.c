@@ -227,6 +227,167 @@ static void read_trim(logical_input_t *li, logical_input_value_t *v)
 
 
 // ****************************************************************************
+// Average the ADC channels
+static void filter_analog_channels(void)
+{
+    for (int i = 0; i < NUMBER_OF_ADC_CHANNELS; i++) {
+        uint16_t filtered_result = 0;
+        int idx = i;
+
+        for (int j = 0; j < WINDOW_SIZE; j++) {
+            filtered_result += adc_array_oversample[idx];
+            idx += NUMBER_OF_ADC_CHANNELS;
+        }
+
+        filtered_result /= WINDOW_SIZE;
+        adc_array_raw[i] = filtered_result;
+    }
+}
+
+
+// ****************************************************************************
+static void normalize_analog_input(transmitter_input_t *t)
+{
+    uint32_t raw;
+    uint8_t adc_index;
+
+    adc_index = adc_channel_to_index(t->pcb_input.adc_channel);
+    raw = adc_array_raw[adc_index];
+    if (raw < t->calibration[0]) {
+        adc_array_calibrated[adc_index] = 0;
+    }
+    else if (raw >= t->calibration[2]) {
+        // Note: we are clamping to (ADC_VALUE_MAX + 1) because
+        // the positive range is only 2047, while the negative is
+        // -2048. This has the effect that after calibration the
+        // range is -100% .. 99%, instead of up to 100%. By adding
+        // 1 we make the range to positive to 100%.
+        adc_array_calibrated[adc_index] = ADC_VALUE_MAX + 1;
+    }
+    else {
+        switch (t->type) {
+            case ANALOG_NO_CENTER:
+            case ANALOG_NO_CENTER_POSITIVE_ONLY:
+                adc_array_calibrated[adc_index] = (raw - t->calibration[0]) * (ADC_VALUE_MAX + 1) / (t->calibration[2] - t->calibration[0]);
+                break;
+
+            case ANALOG_WITH_CENTER:
+            default:
+                if (raw == t->calibration[1]) {
+                    adc_array_calibrated[adc_index] = ADC_VALUE_HALF;
+                }
+                else if (raw > t->calibration[1]) {
+                    // Note: As above, clamp to (ADC_VALUE_MAX + 1)
+                    adc_array_calibrated[adc_index] = ADC_VALUE_HALF + (raw - t->calibration[1]) * (ADC_VALUE_HALF + 1) / (t->calibration[2] - t->calibration[1]);
+                }
+                else {
+                    adc_array_calibrated[adc_index] = (raw - t->calibration[0]) * ADC_VALUE_HALF / (t->calibration[1] - t->calibration[0]);
+                }
+                break;
+        }
+    }
+
+    switch (t->type) {
+        case ANALOG_NO_CENTER_POSITIVE_ONLY:
+            // FIXME: do we need to divide by ADC_VALUE_MAX+1?
+            normalized_inputs[adc_index] = adc_array_calibrated[adc_index] * CHANNEL_100_PERCENT / ADC_VALUE_MAX;
+            break;
+
+        case ANALOG_WITH_CENTER:
+        case ANALOG_NO_CENTER:
+        default:
+            normalized_inputs[adc_index] = (adc_array_calibrated[adc_index] - ADC_VALUE_HALF) * CHANNEL_100_PERCENT / ADC_VALUE_HALF;
+            break;
+    }
+}
+
+
+// ****************************************************************************
+// Normalize the analog transmitter inputs; read the digital transmitter
+// inputs
+static void compute_transmitter_inputs(void)
+{
+    for (int i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
+        transmitter_input_t *t = &config.tx.transmitter_inputs[i];
+        uint32_t gpioport = t->pcb_input.gpioport;
+        uint16_t gpio = t->pcb_input.gpio;
+
+
+        switch (t->type) {
+            // FIXME: handle the various analog types properly
+            case ANALOG_NO_CENTER:
+            case ANALOG_NO_CENTER_POSITIVE_ONLY:
+            case ANALOG_WITH_CENTER:
+                normalize_analog_input(t);
+                break;
+
+            case SWITCH_ON_OFF:
+            case MOMENTARY_ON_OFF:
+                transmitter_digital_inputs[i] = gpio_get(gpioport, gpio) ? 1 : 0;
+                break;
+
+            case SWITCH_ON_OPEN_OFF:
+                gpio_clear(gpioport, gpio);     // Pull down; just in case...
+                transmitter_digital_inputs[i] = 0;
+                if (gpio_get(gpioport, gpio)) {
+                    transmitter_digital_inputs[i] = 2;
+                    break;
+                }
+                gpio_set(gpioport, gpio);       // Pull up
+                if (gpio_get(gpioport, gpio)) {
+                    transmitter_digital_inputs[i] = 1;
+                }
+                gpio_clear(gpioport, gpio);     // Restpre pull down
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
+
+// ****************************************************************************
+// Process the logical inputs using the new values obained by
+// compute_transmitter_inputs
+static void compute_logical_inputs(void)
+{
+    for (int i = 0; i < MAX_LOGICAL_INPUTS; i++) {
+        logical_input_t *li = &config.tx.logical_inputs[i];
+        port_t first_port = li->transmitter_inputs[0];
+        logical_input_value_t *v = &logical_inputs[i];
+
+        switch (li->type) {
+            case ANALOG:
+                v->value = get_normalized_input(first_port);
+                v->switch_value = (v->value > 0) ? 1 : 0;
+                break;
+
+            case MOMENTARY:
+                v->switch_value = transmitter_digital_inputs[first_port];
+                v->value = v->switch_value ? CHANNEL_100_PERCENT : CHANNEL_N100_PERCENT;
+                break;
+
+            case SWITCH:
+                read_switch(li, v);
+                break;
+
+            case BCD_SWITCH:
+                read_bcd_switch(li, v);
+                break;
+
+            case TRIM:
+                read_trim(li, v);
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
+
+// ****************************************************************************
 void INPUTS_configure(void)
 {
     for (size_t i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
@@ -296,120 +457,9 @@ uint32_t INPUTS_get_battery_voltage(void)
 // have the latest inputs available to the mixer.
 void INPUTS_filter_and_normalize(void)
 {
-    // STEP 1: average the ADC channels
-    for (int i = 0; i < NUMBER_OF_ADC_CHANNELS; i++) {
-        uint16_t filtered_result = 0;
-        int idx = i;
-
-        for (int j = 0; j < WINDOW_SIZE; j++) {
-            filtered_result += adc_array_oversample[idx];
-            idx += NUMBER_OF_ADC_CHANNELS;
-        }
-
-        filtered_result /= WINDOW_SIZE;
-        adc_array_raw[i] = filtered_result;
-    }
-
-    // STEP 2: Normalize the analog transmitter inputs; read the digital
-    //         transmitter inputs
-    for (int i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
-        uint32_t raw;
-        uint8_t adc_index;
-        transmitter_input_t *t = &config.tx.transmitter_inputs[i];
-        uint32_t gpioport = t->pcb_input.gpioport;
-        uint16_t gpio = t->pcb_input.gpio;
-
-
-        switch (t->type) {
-            // FIXME: handle the various analog types properly
-            case ANALOG_NO_CENTER:
-            case ANALOG_NO_CENTER_POSITIVE_ONLY:
-
-            case ANALOG_WITH_CENTER:
-                adc_index = adc_channel_to_index(t->pcb_input.adc_channel);
-                raw = adc_array_raw[adc_index];
-                if (raw < t->calibration[0]) {
-                    adc_array_calibrated[adc_index] = 0;
-                }
-                else if (raw >= t->calibration[2]) {
-                    // Note: we are clamping to (ADC_VALUE_MAX + 1) because
-                    // the positive range is only 2047, while the negative is
-                    // -2048. This has the effect that after calibration the
-                    // range is -100% .. 99%, instead of up to 100%. By adding
-                    // 1 we make the range to positive to 100%.
-                    adc_array_calibrated[adc_index] = ADC_VALUE_MAX + 1;
-                }
-                else if (raw == t->calibration[1]) {
-                    adc_array_calibrated[adc_index] = ADC_VALUE_HALF;
-                }
-                else if (raw > t->calibration[1]) {
-                    // Note: As above, clamp to (ADC_VALUE_MAX + 1)
-                    adc_array_calibrated[adc_index] = ADC_VALUE_HALF + (raw - t->calibration[1]) * (ADC_VALUE_HALF + 1) / (t->calibration[2] - t->calibration[1]);
-                }
-                else {
-                    adc_array_calibrated[adc_index] = (raw - t->calibration[0]) * ADC_VALUE_HALF / (t->calibration[1] - t->calibration[0]);
-                }
-
-                normalized_inputs[adc_index] = (adc_array_calibrated[adc_index] - ADC_VALUE_HALF) * CHANNEL_100_PERCENT / ADC_VALUE_HALF;
-                break;
-
-            case SWITCH_ON_OFF:
-            case MOMENTARY_ON_OFF:
-                transmitter_digital_inputs[i] = gpio_get(gpioport, gpio) ? 1 : 0;
-                break;
-
-            case SWITCH_ON_OPEN_OFF:
-                gpio_clear(gpioport, gpio);     // Pull down; just in case...
-                transmitter_digital_inputs[i] = 0;
-                if (gpio_get(gpioport, gpio)) {
-                    transmitter_digital_inputs[i] = 2;
-                    break;
-                }
-                gpio_set(gpioport, gpio);       // Pull up
-                if (gpio_get(gpioport, gpio)) {
-                    transmitter_digital_inputs[i] = 1;
-                }
-                gpio_clear(gpioport, gpio);     // Restpre pull down
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    // STEP 3: Process the logical inputs using the new values obtained above
-    for (int i = 0; i < MAX_LOGICAL_INPUTS; i++) {
-        logical_input_t *li = &config.tx.logical_inputs[i];
-        port_t first_port = li->transmitter_inputs[0];
-        logical_input_value_t *v = &logical_inputs[i];
-
-        switch (li->type) {
-            case ANALOG:
-                v->value = get_normalized_input(first_port);
-                v->switch_value = (v->value > 0) ? 1 : 0;
-                break;
-
-            case MOMENTARY:
-                v->switch_value = transmitter_digital_inputs[first_port];
-                v->value = v->switch_value ? CHANNEL_100_PERCENT : CHANNEL_N100_PERCENT;
-                break;
-
-            case SWITCH:
-                read_switch(li, v);
-                break;
-
-            case BCD_SWITCH:
-                read_bcd_switch(li, v);
-                break;
-
-            case TRIM:
-                read_trim(li, v);
-                break;
-
-            default:
-                break;
-        }
-    }
+    filter_analog_channels();
+    compute_transmitter_inputs();
+    compute_logical_inputs();
 }
 
 
@@ -419,6 +469,7 @@ int32_t INPUTS_get_value(label_t input)
     for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
 
+        // Ignore TRIM and unused inputs
         if (li->type == LOGICAL_INPUT_NOT_USED  ||  li->type == TRIM) {
             continue;
         }
@@ -440,6 +491,7 @@ uint8_t INPUTS_get_switch_value(label_t input)
     for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
 
+        // Ignore TRIM and unused inputs
         if (li->type == LOGICAL_INPUT_NOT_USED  ||  li->type == TRIM) {
             continue;
         }
@@ -461,6 +513,7 @@ int32_t INPUTS_get_trim(label_t input)
     for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
 
+        // Only find TRIM inputs
         if (li->type != TRIM) {
             continue;
         }

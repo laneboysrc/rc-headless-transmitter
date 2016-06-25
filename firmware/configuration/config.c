@@ -51,10 +51,10 @@ static const config_t config_flash = {
             {.type = ANALOG_WITH_CENTER,                    // Elevator
              .calibration = {590, 1943, 3240}},
 
-            {.type = ANALOG_WITH_CENTER,                    // Throttle
+            {.type = ANALOG_NO_CENTER,                      // Throttle
              .calibration = {670, ADC_VALUE_HALF, 3370}},
 
-            {.type = ANALOG_NO_CENTER,                      // Rudder
+            {.type = ANALOG_WITH_CENTER,                    // Rudder
              .calibration = {580, 1874, 3410}},
         },
         .logical_inputs = {

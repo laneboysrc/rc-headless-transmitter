@@ -9,6 +9,7 @@
 
 #include <config.h>
 #include <inputs.h>
+#include <persistent_storage.h>
 #include <sound.h>
 #include <systick.h>
 
@@ -35,26 +36,8 @@
 #define SWITCH_BEEP_TIME 65
 #define SWITCH_BEEP_TIME_5 150
 
-// State machine for momentary button handling
-typedef enum {
-    PB_IDLE = 0,
-    PB_WAIT_FOR_RELEASE,
-    PB_IDLE_SAWTOOTH_DOWN,
-    PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN,
-    PB_WAIT_FOR_RELEASE_CLICK1,
-    PB_WAIT_FOR_CLICK2,
-    PB_TRIM_DOWN_PRESSED,
-    PB_TRIM_UP_PRESSED,
-    PB_TRIM_DOWN_HELD,
-    PB_TRIM_UP_HELD
-} push_button_state_t;
 
-typedef struct{
-    int32_t value;
-    uint8_t switch_value;
-    push_button_state_t state;
-    uint32_t state_timer;
-} logical_input_value_t;
+
 
 
 static uint16_t adc_array_oversample[SAMPLE_COUNT];
@@ -64,9 +47,11 @@ static uint16_t adc_array_calibrated[NUMBER_OF_ADC_CHANNELS];
 static int32_t normalized_inputs[NUMBER_OF_ADC_CHANNELS];
 static uint8_t transmitter_digital_inputs[MAX_TRANSMITTER_INPUTS];
 
-static logical_input_value_t logical_inputs[MAX_LOGICAL_INPUTS];
-
 static uint8_t remaining_switch_beeps;
+
+
+logical_input_value_t logical_inputs[MAX_LOGICAL_INPUTS];
+const logical_input_value_t logical_inputs_flash[MAX_LOGICAL_INPUTS] = {{.value = 0}};
 
 
 // ****************************************************************************
@@ -238,6 +223,7 @@ static void state_machine_up_down_buttons(logical_input_t *li, logical_input_val
             if (pb0) {
                 if (v->switch_value > 1) {
                     --v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -245,6 +231,7 @@ static void state_machine_up_down_buttons(logical_input_t *li, logical_input_val
             else if (pb1) {
                 if (v->switch_value < li->position_count) {
                     ++v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -278,9 +265,11 @@ static void state_machine_increment_and_loop(logical_input_t *li, logical_input_
             if (pb0) {
                 if (v->switch_value < li->position_count) {
                     ++v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 else {
                     v->switch_value = 1;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -314,9 +303,11 @@ static void state_machine_decrement_and_loop(logical_input_t *li, logical_input_
             if (pb0) {
                 if (v->switch_value > 1) {
                     --v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 else {
                     v->switch_value = li->position_count;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -353,10 +344,12 @@ static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *
             if (pb0) {
                 if (v->switch_value < li->position_count) {
                     ++v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                     v->state = PB_WAIT_FOR_RELEASE;
                 }
                 else {
                     --v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                     v->state = PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN;
                 }
                 beep_switch_value(v->switch_value);
@@ -379,10 +372,12 @@ static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *
             if (pb0) {
                 if (v->switch_value > 1) {
                     --v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                     v->state = PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN;
                 }
                 else {
                     ++v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                     v->state = PB_WAIT_FOR_RELEASE;
                 }
                 beep_switch_value(v->switch_value);
@@ -424,6 +419,7 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
             if (pb0) {
                 if (v->switch_value > 1) {
                     --v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -431,6 +427,7 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
             else if (milliseconds > (v->state_timer + config.tx.double_click_timeout_ms)) {
                 if (v->switch_value < li->position_count) {
                     ++v->switch_value;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_IDLE;
@@ -512,6 +509,7 @@ static void trim_momentary_button_state_machine(logical_input_t *li, logical_inp
                 // Down button release: execute one down step
                 if (v->value > (0 - config.tx.trim_range)) {
                     v->value -= config.tx.trim_step_size;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 beep_trim(v->value);
                 v->state = PB_IDLE;
@@ -533,6 +531,7 @@ static void trim_momentary_button_state_machine(logical_input_t *li, logical_inp
                 // Up button release: execute one down step
                 if (v->value < config.tx.trim_range) {
                     v->value += config.tx.trim_step_size;
+                    PERSISTENT_STORAGE_save_transmitter_input_values();
                 }
                 beep_trim(v->value);
                 v->state = PB_IDLE;
@@ -588,6 +587,7 @@ static void trim_momentary_button_state_machine(logical_input_t *li, logical_inp
         case PB_WAIT_FOR_RELEASE:
             if (!pb0 && !pb1) {
                 v->state = PB_IDLE;
+                PERSISTENT_STORAGE_save_transmitter_input_values();
             }
             break;
 
@@ -916,6 +916,36 @@ void INPUTS_init(void)
 {
     INPUTS_configure();
     adc_init();
+
+    // Retrieve the persistent values for trims and switches that make use
+    // of momentary push buttons from.
+
+    for (int i = 0; i < MAX_LOGICAL_INPUTS; i++) {
+        logical_input_t *li = &config.tx.logical_inputs[i];
+        port_t first_port = li->transmitter_inputs[0];
+        transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
+        logical_input_value_t *v = &logical_inputs[i];
+        const logical_input_value_t *saved = &logical_inputs_flash[i];
+
+        if (t->type != MOMENTARY_ON_OFF) {
+            continue;
+        }
+
+        switch (li->type) {
+            case SWITCH:
+                v->switch_value = saved->switch_value;
+                v->value = calculate_value_for_switch_position(v->switch_value, li->position_count);
+                break;
+
+            case TRIM:
+                v->value = saved->value;
+                v->switch_value = 0;
+                break;
+
+            default:
+                break;
+        }
+    }
 }
 
 

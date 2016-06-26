@@ -10,7 +10,11 @@ MEMORY
 /* Put the transmitter configuration in the upper-most 8 KBytes of flash */
 SECTIONS
 {
-    .transmitter_configuration 0x0800e000 :
+    .persistent_settings 0x0800e000 :
+    {
+        *(.rodata.logical_inputs_flash)
+    }
+    .transmitter_configuration 0x0800e400 :
     {
         *(.rodata.config_flash)
     }

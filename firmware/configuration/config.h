@@ -32,6 +32,7 @@ typedef struct {
 
 
 extern config_t config;
+extern const config_t config_flash;
 
 void CONFIG_init(void);
 void CONFIG_load(void);

@@ -178,6 +178,27 @@ typedef enum {
 
 #define OUTPUT_CHANNEL_TAG_OFFSET CH1
 
+// State machine for momentary button handling
+typedef enum {
+    PB_IDLE = 0,
+    PB_WAIT_FOR_RELEASE,
+    PB_IDLE_SAWTOOTH_DOWN,
+    PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN,
+    PB_WAIT_FOR_RELEASE_CLICK1,
+    PB_WAIT_FOR_CLICK2,
+    PB_TRIM_DOWN_PRESSED,
+    PB_TRIM_UP_PRESSED,
+    PB_TRIM_DOWN_HELD,
+    PB_TRIM_UP_HELD
+} push_button_state_t;
+
+typedef struct{
+    int32_t value;
+    uint8_t switch_value;
+    push_button_state_t state;
+    uint32_t state_timer;
+} logical_input_value_t;
+
 typedef struct {
     input_type_t type;
     input_sub_type_t sub_type;
@@ -186,6 +207,10 @@ typedef struct {
     label_t labels[MAX_LABELS];
 } logical_input_t;
 
+
+
+extern logical_input_value_t logical_inputs[MAX_LOGICAL_INPUTS];
+extern const logical_input_value_t logical_inputs_flash[MAX_LOGICAL_INPUTS];
 
 
 void INPUTS_init(void);

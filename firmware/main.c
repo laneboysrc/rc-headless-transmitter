@@ -13,6 +13,7 @@
 #include <mixer.h>
 #include <music.h>
 #include <nrf24l01p.h>
+#include <persistent_storage.h>
 #include <protocol_hk310.h>
 #include <sound.h>
 #include <spi.h>
@@ -78,6 +79,7 @@ int main(void)
     NRF24_init();
     WATCHDOG_start();
 
+    PERSISTENT_STORAGE_init();
     CONFIG_init();
 
     INPUTS_init();
@@ -146,7 +148,7 @@ int main(void)
         }
 
         INPUTS_dump_adc();
-        CONFIG_background_flash_write();
+        PERSISTENT_STORAGE_background_flash_write();
 
         // Put the CPU to sleep until an interrupt triggers. This reduces
         // power consumption drastically.

@@ -1,28 +1,19 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
-
-#include <libopencm3/stm32/flash.h>
 
 #include <config.h>
 #include <inputs.h>
+#include <persistent_storage.h>
 #include <systick.h>
 
 
-static struct {
-    bool active;
-    uint32_t *version_src;
-    uint32_t *version_dst;
-    uint32_t *src;
-    uint32_t *dst;
-    size_t words_remaining;
-} store_config = {.active = false};
+
 
 
 config_t config;
 
 
-#define FLASH_PAGE_SIZE 1024
 
 
 // ****************************************************************************
@@ -40,7 +31,7 @@ static const config_t config_failsafe = {
 
 
 // ****************************************************************************
-static const config_t config_flash = {
+const config_t config_flash = {
     .version = CONFIG_VERSION,
 
     .tx = {
@@ -82,8 +73,8 @@ static const config_t config_flash = {
 
             // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {SW1},
             //  .position_count = 3}
-            // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {SW1},
-            //  .sub_type = UP_DOWN_BUTTONS, .position_count = 3}
+            {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {SW1},
+             .sub_type = UP_DOWN_BUTTONS, .position_count = 3}
 
             // {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {AIL}},
             // {.type = TRIM, .transmitter_inputs = {0}, .labels = {RUD, ST}},
@@ -190,37 +181,6 @@ static const config_t config_flash = {
 };
 
 
-// static void test_flash(void)
-// {
-//     uint32_t loc2 = 0x0800e000;
-//     volatile uint32_t loc = (uint32_t)&config_flash;
-
-
-//     printf("Testing flash write...\n");
-
-//     if (loc == loc2) {
-//         printf("Address match!\n");
-//     }
-
-//     printf("Unlocking flash...\n");
-//     flash_unlock();
-
-//     printf("%p before erasing: 0x%lx (%ld)\n", (void *)loc, *(uint32_t *)loc, *(uint32_t *)loc);
-
-//     printf("Erasing page...\n");
-//     flash_erase_page((uint32_t)loc);
-//     printf("%p after erasing: 0x%lx (%ld)\n", (void *)loc, *(uint32_t *)loc, *(uint32_t *)loc);
-
-//     printf("Writing uint16...\n");
-//     flash_clear_status_flags();
-//     flash_program_word((uint32_t)loc, 0x4711);
-//     printf("%p after writing: 0x%lx (%ld)\n", (void *)loc, *(uint32_t *)loc, *(uint32_t *)loc);
-
-//     printf("Locking flash...\n");
-//     flash_lock();
-// }
-
-
 // ****************************************************************************
 // The configuration contains read-only value describing the hardware inputs.
 // To ensure they are not accidentally overwritten this function sets the
@@ -237,63 +197,10 @@ static void load_pcb_inputs(void)
 
 
 // ****************************************************************************
-void CONFIG_background_flash_write(void)
-{
-    static bool logged = false;
-
-    if (!logged) {
-        logged = true;
-        printf("config.version=%lx\n", config.version);
-    }
-
-
-    if (!store_config.active) {
-        return;
-    }
-
-    if (((uint32_t)store_config.dst % FLASH_PAGE_SIZE) == 0) {
-        flash_erase_page((uint32_t)store_config.dst);
-    }
-
-    flash_program_word((uint32_t) store_config.dst, *store_config.src);
-
-    ++store_config.src;
-    ++store_config.dst;
-    --store_config.words_remaining;
-
-    if (store_config.words_remaining == 0) {
-        store_config.active = false;
-        flash_program_word((uint32_t)store_config.version_dst, *store_config.version_src);
-        flash_lock();
-        printf("CONFIG: done; config saved to flash.\n");
-    }
-}
-
-
-// ****************************************************************************
 void CONFIG_save(void)
 {
-    // WARNING: because config_flash is defined as const, the compiler
-    // optimizes all kind of statements away. Don't put config_flash elements
-    // in printf as it will not print the actual value in the flash, but
-    // rather the value it was at compile time!
-
-    if (store_config.active) {
-        return;
-    }
-
     load_pcb_inputs();
-
-    store_config.active = true;
-    store_config.version_src = (uint32_t *)(&config);
-    store_config.version_dst = (uint32_t *)(&config_flash);
-    store_config.src = store_config.version_src + 1;
-    store_config.dst = store_config.version_dst + 1;
-    store_config.words_remaining = sizeof(config) / sizeof(uint32_t) - 1;
-
-    printf("CONFIG: saving config to flash ...\n");
-    flash_unlock();
-    flash_erase_page((uint32_t)store_config.version_dst);
+    PERSISTENT_STORAGE_save_config();
 }
 
 
@@ -316,7 +223,4 @@ void CONFIG_load(void)
 void CONFIG_init(void)
 {
     CONFIG_load();
-
-    // SYSTICK_set_callback(CONFIG_save, 600);
-    // SYSTICK_set_callback(test_flash, 3600);
 }

@@ -790,17 +790,40 @@ static void compute_transmitter_inputs(void)
                 break;
 
             case SWITCH_ON_OPEN_OFF:
-                gpio_clear(gpioport, gpio);     // Pull down; just in case...
+                // By default all inputs are pull-down, so this is what we
+                // check first. If the input is low, we change to pull-up and
+                // check the input again in a separate piece of code below.
+                // We do this so that we have a delay between switching to
+                // pull-up and reading the IO port.
+                // We switch to pull-up only when necessary to avoid unnecessary
+                // output noise.
                 transmitter_digital_inputs[i] = 0;
                 if (gpio_get(gpioport, gpio)) {
                     transmitter_digital_inputs[i] = 2;
-                    break;
                 }
-                gpio_set(gpioport, gpio);       // Pull up
-                if (gpio_get(gpioport, gpio)) {
-                    transmitter_digital_inputs[i] = 1;
+                else {
+                    gpio_set(gpioport, gpio);     // Switch to pull-up
                 }
-                gpio_clear(gpioport, gpio);     // Restpre pull down
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    for (int i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
+        transmitter_input_t *t = &config.tx.transmitter_inputs[i];
+        uint32_t gpioport = t->pcb_input.gpioport;
+        uint16_t gpio = t->pcb_input.gpio;
+
+        switch (t->type) {
+            case SWITCH_ON_OPEN_OFF:
+                if (transmitter_digital_inputs[i] != 2) {
+                    if (gpio_get(gpioport, gpio)) {
+                        transmitter_digital_inputs[i] = 1;
+                    }
+                    gpio_clear(gpioport, gpio);     // Restore pull-down
+                }
                 break;
 
             default:

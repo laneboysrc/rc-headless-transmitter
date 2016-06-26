@@ -84,6 +84,7 @@ typedef enum {
 
 typedef enum {
     SUB_TYPE_NOT_APPLICABLE = 0,
+    UP_DOWN_BUTTONS,
     INCREMENT_AND_LOOP,
     DECREMENT_AND_LOOP,
     SAW_TOOTH,

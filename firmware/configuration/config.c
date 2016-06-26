@@ -45,26 +45,52 @@ static const config_t config_flash = {
 
     .tx = {
         .transmitter_inputs = {
-            {.type = ANALOG_WITH_CENTER,                    // Ailerons
+            {.type = ANALOG_WITH_CENTER,                    // PA1/ADC1 Ailerons
              .calibration = {510, 1962, 3380}},
 
-            {.type = ANALOG_WITH_CENTER,                    // Elevator
+            {.type = ANALOG_WITH_CENTER,                    // PA2/ADC2 Elevator
              .calibration = {590, 1943, 3240}},
 
-            {.type = ANALOG_NO_CENTER,                      // Throttle
+            {.type = ANALOG_NO_CENTER,                      // PA3/ADC3 Throttle
              .calibration = {670, ADC_VALUE_HALF, 3370}},
 
-            {.type = ANALOG_WITH_CENTER,                    // Rudder
+            {.type = ANALOG_WITH_CENTER,                    // PA4/ADC4 Rudder
              .calibration = {580, 1874, 3410}},
+
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA5/ADC5
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA5/ADC6
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA6/ADC7
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA8/ADC8
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA9/ADC9
+
+            {.type = MOMENTARY_ON_OFF},                     // PB11/SW1
+            {.type = MOMENTARY_ON_OFF},                     // PB10/SW2
+
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB3/SW3
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB4/SW4
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB5/SW5
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB6/SW6
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB7/SW7
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB8/SW8
+            {.type = TRANSMITTER_INPUT_NOT_USED}            // PB9/SW9
         },
         .logical_inputs = {
             {.type = ANALOG, .transmitter_inputs = {0}, .labels = {AIL}},
             {.type = ANALOG, .transmitter_inputs = {1}, .labels = {ELE}},
             {.type = ANALOG, .transmitter_inputs = {2}, .labels = {THR, TH}},
-            {.type = ANALOG, .transmitter_inputs = {3}, .labels = {RUD, ST}}
+            {.type = ANALOG, .transmitter_inputs = {3}, .labels = {RUD, ST}},
+
+            // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
+            //  .sub_type = SAW_TOOTH, .position_count = 7}
+
+            {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {RUD, ST}},
+            // {.type = TRIM, .transmitter_inputs = {0}, .labels = {RUD, ST}},
         },
+        .trim_range = PERCENT_TO_CHANNEL(30),
+        .trim_step_size = PERCENT_TO_CHANNEL(1),
         .led_pwm_percent = 30,
-        .bind_timeout_ms = 10 * 1000
+        .bind_timeout_ms = 10 * 1000,
+        .double_click_timeout_ms = 300
     },
 
     .model = {

@@ -9,17 +9,46 @@
 
 #include <config.h>
 #include <inputs.h>
+#include <sound.h>
 #include <systick.h>
 
 
 #define WINDOW_SIZE 10
 #define SAMPLE_COUNT NUMBER_OF_ADC_CHANNELS * WINDOW_SIZE
 
+// Values for auto-increment when momentary button is held
+#define REPEAT_START_TIME 250
+#define REPEAT_PAUSE_TIME 500
+#define REPEAT_TIME 50
+
+#define TRIM_BEEP_NOTE F4
+#define TRIM_BEEP_TIME 30
+#define TRIM_BEEP_NOTE_CENTER F5
+#define TRIM_BEEP_TIME_CENTER 100
+#define TRIM_BEEP_NOTE_MIN A5
+#define TRIM_BEEP_TIME_MIN 100
+#define TRIM_BEEP_NOTE_MAX TRIM_BEEP_NOTE_MIN
+#define TRIM_BEEP_TIME_MAX TRIM_BEEP_TIME_MIN
+
+// State machine for momentary button handling
+typedef enum {
+    PB_IDLE = 0,
+    PB_WAIT_FOR_RELEASE,
+    PB_IDLE_SAWTOOTH_DOWN,
+    PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN,
+    PB_WAIT_FOR_RELEASE_CLICK1,
+    PB_WAIT_FOR_CLICK2,
+    PB_TRIM_DOWN_PRESSED,
+    PB_TRIM_UP_PRESSED,
+    PB_TRIM_DOWN_HELD,
+    PB_TRIM_UP_HELD
+} push_button_state_t;
 
 typedef struct{
     int32_t value;
     uint8_t switch_value;
-    uint8_t state;          // State machine for momentary button handling
+    push_button_state_t state;
+    uint32_t state_timer;
 } logical_input_value_t;
 
 
@@ -133,6 +162,396 @@ static int32_t calculate_value_for_switch_position(uint8_t value, uint8_t n)
 
 
 // ****************************************************************************
+static void beep_trim(int32_t value)
+{
+    if (value == 0) {
+        SOUND_play(TRIM_BEEP_NOTE_CENTER, TRIM_BEEP_TIME_CENTER, NULL);
+    }
+    else if (value >= config.tx.trim_range) {
+        SOUND_play(TRIM_BEEP_NOTE_MAX, TRIM_BEEP_TIME_MAX, NULL);
+    }
+    else if (value <= -config.tx.trim_range) {
+        SOUND_play(TRIM_BEEP_NOTE_MIN, TRIM_BEEP_TIME_MIN, NULL);
+    }
+    else {
+        SOUND_play(TRIM_BEEP_NOTE, TRIM_BEEP_TIME, NULL);
+    }
+}
+
+
+// ****************************************************************************
+// State machine for handing a n-position switch controlled by two momentary
+// push buttons.
+static void state_machine_up_down_buttons(logical_input_t *li, logical_input_value_t *v)
+{
+    uint8_t pb0 = 0;
+    uint8_t pb1 = 0;
+
+    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+    pb1 = transmitter_digital_inputs[li->transmitter_inputs[1]];
+
+    switch (v->state) {
+        case PB_IDLE:
+            if (pb0) {
+                if (v->switch_value > 0) {
+                    --v->switch_value;
+                }
+                // FIXME: beep the new number
+                v->state = PB_WAIT_FOR_RELEASE;
+            }
+            else if (pb1) {
+                if (v->switch_value < (li->position_count - 1)) {
+                    ++v->switch_value;
+                    // FIXME: beep the new number
+                }
+                v->state = PB_WAIT_FOR_RELEASE;
+            }
+            break;
+
+        case PB_WAIT_FOR_RELEASE:
+            if (!pb0 && !pb1) {
+                v->state = PB_IDLE;
+            }
+            break;
+
+        default:
+            v->state = PB_IDLE;
+            break;
+    }
+}
+
+
+// ****************************************************************************
+// State machine for handing a n-position switch controlled by a single
+// momentary push buttons that increments the value and loops.
+static void state_machine_increment_and_loop(logical_input_t *li, logical_input_value_t *v)
+{
+    uint8_t pb0 = 0;
+
+    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+
+    switch (v->state) {
+        case PB_IDLE:
+            if (pb0) {
+                if (v->switch_value < (li->position_count - 1)) {
+                    ++v->switch_value;
+                }
+                else {
+                    v->switch_value = 0;
+                }
+                // FIXME: beep the new number
+                v->state = PB_WAIT_FOR_RELEASE;
+            }
+            break;
+
+        case PB_WAIT_FOR_RELEASE:
+            if (!pb0) {
+                v->state = PB_IDLE;
+            }
+            break;
+
+        default:
+            v->state = PB_IDLE;
+            break;
+    }
+}
+
+
+// ****************************************************************************
+// State machine for handing a n-position switch controlled by a single
+// momentary push buttons that decrements the value and loops.
+static void state_machine_decrement_and_loop(logical_input_t *li, logical_input_value_t *v)
+{
+    uint8_t pb0 = 0;
+
+    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+
+    switch (v->state) {
+        case PB_IDLE:
+            if (pb0) {
+                if (v->switch_value > 0) {
+                    --v->switch_value;
+                }
+                else {
+                    v->switch_value = li->position_count - 1;
+                }
+                // FIXME: beep the new number
+                v->state = PB_WAIT_FOR_RELEASE;
+            }
+            break;
+
+        case PB_WAIT_FOR_RELEASE:
+            if (!pb0) {
+                v->state = PB_IDLE;
+            }
+            break;
+
+        default:
+            v->state = PB_IDLE;
+            break;
+    }
+}
+
+
+
+// ****************************************************************************
+// State machine for handing a n-position switch controlled by a single
+// momentary push buttons that increases/decreases increments the switch
+// position until the position n-1, then decrements the switch position until
+// 0 ...
+static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *v)
+{
+    uint8_t pb0 = 0;
+
+    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+
+    switch (v->state) {
+        case PB_IDLE:
+            if (pb0) {
+                if (v->switch_value < (li->position_count - 1)) {
+                    ++v->switch_value;
+                    v->state = PB_WAIT_FOR_RELEASE;
+                }
+                else {
+                    --v->switch_value;
+                    v->state = PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN;
+                }
+                // FIXME: beep the new number
+            }
+            break;
+
+        case PB_WAIT_FOR_RELEASE:
+            if (!pb0) {
+                v->state = PB_IDLE;
+            }
+            break;
+
+        case PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN:
+            if (!pb0) {
+                v->state = PB_IDLE_SAWTOOTH_DOWN;
+            }
+            break;
+
+        case PB_IDLE_SAWTOOTH_DOWN:
+            if (pb0) {
+                if (v->switch_value > 0) {
+                    --v->switch_value;
+                    v->state = PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN;
+                }
+                else {
+                    ++v->switch_value;
+                    v->state = PB_WAIT_FOR_RELEASE;
+                }
+                // FIXME: beep the new number
+            }
+            break;
+
+        default:
+            v->state = PB_IDLE;
+            break;
+    }
+}
+
+
+// ****************************************************************************
+// State machine for handing a n-position switch controlled by a single
+// momentary push buttons. Single clicks increment the switch position,
+// double-clicks decrement the switch position.
+static void state_machine_double_click_decrement(logical_input_t *li, logical_input_value_t *v)
+{
+    uint8_t pb0 = 0;
+
+    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+
+    switch (v->state) {
+        case PB_IDLE:
+            if (pb0) {
+                v->state_timer = milliseconds;
+                v->state = PB_WAIT_FOR_RELEASE_CLICK1;
+            }
+            break;
+
+        case PB_WAIT_FOR_RELEASE_CLICK1:
+            if (!pb0) {
+                v->state = PB_WAIT_FOR_CLICK2;
+            }
+            break;
+
+        case PB_WAIT_FOR_CLICK2:
+            if (pb0) {
+                if (v->switch_value > 0) {
+                    --v->switch_value;
+                    // FIXME: beep the new number
+                }
+                v->state = PB_WAIT_FOR_RELEASE;
+            }
+            else if (milliseconds > (v->state_timer + config.tx.double_click_timeout_ms)) {
+                if (v->switch_value < (li->position_count - 1)) {
+                    ++v->switch_value;
+                    // FIXME: beep the new number
+                }
+                v->state = PB_IDLE;
+            }
+            break;
+
+        case PB_WAIT_FOR_RELEASE:
+            if (!pb0) {
+                v->state = PB_IDLE;
+            }
+            break;
+
+        default:
+            v->state = PB_IDLE;
+            break;
+    }
+}
+
+
+// ****************************************************************************
+static void momentary_switch_state_machine(logical_input_t *li, logical_input_value_t *v)
+{
+    switch (li->sub_type) {
+        case UP_DOWN_BUTTONS:
+            state_machine_up_down_buttons(li, v);
+            break;
+
+        case INCREMENT_AND_LOOP:
+            state_machine_increment_and_loop(li, v);
+            break;
+
+        case DECREMENT_AND_LOOP:
+            state_machine_decrement_and_loop(li, v);
+            break;
+
+        case SAW_TOOTH:
+            state_machine_saw_tooth(li, v);
+            break;
+
+        case DOUBLE_CLICK_DECREMENT:
+            state_machine_double_click_decrement(li, v);
+            break;
+
+        default:
+            break;
+    }
+
+    v->value = calculate_value_for_switch_position(v->switch_value, li->position_count);
+}
+
+
+// ****************************************************************************
+static void trim_momentary_button_state_machine(logical_input_t *li, logical_input_value_t *v)
+{
+    uint8_t pb0 = 0;
+    uint8_t pb1 = 0;
+
+    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+    pb1 = transmitter_digital_inputs[li->transmitter_inputs[1]];
+
+    switch (v->state) {
+        case PB_IDLE:
+            if (pb0) {
+                v->state = PB_TRIM_DOWN_PRESSED;
+                v->state_timer = milliseconds;
+            }
+            else if (pb1) {
+                v->state = PB_TRIM_UP_PRESSED;
+                v->state_timer = milliseconds;
+            }
+            break;
+
+        case PB_TRIM_DOWN_PRESSED:
+            if (!pb0) {
+                // Down button release: execute one down step
+                if (v->value > (0 - config.tx.trim_range)) {
+                    v->value -= config.tx.trim_step_size;
+                }
+                beep_trim(v->value);
+                v->state = PB_IDLE;
+            }
+            else if (pb1) {
+                // Up button pressed too: center the trim
+                v->value = 0;
+                v->state = PB_WAIT_FOR_RELEASE;
+                beep_trim(v->value);
+            }
+            else if (milliseconds > (v->state_timer + REPEAT_START_TIME)) {
+                v->state = PB_TRIM_DOWN_HELD;
+                v->state_timer = milliseconds;
+            }
+            break;
+
+        case PB_TRIM_UP_PRESSED:
+            if (!pb1) {
+                // Up button release: execute one down step
+                if (v->value < config.tx.trim_range) {
+                    v->value += config.tx.trim_step_size;
+                }
+                beep_trim(v->value);
+                v->state = PB_IDLE;
+            }
+            else if (pb0) {
+                // Down button pressed too: center the trim
+                v->value = 0;
+                v->state = PB_WAIT_FOR_RELEASE;
+                beep_trim(v->value);
+            }
+            else if (milliseconds > (v->state_timer + REPEAT_START_TIME)) {
+                v->state = PB_TRIM_UP_HELD;
+                v->state_timer = milliseconds;
+            }
+            break;
+
+        case PB_TRIM_DOWN_HELD:
+            if (!pb0) {
+                // Wait for all buttons released
+                v->state = PB_WAIT_FOR_RELEASE;
+            }
+            else if (milliseconds > (v->state_timer + REPEAT_TIME)) {
+                if (v->value > (0 - config.tx.trim_range)) {
+                    v->value -= config.tx.trim_step_size;
+                    beep_trim(v->value);
+                }
+
+                v->state_timer = milliseconds;
+                if (v->value == 0) {
+                    v->state_timer += REPEAT_PAUSE_TIME;
+                }
+            }
+            break;
+
+        case PB_TRIM_UP_HELD:
+            if (!pb1) {
+                // Wait for all buttons released
+                v->state = PB_WAIT_FOR_RELEASE;
+            }
+            else if (milliseconds > (v->state_timer + REPEAT_TIME)) {
+                if (v->value < config.tx.trim_range) {
+                    v->value += config.tx.trim_step_size;
+                    beep_trim(v->value);
+                }
+
+                v->state_timer = milliseconds;
+                if (v->value == 0) {
+                    v->state_timer += REPEAT_PAUSE_TIME;
+                }
+            }
+            break;
+
+        case PB_WAIT_FOR_RELEASE:
+            if (!pb0 && !pb1) {
+                v->state = PB_IDLE;
+            }
+            break;
+
+        default:
+            v->state = PB_IDLE;
+            break;
+    }
+}
+
+
+// ****************************************************************************
 static void read_switch(logical_input_t *li, logical_input_value_t *v)
 {
     port_t first_port = li->transmitter_inputs[0];
@@ -184,7 +603,7 @@ static void read_switch(logical_input_t *li, logical_input_value_t *v)
 
         case MOMENTARY_ON_OFF:
             // Virtual multi-position switch using momentary button(s); n=2..12
-            // FIXME: implement
+            momentary_switch_state_machine(li, v);
             break;
 
         default:
@@ -215,14 +634,17 @@ static void read_trim(logical_input_t *li, logical_input_value_t *v)
     port_t first_port = li->transmitter_inputs[0];
     transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
 
+
     if (t->type == ANALOG_WITH_CENTER  ||  t->type == ANALOG_NO_CENTER) {
-        // FIXME: do we need to shrink this down or keep at 100%?
-        v->value = get_normalized_input(first_port);
+        v->value = get_normalized_input(first_port) * config.tx.trim_range / CHANNEL_100_PERCENT;
     }
     else {
         // Not analog, so must be two momentary buttons
-        // FIXME: implement momentary button state machine
+        trim_momentary_button_state_machine(li, v);
     }
+
+    // The switch value is not applicable for trims, so set it to 0
+    v->switch_value = 0;
 }
 
 
@@ -532,16 +954,58 @@ int32_t INPUTS_get_trim(label_t input)
 // ****************************************************************************
 void INPUTS_dump_adc(void)
 {
+#if 0
+    static uint32_t last_ms = 0;
+
+    if ((milliseconds - last_ms) < 1000) {
+        return;
+    }
+    last_ms = milliseconds;
+#endif
+
+
+#if 0
     printf("BAT: %lumV  ", INPUTS_get_battery_voltage());
     for (int i = 0; i < 4; i++) {
         printf("CH%d:%4ld%% (%4u->%4u)  ", i, CHANNEL_TO_PERCENT(normalized_inputs[i]), adc_array_raw[i], adc_array_calibrated[i]);
     }
     printf("\n");
+#endif
 
-    // printf("%lu, %u, %u\n", INPUTS_get_battery_voltage(), adc_array_raw[0], adc_array_raw[10]);
+#if 0
+    printf("%lu, %u, %u\n", INPUTS_get_battery_voltage(), adc_array_raw[0], adc_array_raw[10]);
+#endif
 
-    // uint8_t adc_index;
-    // transmitter_input_t *t = &config.tx.transmitter_inputs[0];
-    // adc_index = adc_channel_to_index(t->input);
-    // printf("adc_index = %d\n", adc_index);
+#if 0
+    uint8_t adc_index;
+    transmitter_input_t *t = &config.tx.transmitter_inputs[0];
+    adc_index = adc_channel_to_index(t->input);
+    printf("adc_index = %d\n", adc_index);
+#endif
+
+#if 0
+    do {
+        static uint8_t last_switch_value = 99;
+        uint8_t value;
+
+        value = INPUTS_get_switch_value(CH8);
+        if (value != last_switch_value) {
+            last_switch_value = value;
+            printf("CH8: %d\n", value);
+        }
+    } while (0);
+#endif
+
+#if 1
+    do {
+        static int32_t last_value = 99;
+        int32_t value;
+
+        value = INPUTS_get_trim(ST);
+        if (value != last_value) {
+            last_value = value;
+            printf("trim(ST): %ld\n", value);
+        }
+    } while (0);
+#endif
 }

@@ -15,7 +15,10 @@ typedef struct {
     struct {
         transmitter_input_t transmitter_inputs[MAX_TRANSMITTER_INPUTS];
         logical_input_t logical_inputs[MAX_LOGICAL_INPUTS];
+        int32_t trim_range;
+        int32_t trim_step_size;
         uint32_t bind_timeout_ms;
+        uint32_t double_click_timeout_ms;
         uint8_t led_pwm_percent;
     } tx;
 

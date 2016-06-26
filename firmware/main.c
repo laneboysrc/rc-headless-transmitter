@@ -131,7 +131,6 @@ int main(void)
         WATCHDOG_reset();
 
         if ((milliseconds - last_ms) > 1000) {
-            INPUTS_dump_adc();
             BATTERY_check_level();
 
             if ((seconds % 5) == 0) {
@@ -144,6 +143,7 @@ int main(void)
             ++seconds;
         }
 
+        INPUTS_dump_adc();
         CONFIG_background_flash_write();
 
         // Put the CPU to sleep until an interrupt triggers. This reduces

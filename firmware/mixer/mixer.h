@@ -36,10 +36,10 @@ typedef struct  {
     label_t src;
     label_t dst;
     mixer_switch_t sw;
-    int8_t scalar;
-    int8_t offset;
-    uint8_t tag;
     operation_type_t op;
+    int8_t scalar;          // Unit: percent
+    int8_t offset;          // Unit: percent
+    uint8_t tag;            // For use by the programming box internally
     unsigned invert_source : 1;
     unsigned apply_trim : 1;
 } mixer_unit_t;

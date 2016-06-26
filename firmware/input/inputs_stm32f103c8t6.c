@@ -1,7 +1,5 @@
 // Inputs available on the AliExpress STM32F103C8T6 board
 
-// FIXME: this should be a .c file
-
 #include <libopencm3/stm32/gpio.h>
 
 #include <inputs.h>

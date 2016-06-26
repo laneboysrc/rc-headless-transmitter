@@ -91,7 +91,6 @@ typedef enum {
     DOUBLE_CLICK_DECREMENT
 } input_sub_type_t;
 
-// FIXME: add battery input
 typedef enum {
     NONE = 0,
     ST,

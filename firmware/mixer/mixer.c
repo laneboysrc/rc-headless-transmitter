@@ -1,10 +1,47 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 #include <channels.h>
 #include <config.h>
 #include <curves.h>
 #include <inputs.h>
 #include <mixer.h>
+
+
+// ****************************************************************************
+static bool is_mixer_enabled(mixer_switch_t *sw)
+{
+    uint8_t value;
+
+    if (sw->sw == NONE) {
+        return true;
+    }
+
+    value = INPUTS_get_switch_value(sw->sw);
+
+    switch(sw->cmp) {
+        case EQUAL:
+            return (value == sw->value);
+
+        case NON_EQUAL:
+            return (value != sw->value);
+
+        case GREATER:
+            return (value > sw->value);
+
+        case GREATER_OR_EQUAL:
+            return (value >= sw->value);
+
+        case SMALLER:
+            return (value < sw->value);
+
+        case SMALLER_OR_EQUAL:
+            return (value <= sw->value);
+
+        default:
+            return true;
+    }
+}
 
 
 // ****************************************************************************
@@ -17,7 +54,9 @@ static void apply_mixer_unit(mixer_unit_t *m)
     int32_t *p_channel = &channels[m->dst - OUTPUT_CHANNEL_TAG_OFFSET];
 
     // STEP 1: Check switch and bail out if condition not met
-    // FIXME:
+    if (!is_mixer_enabled(&m->sw)) {
+        return;
+    }
 
     // STEP 2: Get source value; invert if necessary
     value = INPUTS_get_value(m->src) * (m->invert_source ? -1 : 1);

@@ -16,11 +16,26 @@ typedef enum {
     OP_MAX
 } operation_type_t;
 
+typedef enum {
+    EQUAL,
+    NON_EQUAL,
+    GREATER,
+    GREATER_OR_EQUAL,
+    SMALLER,
+    SMALLER_OR_EQUAL
+} comparison_t;
+
+typedef struct {
+    label_t sw;
+    comparison_t cmp;
+    uint8_t value;
+} mixer_switch_t;
+
 typedef struct  {
     curve_t curve;
     label_t src;
     label_t dst;
-    uint8_t sw;
+    mixer_switch_t sw;
     int8_t scalar;
     int8_t offset;
     uint8_t tag;

@@ -80,12 +80,12 @@ static const config_t config_flash = {
             {.type = ANALOG, .transmitter_inputs = {2}, .labels = {THR, TH}},
             {.type = ANALOG, .transmitter_inputs = {3}, .labels = {RUD, ST}},
 
-            // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
+            // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {SW1},
             //  .position_count = 3}
-            // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
+            // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {SW1},
             //  .sub_type = UP_DOWN_BUTTONS, .position_count = 3}
 
-            {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {AIL}},
+            // {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {AIL}},
             // {.type = TRIM, .transmitter_inputs = {0}, .labels = {RUD, ST}},
         },
         .trim_range = PERCENT_TO_CHANNEL(30),

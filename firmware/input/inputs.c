@@ -217,7 +217,7 @@ static void beep_switch_repeat(void)
 
 static void beep_switch_value(uint8_t value)
 {
-    remaining_switch_beeps = value + 1;
+    remaining_switch_beeps = value;
     beep_switch_repeat();
 }
 
@@ -236,14 +236,14 @@ static void state_machine_up_down_buttons(logical_input_t *li, logical_input_val
     switch (v->state) {
         case PB_IDLE:
             if (pb0) {
-                if (v->switch_value > 0) {
+                if (v->switch_value > 1) {
                     --v->switch_value;
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
             }
             else if (pb1) {
-                if (v->switch_value < (li->position_count - 1)) {
+                if (v->switch_value < li->position_count) {
                     ++v->switch_value;
                 }
                 beep_switch_value(v->switch_value);
@@ -276,11 +276,11 @@ static void state_machine_increment_and_loop(logical_input_t *li, logical_input_
     switch (v->state) {
         case PB_IDLE:
             if (pb0) {
-                if (v->switch_value < (li->position_count - 1)) {
+                if (v->switch_value < li->position_count) {
                     ++v->switch_value;
                 }
                 else {
-                    v->switch_value = 0;
+                    v->switch_value = 1;
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -312,11 +312,11 @@ static void state_machine_decrement_and_loop(logical_input_t *li, logical_input_
     switch (v->state) {
         case PB_IDLE:
             if (pb0) {
-                if (v->switch_value > 0) {
+                if (v->switch_value > 1) {
                     --v->switch_value;
                 }
                 else {
-                    v->switch_value = li->position_count - 1;
+                    v->switch_value = li->position_count;
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -351,7 +351,7 @@ static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *
     switch (v->state) {
         case PB_IDLE:
             if (pb0) {
-                if (v->switch_value < (li->position_count - 1)) {
+                if (v->switch_value < li->position_count) {
                     ++v->switch_value;
                     v->state = PB_WAIT_FOR_RELEASE;
                 }
@@ -377,7 +377,7 @@ static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *
 
         case PB_IDLE_SAWTOOTH_DOWN:
             if (pb0) {
-                if (v->switch_value > 0) {
+                if (v->switch_value > 1) {
                     --v->switch_value;
                     v->state = PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN;
                 }
@@ -422,14 +422,14 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
 
         case PB_WAIT_FOR_CLICK2:
             if (pb0) {
-                if (v->switch_value > 0) {
+                if (v->switch_value > 1) {
                     --v->switch_value;
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
             }
             else if (milliseconds > (v->state_timer + config.tx.double_click_timeout_ms)) {
-                if (v->switch_value < (li->position_count - 1)) {
+                if (v->switch_value < li->position_count) {
                     ++v->switch_value;
                 }
                 beep_switch_value(v->switch_value);
@@ -453,6 +453,10 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
 // ****************************************************************************
 static void momentary_switch_state_machine(logical_input_t *li, logical_input_value_t *v)
 {
+    // Ensure switch_value is in the range of 1..li->position_count
+    v->switch_value = (v->switch_value < 1) ? 1 : v->switch_value;
+    v->switch_value = (v->switch_value > li->position_count) ? li->position_count : v->switch_value;
+
     switch (li->sub_type) {
         case UP_DOWN_BUTTONS:
             state_machine_up_down_buttons(li, v);
@@ -1068,10 +1072,10 @@ void INPUTS_dump_adc(void)
         static uint8_t last_switch_value = 99;
         uint8_t value;
 
-        value = INPUTS_get_switch_value(CH8);
+        value = INPUTS_get_switch_value(SW1);
         if (value != last_switch_value) {
             last_switch_value = value;
-            printf("CH8: %d\n", value);
+            printf("SW1: %d\n", value);
         }
     } while (0);
 #endif

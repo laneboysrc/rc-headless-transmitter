@@ -15,6 +15,7 @@ typedef struct  {
     uint8_t sw;
     int8_t scalar;
     int8_t offset;
+    uint8_t tag;
     unsigned invert_source : 1;
 } mixer_unit_t;
 

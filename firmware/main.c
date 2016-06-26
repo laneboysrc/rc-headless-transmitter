@@ -101,19 +101,20 @@ int main(void)
     printf("    sizeof(config.model.protocol_hk310)=%u\n", sizeof(config.model.protocol_hk310));
 
 
-// sizeof(config)=3680
-//   sizeof(config.tx)=1128
+// sizeof(config)=4124
+//   sizeof(config.tx)=1172
 //     sizeof(config.tx.transmitter_inputs)=512
 //         sizeof(transmitter_input_t)=16
-//     sizeof(config.tx.logical_inputs)=608
-//       sizeof(logical_input_t)=19
-//   sizeof(config.model)=2548
+//     sizeof(config.tx.logical_inputs)=640
+//       sizeof(logical_input_t)=20
+//   sizeof(config.model)=2948
 //     sizeof(config.model.name)=16
-//     sizeof(config.model.mixer_units)=2000
-//       sizeof(mixer_unit_t)=20
+//     sizeof(config.model.mixer_units)=2400
+//       sizeof(mixer_unit_t)=24
 //     sizeof(config.model.limits)=504
 //       sizeof(limits_t)=28
 //     sizeof(config.model.protocol_hk310)=25
+
 
 
     LED_on();

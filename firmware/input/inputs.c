@@ -1018,7 +1018,7 @@ int32_t INPUTS_get_trim(label_t input)
 // ****************************************************************************
 void INPUTS_dump_adc(void)
 {
-#if 0
+#if 1
     static uint32_t last_ms = 0;
 
     if ((milliseconds - last_ms) < 1000) {
@@ -1027,7 +1027,7 @@ void INPUTS_dump_adc(void)
     last_ms = milliseconds;
 #endif
 
-#if 0
+#if 1
     printf("BAT: %lumV  ", INPUTS_get_battery_voltage());
     for (int i = 0; i < 4; i++) {
         printf("CH%d:%4ld%% (%4u->%4u)  ", i, CHANNEL_TO_PERCENT(normalized_inputs[i]), adc_array_raw[i], adc_array_calibrated[i]);
@@ -1046,7 +1046,7 @@ void INPUTS_dump_adc(void)
     printf("adc_index = %d\n", adc_index);
 #endif
 
-#if 1
+#if 0
     do {
         static uint8_t last_switch_value = 99;
         uint8_t value;

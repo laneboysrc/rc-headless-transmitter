@@ -144,18 +144,17 @@ Returns the trim value for the input corresponding to the label.
 ## Mixer
 
 * The mixer is derived from Deviation
-* The mixer calculates signed values with 100 corresponding to 10000
-* Internally the mixer calculates signed 32 bit
-* Support common templates like V-tail, Flaperons, 4-wheel steering
+* The mixer calculates signed values where 100% corresponding to 10000
+* Internally the mixer calculates with signed 32 bit resolution
 
 ### Mixer unit
 The mixer unit is derived from the DeviationTx project. Each unit performs a simple function:
 
     if (Switch) then
-        Destination  op  f(Curve, OptionalInvert(Source)) * Scalar + Offset
+        Destination  op  f(Curve, OptionalInvert(Source)) * Scalar + Offset + OptionalInvert(Trim)
     endif
 
-Where:
+where:
   - Switch: a switch state that, if true, enables the mixer unit. If Switch is <None> then the mixer unit is always enabled.
   - Destination: The destination channel that receives the output of the mixer unit.
   - op: The operation to perform. Can be
@@ -170,25 +169,24 @@ Where:
   - Source: The input source for the mixer unit. Can be
     - Phyiscal transmitter inputs (sticks, pots, switches, push-buttons)
     - Channels (output channels as sent to the receiver)
-    - Virtual channels (10 available for user selection, 10 hidden for Expo/Dr)
-    - Trainer port inputs (not supported but prepare...)
+    - Virtual channels (10 available for user selection, 10 hidden for high-level mixer use)
   - Scaler: A scaling factor
   - Offset: An offset value to move the result up or down
   - Trim: If enabled then the trim value (range +/-100) is added to the mixer unit output, taking source channel inversion into account
 
-
-The mixer unit also receives a *tag* that identifies how it is used in the UI, i.e. as what mixer type the UI it needs to be presented. This tag is only used by the PB and not the Tx. It allows the PB to reconstruct the model setup by reading the Tx without having the model in its own memory.
-
 Multiple mixer units can be configured to operate on the same destination. The order of which the mixer units are configured plays an important role of the final resulting channel value.
 
-### Mapping mixer units to mixers
+The mixer unit also receives a *tag* that is not used by the transmitter but provides information to the mixer UI in the programming box. Since high-level mixers in the UI may require more than one mixer-unit to implement, the UI can use the tags to identify the mixer-units that belong together and the corresponding high-level mixer function.
+
+### Mapping mixer units to high-level mixing functions shown in the UI
 
 Simple:
   - 1 mixer unit
-  - Trim is enabled (depends on source?)
+  - Trim is enabled
   - Switch is "None"
+  **Do we want to expose that, or should Expo/Dr be the default type**
 
-Cut:
+Cut (TH-hold):
   - 1 mixer unit
   - Switch and Scale exposed, Source is *None*, Curve is *Fixed*, Offset is 0
 
@@ -216,46 +214,42 @@ Other types to think about:
 * V-tail
 * Flaperons
 
+Note that in the UI a single of those mixers can have two outputs, for example for 4-wheel steering, or V-tail, or Flaperons
+
+
 ### Mixer resources
 
-Because Expo/Dr can use up to 4 mixer units, we need to figure out how to detect that we run out of mixer units or (hidden) virtual channels. The overflow can occur when we
-  - Add a mixer to a destination
-  - Change a mixer to Expo/Dr
-DeviationTx has 88 mixers (12 + 10) * 4. However, in the UI one could assign 170 complex mixers (7 channels + 10 virtual ones, 10 mixer units each)
-A possible solution would be to have the mixer type selection in such a way that when the user would change to Expo/Dr and not enough mixers are available, he would get a dialog and the setting remains. The user could still select the other types that use only one mixer unit.
-Actually, since there are only 10 hidden virtual channels, the user can only add 10 Expo/Dr mixers.
+Because Expo/Dr can use up to 4 mixer units, we need to figure out how to detect that we run out of mixer units or (hidden) virtual channels. The overflow can occur when we add a mixer to a destination
 
 Memory is not really an issue (20 KBytes on the MCU), but we have to read/write the settings over the air! Also the UI will be tricky if we allow too many mixer units.
 
 10 Expo/DR = 40 mixer units
 
-    struct Curve {
-        enum curve_type;
-        uint8_t points[13]
-    } curve ;
-    uint8_t source;
-    uint8_t destination;
-    uint8_t switch;
-    int8_t  scalar;
-    int8_t  offset;
-    uint8_t tag;
-    unsigned invert_source : 1;
+    typedef struct  {
+        curve_t curve;
+        label_t src;
+        label_t dest;
+        uint8_t sw;
+        int8_t scalar;
+        int8_t offset;
+        uint8_t tag;
+        unsigned invert_source : 1;
+    } mixer_unit_t;
 
 = 24 bytes per mixer unit
-So 100 mixers would be 2.2 KBytes
+So 100 mixers would be 2.4 KBytes
 
 The PB must align the mixers in the TX so that they can be processed in one loop.
 
 ### Output channel configuration
+After all mixers have been processed, each output channel has a value that needs to be sent to the receiver over the air. Before passing the channel value to the radio protocol, a final set of operations are performed to tweak the corresponding servo outputs:
 
 - Normal/Reverse
-- Fail-safe value
-- *Safety None/switch and value (if switch is defined and on, override channel with value)*
-- Scale -/+ (end points)
+- End points -/+
 - Sub-trim (applied after scale/endpoints; We want this independent of scale)
+- Fail-safe value
+- Limit +/ (just hard limits, checked last)
 - *Speed (0..250, speed of output change in degrees per 100ms)*
-- Min/max limit (just hard limits, checked last)
-
 
 
 ## Programming box

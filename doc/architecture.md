@@ -142,13 +142,10 @@ Returns the trim value for the input corresponding to the label.
 
 
 ## Mixer
-
-* The mixer is derived from Deviation
-* The mixer calculates signed values where 100% corresponding to 10000
-* Internally the mixer calculates with signed 32 bit resolution
+The mixer is derived from the DeviationTx project, but modified. The mixer calculates signed values where 100% corresponds to 10000. Internally the mixer calculates with signed 32 bit resolution.
 
 ### Mixer unit
-The mixer unit is derived from the DeviationTx project. Each unit performs a simple function:
+The mixer unit is derived from the DeviationTx project. Each mixer-unit performs a simple function:
 
     if (Switch) then
         Destination  op  f(Curve, OptionalInvert(Source)) * Scalar + Offset + OptionalInvert(Trim)
@@ -160,7 +157,7 @@ where:
   - op: The operation to perform. Can be
     * = replace destination channel value with output of the mixer unit),
     * += add mixer unit output to current destination channel value
-    * *= multiply mixer unit output with the current destination channel value
+    * *= multiply mixer unit output, with `CHANNEL_100_PERCENT` being treated as 100%, with the current destination channel value
     * MAX (whichever is greater, the current output channel or the output of the mixer)
     * MIN (whichever is smaller)
   - f(): One of the curve functions applied to the input source
@@ -248,7 +245,7 @@ After all mixers have been processed, each output channel has a value that needs
 - Sub-trim (applied after scale/endpoints; We want this independent of scale)
 - Fail-safe value
 - Limit +/ (just hard limits, checked last)
-- *Speed (0..250, speed of output change in degrees per 100ms)*
+- Speed (0..250, speed of output change in *degrees per 100 ms*)
 
 
 ## Programming box

@@ -12,11 +12,13 @@ The transmitter is designed to be used in old RC transmitter hardware, or to tur
 
 This project would not have been possible without the author being able to stand on the shoulders of giants:
 
+
 ### Deviation
 
 http://deviationtx.com/
 
-A replacement firmware designed primarily for the Walkera Devo® series RC Transmitters.
+A replacement firmware designed primarily for the Walkera Devo series RC Transmitters.
+
 
 ### ER9X
 

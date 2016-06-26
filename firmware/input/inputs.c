@@ -30,6 +30,11 @@
 #define TRIM_BEEP_NOTE_MAX TRIM_BEEP_NOTE_MIN
 #define TRIM_BEEP_TIME_MAX TRIM_BEEP_TIME_MIN
 
+#define SWITCH_BEEP_NOTE A5
+#define SWITCH_BEEP_NOTE_5 A5
+#define SWITCH_BEEP_TIME 65
+#define SWITCH_BEEP_TIME_5 150
+
 // State machine for momentary button handling
 typedef enum {
     PB_IDLE = 0,
@@ -59,8 +64,9 @@ static uint16_t adc_array_calibrated[NUMBER_OF_ADC_CHANNELS];
 static int32_t normalized_inputs[NUMBER_OF_ADC_CHANNELS];
 static uint8_t transmitter_digital_inputs[MAX_TRANSMITTER_INPUTS];
 
-
 static logical_input_value_t logical_inputs[MAX_LOGICAL_INPUTS];
+
+static uint8_t remaining_switch_beeps;
 
 
 // ****************************************************************************
@@ -180,6 +186,43 @@ static void beep_trim(int32_t value)
 
 
 // ****************************************************************************
+static void beep_switch_pause(void);
+static void beep_switch_repeat(void);
+
+static void beep_switch_pause(void)
+{
+    SOUND_play(PAUSE, SWITCH_BEEP_TIME, beep_switch_repeat);
+
+}
+
+static void beep_switch_repeat(void)
+{
+    if (remaining_switch_beeps > 5) {
+        remaining_switch_beeps -= 5;
+        SOUND_play(SWITCH_BEEP_NOTE_5, SWITCH_BEEP_TIME_5, beep_switch_pause);
+    }
+    else if (remaining_switch_beeps == 5) {
+        remaining_switch_beeps = 0;
+        SOUND_play(SWITCH_BEEP_NOTE_5, SWITCH_BEEP_TIME_5, NULL);
+    }
+    else if (remaining_switch_beeps == 1) {
+        remaining_switch_beeps = 0;
+        SOUND_play(SWITCH_BEEP_NOTE, SWITCH_BEEP_TIME, NULL);
+    }
+    else {
+        remaining_switch_beeps -= 1;
+        SOUND_play(SWITCH_BEEP_NOTE, SWITCH_BEEP_TIME, beep_switch_pause);
+    }
+}
+
+static void beep_switch_value(uint8_t value)
+{
+    remaining_switch_beeps = value + 1;
+    beep_switch_repeat();
+}
+
+
+// ****************************************************************************
 // State machine for handing a n-position switch controlled by two momentary
 // push buttons.
 static void state_machine_up_down_buttons(logical_input_t *li, logical_input_value_t *v)
@@ -196,13 +239,13 @@ static void state_machine_up_down_buttons(logical_input_t *li, logical_input_val
                 if (v->switch_value > 0) {
                     --v->switch_value;
                 }
-                // FIXME: beep the new number
+                beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
             }
             else if (pb1) {
                 if (v->switch_value < (li->position_count - 1)) {
                     ++v->switch_value;
-                    // FIXME: beep the new number
+                    beep_switch_value(v->switch_value);
                 }
                 v->state = PB_WAIT_FOR_RELEASE;
             }
@@ -239,7 +282,7 @@ static void state_machine_increment_and_loop(logical_input_t *li, logical_input_
                 else {
                     v->switch_value = 0;
                 }
-                // FIXME: beep the new number
+                beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
             }
             break;
@@ -275,7 +318,7 @@ static void state_machine_decrement_and_loop(logical_input_t *li, logical_input_
                 else {
                     v->switch_value = li->position_count - 1;
                 }
-                // FIXME: beep the new number
+                beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
             }
             break;
@@ -316,7 +359,7 @@ static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *
                     --v->switch_value;
                     v->state = PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN;
                 }
-                // FIXME: beep the new number
+                beep_switch_value(v->switch_value);
             }
             break;
 
@@ -342,7 +385,7 @@ static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *
                     ++v->switch_value;
                     v->state = PB_WAIT_FOR_RELEASE;
                 }
-                // FIXME: beep the new number
+                beep_switch_value(v->switch_value);
             }
             break;
 
@@ -381,14 +424,14 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
             if (pb0) {
                 if (v->switch_value > 0) {
                     --v->switch_value;
-                    // FIXME: beep the new number
+                    beep_switch_value(v->switch_value);
                 }
                 v->state = PB_WAIT_FOR_RELEASE;
             }
             else if (milliseconds > (v->state_timer + config.tx.double_click_timeout_ms)) {
                 if (v->switch_value < (li->position_count - 1)) {
                     ++v->switch_value;
-                    // FIXME: beep the new number
+                    beep_switch_value(v->switch_value);
                 }
                 v->state = PB_IDLE;
             }
@@ -711,7 +754,6 @@ static void normalize_analog_input(transmitter_input_t *t)
 
     switch (t->type) {
         case ANALOG_NO_CENTER_POSITIVE_ONLY:
-            // FIXME: do we need to divide by ADC_VALUE_MAX+1?
             normalized_inputs[adc_index] = adc_array_calibrated[adc_index] * CHANNEL_100_PERCENT / ADC_VALUE_MAX;
             break;
 
@@ -736,7 +778,6 @@ static void compute_transmitter_inputs(void)
 
 
         switch (t->type) {
-            // FIXME: handle the various analog types properly
             case ANALOG_NO_CENTER:
             case ANALOG_NO_CENTER_POSITIVE_ONLY:
             case ANALOG_WITH_CENTER:
@@ -963,7 +1004,6 @@ void INPUTS_dump_adc(void)
     last_ms = milliseconds;
 #endif
 
-
 #if 0
     printf("BAT: %lumV  ", INPUTS_get_battery_voltage());
     for (int i = 0; i < 4; i++) {
@@ -983,7 +1023,7 @@ void INPUTS_dump_adc(void)
     printf("adc_index = %d\n", adc_index);
 #endif
 
-#if 0
+#if 1
     do {
         static uint8_t last_switch_value = 99;
         uint8_t value;
@@ -996,7 +1036,7 @@ void INPUTS_dump_adc(void)
     } while (0);
 #endif
 
-#if 1
+#if 0
     do {
         static int32_t last_value = 99;
         int32_t value;

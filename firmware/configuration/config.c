@@ -81,9 +81,11 @@ static const config_t config_flash = {
             {.type = ANALOG, .transmitter_inputs = {3}, .labels = {RUD, ST}},
 
             // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
-            //  .sub_type = SAW_TOOTH, .position_count = 7}
+            //  .position_count = 3}
+            {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
+             .sub_type = SAW_TOOTH, .position_count = 12}
 
-            {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {RUD, ST}},
+            // {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {RUD, ST}},
             // {.type = TRIM, .transmitter_inputs = {0}, .labels = {RUD, ST}},
         },
         .trim_range = PERCENT_TO_CHANNEL(30),

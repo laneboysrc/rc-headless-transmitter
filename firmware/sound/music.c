@@ -5,7 +5,6 @@
 #include <sound.h>
 
 
-#define PAUSE 0
 #define SONG_END 0xffff
 
 

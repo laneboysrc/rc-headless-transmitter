@@ -49,6 +49,8 @@
 #define A8 7040
 #define B8 7902
 
+#define PAUSE 0
+
 
 void SOUND_init(void);
 void SOUND_set_volume(uint8_t volume);

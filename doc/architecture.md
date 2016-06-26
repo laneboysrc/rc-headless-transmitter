@@ -161,9 +161,8 @@ where:
     * = replace destination channel value with output of the mixer unit),
     * += add mixer unit output to current destination channel value
     * *= multiply mixer unit output with the current destination channel value
-    * MAX (**?**)
-    * MIN (**?**)
-    * Delay (**?**)
+    * MAX (whichever is greater, the current output channel or the output of the mixer)
+    * MIN (whichever is smaller)
   - f(): One of the curve functions applied to the input source
   - OptionalInvert: Switch to invert the incoming Source
   - Source: The input source for the mixer unit. Can be

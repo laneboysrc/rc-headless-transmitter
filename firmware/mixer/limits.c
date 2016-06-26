@@ -21,7 +21,7 @@ void LIMITS_apply(void)
 
     for (int i = 0; i < NUMBER_OF_OUTPUT_CHANNELS; i++) {
         limits_t *l = &config.model.limits[i];
-        int32_t input_value = channels[FIRST_OUTPUT_CHANNEL_INDEX + i];
+        int32_t input_value = channels[i];
         int32_t output_value;
         int32_t failsafe_value;
 

@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include <channels.h>
+
 
 #define MAX_LABELS 5
 #define MAX_TRANSMITTER_INPUTS 32
@@ -99,7 +101,55 @@ typedef enum {
     RUD,
     AIL,
     ELE,
+    AUX,
+    ST_DR,
+    RUD_DR,
+    AIL_DR,
+    ELE_DR,
+    TH_DR,
+    THR_DR,
+    TH_HOLD,
+    GEAR,
+    FLAPS,
+    TRAINER,
+    SIDE_L,
+    SIDE_R,
+    POT1,
+    POT2,
+    POT3,
+    POT4,
+    POT5,
+    POT6,
+    POT7,
+    POT8,
+    POT9,
+    SW1,
+    SW2,
+    SW3,
+    SW4,
+    SW5,
+    SW6,
+    SW7,
+    SW8,
+    SW9,
 
+    // IMPORTANT:
+    // ==========
+    // The following items must be in sequence, and the output channels must be
+    // followed by the virtual channels. No tag that does not describe an output
+    // channel must preceed this section.
+    //
+    // The variables defined in channels.c and from where the INPUT_get_value()
+    // function get their depend on this order. OUTPUT_CHANNEL_TAG_OFFSET
+    // defines the first element (CH1) in this list, which corresponds to the
+    // first element in the channels[], output_channels[] and failsafe[] arrays.
+    //
+    // There must be NUMBER_OF_OUTPUT_CHANNELS output channels (CH1..CHxxx),
+    // NUMBER_OF_VIRTUAL_CHANNELS virtual channels (VIRTUAL1..VIRTUALxxx),
+    // and NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS hidden channels to be used by the
+    // complex mixer UI (HIDDEN1..HIDDENxxx)
+
+    // Tags to access the output channels
     CH1,
     CH2,
     CH3,
@@ -107,8 +157,26 @@ typedef enum {
     CH5,
     CH6,
     CH7,
-    CH8
+    CH8,
+
+    VIRTUAL1,
+    VIRTUAL2,
+    VIRTUAL3,
+    VIRTUAL4,
+    VIRTUAL5,
+    VIRTUAL6,
+    VIRTUAL7,
+    VIRTUAL8,
+    VIRTUAL9,
+    VIRTUAL10,
+
+    HIDDEN1,
+    HIDDEN_LAST = HIDDEN1 + NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS,
+    // FIXME: Do we need all tags here?
+
 } label_t;
+
+#define OUTPUT_CHANNEL_TAG_OFFSET CH1
 
 typedef struct {
     input_type_t type;

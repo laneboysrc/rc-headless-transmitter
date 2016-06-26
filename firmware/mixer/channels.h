@@ -19,11 +19,12 @@
 
 #define NUMBER_OF_OUTPUT_CHANNELS 8
 #define NUMBER_OF_VIRTUAL_CHANNELS 10
-#define NUMBER_OF_CHANNELS (NUMBER_OF_OUTPUT_CHANNELS + NUMBER_OF_VIRTUAL_CHANNELS)
+#define NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS 50
+#define NUMBER_OF_CHANNELS (NUMBER_OF_OUTPUT_CHANNELS + NUMBER_OF_VIRTUAL_CHANNELS + NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS)
 
-// Index of the channel that represents an output within channels[]
-#define FIRST_OUTPUT_CHANNEL_INDEX 0
-
+// Channel output destinations for the mixer
 extern int32_t channels[NUMBER_OF_CHANNELS];
+
+// Channel outputs and failsafe values passed to the radio module
 extern int32_t output_channels[NUMBER_OF_OUTPUT_CHANNELS];
 extern int32_t failsafe[NUMBER_OF_OUTPUT_CHANNELS];

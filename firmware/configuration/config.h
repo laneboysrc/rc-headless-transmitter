@@ -25,7 +25,7 @@ typedef struct {
     struct {
         char name[16];
         mixer_unit_t mixer_units[MAX_MIXER_UNITS];
-        limits_t limits[NUMBER_OF_CHANNELS];
+        limits_t limits[NUMBER_OF_OUTPUT_CHANNELS];
         protocol_hk310_t protocol_hk310;
     } model;
 } config_t;

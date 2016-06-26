@@ -1,6 +1,6 @@
 * Add sensible failsafe configuration
 
-* Mixer min/max/delay operation on destination channel
+* Switch input for the mixer
 
 * Programming box nRF protocol
 * Programming box UART protocol

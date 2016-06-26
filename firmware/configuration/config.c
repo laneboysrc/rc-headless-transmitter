@@ -63,7 +63,7 @@ static const config_t config_flash = {
             {.type = TRANSMITTER_INPUT_NOT_USED},           // PA8/ADC8
             {.type = TRANSMITTER_INPUT_NOT_USED},           // PA9/ADC9
 
-            {.type = SWITCH_ON_OPEN_OFF},                     // PB11/SW1
+            {.type = MOMENTARY_ON_OFF},                     // PB11/SW1
             {.type = MOMENTARY_ON_OFF},                     // PB10/SW2
 
             {.type = TRANSMITTER_INPUT_NOT_USED},           // PB3/SW3
@@ -82,10 +82,10 @@ static const config_t config_flash = {
 
             // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
             //  .position_count = 3}
-            {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
-             .sub_type = UP_DOWN_BUTTONS, .position_count = 3}
+            // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
+            //  .sub_type = UP_DOWN_BUTTONS, .position_count = 3}
 
-            // {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {RUD, ST}},
+            {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {AIL}},
             // {.type = TRIM, .transmitter_inputs = {0}, .labels = {RUD, ST}},
         },
         .trim_range = PERCENT_TO_CHANNEL(30),
@@ -100,38 +100,44 @@ static const config_t config_flash = {
         .mixer_units = {
             {
                 .src = AIL,
-                .dest = CH1,
+                .dst = CH1,
                 .curve = {
                     .type = CURVE_NONE,
                     .points = {50, 50}
                 },
                 .scalar = 100,
-                .offset = 0
+                .offset = 0,
+                .apply_trim = true
             },
             {
                 .src = ELE,
-                .dest = CH2,
+                .dst = CH2,
                 .curve = {
                     .type = CURVE_NONE,
                 },
                 .scalar = 100,
-                .offset = 0
+                .offset = 0,
+                .apply_trim = true
             },
             {
                 .src = THR,
-                .dest = CH3,
+                .dst = CH3,
                 .curve = {
                     .type = CURVE_NONE,
                 },
-                .scalar = 100
+                .offset = 0,
+                .scalar = 100,
+                .apply_trim = true
             },
             {
                 .src = RUD,
-                .dest = CH4,
+                .dst = CH4,
                 .curve = {
                     .type = CURVE_NONE,
                 },
-                .scalar = 100
+                .scalar = 100,
+                .offset = 0,
+                .apply_trim = true
             },
             {
                 .src = 0

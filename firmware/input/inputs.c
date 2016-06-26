@@ -245,8 +245,8 @@ static void state_machine_up_down_buttons(logical_input_t *li, logical_input_val
             else if (pb1) {
                 if (v->switch_value < (li->position_count - 1)) {
                     ++v->switch_value;
-                    beep_switch_value(v->switch_value);
                 }
+                beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
             }
             break;
@@ -424,15 +424,15 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
             if (pb0) {
                 if (v->switch_value > 0) {
                     --v->switch_value;
-                    beep_switch_value(v->switch_value);
                 }
+                beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
             }
             else if (milliseconds > (v->state_timer + config.tx.double_click_timeout_ms)) {
                 if (v->switch_value < (li->position_count - 1)) {
                     ++v->switch_value;
-                    beep_switch_value(v->switch_value);
                 }
+                beep_switch_value(v->switch_value);
                 v->state = PB_IDLE;
             }
             break;

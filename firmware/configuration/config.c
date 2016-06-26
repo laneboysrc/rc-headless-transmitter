@@ -83,7 +83,7 @@ static const config_t config_flash = {
             // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
             //  .position_count = 3}
             {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {CH8},
-             .sub_type = SAW_TOOTH, .position_count = 12}
+             .sub_type = UP_DOWN_BUTTONS, .position_count = 5}
 
             // {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {RUD, ST}},
             // {.type = TRIM, .transmitter_inputs = {0}, .labels = {RUD, ST}},

@@ -30,7 +30,7 @@ OBJCOPY          	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
 SIZE             	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
 
 OPENOCD          	:= /opt/openocd/bin/openocd
-OPENOCD_FLAGS       := -f interface/stlink-v2.cfg -f target/stm32f1x.cfg
+OPENOCD_FLAGS       := --debug=0 -f interface/stlink-v2.cfg -f target/stm32f1x.cfg
 
 MK 				 	:= mkdir -p
 RM 					:= rm -rf

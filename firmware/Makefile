@@ -30,8 +30,7 @@ OBJCOPY          	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
 SIZE             	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
 
 OPENOCD          	:= /opt/openocd/bin/openocd
-OPENOCD_INTERFACE   := stlink-v2
-OPENOCD_TARGET      := stm32f1x
+OPENOCD_FLAGS       := -f interface/stlink-v2.cfg -f target/stm32f1x.cfg
 
 MK 				 	:= mkdir -p
 RM 					:= rm -rf
@@ -219,16 +218,16 @@ clean :
 	$(ECHO)$(RM) $(BUILD_DIRECTORIES)
 
 program : $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex
-	$(OPENOCD) -f interface/$(OPENOCD_INTERFACE).cfg -f target/$(OPENOCD_TARGET).cfg -c "init ; reset init ; flash write_image erase $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex ; reset ; shutdown"
+	$(OPENOCD) $(OPENOCD_FLAGS) -c "program $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex reset exit"
 
 flash : program
 
 reset :
-	$(OPENOCD) -f interface/$(OPENOCD_INTERFACE).cfg -f target/$(OPENOCD_TARGET).cfg -c "init; reset ; shutdown"
+	$(OPENOCD) -f $(OPENOCD_FLAGS) -c "init; reset ; shutdown"
 
 # Invoke openocd for a debugging session
 debug : $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out
-	$(ECHO)$(GDB) -ex "target extended-remote | $(OPENOCD) -f interface/$(OPENOCD_INTERFACE).cfg -f target/$(OPENOCD_TARGET).cfg -c \"gdb_port pipe; log_output openocd.log\"" $<
+	$(ECHO)$(GDB) -ex "target extended-remote | $(OPENOCD) $(OPENOCD_FLAGS) -c \"gdb_port pipe; log_output openocd.log\"" $<
 
 terminal :
 	miniterm.py -p /dev/ttyUSB0 -b 115200

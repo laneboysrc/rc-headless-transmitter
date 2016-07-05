@@ -1,0 +1,27 @@
+html, body {
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+
+.mdl-layout__content section:not(:last-of-type) {
+    position: relative;
+    margin-bottom: 48px;
+}
+
+section.section--center {
+    max-width: 600px;
+}
+
+header.header--vertical-center {
+  display: -webkit-flex;
+  display: flex;
+
+  -webkit-align-items: center;
+  align-items: center;
+
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+i.icon--large {
+  font-size: 5rem;
+}

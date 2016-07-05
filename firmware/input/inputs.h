@@ -137,7 +137,7 @@ typedef enum {
     // ==========
     // The following items must be in sequence, and the output channels must be
     // followed by the virtual channels. No tag that does not describe an output
-    // channel must preceed this section.
+    // channel must follow this section.
     //
     // The variables defined in channels.c and from where the INPUT_get_value()
     // function get their depend on this order. OUTPUT_CHANNEL_TAG_OFFSET

@@ -2,9 +2,13 @@ html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 
+.mdl-layout__content section:first-of-type {
+    margin-top: 24px;
+}
+
 .mdl-layout__content section:not(:last-of-type) {
     position: relative;
-    margin-bottom: 48px;
+    margin-bottom: 24px;
 }
 
 section.section--center {

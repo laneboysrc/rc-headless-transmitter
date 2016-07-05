@@ -1,0 +1,93 @@
+# Programming box UI
+
+- *Not connected* (default)
+    - *Main screen*:
+        - Large connect button
+        - Drawer:
+            - Models
+                - Show *Model list*
+            - Transmitters
+                - Show *Transmitter list*
+
+    - *Model list*:
+        - List of cards, one for each model
+            - If card is selected: Show *Model details*
+                - *Model details*:
+                    - View where the user can edit the following elements:
+                        - Name
+                        - Mixers and limits; If selected: Show *Mixer*
+                            - *Mixer*:
+                                - Show mixer units in sequence, their input and output channels
+                                    - Select mixer unit: Show *Mixer unit*:
+                                        - *Mixer unit*:
+                                            - Source
+                                            - Invert source
+                                            - Destination
+                                            - Curve (FIXME: needs editing!)
+                                            - Switch (label, comparison, value)
+                                            - Operation
+                                            - Apply trim
+                                    - Select output channel: Show *Limits*:
+                                        - *Limits*:
+                                            - EP left
+                                            - EP right
+                                            - Subtrim
+                                            - Limit left
+                                            - Limit right
+                                            - Failsafe
+                                            - Speed
+                                            - Invert
+                                - Back: Show *Model details*
+                                - Context menu: Add mixer unit
+                                - **FIXME need a way to delete mixer units**
+                                    - Swipe out?
+                                    - Swipe onto trashbin icon that appears while dragging?
+                                    - Context menu while in *Mixer unit*?
+                                - **FIXME need a way to re-arrange mixer units**
+                                    - Drag-and-drop?
+                        - RF Protocol; If selected: Show *RF protocol details*
+                            - *RF protocol details*:
+                                - RF protocol editing: depends on protocol! Adress, Hop channels
+                                - Back: Show *Model details*
+                    - Back: Show *Model list*
+                    - Context menu: Delete model
+        - Back: Show Main screen
+        - Context menu: Add model
+
+    - *Transmitter list*
+        - List of cards, one for each transmitter
+            - If card is selected: Show *Transmitter details*
+                - *Transmitter details*:
+                    - Two tabs: *Hardware inputs*, *Logical inputs*
+                        - *Hardware inputs*:
+                            - List of cards, one for each hardware input
+                                - Unused hardware inputs are shown such
+                                - Select pcb input (determines possible types!)
+                                - Select type
+                                - **FIXME**: how to do calibration?
+                        - *Logical inputs*:
+                            - List of cards, one for each logical input
+                                - Unused logical inputs are hidden; last entry is "add new logical input"
+                                - Select type (and subtype if type is momentary)
+                                - Select number of switch positions if type is switch
+                                - Select or Add/Remove Hardware inputs, depending on type
+                                - Add/Remove labels
+                    - Back: Show *Transmitter list*
+                    - Context menu: Delete transmitter
+        - Back: Show *Main screen*
+        - Context menu: Add transmitter
+
+- *Connected*
+    - Header:
+        - Show transmitter name and colored dot with connection state
+        - Back: Disconnect; need a prompt?
+        - Context menu:
+            - Change model
+                * Show same view as *Model list* but different behaviour
+            - Configure transmitter
+                - Show *Transmitter details*
+            - Disconnect?
+    - Same view as *Model details*
+        - Show live bars of the various channels/mixers/outputs
+
+

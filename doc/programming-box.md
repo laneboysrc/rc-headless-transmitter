@@ -23,7 +23,7 @@
                                             - Source
                                             - Invert source
                                             - Destination
-                                            - Curve (FIXME: needs editing!)
+                                            - Curve (**FIXME: needs editing!**)
                                             - Switch (label, comparison, value)
                                             - Operation
                                             - Apply trim

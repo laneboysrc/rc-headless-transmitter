@@ -2,14 +2,6 @@ html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 
-.mdl-layout__content section:first-of-type {
-    margin-top: 24px;
-}
-
-.mdl-layout__content section:not(:last-of-type) {
-    position: relative;
-    margin-bottom: 24px;
-}
 
 section.section--center {
     max-width: 600px;
@@ -28,4 +20,8 @@ header.header--vertical-center {
 
 i.icon--large {
   font-size: 5rem;
+}
+
+.mdl-card .mdl-textfield {
+  padding-left: 10px;
 }

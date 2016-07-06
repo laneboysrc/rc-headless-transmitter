@@ -20,23 +20,23 @@
                                 - Show mixer units in sequence, their input and output channels
                                     - Select mixer unit: Show *Mixer unit*:
                                         - *Mixer unit*:
-                                            - Source
-                                            - Invert source
-                                            - Destination
-                                            - Curve (**FIXME: needs editing!**)
-                                            - Switch (label, comparison, value)
-                                            - Operation
-                                            - Apply trim
+                                            - Source (button -> *single selection page*)
+                                            - Invert source (on/off switch)
+                                            - Destination (button -> *single selection page*)
+                                            - Curve (*custom element* -> *curve editing page*)
+                                            - Switch (*custom element* -> *page to edit label, comparison, value*)
+                                            - Operation (button -> *single selection page*)
+                                            - Apply trim (on/off switch)
                                     - Select output channel: Show *Limits*:
                                         - *Limits*:
-                                            - EP left
-                                            - EP right
-                                            - Subtrim
-                                            - Limit left
-                                            - Limit right
-                                            - Failsafe
-                                            - Speed
-                                            - Invert
+                                            - EP left (slider)
+                                            - EP right (slider)
+                                            - Subtrim (slider)
+                                            - Limit left (slider)
+                                            - Limit right (slider)
+                                            - Failsafe (slider)
+                                            - Speed (slider)
+                                            - Invert (on/off switch)
                                 - Back: Show *Model details*
                                 - Context menu: Add mixer unit
                                 - **FIXME need a way to delete mixer units**
@@ -62,16 +62,16 @@
                         - *Hardware inputs*:
                             - List of cards, one for each hardware input
                                 - Unused hardware inputs are shown such
-                                - Select pcb input (determines possible types!)
-                                - Select type
+                                - Select pcb input (determines possible types!) (button -> *single selection page*)
+                                - Select type (button -> *single selection page*)
                                 - **FIXME**: how to do calibration?
                         - *Logical inputs*:
                             - List of cards, one for each logical input
                                 - Unused logical inputs are hidden; last entry is "add new logical input"
-                                - Select type (and subtype if type is momentary)
-                                - Select number of switch positions if type is switch
-                                - Select or Add/Remove Hardware inputs, depending on type
-                                - Add/Remove labels
+                                - Select type (and subtype if type is momentary) (button -> *single selection page*)
+                                - Select number of switch positions if type is switch (slider)
+                                - Select or Add/Remove Hardware inputs, depending on type (button -> *multiple selection page*)
+                                - Add/Remove labels (button -> *multiple selection page*)
                     - Back: Show *Transmitter list*
                     - Context menu: Delete transmitter
         - Back: Show *Main screen*

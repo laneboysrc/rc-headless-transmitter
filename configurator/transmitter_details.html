@@ -36,29 +36,53 @@
           <span class="mdl-layout-title"><span id="tx_name">Transmitter configuration</span></span>
           <div class="mdl-layout-spacer"></div>
         </div>
+
+        <!-- Tabs -->
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+          <a href="#hardware_tab" class="mdl-layout__tab is-active">Hardware</a>
+          <a href="#logical_tab" class="mdl-layout__tab">Logical inputs</a>
+        </div>
       </header>
 
       <main class="mdl-layout__content" >
-        <!-- Model name Card -->
-        <section class="section--center mdl-grid">
-          <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
-            <div class="mdl-card__title">
-              <h2 class="mdl-card__title-text">Transmitter identifier</h2>
-            </div>
-            <div class="mdl-card__supporting-text mdl-card--expand">
-              Give the transmitter a unique name.
-            </div>
-            <div class="mdl-card__actions">
-              <form>
-                <div class="mdl-textfield mdl-js-textfield">
-                  <input class="mdl-textfield__input" type="text" id="tx_name" pattern=".{1,10}" value="Tx001">
-                  <label class="mdl-textfield__label" for="tx_name">Transmitter name ...</label>
-                  <span class="mdl-textfield__error">1 to 10 characters only</span>
+        <!-- Hardware inputs Tab -->
+        <section class="mdl-layout__tab-panel is-active" id="hardware_tab">
+          <div class="page-content">
+
+            <!-- Transmitter name Card -->
+            <section class="section--center mdl-grid">
+              <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+                <div class="mdl-card__title">
+                  <h2 class="mdl-card__title-text">Transmitter identifier</h2>
                 </div>
-              </form>
-            </div>
+                <div class="mdl-card__supporting-text mdl-card--expand">
+                  Give the transmitter a unique name.
+                </div>
+                <div class="mdl-card__actions">
+                  <form>
+                    <div class="mdl-textfield mdl-js-textfield">
+                      <input class="mdl-textfield__input" type="text" id="tx_name" pattern=".{1,10}" value="Tx001">
+                      <label class="mdl-textfield__label" for="tx_name">Transmitter name ...</label>
+                      <span class="mdl-textfield__error">1 to 10 characters only</span>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </section>
+            <!-- Transmitter name Card -->
+
           </div>
         </section>
+        <!-- Hardware inputs Tab -->
+
+        <!-- Logical inputs Tab -->
+        <section class="mdl-layout__tab-panel" id="logical_tab">
+          <div class="page-content">
+            <!-- Your content goes here -->
+          </div>
+        </section>
+        <!-- Logical inputs Tab -->
+
 
       </main>
     </div>

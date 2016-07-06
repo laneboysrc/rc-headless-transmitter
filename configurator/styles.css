@@ -25,3 +25,7 @@ i.icon--large {
 .mdl-card .mdl-textfield, .mdl-card .mdl-textfield__label {
   padding-left: 10px;
 }
+
+.mdl-card__actions .mdl-radio {
+  display: block;
+}

@@ -75,7 +75,6 @@
                     - Back: Show *Transmitter list*
                     - Context menu: Delete transmitter
         - Back: Show *Main screen*
-        - Context menu: Add transmitter
 
 - *Connected*
     - Header:

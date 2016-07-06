@@ -26,46 +26,40 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <div class="mdl-layout mdl-js-layout mdl-layout--no-drawer-button mdl-layout--fixed-header">
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">Headless RC Transmitter</span>
-<!--           <div class="mdl-layout-spacer"></div>
-          <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="more_vert">
-            <i class="material-icons">more_vert</i>
-          </button>
-          <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="more_vert">
-            <li class="mdl-menu__item">About</li>
-            <li class="mdl-menu__item">Contact</li>
-            <li class="mdl-menu__item">Legal information</li>
-          </ul> -->
+          <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" href="index.html">
+            <i class="material-icons">arrow_back</i>
+          </a>
+          <div class="mdl-layout-spacer"></div>
+          <span class="mdl-layout-title"><span id="tx_name">Transmitter configuration</span></span>
+          <div class="mdl-layout-spacer"></div>
         </div>
       </header>
 
-      <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title mdl-color--primary"><img src="images/laneboysrc-logo-128-transparent.png" /></span>
-        <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href="model_list.html"><i class="material-icons">directions_car</i> Models</a>
-          <a class="mdl-navigation__link" href="transmitter_list.html"><i class="material-icons">router</i> Transmitters</a>
-        </nav>
-      </div>
-
-      <main class="mdl-layout__content">
+      <main class="mdl-layout__content" >
+        <!-- Model name Card -->
         <section class="section--center mdl-grid">
           <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
             <div class="mdl-card__title mdl-card--expand">
-              <h2 class="mdl-card__title-text">Configure a transmitter</h2>
+              <h2 class="mdl-card__title-text">Transmitter identifier</h2>
             </div>
             <div class="mdl-card__supporting-text">
-              Find available transmitters and select one to configure.
+              Give the transmitter a unique name.
             </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" href="model_details.html">
-                Connect
-              </a>
+            <div class="mdl-card__actions">
+              <form>
+                <div class="mdl-textfield mdl-js-textfield">
+                  <input class="mdl-textfield__input" type="text" id="tx_name" pattern=".{1,10}" value="Tx001">
+                  <label class="mdl-textfield__label" for="tx_name">Transmitter name ...</label>
+                  <span class="mdl-textfield__error">1 to 10 characters only</span>
+                </div>
+              </form>
             </div>
           </div>
         </section>
+
       </main>
     </div>
 

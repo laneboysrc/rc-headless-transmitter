@@ -2,47 +2,41 @@ html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 
-
+/* Limit the size of the single-colum cards on large screens */
 section.section--center {
     max-width: 600px;
 }
 
-header.header--vertical-center {
-  display: -webkit-flex;
-  display: flex;
-
-  -webkit-align-items: center;
-  align-items: center;
-
-  -webkit-justify-content: center;
-  justify-content: center;
-}
-
-i.icon--large {
+/* Large icon in a card */
+i.icon--largeicon--large {
   font-size: 5rem;
 }
 
+/* Correct text field position when used in a card */
 .mdl-card .mdl-textfield, .mdl-card .mdl-textfield__label {
   padding-left: 10px;
 }
 
+/* Radio buttons positioned in a card are shown one-per-line */
 .mdl-card__actions .mdl-radio {
   display: block;
 }
 
+/* Make icons used in a list (transmitter, model) larger than default */
 .mdl-list__item-primary-content .mdl-list__item-icon {
   height: 40px;
   width: 40px;
   font-size: 40px;
 }
 
+/* Enlarge and align icons with text in the hamburger menu */
 .mdl-navigation__link i {
   font-size: 32px;
   padding-right: 8px;
   margin-top: -5px;
 }
 
-
+/* Make the LANE Boys RC logo float left in the About card */
 .logo {
   float: left;
   padding-right: 16px;
@@ -58,3 +52,29 @@ i.icon--large {
   background-size: cover;
 }
 
+/* Make the table fill the card and hide the border */
+.mdl-card .mdl-data-table {
+  width: 100%;
+  border: none;
+}
+
+/* Hide border of table cells in a card */
+.mdl-card .mdl-data-table td {
+  border: none;
+}
+
+/* Right-most column (switches and buttons) has the elements centered */
+.mdl-card .mdl-data-table td:nth-child(3) {
+  text-align: center;
+}
+
+/* Use normal (16px) font size on tables used in cards */
+.mdl-card .mdl-data-table td {
+  font-size: 16px;
+}
+
+/* Switch elements in the table are as wide as the track so that they center
+   properly */
+.mdl-data-table .mdl-switch {
+  width: 36px;
+}

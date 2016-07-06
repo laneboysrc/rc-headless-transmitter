@@ -60,9 +60,9 @@
               Find available transmitters and select one to configure.
             </div>
             <div class="mdl-card__actions mdl-card--border">
-              <button id="connect" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+              <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" href="model_details.html">
                 Connect
-              </button>
+              </a>
             </div>
           </div>
         </section>
@@ -70,13 +70,5 @@
     </div>
 
     <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
-    <script>
-      document.querySelector('#connect').addEventListener('click', function(event) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        window.location = 'connected.html';
-      });
-    </script>
   </body>
 </html>

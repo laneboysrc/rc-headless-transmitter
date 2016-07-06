@@ -29,9 +29,9 @@
     <div class="mdl-layout mdl-js-layout mdl-layout--no-drawer-button mdl-layout--fixed-header">
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
-          <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="window.location='index.html'">
+          <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" href="index.html">
             <i class="material-icons">arrow_back</i>
-          </button>
+          </a>
           <div class="mdl-layout-spacer"></div>
           <span class="mdl-layout-title">Models</span>
           <div class="mdl-layout-spacer"></div>
@@ -39,7 +39,7 @@
             <i class="material-icons">more_vert</i>
           </button>
           <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="more_vert">
-            <li class="mdl-menu__item">Create model</li>
+            <li class="mdl-menu__item" onclick="window.location='model_details.html'">Create model</li>
           </ul>
         </div>
       </header>
@@ -62,9 +62,9 @@
                     <span>TT01</span>
                   </span>
                   <a class="mdl-list__item-secondary-action" href="#">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
+                    <a class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="model_details.html">
                       <i class="material-icons">mode_edit</i>
-                    </button>
+                    </a>
                   </a>
                 </div>
                 <div class="mdl-list__item">
@@ -73,9 +73,9 @@
                     <span>TA03RS</span>
                   </span>
                   <a class="mdl-list__item-secondary-action" href="#">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
+                    <a class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="model_details.html">
                       <i class="material-icons">mode_edit</i>
-                    </button>
+                    </a>
                   </a>
                 </div>
                 <div class="mdl-list__item">
@@ -84,9 +84,9 @@
                     <span>Durga</span>
                   </span>
                   <a class="mdl-list__item-secondary-action" href="#">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
+                    <a class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="model_details.html">
                       <i class="material-icons">mode_edit</i>
-                    </button>
+                    </a>
                   </a>
                 </div>
               </div>
@@ -107,11 +107,8 @@
                 </div>
               </div>
             </div>
-<!--             <div class="mdl-card__supporting-text">
-              Create a new model and add it to the database.
-            </div>
- -->            <div class="mdl-card__actions mdl-card--border">
-              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+            <div class="mdl-card__actions mdl-card--border">
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="model_details.html">
                 Create model
               </a>
             </div>

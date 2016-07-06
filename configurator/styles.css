@@ -29,3 +29,32 @@ i.icon--large {
 .mdl-card__actions .mdl-radio {
   display: block;
 }
+
+.mdl-list__item-primary-content .mdl-list__item-icon {
+  height: 40px;
+  width: 40px;
+  font-size: 40px;
+}
+
+.mdl-navigation__link i {
+  font-size: 32px;
+  padding-right: 8px;
+  margin-top: -5px;
+}
+
+
+.logo {
+  float: left;
+  padding-right: 16px;
+}
+
+.background-image-yt {
+  background-image: url("images/laneboysrc-yt.jpg");
+  background-size: cover;
+}
+
+.background-image-blog {
+  background-image: url("images/laneboysrc-blog.jpg");
+  background-size: cover;
+}
+

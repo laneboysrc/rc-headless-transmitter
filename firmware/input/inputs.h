@@ -63,13 +63,13 @@ typedef enum {
     SWITCH_ON_OFF,                      // On / Off latching switch input
     SWITCH_ON_OPEN_OFF,                 // GND / Open / VCC latching switch input
     MOMENTARY_ON_OFF                    // On / Off momentary push-button input
-} transmitter_input_type_t;
+} hardware_input_type_t;
 
 typedef struct {
     pcb_input_t pcb_input;
-    transmitter_input_type_t type;
+    hardware_input_type_t type;
     uint16_t calibration[3];             // Left/Center/Right HW endpoint calibration values
-} transmitter_input_t;
+} hardware_input_t;
 
 
 // Finally we have the logical inputs, i.e. Steering, Throttle, Rudder, Elevator ...
@@ -203,7 +203,7 @@ typedef struct {
     input_type_t type;
     input_sub_type_t sub_type;
     uint8_t position_count;
-    port_t transmitter_inputs[MAX_POSITION_COUNT];
+    port_t hardware_inputs[MAX_POSITION_COUNT];
     label_t labels[MAX_LABELS];
 } logical_input_t;
 

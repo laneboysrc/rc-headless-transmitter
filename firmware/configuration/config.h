@@ -13,7 +13,7 @@ typedef struct {
     uint32_t version;
 
     struct {
-        transmitter_input_t transmitter_inputs[MAX_TRANSMITTER_INPUTS];
+        hardware_input_t hardware_inputs[MAX_TRANSMITTER_INPUTS];
         logical_input_t logical_inputs[MAX_LOGICAL_INPUTS];
         int32_t trim_range;
         int32_t trim_step_size;

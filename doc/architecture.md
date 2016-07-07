@@ -67,8 +67,8 @@ The STM32F103C8T6 based hardware using the AliExpress board has the following *P
     * Can be configured as analog or digital input
 * 9 digital inputs
 
-### Transmitter inputs
-Some, or all, *PCB inputs* are connected to control devices such as sticks, pots or switches in a particular transmitter. We refer to those as *Transmitter inputs*. There is a 1:1 relationship between a *Transmitter inputs* and a *PCB inputs*. A *Transmitter input* narrows down the *PCB input* type to one of the following:
+### hardware inputs
+Some, or all, *PCB inputs* are connected to control devices such as sticks, pots or switches in a particular transmitter. We refer to those as *Hardware inputs*. There is a 1:1 relationship between a *Hardware inputs* and a *PCB inputs*. A *Hardware input* narrows down the *PCB input* type to one of the following:
 
 * Analog with center detent: -100..0..100
 * Analog without center detent: -100..100
@@ -77,15 +77,15 @@ Some, or all, *PCB inputs* are connected to control devices such as sticks, pots
 * Switch 3-position:  GND / Open / Vcc
 * Momentary: Open / Vcc (pull-down)
 
-For the analog inputs the *Transmitter input* holds the endpoint- (and where applicable center-point) calibration values.
-*Transmitter inputs* are usually setup once when configuring a newly built transmitter.
+For the analog inputs the *Hardware input* holds the endpoint- (and where applicable center-point) calibration values.
+*Hardware inputs* are usually setup once when configuring a newly built transmitter.
 
-In software, we reference *Transmitter input* as *transmitter_inputs*.
+In software, we reference *Hardware input* as *config.tx.hardware_inputs*.
 
 ### Logical inputs
-In the configuration one or more *Transmitter input* can be combined to form a *logical input* that can be referenced as user input by the mixer.
+In the configuration one or more *Hardware input* can be combined to form a *Logical input* that can be referenced as user input by the mixer.
 
-Like *Transmitter inputs*, *Logical inputs* are configured once for each physical transmitter hardware and do not need to be changed when configuring models.
+Like *Hardware inputs*, *Logical inputs* are configured once for each physical transmitter hardware and do not need to be changed when configuring models.
 
 Every logical input can have up to 5 *labels* that indicate the potential function of the input. This way one transmitter can have a Dual Rate switch, while another one can have a Dual Rate potentiometer. The mixers in the model configuration use the *labels* to retrieve the input values.
 
@@ -95,12 +95,12 @@ In software, we reference the *Logical inputs* as *config.tx.logical_inputs*.
 There are several types of *logical inputs* available
 
 * Analog
-    * Can only have a single Analog type *Transmitter input* assigned
+    * Can only have a single Analog type *Hardware input* assigned
 * Momentary
-    * Can only have a single Momentary type *Transmitter input* assigned
+    * Can only have a single Momentary type *Hardware input* assigned
 * Switches
     * n-position switch
-        * Can have a single Momentary type *Transmitter input* assigned
+        * Can have a single Momentary type *Hardware input* assigned
             * Each press toggles to the next position
             * Can be configured to:
                 * increment, loop
@@ -108,20 +108,20 @@ There are several types of *logical inputs* available
                 * saw-tooth
                 * single-click increment, double-click decrement
             * Transmitter beeps the current number?
-        * Can have a two Momentary type *Transmitter input* assigned
+        * Can have a two Momentary type *Hardware input* assigned
             * up/down
-        * n=3: can have a single 3-position switch *Transmitter input* assigned
-        * n=2,4..12 can have n on/off switch *Transmitter input* assigned
+        * n=3: can have a single 3-position switch *Hardware input* assigned
+        * n=2,4..12 can have n on/off switch *Hardware input* assigned
             * In theory we could do with n-1 digital inputs, using the state when all inputs are open as first position. However, this may cause issues that the first position is triggered when switching between the other positions, as contacts may temporarily open.
             * Therefore it is better to use n inputs and treat "all inputs open"as well as "more than one input closed" as error condition.
 * BCD switch n=2..4
-    * Must have n on/off switch switch *Transmitter input* assigned
+    * Must have n on/off switch switch *Hardware input* assigned
     * Output values are 0..(2^n-1)
 * Trims
-    * Can have two Momentary type *Transmitter inputs* assigned (up/down)
-    * Can have a single Analog type *Transmitter input* assigned (with or without detent, but must not be *Analog without center detent, positive only*)
+    * Can have two Momentary type *Hardware inputs* assigned (up/down)
+    * Can have a single Analog type *Hardware input* assigned (with or without detent, but must not be *Analog without center detent, positive only*)
 
-**Every *Switch* or *Trim* that uses a Momentary type *Transmitter input* must remember their state across power cycles**
+**Every *Switch* or *Trim* that uses a Momentary type *Hardware input* must remember their state across power cycles**
 
 ### Input API
 The mixer can acces the inputs by passing a *label* to one of the input functions.

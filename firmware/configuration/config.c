@@ -30,7 +30,7 @@ const config_t config_flash = {
     .version = CONFIG_VERSION,
 
     .tx = {
-        .transmitter_inputs = {
+        .hardware_inputs = {
             {.type = ANALOG_WITH_CENTER,                    // PA1/ADC1 Ailerons
              .calibration = {510, 1962, 3380}},
 
@@ -61,18 +61,18 @@ const config_t config_flash = {
             {.type = TRANSMITTER_INPUT_NOT_USED}            // PB9/SW9
         },
         .logical_inputs = {
-            {.type = ANALOG, .transmitter_inputs = {0}, .labels = {AIL}},
-            {.type = ANALOG, .transmitter_inputs = {1}, .labels = {ELE}},
-            {.type = ANALOG, .transmitter_inputs = {2}, .labels = {THR, TH}},
-            {.type = ANALOG, .transmitter_inputs = {3}, .labels = {RUD, ST}},
+            {.type = ANALOG, .hardware_inputs = {0}, .labels = {AIL}},
+            {.type = ANALOG, .hardware_inputs = {1}, .labels = {ELE}},
+            {.type = ANALOG, .hardware_inputs = {2}, .labels = {THR, TH}},
+            {.type = ANALOG, .hardware_inputs = {3}, .labels = {RUD, ST}},
 
-            // {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {SW1},
+            // {.type = SWITCH, .hardware_inputs = {9, 10}, .labels = {SW1},
             //  .position_count = 3}
-            {.type = SWITCH, .transmitter_inputs = {9, 10}, .labels = {SW1},
+            {.type = SWITCH, .hardware_inputs = {9, 10}, .labels = {SW1},
              .sub_type = UP_DOWN_BUTTONS, .position_count = 3}
 
-            // {.type = TRIM, .transmitter_inputs = {9, 10}, .labels = {AIL}},
-            // {.type = TRIM, .transmitter_inputs = {0}, .labels = {RUD, ST}},
+            // {.type = TRIM, .hardware_inputs = {9, 10}, .labels = {AIL}},
+            // {.type = TRIM, .hardware_inputs = {0}, .labels = {RUD, ST}},
         },
         .trim_range = PERCENT_TO_CHANNEL(30),
         .trim_step_size = PERCENT_TO_CHANNEL(1),
@@ -184,7 +184,7 @@ const config_t config_flash = {
 static void load_pcb_inputs(void)
 {
     for (size_t i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
-        pcb_input_t *dst = &config.tx.transmitter_inputs[i].pcb_input;
+        pcb_input_t *dst = &config.tx.hardware_inputs[i].pcb_input;
         const pcb_input_t *src = &pcb_inputs[i];
 
         memcpy(dst, src, sizeof(pcb_input_t));

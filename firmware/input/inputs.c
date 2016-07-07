@@ -45,7 +45,7 @@ static uint16_t adc_array_raw[NUMBER_OF_ADC_CHANNELS];
 static uint16_t adc_array_calibrated[NUMBER_OF_ADC_CHANNELS];
 
 static int32_t normalized_inputs[NUMBER_OF_ADC_CHANNELS];
-static uint8_t transmitter_digital_inputs[MAX_TRANSMITTER_INPUTS];
+static uint8_t digital_hardware_inputs[MAX_TRANSMITTER_INPUTS];
 
 static uint8_t remaining_switch_beeps;
 
@@ -134,7 +134,7 @@ static uint8_t adc_channel_to_index(uint8_t adc_channel)
 // ****************************************************************************
 static int32_t get_normalized_input(uint8_t tx_index)
 {
-    transmitter_input_t *t = &config.tx.transmitter_inputs[tx_index];
+    hardware_input_t *t = &config.tx.hardware_inputs[tx_index];
     uint8_t adc_channel = t->pcb_input.adc_channel;
     uint8_t adc_index = adc_channel_to_index(adc_channel);
 
@@ -215,15 +215,15 @@ static void state_machine_up_down_buttons(logical_input_t *li, logical_input_val
     uint8_t pb0 = 0;
     uint8_t pb1 = 0;
 
-    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
-    pb1 = transmitter_digital_inputs[li->transmitter_inputs[1]];
+    pb0 = digital_hardware_inputs[li->hardware_inputs[0]];
+    pb1 = digital_hardware_inputs[li->hardware_inputs[1]];
 
     switch (v->state) {
         case PB_IDLE:
             if (pb0) {
                 if (v->switch_value > 1) {
                     --v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -231,7 +231,7 @@ static void state_machine_up_down_buttons(logical_input_t *li, logical_input_val
             else if (pb1) {
                 if (v->switch_value < li->position_count) {
                     ++v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -258,18 +258,18 @@ static void state_machine_increment_and_loop(logical_input_t *li, logical_input_
 {
     uint8_t pb0 = 0;
 
-    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+    pb0 = digital_hardware_inputs[li->hardware_inputs[0]];
 
     switch (v->state) {
         case PB_IDLE:
             if (pb0) {
                 if (v->switch_value < li->position_count) {
                     ++v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 else {
                     v->switch_value = 1;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -296,18 +296,18 @@ static void state_machine_decrement_and_loop(logical_input_t *li, logical_input_
 {
     uint8_t pb0 = 0;
 
-    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+    pb0 = digital_hardware_inputs[li->hardware_inputs[0]];
 
     switch (v->state) {
         case PB_IDLE:
             if (pb0) {
                 if (v->switch_value > 1) {
                     --v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 else {
                     v->switch_value = li->position_count;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -337,19 +337,19 @@ static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *
 {
     uint8_t pb0 = 0;
 
-    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+    pb0 = digital_hardware_inputs[li->hardware_inputs[0]];
 
     switch (v->state) {
         case PB_IDLE:
             if (pb0) {
                 if (v->switch_value < li->position_count) {
                     ++v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                     v->state = PB_WAIT_FOR_RELEASE;
                 }
                 else {
                     --v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                     v->state = PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN;
                 }
                 beep_switch_value(v->switch_value);
@@ -372,12 +372,12 @@ static void state_machine_saw_tooth(logical_input_t *li, logical_input_value_t *
             if (pb0) {
                 if (v->switch_value > 1) {
                     --v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                     v->state = PB_WAIT_FOR_RELEASE_SAWTOOTH_DOWN;
                 }
                 else {
                     ++v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                     v->state = PB_WAIT_FOR_RELEASE;
                 }
                 beep_switch_value(v->switch_value);
@@ -399,7 +399,7 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
 {
     uint8_t pb0 = 0;
 
-    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
+    pb0 = digital_hardware_inputs[li->hardware_inputs[0]];
 
     switch (v->state) {
         case PB_IDLE:
@@ -419,7 +419,7 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
             if (pb0) {
                 if (v->switch_value > 1) {
                     --v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_WAIT_FOR_RELEASE;
@@ -427,7 +427,7 @@ static void state_machine_double_click_decrement(logical_input_t *li, logical_in
             else if (milliseconds > (v->state_timer + config.tx.double_click_timeout_ms)) {
                 if (v->switch_value < li->position_count) {
                     ++v->switch_value;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 beep_switch_value(v->switch_value);
                 v->state = PB_IDLE;
@@ -489,8 +489,8 @@ static void trim_momentary_button_state_machine(logical_input_t *li, logical_inp
     uint8_t pb0 = 0;
     uint8_t pb1 = 0;
 
-    pb0 = transmitter_digital_inputs[li->transmitter_inputs[0]];
-    pb1 = transmitter_digital_inputs[li->transmitter_inputs[1]];
+    pb0 = digital_hardware_inputs[li->hardware_inputs[0]];
+    pb1 = digital_hardware_inputs[li->hardware_inputs[1]];
 
     switch (v->state) {
         case PB_IDLE:
@@ -509,7 +509,7 @@ static void trim_momentary_button_state_machine(logical_input_t *li, logical_inp
                 // Down button release: execute one down step
                 if (v->value > (0 - config.tx.trim_range)) {
                     v->value -= config.tx.trim_step_size;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 beep_trim(v->value);
                 v->state = PB_IDLE;
@@ -531,7 +531,7 @@ static void trim_momentary_button_state_machine(logical_input_t *li, logical_inp
                 // Up button release: execute one down step
                 if (v->value < config.tx.trim_range) {
                     v->value += config.tx.trim_step_size;
-                    PERSISTENT_STORAGE_save_transmitter_input_values();
+                    PERSISTENT_STORAGE_save_hardware_input_values();
                 }
                 beep_trim(v->value);
                 v->state = PB_IDLE;
@@ -587,7 +587,7 @@ static void trim_momentary_button_state_machine(logical_input_t *li, logical_inp
         case PB_WAIT_FOR_RELEASE:
             if (!pb0 && !pb1) {
                 v->state = PB_IDLE;
-                PERSISTENT_STORAGE_save_transmitter_input_values();
+                PERSISTENT_STORAGE_save_hardware_input_values();
             }
             break;
 
@@ -601,14 +601,14 @@ static void trim_momentary_button_state_machine(logical_input_t *li, logical_inp
 // ****************************************************************************
 static void read_switch(logical_input_t *li, logical_input_value_t *v)
 {
-    port_t first_port = li->transmitter_inputs[0];
-    transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
+    port_t first_port = li->hardware_inputs[0];
+    hardware_input_t *t = &config.tx.hardware_inputs[first_port];
 
     switch (t->type) {
         case SWITCH_ON_OFF:
             // Generic multi-position switch; n=2, 4..12
             if (li->position_count == 2) {
-                v->switch_value = transmitter_digital_inputs[first_port];
+                v->switch_value = digital_hardware_inputs[first_port];
                 v->value = v->switch_value ? CHANNEL_100_PERCENT : CHANNEL_N100_PERCENT;
             }
             else {
@@ -618,8 +618,8 @@ static void read_switch(logical_input_t *li, logical_input_value_t *v)
 
                 // Test all inputs associated with this multi-position switch
                 for (int i = 0; i < li->position_count; i++) {
-                    port_t port = li->transmitter_inputs[i];
-                    if (transmitter_digital_inputs[port]) {
+                    port_t port = li->hardware_inputs[i];
+                    if (digital_hardware_inputs[port]) {
                         if (found) {
                             // More than one input set: illegal value, ignore!
                             return;
@@ -638,7 +638,7 @@ static void read_switch(logical_input_t *li, logical_input_value_t *v)
 
         case SWITCH_ON_OPEN_OFF:
             // Special case for 3-position switch using a single IO port
-            v->switch_value = transmitter_digital_inputs[first_port];
+            v->switch_value = digital_hardware_inputs[first_port];
             v->value = 0;
             if (v->switch_value == 0) {
                 v->value = CHANNEL_N100_PERCENT;
@@ -665,8 +665,8 @@ static void read_bcd_switch(logical_input_t *li, logical_input_value_t *v)
     uint8_t value = 0;
 
     for (int i = 0; i < li->position_count; i++) {
-        port_t port = li->transmitter_inputs[i];
-        if (transmitter_digital_inputs[port]) {
+        port_t port = li->hardware_inputs[i];
+        if (digital_hardware_inputs[port]) {
             value += 1 << i;
         }
     }
@@ -678,8 +678,8 @@ static void read_bcd_switch(logical_input_t *li, logical_input_value_t *v)
 // ****************************************************************************
 static void read_trim(logical_input_t *li, logical_input_value_t *v)
 {
-    port_t first_port = li->transmitter_inputs[0];
-    transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
+    port_t first_port = li->hardware_inputs[0];
+    hardware_input_t *t = &config.tx.hardware_inputs[first_port];
 
 
     if (t->type == ANALOG_WITH_CENTER  ||  t->type == ANALOG_NO_CENTER) {
@@ -715,7 +715,7 @@ static void filter_analog_channels(void)
 
 
 // ****************************************************************************
-static void normalize_analog_input(transmitter_input_t *t)
+static void normalize_analog_input(hardware_input_t *t)
 {
     uint32_t raw;
     uint8_t adc_index;
@@ -771,12 +771,11 @@ static void normalize_analog_input(transmitter_input_t *t)
 
 
 // ****************************************************************************
-// Normalize the analog transmitter inputs; read the digital transmitter
-// inputs
-static void compute_transmitter_inputs(void)
+// Normalize the analog hardware inputs; read the digital hardware inputs
+static void compute_hardware_inputs(void)
 {
     for (int i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
-        transmitter_input_t *t = &config.tx.transmitter_inputs[i];
+        hardware_input_t *t = &config.tx.hardware_inputs[i];
         uint32_t gpioport = t->pcb_input.gpioport;
         uint16_t gpio = t->pcb_input.gpio;
 
@@ -790,7 +789,7 @@ static void compute_transmitter_inputs(void)
 
             case SWITCH_ON_OFF:
             case MOMENTARY_ON_OFF:
-                transmitter_digital_inputs[i] = gpio_get(gpioport, gpio) ? 1 : 0;
+                digital_hardware_inputs[i] = gpio_get(gpioport, gpio) ? 1 : 0;
                 break;
 
             case SWITCH_ON_OPEN_OFF:
@@ -801,9 +800,9 @@ static void compute_transmitter_inputs(void)
                 // pull-up and reading the IO port.
                 // We switch to pull-up only when necessary to avoid unnecessary
                 // output noise.
-                transmitter_digital_inputs[i] = 0;
+                digital_hardware_inputs[i] = 0;
                 if (gpio_get(gpioport, gpio)) {
-                    transmitter_digital_inputs[i] = 2;
+                    digital_hardware_inputs[i] = 2;
                 }
                 else {
                     gpio_set(gpioport, gpio);     // Switch to pull-up
@@ -816,15 +815,15 @@ static void compute_transmitter_inputs(void)
     }
 
     for (int i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
-        transmitter_input_t *t = &config.tx.transmitter_inputs[i];
+        hardware_input_t *t = &config.tx.hardware_inputs[i];
         uint32_t gpioport = t->pcb_input.gpioport;
         uint16_t gpio = t->pcb_input.gpio;
 
         switch (t->type) {
             case SWITCH_ON_OPEN_OFF:
-                if (transmitter_digital_inputs[i] != 2) {
+                if (digital_hardware_inputs[i] != 2) {
                     if (gpio_get(gpioport, gpio)) {
-                        transmitter_digital_inputs[i] = 1;
+                        digital_hardware_inputs[i] = 1;
                     }
                     gpio_clear(gpioport, gpio);     // Restore pull-down
                 }
@@ -839,12 +838,12 @@ static void compute_transmitter_inputs(void)
 
 // ****************************************************************************
 // Process the logical inputs using the new values obained by
-// compute_transmitter_inputs
+// compute_hardware_inputs
 static void compute_logical_inputs(void)
 {
     for (int i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
-        port_t first_port = li->transmitter_inputs[0];
+        port_t first_port = li->hardware_inputs[0];
         logical_input_value_t *v = &logical_inputs[i];
 
         switch (li->type) {
@@ -854,7 +853,7 @@ static void compute_logical_inputs(void)
                 break;
 
             case MOMENTARY:
-                v->switch_value = transmitter_digital_inputs[first_port];
+                v->switch_value = digital_hardware_inputs[first_port];
                 v->value = v->switch_value ? CHANNEL_100_PERCENT : CHANNEL_N100_PERCENT;
                 break;
 
@@ -881,7 +880,7 @@ static void compute_logical_inputs(void)
 void INPUTS_configure(void)
 {
     for (size_t i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
-        transmitter_input_t *t = &config.tx.transmitter_inputs[i];
+        hardware_input_t *t = &config.tx.hardware_inputs[i];
         uint32_t gpioport = t->pcb_input.gpioport;
         uint16_t gpio = t->pcb_input.gpio;
 
@@ -922,8 +921,8 @@ void INPUTS_init(void)
 
     for (int i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
-        port_t first_port = li->transmitter_inputs[0];
-        transmitter_input_t *t = &config.tx.transmitter_inputs[first_port];
+        port_t first_port = li->hardware_inputs[0];
+        hardware_input_t *t = &config.tx.hardware_inputs[first_port];
         logical_input_value_t *v = &logical_inputs[i];
         const logical_input_value_t *saved = &logical_inputs_flash[i];
 
@@ -978,7 +977,7 @@ uint32_t INPUTS_get_battery_voltage(void)
 void INPUTS_filter_and_normalize(void)
 {
     filter_analog_channels();
-    compute_transmitter_inputs();
+    compute_hardware_inputs();
     compute_logical_inputs();
 }
 
@@ -1092,7 +1091,7 @@ void INPUTS_dump_adc(void)
 
 #if 0
     uint8_t adc_index;
-    transmitter_input_t *t = &config.tx.transmitter_inputs[0];
+    hardware_input_t *t = &config.tx.hardware_inputs[0];
     adc_index = adc_channel_to_index(t->input);
     printf("adc_index = %d\n", adc_index);
 #endif

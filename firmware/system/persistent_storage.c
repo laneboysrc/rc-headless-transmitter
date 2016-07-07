@@ -23,7 +23,7 @@ static struct {
 } store_config = {.active = false};
 
 static bool save_config = false;
-static bool save_transmitter_input_values = false;
+static bool save_hardware_input_values = false;
 
 
 // WARNING: because config_flash is defined as const, the compiler
@@ -47,9 +47,9 @@ void PERSISTENT_STORAGE_save_config(void)
 
 
 // ****************************************************************************
-void PERSISTENT_STORAGE_save_transmitter_input_values(void)
+void PERSISTENT_STORAGE_save_hardware_input_values(void)
 {
-    save_transmitter_input_values = true;
+    save_hardware_input_values = true;
 }
 
 
@@ -72,8 +72,8 @@ void PERSISTENT_STORAGE_background_flash_write(void)
             flash_unlock();
             flash_erase_page((uint32_t)store_config.version_dst);
         }
-        else if (save_transmitter_input_values) {
-            save_transmitter_input_values = false;
+        else if (save_hardware_input_values) {
+            save_hardware_input_values = false;
 
             store_config.active = true;
             store_config.version_src = (uint32_t *)(logical_inputs);

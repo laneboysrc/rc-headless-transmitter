@@ -90,8 +90,8 @@ int main(void)
 
     printf("sizeof(config)=%u\n", sizeof(config));
     printf("  sizeof(config.tx)=%u\n", sizeof(config.tx));
-    printf("    sizeof(config.tx.transmitter_inputs)=%u\n", sizeof(config.tx.transmitter_inputs));
-    printf("        sizeof(transmitter_input_t)=%u\n", sizeof(transmitter_input_t));
+    printf("    sizeof(config.tx.hardware_inputs)=%u\n", sizeof(config.tx.hardware_inputs));
+    printf("        sizeof(hardware_input_t)=%u\n", sizeof(hardware_input_t));
     printf("    sizeof(config.tx.logical_inputs)=%u\n", sizeof(config.tx.logical_inputs));
     printf("      sizeof(logical_input_t)=%u\n", sizeof(logical_input_t));
     printf("  sizeof(config.model)=%u\n", sizeof(config.model));
@@ -105,8 +105,8 @@ int main(void)
 
 // sizeof(config)=3844
 //   sizeof(config.tx)=1172
-//     sizeof(config.tx.transmitter_inputs)=512
-//         sizeof(transmitter_input_t)=16
+//     sizeof(config.tx.hardware_inputs)=512
+//         sizeof(hardware_input_t)=16
 //     sizeof(config.tx.logical_inputs)=640
 //       sizeof(logical_input_t)=20
 //   sizeof(config.model)=2668

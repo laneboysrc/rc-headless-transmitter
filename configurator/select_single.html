@@ -33,60 +33,39 @@
             <i class="material-icons">arrow_back</i>
           </a>
           <div class="mdl-layout-spacer"></div>
-          <span class="mdl-layout-title">Transmitters</span>
+          <span class="mdl-layout-title">Select single</span>
           <div class="mdl-layout-spacer"></div>
         </div>
       </header>
 
       <main class="mdl-layout__content" >
-        <!-- Card -->
-        <section class="section--center mdl-grid"> <!-- style="display: none;"> -->
+
+        <!-- RF protocol type Card -->
+        <section class="section--center mdl-grid">
           <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
             <div class="mdl-card__title">
-              <h2 class="mdl-card__title-text">Transmitter</h2>
+              <h2 class="mdl-card__title-text">Item name</h2>
             </div>
-            <div class="mdl-card__supporting-text">
-              Select a transmitter to view or modify.
+            <div class="mdl-card__supporting-text mdl-card--expand  ">
+              Item description.
             </div>
             <div class="mdl-card__actions mdl-card--border">
-              <div class="mdl-list">
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="material-icons mdl-list__item-icon">router</i>
-                    <span>3XS #1</span>
-                  </span>
-                  <a class="mdl-list__item-secondary-action" href="transmitter_details.html">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                      <i class="material-icons">mode_edit</i>
-                    </button>
-                  </a>
-                </div>
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="material-icons mdl-list__item-icon">router</i>
-                    <span>HK310 #2</span>
-                  </span>
-                  <a class="mdl-list__item-secondary-action" href="transmitter_details.html">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                      <i class="material-icons">mode_edit</i>
-                    </button>
-                  </a>
-                </div>
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="material-icons mdl-list__item-icon">router</i>
-                    <span>Futaba TF2</span>
-                  </span>
-                  <a class="mdl-list__item-secondary-action" href="transmitter_details.html">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                      <i class="material-icons">mode_edit</i>
-                    </button>
-                  </a>
-                </div>
-              </div>
+              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="item1">
+                <input checked class="mdl-radio__button" id="item1" name="selection" type="radio" value="on">
+                <span class="mdl-radio__label">ST</span>
+              </label>
+              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="item2">
+                <input checked class="mdl-radio__button" id="item2" name="selection" type="radio">
+                <span class="mdl-radio__label">TH</span>
+              </label>
+              <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="item3">
+                <input checked class="mdl-radio__button" id="item3" name="selection" type="radio">
+                <span class="mdl-radio__label">AIL</span>
+              </label>
             </div>
           </div>
         </section>
+
       </main>
     </div>
 

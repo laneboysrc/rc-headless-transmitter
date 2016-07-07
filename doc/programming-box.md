@@ -91,3 +91,4 @@
 
 
 **FIXME: show TX battery state**
+**FIXME: slider from MDL are not what we need: no 0 point marker, do not go dim when set to the left**

@@ -44,6 +44,9 @@ typedef struct {
     uint16_t gpio;              // GPIO number, e.g. GPIO3
     uint8_t adc_channel;        // ADC channel
     pcb_input_type_t type;
+
+    char pin_name[10];
+    char schematic_reference[6];
 } pcb_input_t;
 
 

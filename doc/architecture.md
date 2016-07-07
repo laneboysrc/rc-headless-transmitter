@@ -15,9 +15,6 @@
 * This should also allow us to extract "mixer" configurations from the 3XS model memory expansion EEPROM
 * The *configurator* can change mixer configuration as well as hardware configuration
 
-* The nRF24 address can serve as a unique model identifier so that the *configurator* can find the corresponding model in its memory
-    * NOTE: this method will not work well once we support different RF protocols
-
 * Trims have to be assigneable to a specific input. Trims may be either a pair of push-buttons (option: support a separate centering button?) or a potentiometer, or be mechanical (i.e. not existant from a software point-of-view).
 
 

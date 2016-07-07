@@ -58,7 +58,7 @@
         - List of cards, one for each transmitter
             - If card is selected: Show *Transmitter details*
                 - *Transmitter details*:
-                    - Two tabs: *Hardware inputs*, *Logical inputs*
+                    - Tabs: *Hardware inputs*, *Logical inputs*, *Name*
                         - *Hardware inputs*:
                             - List of cards, one for each hardware input
                                 - Unused hardware inputs are shown such
@@ -90,3 +90,4 @@
         - Show live bars of the various channels/mixers/outputs
 
 
+**FIXME: show TX battery state**

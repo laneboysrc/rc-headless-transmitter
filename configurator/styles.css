@@ -100,3 +100,16 @@ table.mixer td:nth-child(2) {
   width: 80%;
   text-align: center;
 }
+
+
+/* Limits: Make the 2nd colum the widest to give the sliders maximum space */
+table.limits td:nth-child(2) {
+  width: 80%;
+}
+
+/* Limits: move the on/off switch to the right to visually align it with
+   the sliders. The sliders have built in white-space of 40px total; this
+   compensates for that. */
+table.limits .mdl-switch {
+  margin-left: 20px;
+}

@@ -259,6 +259,10 @@ After all mixers have been processed, each output channel has a value that needs
         * To Smartphone or tablet running custom app
     * UART
         * To PC running Chrome app
+    * Wi-Fi
+        * To PC or Smartphone running a modern web browser
+        * ESP8266 or similar to connect to Tx via UART
+        * ESP8266 contains configurator app and local server
 
 ### HK300 / HK310 / X3S RF protocol
 * 20 hop channels

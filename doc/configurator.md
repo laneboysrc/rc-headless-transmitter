@@ -1,4 +1,4 @@
-# Programming box UI
+# Configurator UI
 
 - *Not connected* (default)
     - *Main screen*:

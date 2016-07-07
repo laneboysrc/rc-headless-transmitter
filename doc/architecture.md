@@ -13,9 +13,9 @@
 
 * So the "mixer" describes the vehicle, but the input section describes the transmitter
 * This should also allow us to extract "mixer" configurations from the 3XS model memory expansion EEPROM
-* The PB can change mixer configuration as well as hardware configuration
+* The *configurator* can change mixer configuration as well as hardware configuration
 
-* The nRF24 address can serve as a unique model identifier so that the PB can find the corresponding model in its memory
+* The nRF24 address can serve as a unique model identifier so that the *configurator* can find the corresponding model in its memory
     * NOTE: this method will not work well once we support different RF protocols
 
 * Trims have to be assigneable to a specific input. Trims may be either a pair of push-buttons (option: support a separate centering button?) or a potentiometer, or be mechanical (i.e. not existant from a software point-of-view).
@@ -172,7 +172,7 @@ where:
 
 Multiple mixer units can be configured to operate on the same destination. The order of which the mixer units are configured plays an important role of the final resulting channel value.
 
-The mixer unit also receives a *tag* that is not used by the transmitter but provides information to the mixer UI in the programming box. Since high-level mixers in the UI may require more than one mixer-unit to implement, the UI can use the tags to identify the mixer-units that belong together and the corresponding high-level mixer function.
+The mixer unit also receives a *tag* that is not used by the transmitter but provides information to the mixer UI in the *configurator*. Since high-level mixers in the UI may require more than one mixer-unit to implement, the UI can use the tags to identify the mixer-units that belong together and the corresponding high-level mixer function.
 
 ### Mapping mixer units to high-level mixing functions shown in the UI
 
@@ -235,7 +235,7 @@ Memory is not really an issue (20 KBytes on the MCU), but we have to read/write 
 = 24 bytes per mixer unit
 So 100 mixers would be 2.4 KBytes
 
-The PB must align the mixers in the TX so that they can be processed in one loop.
+The *configurator* must align the mixers in the TX so that they can be processed in one loop.
 
 ### Output channel configuration
 After all mixers have been processed, each output channel has a value that needs to be sent to the receiver over the air. Before passing the channel value to the radio protocol, a final set of operations are performed to tweak the corresponding servo outputs:
@@ -248,15 +248,15 @@ After all mixers have been processed, each output channel has a value that needs
 - Speed (0..250, speed of output change in *degrees per 100 ms*)
 
 
-## Programming box
+## Configurator
 
-* The PB allows live configuration of (sub)-trim values, end points, etc
-* The PB can display the live stick position and channel outputs
-* The PB shows the battery state of the Tx
+* The *configurator* allows live configuration of (sub)-trim values, end points, etc
+* The *configurator* can display the live stick position and channel outputs
+* The *configurator* shows the battery state of the Tx
 
 * Options:
     * nRF24 based protocol
-        * requires custom programming box hardware
+        * requires custom *configurator* hardware
     * Bluetooth SPP using the serial port
         * To PC running Chrome app
         * To Smartphone or tablet running custom app
@@ -278,7 +278,7 @@ After all mixers have been processed, each output channel has a value that needs
     - 8 channels, 12 bits means 12 Bytes of data, plus one frame identifier
     - More channels can be added by introducing multiple frames. The higher channels could be sent at a slower update rate
 
-### HK310 RF protocol modified for programming box use
+### HK310 RF protocol modified for *configurator* use
 
 * Every 5 ms:
     * Send stick data
@@ -293,49 +293,49 @@ After all mixers have been processed, each output channel has a value that needs
     * Sleep until the next 5 ms
 
 * Setup protocol:
-    * The Tx is the master on RF, but it is the slave regarding communication with the programming box (PB)
-    * The Tx has to poll the PB if it has a command for it to execute.
-    * The Tx must acknowledge each command in the next packet so that the PB knows the command was received and executed.
+    * The Tx is the master on RF, but it is the slave regarding communication with the *configurator*
+    * The Tx has to poll the *configurator* if it has a command for it to execute.
+    * The Tx must acknowledge each command in the next packet so that the *configurator* knows the command was received and executed.
     * The setup packet uses dynamic payload up to 32 bytes at 2 Mbps (ARD must be set to 500 us)
 
 * Establishing a connection:
     * The Tx sends a 'free to connect' paket with address hop channel info every 100 ms on channel 111. (26 byte packet: 1 byte command, 5 bytes address, 20 bytes channels)
-    * The PB listens for Tx on channel 111 at 2Mbps and when receiving a "free to connect" packet it learns the address and hop channel sequence
-    * The PB ACKs if it wants to connect, with a unique address to use during the setup session
-    * When the Tx receives an answer it is now "connected" and starts sending setup packets using the hop frequencies every 5 ms, with the address received from the PB.
-    * Once the PB has the ACK being taken by the Tx (= it received the "Free to connect") it listens to the adress on the 2nd hop channel (since the 'free to connect' is sent during the first hop channel) with the address given to the Tx. The Tx and PB are now connected.
-        * Note that the PB may have taken the ACK, but the Tx may not have received it. In that case the PB would timeout after 600 ms as described in "Terminating a connection".
+    * The *configurator* listens for Tx on channel 111 at 2Mbps and when receiving a "free to connect" packet it learns the address and hop channel sequence
+    * The *configurator* ACKs if it wants to connect, with a unique address to use during the setup session
+    * When the Tx receives an answer it is now "connected" and starts sending setup packets using the hop frequencies every 5 ms, with the address received from the *configurator*.
+    * Once the *configurator* has the ACK being taken by the Tx (= it received the "Free to connect") it listens to the adress on the 2nd hop channel (since the 'free to connect' is sent during the first hop channel) with the address given to the Tx. The Tx and *configurator* are now connected.
+        * Note that the *configurator* may have taken the ACK, but the Tx may not have received it. In that case the *configurator* would timeout after 600 ms as described in "Terminating a connection".
 
 * Terminating a connection
-    * If the Tx or the PB do not receive anything for 600 ms they consider the connection lost and terminate the connected state. The Tx returns to sending of "Free to connect" setup packets every 100 ms on channel 111.
-    * The PB can send the "Disconnect" command to the Tx. The Tx responds "Disconnecting now" and once it received the ACK from the PB it terminates the connection and returns sending "Free to connect" setup packets.
-    * The PB considers the connection terminated after it received the "Disconnecting now" from the Tx, or after 600 ms if not received.
+    * If the Tx or the *configurator* do not receive anything for 600 ms they consider the connection lost and terminate the connected state. The Tx returns to sending of "Free to connect" setup packets every 100 ms on channel 111.
+    * The *configurator* can send the "Disconnect" command to the Tx. The Tx responds "Disconnecting now" and once it received the ACK from the *configurator* it terminates the connection and returns sending "Free to connect" setup packets.
+    * The *configurator* considers the connection terminated after it received the "Disconnecting now" from the Tx, or after 600 ms if not received.
 
-* PB -> Tx
-    * PB puts command as ACK payload
+* *configurator* -> Tx
+    * *configurator* puts command as ACK payload
     * Tx responds with "Acknowedledged"
-    * If PB does not receive "Acknowedledged" it knows that the Tx could not receive the command and it has to resend it with the next ACK
+    * If *configurator* does not receive "Acknowedledged" it knows that the Tx could not receive the command and it has to resend it with the next ACK
 
 * Commands
-    * Free-to-connect [Tx->PB]
+    * Free-to-connect [Tx->*configurator*]
         - Only sent on channel 111, every 100 ms
         - Sent on the vehicle address
-        - Only allows Connect command from PB
+        - Only allows Connect command from *configurator*
 
-    * Connect [PB->Tx]
+    * Connect [*configurator*->Tx]
         - Only sent on channel 111
         - Sent on the vehicle address
         - Payload: address to use for the rest of the communication
 
-    * Tx->PB Inquiry
+    * Tx->*configurator* Inquiry
         - Payload: stick data (raw? channel outputs? how to deal with multiple channels?)
-    * Tx->PB Acknowledged
-    * PB->Tx Disconnect
-    * Tx->PB Disconnecting-now
+    * Tx->*configurator* Acknowledged
+    * *configurator*->Tx Disconnect
+    * Tx->*configurator* Disconnecting-now
 
-    * PB->Tx Read data
+    * *configurator*->Tx Read data
         - Payload: address (uint16_t), count (uint8__t)
-    * PB->Tx Write data
+    * *configurator*->Tx Write data
         - Payload: address (uint16_t), up to 28 bytes data
 
 ### Bandwidth
@@ -355,9 +355,9 @@ One issue is that there is no way to automatically determine package boundaries 
 We could send the number of bytes in the packet (1 Byte), and add a checksum (2 Bytes) to the end of the packet. The receiving side would shift bytes until it finds a matching CRC, then removes that packet from the buffer.
 The STM32F103 supports CRC, but only 32 bit data words. Need to figure out how to deal with variable lengths packages yet still be able to use the hardware. Maybe we expand 8 bits with leading 0 to 32 bits? And use the lower 16 bits as result.
 
-The (UART based) PB shall only send 1 packet of data after receiving a packet from the TX. This way the TX can time a packet every 5 ms and we don't get an issue with swamping the TX.
+The (UART based) *configurator* shall only send 1 packet of data after receiving a packet from the TX. This way the TX can time a packet every 5 ms and we don't get an issue with swamping the TX.
 
-### What functions should the PB have access to when connected to a TX?
+### What functions should the *configurator* have access to when connected to a TX?
 
 - TX hardware configuration (which inputs, their names and types, trims, invert)
     - Function to calibrate the sticks, pots

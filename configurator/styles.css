@@ -59,22 +59,44 @@ i.icon--largeicon--large {
 }
 
 /* Hide border of table cells in a card */
-.mdl-card .mdl-data-table td {
-  border: none;
-}
-
-/* Right-most column (switches and buttons) has the elements centered */
-.mdl-card .mdl-data-table td:nth-child(3) {
-  text-align: center;
-}
-
 /* Use normal (16px) font size on tables used in cards */
 .mdl-card .mdl-data-table td {
+  border: none;
   font-size: 16px;
 }
 
-/* Switch elements in the table are as wide as the track so that they center
-   properly */
-.mdl-data-table .mdl-switch {
-  width: 36px;
+
+
+/* Mixer-unit: Right-most column (switches and buttons) has the elements
+   aligned to the right */
+table.mixer-unit td:nth-child(3) {
+  text-align: right;
+}
+
+/* Mixer-unit: If a switch does not have a label, as it is in our case, it is
+   still a rather wide element where the actual visible switch is left-aligned.
+   In order to right-align it in the table cell so that it visually aligns with
+   the buttons consisting of a single icon, we need set the switch width as
+   follows:
+
+   The widest visible part of the switch is the "track", which is 36px.
+   The button width is minimally 64px, with the icon centered in the button.
+   So we need to set the switch to 36 + ((64 - 36) / 2) = 50px
+ */
+table.mixer-unit .mdl-switch {
+  width: 50px;
+}
+
+/* Mixer-unit: Make the middle colum the widest so that the mixer unit gets
+   visually left-aligned to the label in the first colum */
+table.mixer-unit td:nth-child(2) {
+  width: 80%;
+}
+
+
+/* Mixer: Make the middle colum the widest so that it becomes most prominent
+   and visually centered. */
+table.mixer td:nth-child(2) {
+  width: 80%;
+  text-align: center;
 }

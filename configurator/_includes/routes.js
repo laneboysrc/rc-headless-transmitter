@@ -2,8 +2,6 @@
 /*globals Path */
 "use strict";
 
-var current_device = null;
-
 var routes = {
     // path: name
     '#/': 'main',
@@ -44,13 +42,8 @@ for (var path in routes) {
     }
 }
 
-// Path.map('#/').to(function () {
-//     showPage('main');
-// });
-
-// Path.map('#/about').to(function () {
-//     showPage('about');
-// });
+// FIXME: this needs to be generalized
+Path.map('#/model_details(/:model_uuid)(/:tx_uuid)').to(ModelDetails.route);
 
 Path.root('#/');
 Path.listen();

@@ -20,24 +20,30 @@ var routes = {
     '#/transmitter_list': 'transmitter_list',
 };
 
-function showPage(route) {
+function showPage(name) {
+    for (let page of document.querySelectorAll('.app-page')) {
+        page.classList.add('hidden');
+    }
+
+    document.querySelector('#page_' + name).classList.remove('hidden');
+}
+
+
+function routeTo(route) {
     var path = route.path;
     if (path in routes) {
-        for (let page of document.querySelectorAll('.app-page')) {
-            page.classList.add('hidden');
-        }
-
-        document.querySelector('#page_' + routes[path]).classList.remove('hidden');
+        showPage(routes[path]);
     }
     else {
         console.error('Route ' + path + ' not in routes[]')
     }
 }
 
+
 for (var path in routes) {
     if (routes.hasOwnProperty(path)) {
         Path.map(path).to(function () {
-            showPage(this);
+            routeTo(this);
         });
     }
 }

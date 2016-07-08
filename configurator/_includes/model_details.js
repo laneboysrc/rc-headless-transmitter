@@ -1,33 +1,26 @@
 /*jslint browser: true */
-/*global Path, Device */
+/*global Path, Device, showPage */
 "use strict";
 
 var ModelDetails = {
-    'model': null,
-    'tx': null,
+    'model_uuid': null,
+    'tx_uuid': null,
 
     'populate': function () {
-        document.querySelector('#app__model_details__name').value = this.model.name;
+        var name = ModelDatabase.get(this.model_uuid, 'name');
+        document.querySelector('#app__model_details__name').value = name;
     },
 
     'route': function () {
-
-        // FIXME: Look up model_uuid and tx_uuid in the database
-        document.querySelector('#app__model_details__name').value = '';
+        // FIXME: error handling: uuids given; uuids exist in db
         if (this.params.model_uuid) {
-            var dev = new Device();
-            dev.useDummyDevice();
-            ModelDetails.model = dev.model;
-            ModelDetails.tx = dev.tx;
-
+            ModelDetails.model_uuid = this.params.model_uuid;
             ModelDetails.populate();
+            showPage('model_details');
         }
-
-        // FIXME: DRY
-        for (var page of document.querySelectorAll('.app-page')) {
-            page.classList.add('hidden');
+        else {
+            location.hash = '#/';
         }
-        document.querySelector('#page_model_details').classList.remove('hidden');
     }
 };
 

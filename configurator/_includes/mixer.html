@@ -1,0 +1,65 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--no-drawer-button mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="history.go(-1);">
+        <i class="material-icons">arrow_back</i>
+      </a>
+      <div class="mdl-layout-spacer"></div>
+      <span class="mdl-layout-title">Mixer</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </header>
+
+  <main class="mdl-layout__content" >
+    <!-- Card -->
+    <section class="section--center mdl-grid"> <!-- style="display: none;"> -->
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Mixer</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+          Configure how the transmitter sticks, potentiometers and switches
+          are mixed to generate the output channels sent to the receiver.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <table class="mixer mdl-data-table mdl-js-data-table">
+          <tbody>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                ST
+              </td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <a class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/mixer_unit">
+                  Expo 30% =
+                </a>
+              </td>
+              </span>
+              <td class="mdl-data-table__cell--non-numeric">
+                <a class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/limits">
+                  CH1
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                TH
+              </td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <a class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/mixer_unit">
+                  Linear =
+                </a>
+              </td>
+              </span>
+              <td class="mdl-data-table__cell--non-numeric">
+                <a class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/limits">
+                  CH2
+                </a>
+              </td>
+            </tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

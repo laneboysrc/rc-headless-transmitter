@@ -1,0 +1,34 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">Headless RC Transmitter</span>
+    </div>
+  </header>
+
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title mdl-color--primary"><img src="images/laneboysrc-logo-128-transparent.png" /></span>
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="#/model_list"><i class="material-icons">directions_car</i>Models</a>
+      <a class="mdl-navigation__link" href="#/transmitter_list"><i class="material-icons">router</i>Transmitters</a>
+      <a class="mdl-navigation__link" href="#/about"><i class="material-icons">info_outline</i>About</a>
+    </nav>
+  </div>
+
+  <main class="mdl-layout__content">
+    <section class="section--center mdl-grid">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="this.querySelector('a').click()">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Configure a transmitter</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Find available transmitters and select one to configure.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" href="#/model_details">
+            Connect
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

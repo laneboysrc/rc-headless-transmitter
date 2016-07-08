@@ -1,0 +1,79 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--no-drawer-button mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="history.go(-1);">
+        <i class="material-icons">arrow_back</i>
+      </a>
+      <div class="mdl-layout-spacer"></div>
+      <span class="mdl-layout-title"><span id="tx_name">Model details</span></span>
+      <div class="mdl-layout-spacer"></div>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="more_vert">
+        <i class="material-icons">more_vert</i>
+      </button>
+      <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="more_vert">
+        <li class="mdl-menu__item" onclick="window.location='#/model_list'">Change model</li>
+        <li class="mdl-menu__item" onclick="window.location='#/transmitter_details'">Configure transmitter</li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="mdl-layout__content" >
+    <!-- Model name Card -->
+    <section class="section--center mdl-grid">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Model name</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Give the model a unique name.
+        </div>
+        <div class="mdl-card__actions">
+          <form>
+            <div class="mdl-textfield mdl-js-textfield">
+              <input class="mdl-textfield__input" type="text" id="model_name" pattern="[A-Z,a-z,0-9 ]{1,10}" value="Model001">
+              <label class="mdl-textfield__label" for="model_name">Model name ...</label>
+              <span class="mdl-textfield__error">1 to 10 letters, numbers and spaces only</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mixer name Card -->
+    <section class="section--center mdl-grid">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="this.getElementsByTagName('a')[0].click()">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Mixer</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Configure how the transmitter sticks, switches and potentiometers
+          are scaled and mixed before they are sent to the receiver.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#/mixer">
+            Configure mixer
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- RF protocol name Card -->
+    <section class="section--center mdl-grid">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="this.getElementsByTagName('a')[0].click()">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">RF protocol</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Select the RF protocol to use and change parameters such as the
+          unique address and hop channel sequence.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#/rf_protocol">
+            RF protocol parameters
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>

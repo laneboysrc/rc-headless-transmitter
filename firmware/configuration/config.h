@@ -9,6 +9,10 @@
 
 #define CONFIG_VERSION 1
 
+typedef enum {
+    RF_PROTOCOL_HK310
+} rf_protocol_type_t;
+
 typedef struct {
     uint32_t version;
 
@@ -29,7 +33,10 @@ typedef struct {
         char name[16];
         mixer_unit_t mixer_units[MAX_MIXER_UNITS];
         limits_t limits[NUMBER_OF_OUTPUT_CHANNELS];
-        protocol_hk310_t protocol_hk310;
+        rf_protocol_type_t rf_protocol_type;
+        union {
+            protocol_hk310_t protocol_hk310;
+        } rf;
     } model;
 } config_t;
 

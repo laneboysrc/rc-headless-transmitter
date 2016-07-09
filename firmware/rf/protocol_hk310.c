@@ -52,7 +52,7 @@ static const uint8_t bind_address[ADDRESS_SIZE] = {0x12, 0x23, 0x23, 0x45, 0x78}
 // failsafe packet is sent on all hop channels over time.
 static uint8_t failsafe_counter = 0;
 
-static const protocol_hk310_t *cfg = &config.model.protocol_hk310;
+static const protocol_hk310_t *cfg = &config.model.rf.protocol_hk310;
 
 
 // ****************************************************************************

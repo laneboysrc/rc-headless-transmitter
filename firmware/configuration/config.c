@@ -17,9 +17,12 @@ static const config_t config_failsafe = {
     // FIXME: add some useful defaults
     .model = {
         .name = "CONFIG CORRUPTED",
-        .protocol_hk310 = {
-            .hop_channels = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39},
-            .address = {0x0d, 0x0e, 0x0a, 0x0d, 0x00}
+        .rf_protocol_type = RF_PROTOCOL_HK310,
+        .rf = {
+            .protocol_hk310 = {
+                .hop_channels = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39},
+                .address = {0x0d, 0x0e, 0x0a, 0x0d, 0x00}
+            }
         }
     }
 };
@@ -168,10 +171,13 @@ const config_t config_flash = {
             },
         },
 
-        .protocol_hk310 = {
-            .hop_channels = {41, 21, 16, 66, 38, 33, 23, 32, 48, 37, 30, 54, 1, 12, 34, 19, 59, 17, 53, 49},
-            // .hop_channels = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39},
-            .address = {0xab, 0x22, 0x08, 0x97, 0x45}
+        .rf_protocol_type = RF_PROTOCOL_HK310,
+        .rf = {
+            .protocol_hk310 = {
+                .hop_channels = {41, 21, 16, 66, 38, 33, 23, 32, 48, 37, 30, 54, 1, 12, 34, 19, 59, 17, 53, 49},
+                // .hop_channels = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39},
+                .address = {0xab, 0x22, 0x08, 0x97, 0x45}
+            }
         }
     }
 };
@@ -380,12 +386,16 @@ static void dump_javascript_4(void) {
     // FIXME! How to deal with bit-fields?
     // printf("    LIMITS_INVERT_O: %u,\n", offsetof(config_t, model.limits[0].invert));
     // printf("    LIMITS_INVERT_S: %u,\n", membersizeof(config_t, model.limits[0].invert));
-    printf("    PROTOCOL_HK310_O: %u,\n", offsetof(config_t, model.protocol_hk310));
-    printf("    PROTOCOL_HK310_S: %u,\n", membersizeof(config_t, model.protocol_hk310));
-    printf("    PROTOCOL_HK310_HOP_CHANNELS_O: %u,\n", offsetof(config_t, model.protocol_hk310.hop_channels));
-    printf("    PROTOCOL_HK310_HOP_CHANNELS_S: %u,\n", membersizeof(config_t, model.protocol_hk310.hop_channels));
-    printf("    PROTOCOL_HK310_ADDRESS_O: %u,\n", offsetof(config_t, model.protocol_hk310.address));
-    printf("    PROTOCOL_HK310_ADDRESS_S: %u,\n", membersizeof(config_t, model.protocol_hk310.address));
+    printf("    RF_PROTOCOL_TYPE_O: %u,\n", offsetof(config_t, model.rf_protocol_type));
+    printf("    RF_PROTOCOL_TYPE_S: %u,\n", membersizeof(config_t, model.rf_protocol_type));
+    printf("    RF_O: %u,\n", offsetof(config_t, model.rf));
+    printf("    RF_S: %u,\n", membersizeof(config_t, model.rf));
+    printf("    RF_PROTOCOL_HK310_O: %u,\n", offsetof(config_t, model.rf.protocol_hk310));
+    printf("    RF_PROTOCOL_HK310_S: %u,\n", membersizeof(config_t, model.rf.protocol_hk310));
+    printf("    RF_PROTOCOL_HK310_HOP_CHANNELS_O: %u,\n", offsetof(config_t, model.rf.protocol_hk310.hop_channels));
+    printf("    RF_PROTOCOL_HK310_HOP_CHANNELS_S: %u,\n", membersizeof(config_t, model.rf.protocol_hk310.hop_channels));
+    printf("    RF_PROTOCOL_HK310_ADDRESS_O: %u,\n", offsetof(config_t, model.rf.protocol_hk310.address));
+    printf("    RF_PROTOCOL_HK310_ADDRESS_S: %u,\n", membersizeof(config_t, model.rf.protocol_hk310.address));
     printf("};\n");
     SYSTICK_set_callback(dump_javascript_5, 300);
 }
@@ -429,7 +439,4 @@ void CONFIG_init(void)
 {
     CONFIG_load();
 }
-
-
-
 

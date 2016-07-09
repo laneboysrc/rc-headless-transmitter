@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <config.h>
 
 #define ADDRESS_SIZE 5
 #define NUMBER_OF_HOP_CHANNELS 20

@@ -88,37 +88,9 @@ int main(void)
 
     printf("\n\n\n**********\nTransmitter initialized\n");
 
-    printf("sizeof(config)=%u\n", sizeof(config));
-    printf("  sizeof(config.tx)=%u\n", sizeof(config.tx));
-    printf("    sizeof(config.tx.hardware_inputs)=%u\n", sizeof(config.tx.hardware_inputs));
-    printf("        sizeof(hardware_input_t)=%u\n", sizeof(hardware_input_t));
-    printf("    sizeof(config.tx.logical_inputs)=%u\n", sizeof(config.tx.logical_inputs));
-    printf("      sizeof(logical_input_t)=%u\n", sizeof(logical_input_t));
-    printf("  sizeof(config.model)=%u\n", sizeof(config.model));
-    printf("    sizeof(config.model.name)=%u\n", sizeof(config.model.name));
-    printf("    sizeof(config.model.mixer_units)=%u\n", sizeof(config.model.mixer_units));
-    printf("      sizeof(mixer_unit_t)=%u\n", sizeof(mixer_unit_t));
-    printf("    sizeof(config.model.limits)=%u\n", sizeof(config.model.limits));
-    printf("      sizeof(limits_t)=%u\n", sizeof(limits_t));
-    printf("    sizeof(config.model.protocol_hk310)=%u\n", sizeof(config.model.protocol_hk310));
-
-
-// sizeof(config)=3844
-//   sizeof(config.tx)=1172
-//     sizeof(config.tx.hardware_inputs)=512
-//         sizeof(hardware_input_t)=16
-//     sizeof(config.tx.logical_inputs)=640
-//       sizeof(logical_input_t)=20
-//   sizeof(config.model)=2668
-//     sizeof(config.model.name)=16
-//     sizeof(config.model.mixer_units)=2400
-//       sizeof(mixer_unit_t)=24
-//     sizeof(config.model.limits)=224
-//       sizeof(limits_t)=28
-//     sizeof(config.model.protocol_hk310)=25
-
-
-
+#if 1
+    CONFIG_dump_javascript_information();
+#endif
 
     LED_on();
     SOUND_play(C5, 100, NULL);
@@ -147,7 +119,7 @@ int main(void)
             ++seconds;
         }
 
-        INPUTS_dump_adc();
+        // INPUTS_dump_adc();
         PERSISTENT_STORAGE_background_flash_write();
 
         // Put the CPU to sleep until an interrupt triggers. This reduces

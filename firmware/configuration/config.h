@@ -41,4 +41,5 @@ void CONFIG_init(void);
 void CONFIG_load(void);
 void CONFIG_save(void);
 void CONFIG_background_flash_write(void);
+void CONFIG_dump_javascript_information(void);
 

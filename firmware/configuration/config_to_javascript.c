@@ -16,6 +16,10 @@ static void dump_javascript_3(void);
 static void dump_javascript_4(void);
 static void dump_javascript_5(void);
 static void dump_javascript_6(void);
+static void dump_javascript_7(void);
+static void dump_javascript_8(void);
+static void dump_javascript_9(void);
+static void dump_javascript_10(void);
 static void dump_javascript_config(void);
 
 
@@ -56,7 +60,6 @@ void CONFIG_dump_javascript_information(void)
     printf("    NAME: {o: %u, s: 1, c: %u, t: 'c'},\n",
         offsetof(config_t, tx.name) - o,
         membersizeof(config_t, tx.name));
-
     SYSTICK_set_callback(dump_javascript_1, 300);
 }
 
@@ -140,12 +143,111 @@ static void dump_javascript_2(void) {
     printf("    LED_PWM_PERCENT: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, tx.led_pwm_percent) - o,
         membersizeof(config_t, tx.led_pwm_percent));
-    printf("};\n\n");
-
     SYSTICK_set_callback(dump_javascript_3, 200);
 }
 
 static void dump_javascript_3(void) {
+    printf("    types: {\n");
+    printf("        pcb_inputut_type_t: {\n");
+    printf("            PCB_INPUT_NOT_USED: %d,\n", PCB_INPUT_NOT_USED);
+    printf("            ANALOG_DIGITAL: %d,\n", ANALOG_DIGITAL);
+    printf("            DIGITAL: %d,\n", DIGITAL);
+    printf("        },\n");
+    printf("        hardware_input_type_t: {\n");
+    printf("            TRANSMITTER_INPUT_NOT_USED: %d,\n", TRANSMITTER_INPUT_NOT_USED);
+    printf("            ANALOG_WITH_CENTER: %d,\n", ANALOG_WITH_CENTER);
+    printf("            ANALOG_NO_CENTER: %d,\n", ANALOG_NO_CENTER);
+    printf("            ANALOG_NO_CENTER_POSITIVE_ONLY: %d,\n", ANALOG_NO_CENTER_POSITIVE_ONLY);
+    printf("            SWITCH_ON_OFF: %d,\n", SWITCH_ON_OFF);
+    printf("            SWITCH_ON_OPEN_OFF: %d,\n", SWITCH_ON_OPEN_OFF);
+    printf("            MOMENTARY_ON_OFF: %d,\n", MOMENTARY_ON_OFF);
+    printf("        },\n");
+    printf("        input_type_t: {\n");
+    printf("            LOGICAL_INPUT_NOT_USED: %d,\n", LOGICAL_INPUT_NOT_USED);
+    printf("            ANALOG: %d,\n", ANALOG);
+    printf("            SWITCH: %d,\n", SWITCH);
+    printf("            BCD_SWITCH: %d,\n", BCD_SWITCH);
+    printf("            MOMENTARY: %d,\n", MOMENTARY);
+    printf("            TRIM: %d,\n", TRIM);
+    printf("        },\n");
+    printf("        input_sub_type_t: {\n");
+    printf("            SUB_TYPE_NOT_APPLICABLE: %d,\n", SUB_TYPE_NOT_APPLICABLE);
+    printf("            UP_DOWN_BUTTONS: %d,\n", UP_DOWN_BUTTONS);
+    printf("            INCREMENT_AND_LOOP: %d,\n", INCREMENT_AND_LOOP);
+    printf("            DECREMENT_AND_LOOP: %d,\n", DECREMENT_AND_LOOP);
+    printf("            SAW_TOOTH: %d,\n", SAW_TOOTH);
+    printf("            DOUBLE_CLICK_DECREMENT: %d,\n", DOUBLE_CLICK_DECREMENT);
+    printf("        },\n");
+    SYSTICK_set_callback(dump_javascript_4, 200);
+}
+
+static void dump_javascript_4(void) {
+    printf("        label_t: {\n");
+    printf("            NONE: %d,\n", NONE);
+    printf("            ST: %d,\n", ST);
+    printf("            TH: %d,\n", TH);
+    printf("            THR: %d,\n", THR);
+    printf("            RUD: %d,\n", RUD);
+    printf("            ELE: %d,\n", ELE);
+    printf("            AUX: %d,\n", AUX);
+    printf("            ST_DR: %d,\n", ST_DR);
+    printf("            RUD_DR: %d,\n", RUD_DR);
+    printf("            AIL_DR: %d,\n", AIL_DR);
+    printf("            ELE_DR: %d,\n", ELE_DR);
+    printf("            TH_DR: %d,\n", TH_DR);
+    printf("            THR_DR: %d,\n", THR_DR);
+    printf("            TH_HOLD: %d,\n", TH_HOLD);
+    printf("            GEAR: %d,\n", GEAR);
+    printf("            FLAPS: %d,\n", FLAPS);
+    printf("            TRAINER: %d,\n", TRAINER);
+    printf("            SIDE_L: %d,\n", SIDE_L);
+    printf("            SIDE_R: %d,\n", SIDE_R);
+    printf("            POT1: %d,\n", POT1);
+    printf("            POT2: %d,\n", POT2);
+    printf("            POT3: %d,\n", POT3);
+    printf("            POT4: %d,\n", POT4);
+    printf("            POT5: %d,\n", POT5);
+    printf("            POT6: %d,\n", POT6);
+    printf("            POT7: %d,\n", POT7);
+    printf("            POT8: %d,\n", POT8);
+    printf("            POT9: %d,\n", POT9);
+    printf("            SW1: %d,\n", SW1);
+    printf("            SW2: %d,\n", SW2);
+    printf("            SW3: %d,\n", SW3);
+    printf("            SW4: %d,\n", SW4);
+    printf("            SW5: %d,\n", SW5);
+    printf("            SW7: %d,\n", SW7);
+    printf("            SW8: %d,\n", SW8);
+    printf("            SW9: %d,\n", SW9);
+    SYSTICK_set_callback(dump_javascript_5, 200);
+}
+
+static void dump_javascript_5(void) {
+    printf("            CH1: %d,\n", CH1);
+    printf("            CH2: %d,\n", CH2);
+    printf("            CH3: %d,\n", CH3);
+    printf("            CH4: %d,\n", CH4);
+    printf("            CH5: %d,\n", CH5);
+    printf("            CH6: %d,\n", CH6);
+    printf("            CH7: %d,\n", CH7);
+    printf("            CH8: %d,\n", CH8);
+    printf("            VIRTUAL1: %d,\n", VIRTUAL1);
+    printf("            VIRTUAL2: %d,\n", VIRTUAL2);
+    printf("            VIRTUAL3: %d,\n", VIRTUAL3);
+    printf("            VIRTUAL4: %d,\n", VIRTUAL4);
+    printf("            VIRTUAL5: %d,\n", VIRTUAL5);
+    printf("            VIRTUAL6: %d,\n", VIRTUAL6);
+    printf("            VIRTUAL7: %d,\n", VIRTUAL7);
+    printf("            VIRTUAL8: %d,\n", VIRTUAL8);
+    printf("            VIRTUAL9: %d,\n", VIRTUAL9);
+    printf("            VIRTUAL10: %d,\n", VIRTUAL10);
+    printf("        },\n");
+    printf("    },\n");
+    printf("};\n\n");
+    SYSTICK_set_callback(dump_javascript_6, 200);
+}
+
+static void dump_javascript_6(void) {
     size_t o = offsetof(config_t, model);
 
     printf("var MODEL = {\n");
@@ -173,10 +275,10 @@ static void dump_javascript_3(void) {
         offsetof(config_t, model.mixer_units[0].curve.points) - o,
         membersizeof(config_t, model.mixer_units[0].curve.points));
 
-    SYSTICK_set_callback(dump_javascript_4, 300);
+    SYSTICK_set_callback(dump_javascript_7, 300);
 }
 
-static void dump_javascript_4(void) {
+static void dump_javascript_7(void) {
     size_t o = offsetof(config_t, model);
 
     printf("    MIXER_UNITS_SRC: {o: %u, s: %u, c: 1, t: 'u'},\n",
@@ -215,10 +317,10 @@ static void dump_javascript_4(void) {
     printf("    MIXER_UNITS_APPLY_TRIM: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, model.mixer_units[0].apply_trim) - o,
         membersizeof(config_t, model.mixer_units[0].apply_trim));
-    SYSTICK_set_callback(dump_javascript_5, 200);
+    SYSTICK_set_callback(dump_javascript_8, 200);
 }
 
-static void dump_javascript_5(void) {
+static void dump_javascript_8(void) {
     size_t o = offsetof(config_t, model);
 
     printf("    LIMITS: {o: %u, s: %u, c: %u, t: 's'},\n",
@@ -264,13 +366,59 @@ static void dump_javascript_5(void) {
     printf("    RF_PROTOCOL_HK310_ADDRESS: {o: %u, s: 1, c: %u, t: 'u'},\n",
         offsetof(config_t, model.rf.protocol_hk310.address) - o,
         membersizeof(config_t, model.rf.protocol_hk310.address));
-    printf("};\n");
-    SYSTICK_set_callback(dump_javascript_6, 300);
+    SYSTICK_set_callback(dump_javascript_9, 300);
 }
 
-static void dump_javascript_6(void) {
+static void dump_javascript_9(void) {
+    printf("    types: {\n");
+    printf("        rf_protocol_type_t: {\n");
+    printf("            RF_PROTOCOL_HK310: %d,\n", RF_PROTOCOL_HK310);
+    printf("        },\n");
+    printf("        operation_type_t: {\n");
+    printf("            OP_REPLACE: %d,\n", OP_REPLACE);
+    printf("            OP_ADD: %d,\n", OP_ADD);
+    printf("            OP_MULTIPLY: %d,\n", OP_MULTIPLY);
+    printf("            OP_MIN: %d,\n", OP_MIN);
+    printf("            OP_MAX: %d,\n", OP_MAX);
+    printf("        },\n");
+    printf("        comparison_t: {\n");
+    printf("            EQUAL: %d,\n", EQUAL);
+    printf("            NON_EQUAL: %d,\n", NON_EQUAL);
+    printf("            GREATER: %d,\n", GREATER);
+    printf("            GREATER_OR_EQUAL: %d,\n", GREATER_OR_EQUAL);
+    printf("            SMALLER: %d,\n", SMALLER);
+    printf("            SMALLER_OR_EQUAL: %d,\n", SMALLER_OR_EQUAL);
+    printf("        },\n");
+    printf("        curve_type_t: {\n");
+    printf("            CURVE_NONE: %d,\n", CURVE_NONE);
+    printf("            CURVE_FIXED: %d,\n", CURVE_FIXED);
+    printf("            CURVE_MIN_MAX: %d,\n", CURVE_MIN_MAX);
+    printf("            CURVE_ZERO_MAX: %d,\n", CURVE_ZERO_MAX);
+    printf("            CURVE_GT_ZERO: %d,\n", CURVE_GT_ZERO);
+    printf("            CURVE_LT_ZERO: %d,\n", CURVE_LT_ZERO);
+    printf("            CURVE_ABSVAL: %d,\n", CURVE_ABSVAL);
+    printf("            CURVE_EXPO: %d,\n", CURVE_EXPO);
+    printf("            CURVE_DEADBAND: %d,\n", CURVE_DEADBAND);
+    printf("            CURVE_3POINT: %d,\n", CURVE_3POINT);
+    printf("            CURVE_5POINT: %d,\n", CURVE_5POINT);
+    printf("            CURVE_7POINT: %d,\n", CURVE_7POINT);
+    printf("            CURVE_9POINT: %d,\n", CURVE_9POINT);
+    printf("            CURVE_11POINT: %d,\n", CURVE_11POINT);
+    printf("            CURVE_13POINT: %d,\n", CURVE_13POINT);
+    printf("        },\n");
+    SYSTICK_set_callback(dump_javascript_10, 200);
+}
+
+static void dump_javascript_10(void) {
+    printf("        interpolation_type_t: {\n");
+    printf("            INTERPOLATION_LINEAR: %d,\n", INTERPOLATION_LINEAR);
+    printf("            INTERPOLATION_SMOOTHING: %d,\n", INTERPOLATION_SMOOTHING);
+    printf("        },\n");
+    printf("    },\n");
+    printf("};\n");
+
     print_separator();
-    SYSTICK_set_callback(dump_javascript_config, 200);
+    // SYSTICK_set_callback(dump_javascript_config, 200);
 }
 
 static void dump_javascript_config(void)

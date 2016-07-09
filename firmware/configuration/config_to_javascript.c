@@ -82,11 +82,11 @@ static void dump_javascript_1(void) {
     printf("    HARDWARE_INPUTS_PCB_INPUT_TYPE: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, tx.hardware_inputs[0].pcb_input.type) - o,
         membersizeof(config_t, tx.hardware_inputs[0].pcb_input.type));
-    printf("    HARDWARE_INPUTS_PCB_INPUT_PIN_NAME: {o: %u, s: %u, c: %u, t: 'u'},\n",
+    printf("    HARDWARE_INPUTS_PCB_INPUT_PIN_NAME: {o: %u, s: %u, c: %u, t: 'c'},\n",
         offsetof(config_t, tx.hardware_inputs[0].pcb_input.pin_name) - o,
         sizeof(config.tx.hardware_inputs[0].pcb_input.pin_name[0]),
         membersizeof(config_t, tx.hardware_inputs[0].pcb_input.pin_name) / sizeof(config.tx.hardware_inputs[0].pcb_input.pin_name[0]));
-    printf("    HARDWARE_INPUTS_PCB_INPUT_SCHEMATIC_REFERENCE: {o: %u, s: %u, c: %u, t: 'u'},\n",
+    printf("    HARDWARE_INPUTS_PCB_INPUT_SCHEMATIC_REFERENCE: {o: %u, s: %u, c: %u, t: 'c'},\n",
         offsetof(config_t, tx.hardware_inputs[0].pcb_input.schematic_reference) - o,
         sizeof(config.tx.hardware_inputs[0].pcb_input.schematic_reference[0]),
         membersizeof(config_t, tx.hardware_inputs[0].pcb_input.schematic_reference) / sizeof(config.tx.hardware_inputs[0].pcb_input.schematic_reference[0]));

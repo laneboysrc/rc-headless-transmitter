@@ -188,6 +188,7 @@ static void dump_javascript_4(void) {
     printf("            TH: %d,\n", TH);
     printf("            THR: %d,\n", THR);
     printf("            RUD: %d,\n", RUD);
+    printf("            AIL: %d,\n", AIL);
     printf("            ELE: %d,\n", ELE);
     printf("            AUX: %d,\n", AUX);
     printf("            ST_DR: %d,\n", ST_DR);

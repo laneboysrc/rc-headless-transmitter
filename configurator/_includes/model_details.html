@@ -41,7 +41,7 @@
 
     <!-- Mixer name Card -->
     <section class="section--center mdl-grid">
-      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="this.getElementsByTagName('a')[0].click()">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="ModelDetails.showMixer()">
         <div class="mdl-card__title">
           <h2 class="mdl-card__title-text">Mixer</h2>
         </div>
@@ -50,16 +50,16 @@
           are scaled and mixed before they are sent to the receiver.
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#/mixer">
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
             Configure mixer
-          </a>
+          </button>
         </div>
       </div>
     </section>
 
     <!-- RF protocol name Card -->
     <section class="section--center mdl-grid">
-      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="this.getElementsByTagName('a')[0].click()">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="ModelDetails.showRFProtocol()">
         <div class="mdl-card__title">
           <h2 class="mdl-card__title-text">RF protocol</h2>
         </div>
@@ -68,9 +68,9 @@
           unique address and hop channel sequence.
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#/rf_protocol">
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"">
             RF protocol parameters
-          </a>
+          </button>
         </div>
       </div>
     </section>

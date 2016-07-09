@@ -9,7 +9,7 @@ var routes = {
     '#/edit_curve': 'edit_curve',
     '#/edit_switch': 'edit_switch',
     '#/limits': 'limits',
-    '#/mixer': 'mixer',
+    // '#/mixer': 'mixer',
     '#/mixer_unit': 'mixer_unit',
     // '#/model_details(/:model_uuid)(/:transmitter_uuid)': 'model_details',
     '#/model_list': 'model_list',
@@ -50,6 +50,8 @@ for (var path in routes) {
 
 // FIXME: this needs to be generalized
 Path.map('#/model_details(/:model_uuid)(/:tx_uuid)').to(ModelDetails.route);
+Path.map('#/mixer(/:model_uuid)(/:tx_uuid)').to(Mixer.route);
+Path.map('#/rf_protocol(/:model_uuid)(/:tx_uuid)').to(RFProtocol.route);
 
 Path.root('#/');
 Path.listen();

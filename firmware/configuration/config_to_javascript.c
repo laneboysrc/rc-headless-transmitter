@@ -82,7 +82,7 @@ static void dump_javascript_1(void) {
     printf("    HARDWARE_INPUTS_PCB_INPUT_ADC_CHANNEL: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, tx.hardware_inputs[0].pcb_input.adc_channel) - o,
         membersizeof(config_t, tx.hardware_inputs[0].pcb_input.adc_channel) );
-    printf("    HARDWARE_INPUTS_PCB_INPUT_TYPE: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    HARDWARE_INPUTS_PCB_INPUT_TYPE: {o: %u, s: %u, c: 1, t: 'pcb_input_type_t'},\n",
         offsetof(config_t, tx.hardware_inputs[0].pcb_input.type) - o,
         membersizeof(config_t, tx.hardware_inputs[0].pcb_input.type));
     printf("    HARDWARE_INPUTS_PCB_INPUT_PIN_NAME: {o: %u, s: %u, c: %u, t: 'c'},\n",
@@ -93,7 +93,7 @@ static void dump_javascript_1(void) {
         offsetof(config_t, tx.hardware_inputs[0].pcb_input.schematic_reference) - o,
         sizeof(config.tx.hardware_inputs[0].pcb_input.schematic_reference[0]),
         membersizeof(config_t, tx.hardware_inputs[0].pcb_input.schematic_reference) / sizeof(config.tx.hardware_inputs[0].pcb_input.schematic_reference[0]));
-    printf("    HARDWARE_INPUTS_TYPE: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    HARDWARE_INPUTS_TYPE: {o: %u, s: %u, c: 1, t: 'hardware_input_type_t'},\n",
         offsetof(config_t, tx.hardware_inputs[0].type) - o,
         membersizeof(config_t, tx.hardware_inputs[0].type));
     printf("    HARDWARE_INPUTS_CALIBRATION: {o: %u, s: %u, c: %u, t: 'u'},\n",
@@ -111,10 +111,10 @@ static void dump_javascript_2(void) {
         offsetof(config_t, tx.logical_inputs) - o,
         sizeof(logical_input_t),
         membersizeof(config_t, tx.logical_inputs) / sizeof(logical_input_t));
-    printf("    LOGICAL_INPUTS_TYPE: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    LOGICAL_INPUTS_TYPE: {o: %u, s: %u, c: 1, t: 'input_type_t'},\n",
         offsetof(config_t, tx.logical_inputs[0].type) - o,
         membersizeof(config_t, tx.logical_inputs[0].type));
-    printf("    LOGICAL_INPUTS_SUB_TYPE: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    LOGICAL_INPUTS_SUB_TYPE: {o: %u, s: %u, c: 1, t: 'input_sub_type_t'},\n",
         offsetof(config_t, tx.logical_inputs[0].sub_type) - o,
         membersizeof(config_t, tx.logical_inputs[0].sub_type));
     printf("    LOGICAL_INPUTS_POSITION_COUNT: {o: %u, s: %u, c: 1, t: 'u'},\n",
@@ -124,7 +124,7 @@ static void dump_javascript_2(void) {
         offsetof(config_t, tx.logical_inputs[0].hardware_inputs) - o,
         sizeof(port_t),
         membersizeof(config_t, tx.logical_inputs[0].hardware_inputs) / sizeof(port_t));
-    printf("    LOGICAL_INPUTS_LABELS_O: {o: %u, s: %u, c: %u, t: 'u'},\n",
+    printf("    LOGICAL_INPUTS_LABELS_O: {o: %u, s: %u, c: %u, t: 'label_t'},\n",
         offsetof(config_t, tx.logical_inputs[0].labels) - o,
         sizeof(label_t),
         membersizeof(config_t, tx.logical_inputs[0].labels) / sizeof(label_t));
@@ -265,13 +265,13 @@ static void dump_javascript_6(void) {
     printf("    MIXER_UNITS_CURVE: {o: %u, s: %u, c: 1, t: 's'},\n",
         offsetof(config_t, model.mixer_units[0].curve) - o,
         membersizeof(config_t, model.mixer_units[0].curve));
-    printf("    MIXER_UNITS_CURVE_TYPE: {o: %u, s: %u, c: 1, t: 's'},\n",
+    printf("    MIXER_UNITS_CURVE_TYPE: {o: %u, s: %u, c: 1, t: 'curve_type_t'},\n",
         offsetof(config_t, model.mixer_units[0].curve.type) - o,
         membersizeof(config_t, model.mixer_units[0].curve.type));
-    printf("    MIXER_UNITS_CURVE_SMOOTHING: {o: %u, s: %u, c: 1, t: 's'},\n",
+    printf("    MIXER_UNITS_CURVE_SMOOTHING: {o: %u, s: %u, c: 1, t: 'interpolation_type_t'},\n",
         offsetof(config_t, model.mixer_units[0].curve.smoothing) - o,
         membersizeof(config_t, model.mixer_units[0].curve.smoothing));
-    printf("    MIXER_UNITS_CURVE_POINTS: {o: %u, s: %u, c: 1, t: 's'},\n",
+    printf("    MIXER_UNITS_CURVE_POINTS: {o: %u, s: %u, c: 1, t: 'i'},\n",
         offsetof(config_t, model.mixer_units[0].curve.points) - o,
         membersizeof(config_t, model.mixer_units[0].curve.points));
 
@@ -281,10 +281,10 @@ static void dump_javascript_6(void) {
 static void dump_javascript_7(void) {
     size_t o = offsetof(config_t, model);
 
-    printf("    MIXER_UNITS_SRC: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    MIXER_UNITS_SRC: {o: %u, s: %u, c: 1, t: 'label_t'},\n",
         offsetof(config_t, model.mixer_units[0].src) - o,
         membersizeof(config_t, model.mixer_units[0].src));
-    printf("    MIXER_UNITS_DST: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    MIXER_UNITS_DST: {o: %u, s: %u, c: 1, t: 'label_t'},\n",
         offsetof(config_t, model.mixer_units[0].dst) - o,
         membersizeof(config_t, model.mixer_units[0].dst));
     printf("    MIXER_UNITS_SW: {o: %u, s: %u, c: 1, t: 's'},\n",
@@ -293,13 +293,13 @@ static void dump_javascript_7(void) {
     printf("    MIXER_UNITS_SW_SW: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, model.mixer_units[0].sw.sw) - o,
         membersizeof(config_t, model.mixer_units[0].sw.sw));
-    printf("    MIXER_UNITS_SW_CMP: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    MIXER_UNITS_SW_CMP: {o: %u, s: %u, c: 1, t: 'comparison_t'},\n",
         offsetof(config_t, model.mixer_units[0].sw.cmp) - o,
         membersizeof(config_t, model.mixer_units[0].sw.cmp));
     printf("    MIXER_UNITS_SW_VALUE: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, model.mixer_units[0].sw.value) - o,
         membersizeof(config_t, model.mixer_units[0].sw.value));
-    printf("    MIXER_UNITS_OP: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    MIXER_UNITS_OP: {o: %u, s: %u, c: 1, t: 'operation_type_t'},\n",
         offsetof(config_t, model.mixer_units[0].op) - o,
         membersizeof(config_t, model.mixer_units[0].op));
     printf("    MIXER_UNITS_SCALAR: {o: %u, s: %u, c: 1, t: 'i'},\n",
@@ -351,7 +351,7 @@ static void dump_javascript_8(void) {
     printf("    LIMITS_INVERT: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, model.limits[0].invert) - o,
         membersizeof(config_t, model.limits[0].invert));
-    printf("    RF_PROTOCOL_TYPE: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    RF_PROTOCOL_TYPE: {o: %u, s: %u, c: 1, t: 'rf_protocol_type_t'},\n",
         offsetof(config_t, model.rf_protocol_type) - o,
         membersizeof(config_t, model.rf_protocol_type));
     printf("    RF: {o: %u, s: %u, c: 1, t: 's'},\n",

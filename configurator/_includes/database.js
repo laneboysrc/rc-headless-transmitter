@@ -2,6 +2,7 @@
 /*global  */
 "use strict";
 
+
 var CONFIG = {
     o: 0, s: 4604, c: 1, t: 's',
     VERSION: {o: 0, s: 4, c: 1, t: 'u'},
@@ -18,17 +19,17 @@ var TX = {
     HARDWARE_INPUTS_PCB_INPUT_GPIOPORT: {o: 32, s: 4, c: 1, t: 'u'},
     HARDWARE_INPUTS_PCB_INPUT_GPIO: {o: 36, s: 2, c: 1, t: 'u'},
     HARDWARE_INPUTS_PCB_INPUT_ADC_CHANNEL: {o: 38, s: 1, c: 1, t: 'u'},
-    HARDWARE_INPUTS_PCB_INPUT_TYPE: {o: 39, s: 1, c: 1, t: 'u'},
+    HARDWARE_INPUTS_PCB_INPUT_TYPE: {o: 39, s: 1, c: 1, t: 'pcb_input_type_t'},
     HARDWARE_INPUTS_PCB_INPUT_PIN_NAME: {o: 40, s: 1, c: 10, t: 'c'},
     HARDWARE_INPUTS_PCB_INPUT_SCHEMATIC_REFERENCE: {o: 50, s: 1, c: 6, t: 'c'},
-    HARDWARE_INPUTS_TYPE: {o: 56, s: 1, c: 1, t: 'u'},
+    HARDWARE_INPUTS_TYPE: {o: 56, s: 1, c: 1, t: 'hardware_input_type_t'},
     HARDWARE_INPUTS_CALIBRATION: {o: 58, s: 2, c: 3, t: 'u'},
     LOGICAL_INPUTS: {o: 1056, s: 20, c: 32, t: 's'},
-    LOGICAL_INPUTS_TYPE: {o: 1056, s: 1, c: 1, t: 'u'},
-    LOGICAL_INPUTS_SUB_TYPE: {o: 1057, s: 1, c: 1, t: 'u'},
+    LOGICAL_INPUTS_TYPE: {o: 1056, s: 1, c: 1, t: 'input_type_t'},
+    LOGICAL_INPUTS_SUB_TYPE: {o: 1057, s: 1, c: 1, t: 'input_sub_type_t'},
     LOGICAL_INPUTS_POSITION_COUNT: {o: 1058, s: 1, c: 1, t: 'u'},
     LOGICAL_INPUTS_HARDWARE_INPUTS: {o: 1059, s: 1, c: 12, t: 'u'},
-    LOGICAL_INPUTS_LABELS_O: {o: 1071, s: 1, c: 5, t: 'u'},
+    LOGICAL_INPUTS_LABELS_O: {o: 1071, s: 1, c: 5, t: 'label_t'},
     TRIM_RANGE: {o: 1696, s: 4, c: 1, t: 'i'},
     TRIM_STEP_SIZE: {o: 1700, s: 4, c: 1, t: 'i'},
     BIND_TIMEOUT_MS: {o: 1704, s: 4, c: 1, t: 'u'},
@@ -130,16 +131,16 @@ var MODEL = {
     NAME: {o: 16, s: 1, c: 16, t: 'c'},
     MIXER_UNITS: {o: 32, s: 26, c: 100, t: 's'},
     MIXER_UNITS_CURVE: {o: 32, s: 15, c: 1, t: 's'},
-    MIXER_UNITS_CURVE_TYPE: {o: 32, s: 1, c: 1, t: 's'},
-    MIXER_UNITS_CURVE_SMOOTHING: {o: 33, s: 1, c: 1, t: 's'},
-    MIXER_UNITS_CURVE_POINTS: {o: 34, s: 13, c: 1, t: 's'},
-    MIXER_UNITS_SRC: {o: 47, s: 1, c: 1, t: 'u'},
-    MIXER_UNITS_DST: {o: 48, s: 1, c: 1, t: 'u'},
+    MIXER_UNITS_CURVE_TYPE: {o: 32, s: 1, c: 1, t: 'curve_type_t'},
+    MIXER_UNITS_CURVE_SMOOTHING: {o: 33, s: 1, c: 1, t: 'interpolation_type_t'},
+    MIXER_UNITS_CURVE_POINTS: {o: 34, s: 13, c: 1, t: 'i'},
+    MIXER_UNITS_SRC: {o: 47, s: 1, c: 1, t: 'label_t'},
+    MIXER_UNITS_DST: {o: 48, s: 1, c: 1, t: 'label_t'},
     MIXER_UNITS_SW: {o: 49, s: 3, c: 1, t: 's'},
     MIXER_UNITS_SW_SW: {o: 49, s: 1, c: 1, t: 'u'},
-    MIXER_UNITS_SW_CMP: {o: 50, s: 1, c: 1, t: 'u'},
+    MIXER_UNITS_SW_CMP: {o: 50, s: 1, c: 1, t: 'comparison_t'},
     MIXER_UNITS_SW_VALUE: {o: 51, s: 1, c: 1, t: 'u'},
-    MIXER_UNITS_OP: {o: 52, s: 1, c: 1, t: 'u'},
+    MIXER_UNITS_OP: {o: 52, s: 1, c: 1, t: 'operation_type_t'},
     MIXER_UNITS_SCALAR: {o: 53, s: 1, c: 1, t: 'i'},
     MIXER_UNITS_OFFSET: {o: 54, s: 1, c: 1, t: 'i'},
     MIXER_UNITS_TAG: {o: 55, s: 1, c: 1, t: 'u'},
@@ -154,7 +155,7 @@ var MODEL = {
     LIMITS_FAILSAFE: {o: 2652, s: 4, c: 1, t: 'i'},
     LIMITS_SPEED: {o: 2656, s: 1, c: 1, t: 'u'},
     LIMITS_INVERT: {o: 2657, s: 1, c: 1, t: 'u'},
-    RF_PROTOCOL_TYPE: {o: 2856, s: 1, c: 1, t: 'u'},
+    RF_PROTOCOL_TYPE: {o: 2856, s: 1, c: 1, t: 'rf_protocol_type_t'},
     RF: {o: 2857, s: 25, c: 1, t: 's'},
     RF_PROTOCOL_HK310: {o: 2857, s: 25, c: 1, t: 's'},
     RF_PROTOCOL_HK310_HOP_CHANNELS: {o: 2857, s: 1, c: 20, t: 'u'},
@@ -201,7 +202,6 @@ var MODEL = {
         },
     },
 };
-
 
 
 function uuid2string(uuid_bytes) {

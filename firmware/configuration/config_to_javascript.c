@@ -124,7 +124,7 @@ static void dump_javascript_2(void) {
         offsetof(config_t, tx.logical_inputs[0].hardware_inputs) - o,
         sizeof(port_t),
         membersizeof(config_t, tx.logical_inputs[0].hardware_inputs) / sizeof(port_t));
-    printf("    LOGICAL_INPUTS_LABELS_O: {o: %u, s: %u, c: %u, t: 'label_t'},\n",
+    printf("    LOGICAL_INPUTS_LABELS: {o: %u, s: %u, c: %u, t: 'label_t'},\n",
         offsetof(config_t, tx.logical_inputs[0].labels) - o,
         sizeof(label_t),
         membersizeof(config_t, tx.logical_inputs[0].labels) / sizeof(label_t));

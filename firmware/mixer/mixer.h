@@ -40,8 +40,8 @@ typedef struct  {
     int8_t scalar;          // Unit: percent
     int8_t offset;          // Unit: percent
     uint8_t tag;            // For use by the programming box internally
-    unsigned invert_source : 1;
-    unsigned apply_trim : 1;
+    uint8_t invert_source;
+    uint8_t apply_trim;
 } mixer_unit_t;
 
 

@@ -28,8 +28,8 @@ typedef enum {
 } interpolation_type_t;
 
 typedef struct {
-    curve_type_t type : 7;
-    interpolation_type_t smoothing : 1;
+    curve_type_t type;
+    interpolation_type_t smoothing;
     int8_t points[CURVE_MAX_POINTS];
 } curve_t;
 

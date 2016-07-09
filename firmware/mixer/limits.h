@@ -13,7 +13,7 @@ typedef struct {
     int32_t limit_h;
     int32_t failsafe;
     uint8_t speed;              // limit servo speed to "degrees per 100 ms", 0 = no limit
-    unsigned invert : 1;
+    uint8_t invert;
 } limits_t;
 
 void LIMITS_apply(void);

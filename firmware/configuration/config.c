@@ -239,6 +239,7 @@ static void dump_javascript_2(void);
 static void dump_javascript_3(void);
 static void dump_javascript_4(void);
 static void dump_javascript_5(void);
+static void dump_javascript_6(void);
 static void dump_javascript_config(void);
 
 void CONFIG_dump_javascript_information(void)
@@ -329,13 +330,16 @@ static void dump_javascript_3(void) {
     printf("    MIXER_UNITS_C: %u,\n", membersizeof(config_t, model.mixer_units) / sizeof(mixer_unit_t));
     printf("    MIXER_UNITS_CURVE_O: %u,\n", offsetof(config_t, model.mixer_units[0].curve));
     printf("    MIXER_UNITS_CURVE_S: %u,\n", membersizeof(config_t, model.mixer_units[0].curve));
-    // FIXME! How to deal with bit-fields?
-    // printf("    MIXER_UNITS_CURVE_TYPE_O: %u,\n", offsetof(config_t, model.mixer_units[0].curve.type));
-    // printf("    MIXER_UNITS_CURVE_TYPE_S: %u,\n", membersizeof(config_t, model.mixer_units[0].curve.type));
-    // printf("    MIXER_UNITS_CURVE_SMOOTHING_O: %u,\n", offsetof(config_t, model.mixer_units[0].curve.smoothing));
-    // printf("    MIXER_UNITS_CURVE_SMOOTHING_S: %u,\n", membersizeof(config_t, model.mixer_units[0].curve.smoothing));
+    printf("    MIXER_UNITS_CURVE_TYPE_O: %u,\n", offsetof(config_t, model.mixer_units[0].curve.type));
+    printf("    MIXER_UNITS_CURVE_TYPE_S: %u,\n", membersizeof(config_t, model.mixer_units[0].curve.type));
+    printf("    MIXER_UNITS_CURVE_SMOOTHING_O: %u,\n", offsetof(config_t, model.mixer_units[0].curve.smoothing));
+    printf("    MIXER_UNITS_CURVE_SMOOTHING_S: %u,\n", membersizeof(config_t, model.mixer_units[0].curve.smoothing));
     printf("    MIXER_UNITS_CURVE_POINTS_O: %u,\n", offsetof(config_t, model.mixer_units[0].curve.points));
     printf("    MIXER_UNITS_CURVE_POINTS_S: %u,\n", membersizeof(config_t, model.mixer_units[0].curve.points));
+    SYSTICK_set_callback(dump_javascript_4, 300);
+}
+
+static void dump_javascript_4(void) {
     printf("    MIXER_UNITS_SRC_O: %u,\n", offsetof(config_t, model.mixer_units[0].src));
     printf("    MIXER_UNITS_SRC_S: %u,\n", membersizeof(config_t, model.mixer_units[0].src));
     printf("    MIXER_UNITS_DST_O: %u,\n", offsetof(config_t, model.mixer_units[0].dst));
@@ -356,15 +360,14 @@ static void dump_javascript_3(void) {
     printf("    MIXER_UNITS_OFFSET_S: %u,\n", membersizeof(config_t, model.mixer_units[0].offset));
     printf("    MIXER_UNITS_TAG_O: %u,\n", offsetof(config_t, model.mixer_units[0].tag));
     printf("    MIXER_UNITS_TAG_S: %u,\n", membersizeof(config_t, model.mixer_units[0].tag));
-    // FIXME! How to deal with bit-fields?
-    // printf("    MIXER_UNITS_INVERT_SOURCE_O: %u,\n", offsetof(config_t, model.mixer_units[0].invert_source));
-    // printf("    MIXER_UNITS_INVERT_SOURCE_S: %u,\n", membersizeof(config_t, model.mixer_units[0].invert_source));
-    // printf("    MIXER_UNITS_APPLY_TRIM_O: %u,\n", offsetof(config_t, model.mixer_units[0].apply_trim));
-    // printf("    MIXER_UNITS_APPLY_TRIM_S: %u,\n", membersizeof(config_t, model.mixer_units[0].apply_trim));
-    SYSTICK_set_callback(dump_javascript_4, 300);
+    printf("    MIXER_UNITS_INVERT_SOURCE_O: %u,\n", offsetof(config_t, model.mixer_units[0].invert_source));
+    printf("    MIXER_UNITS_INVERT_SOURCE_S: %u,\n", membersizeof(config_t, model.mixer_units[0].invert_source));
+    printf("    MIXER_UNITS_APPLY_TRIM_O: %u,\n", offsetof(config_t, model.mixer_units[0].apply_trim));
+    printf("    MIXER_UNITS_APPLY_TRIM_S: %u,\n", membersizeof(config_t, model.mixer_units[0].apply_trim));
+    SYSTICK_set_callback(dump_javascript_5, 300);
 }
 
-static void dump_javascript_4(void) {
+static void dump_javascript_5(void) {
     printf("    LIMITS_O: %u,\n", offsetof(config_t, model.limits));
     printf("    LIMITS_S: %u,\n", membersizeof(config_t, model.limits));
     printf("    LIMITS_ES: %u,\n", sizeof(limits_t));
@@ -383,9 +386,8 @@ static void dump_javascript_4(void) {
     printf("    LIMITS_FAILSAFE_S: %u,\n", membersizeof(config_t, model.limits[0].failsafe));
     printf("    LIMITS_SPEED_O: %u,\n", offsetof(config_t, model.limits[0].speed));
     printf("    LIMITS_SPEED_S: %u,\n", membersizeof(config_t, model.limits[0].speed));
-    // FIXME! How to deal with bit-fields?
-    // printf("    LIMITS_INVERT_O: %u,\n", offsetof(config_t, model.limits[0].invert));
-    // printf("    LIMITS_INVERT_S: %u,\n", membersizeof(config_t, model.limits[0].invert));
+    printf("    LIMITS_INVERT_O: %u,\n", offsetof(config_t, model.limits[0].invert));
+    printf("    LIMITS_INVERT_S: %u,\n", membersizeof(config_t, model.limits[0].invert));
     printf("    RF_PROTOCOL_TYPE_O: %u,\n", offsetof(config_t, model.rf_protocol_type));
     printf("    RF_PROTOCOL_TYPE_S: %u,\n", membersizeof(config_t, model.rf_protocol_type));
     printf("    RF_O: %u,\n", offsetof(config_t, model.rf));
@@ -397,10 +399,10 @@ static void dump_javascript_4(void) {
     printf("    RF_PROTOCOL_HK310_ADDRESS_O: %u,\n", offsetof(config_t, model.rf.protocol_hk310.address));
     printf("    RF_PROTOCOL_HK310_ADDRESS_S: %u,\n", membersizeof(config_t, model.rf.protocol_hk310.address));
     printf("};\n");
-    SYSTICK_set_callback(dump_javascript_5, 300);
+    SYSTICK_set_callback(dump_javascript_6, 300);
 }
 
-static void dump_javascript_5(void) {
+static void dump_javascript_6(void) {
     print_separator();
     SYSTICK_set_callback(dump_javascript_config, 200);
 }
@@ -427,7 +429,7 @@ static void dump_javascript_config(void)
     offset += count_per_run;
     if (offset < sizeof(config)) {
         printf("\n    ");
-        SYSTICK_set_callback(dump_javascript_config, 50);
+        SYSTICK_set_callback(dump_javascript_config, 10);
     }
     else {
         printf("\n]);\n");

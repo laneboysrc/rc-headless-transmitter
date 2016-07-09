@@ -22,40 +22,21 @@
           are mixed to generate the output channels sent to the receiver.
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <table id="mixer_list" class="mixer mdl-data-table mdl-js-data-table">
+          <table id="app-mixer-list" class="mixer mdl-data-table mdl-js-data-table">
           <tbody>
+
+            <template id="app-mixer-template">
             <tr>
+              <td id="app-mixer-template-src" class="mdl-data-table__cell--non-numeric"></td>
               <td class="mdl-data-table__cell--non-numeric">
-                ST
-              </td>
-              <td class="mdl-data-table__cell--non-numeric">
-                <a class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/mixer_unit">
-                  Expo 30% =
-                </a>
+                <a id="app-mixer-template-mixer_unit" class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/mixer_unit"></a>
               </td>
               </span>
               <td class="mdl-data-table__cell--non-numeric">
-                <a class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/limits">
-                  CH1
-                </a>
+                <a id="app-mixer-template-dst" class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/limits"></a>
               </td>
             </tr>
-            <tr>
-              <td class="mdl-data-table__cell--non-numeric">
-                TH
-              </td>
-              <td class="mdl-data-table__cell--non-numeric">
-                <a class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/mixer_unit">
-                  Linear =
-                </a>
-              </td>
-              </span>
-              <td class="mdl-data-table__cell--non-numeric">
-                <a class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/limits">
-                  CH2
-                </a>
-              </td>
-            </tr>
+            </template>
           </tbody>
           </table>
         </div>

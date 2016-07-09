@@ -232,22 +232,22 @@ TransmitterDatabase.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG
 var mdbl = ModelDatabase.list();
 var tdbl = TransmitterDatabase.list()
 
-console.log(ModelDatabase.get(mdbl[0], 'NAME'));
-console.log(TransmitterDatabase.get(tdbl[0], 'NAME'));
-console.log(uuid2string(TransmitterDatabase.get(tdbl[0], 'UUID')));
+// console.log(ModelDatabase.get(mdbl[0], 'NAME'));
+// console.log(TransmitterDatabase.get(tdbl[0], 'NAME'));
+// console.log(uuid2string(TransmitterDatabase.get(tdbl[0], 'UUID')));
 
-console.log(TransmitterDatabase.get(tdbl[0], 'BIND_TIMEOUT_MS'));
+// console.log(TransmitterDatabase.get(tdbl[0], 'BIND_TIMEOUT_MS'));
 
-console.log(ModelDatabase.get(mdbl[0], 'RF_PROTOCOL_HK310_ADDRESS'));
-console.log(ModelDatabase.get(mdbl[0], 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
+// console.log(ModelDatabase.get(mdbl[0], 'RF_PROTOCOL_HK310_ADDRESS'));
+// console.log(ModelDatabase.get(mdbl[0], 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
 
-console.log(TransmitterDatabase.get(tdbl[0], 'BIND_TIMEOUT_MS'));
+// console.log(TransmitterDatabase.get(tdbl[0], 'BIND_TIMEOUT_MS'));
 
-console.log(TransmitterDatabase.get(tdbl[0], 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
-console.log(TransmitterDatabase.get(tdbl[0], 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
+// console.log(TransmitterDatabase.get(tdbl[0], 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
+// console.log(TransmitterDatabase.get(tdbl[0], 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
 
-console.log(ModelDatabase.get(mdbl[0], 'MIXER_UNITS_CURVE_TYPE'));
-console.log(TransmitterDatabase.get(tdbl[0], 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
+// console.log(ModelDatabase.get(mdbl[0], 'MIXER_UNITS_CURVE_TYPE'));
+// console.log(TransmitterDatabase.get(tdbl[0], 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
 
 
 

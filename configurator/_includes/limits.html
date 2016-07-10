@@ -31,8 +31,8 @@
                 Invert:
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
-                  <input type="checkbox" id="switch-1" class="mdl-switch__input">
+                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="app-limits-invert">
+                  <input id="app-limits-invert" type="checkbox" class="mdl-switch__input">
                 </label>
               </td>
             </tr>
@@ -41,7 +41,7 @@
                 Sub-trim:
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <input class="mdl-slider mdl-js-slider" type="range" min="-100" max="100" value="0" tabindex="0">
+                <input id="app-limits-subtrim" class="mdl-slider mdl-js-slider" type="range" min="-10000" max="10000">
               </td>
             </tr>
             <tr>
@@ -49,7 +49,7 @@
                 Endpoint left:
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <input class="mdl-slider mdl-js-slider" type="range" min="-100" max="100" value="-100" tabindex="0">
+                <input id="app-limits-ep_l" class="mdl-slider mdl-js-slider" type="range" min="-10000" max="10000">
               </td>
             </tr>
             <tr>
@@ -57,7 +57,7 @@
                 Endpoint right:
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <input class="mdl-slider mdl-js-slider" type="range" min="-100" max="100" value="100" tabindex="0">
+                <input id="app-limits-ep_h" class="mdl-slider mdl-js-slider" type="range" min="-10000" max="10000">
               </td>
             </tr>
             <tr>
@@ -65,7 +65,7 @@
                 Limit left:
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <input class="mdl-slider mdl-js-slider" type="range" min="-150" max="150" value="-150">
+                <input id="app-limits-limit_l" class="mdl-slider mdl-js-slider" type="range" min="-15000" max="15000">
               </td>
             </tr>
             <tr>
@@ -73,7 +73,7 @@
                 Limit right:
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <input class="mdl-slider mdl-js-slider" type="range" min="-150" max="150" value="150" tabindex="0">
+                <input id="app-limits-limit_h" class="mdl-slider mdl-js-slider" type="range" min="-15000" max="15000">
               </td>
             </tr>
             <tr>
@@ -81,7 +81,7 @@
                 Failsafe position:
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <input class="mdl-slider mdl-js-slider" type="range" min="-100" max="100" value="0" tabindex="0">
+                <input id="app-limits-failsafe" class="mdl-slider mdl-js-slider" type="range" min="-10000" max="10000">
               </td>
             </tr>
             <tr>
@@ -89,7 +89,7 @@
                 Speed:
               </td>
               <td class="mdl-data-table__cell--non-numeric">
-                <input class="mdl-slider mdl-js-slider" type="range" min="0" max="100" value="100" tabindex="0">
+                <input id="app-limits-speed" class="mdl-slider mdl-js-slider" type="range" min="0" max="100">
               </td>
             </tr>
           </tbody>

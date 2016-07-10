@@ -49,11 +49,16 @@ for (var path in routes) {
 }
 
 // FIXME: this needs to be generalized
-Path.map('#/model_details(/:model_uuid)(/:tx_uuid)').to(ModelDetails.route);
-Path.map('#/mixer(/:model_uuid)(/:tx_uuid)').to(Mixer.route);
+Path.map('#/model_details/:model_uuid/:tx_uuid').to(ModelDetails.route);
+Path.map('#/mixer/:model_uuid/:tx_uuid').to(Mixer.route);
+Path.map('#/limits/:model_uuid/:tx_uuid/:channel').to(Limits.route);
 Path.map('#/rf_protocol(/:model_uuid)(/:tx_uuid)').to(RFProtocol.route);
 
 Path.root('#/');
-Path.listen();
+
+window.onload = function() {
+    Path.listen();
+};
+
 
 

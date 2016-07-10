@@ -15,4 +15,3 @@
 - Host MDL an fonts locally for better speed
 - Offline mode
 
-- Change structure everywhere as in mixer_unit.js

@@ -3,10 +3,16 @@
 "use strict";
 
 var RFProtocol = {
-    'model_uuid': null,
-    'tx_uuid': null,
+    model_uuid: undefined,
+    tx_uuid: undefined,
 
-    populate: function () {
+    db: ModelDatabase,
+    offset: 0,
+
+    init: function (params) {
+        this.model_uuid = params.model_uuid;
+        this.tx_uuid = params.tx_uuid;
+
         var address = ModelDatabase.get(this.model_uuid, 'RF_PROTOCOL_HK310_ADDRESS');
         var hop_channels = ModelDatabase.get(this.model_uuid, 'RF_PROTOCOL_HK310_HOP_CHANNELS');
         var value = '';
@@ -23,20 +29,11 @@ var RFProtocol = {
             value += channel.toString() + " ";
         }
         document.querySelector('#app-rf_protocol-hop_channels').value = value;
-
     },
 
     route: function () {
-        // FIXME: error handling: uuids given; uuids exist in db
-        if (this.params.model_uuid) {
-            RFProtocol.model_uuid = this.params.model_uuid;
-            RFProtocol.tx_uuid = this.params.tx_uuid;
-            RFProtocol.populate();
-            showPage('rf_protocol');
-        }
-        else {
-            location.hash = '#/';
-        }
+        RFProtocol.init(this.params);
+        showPage('rf_protocol');
     }
 };
 

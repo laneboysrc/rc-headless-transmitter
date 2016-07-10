@@ -11,6 +11,7 @@ var MDLHelper = {
         let element = document.querySelector(selector);
         element.checked = value;
         element.parentNode.MaterialSwitch.checkToggleState();
+        element.setAttribute('data-source', item);
         element.onchange = this.onChangeHandler;
     },
 
@@ -18,6 +19,15 @@ var MDLHelper = {
         let value = this.db.get(this.model_uuid, item, this.offset);
         let element = document.querySelector(selector);
         element.MaterialSlider.change(value);
+        element.setAttribute('data-source', item);
         element.onchange = this.onChangeHandler;
+    },
+
+    setTextfield: function (selector, item) {
+        let value = this.db.get(this.model_uuid, item, this.offset);
+        let element = document.querySelector(selector);
+        element.value = value;
+        element.setAttribute('data-source', item);
+        element.onblur = this.onChangeHandler;
     }
 };

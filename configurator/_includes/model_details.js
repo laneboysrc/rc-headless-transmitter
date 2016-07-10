@@ -3,33 +3,34 @@
 "use strict";
 
 var ModelDetails = {
-    'model_uuid': null,
-    'tx_uuid': null,
+    model_uuid: undefined,
+    tx_uuid: undefined,
 
-    populate: function () {
-        var name = ModelDatabase.get(this.model_uuid, 'NAME');
-        document.querySelector('#app__model_details__name').value = name;
+    db: ModelDatabase,
+    offset: 0,
+    setTextfield: MDLHelper.setTextfield,
+
+    onChangeHandler: function (event) {
+        console.log(event.target.getAttribute('data-source'));
     },
 
-    showMixer: function () {
-        location.hash = '#/mixer/' +  this.model_uuid + '/' + this.tx_uuid;;
-    },
+    init: function (params) {
+        this.model_uuid = params.model_uuid;
+        this.tx_uuid = params.tx_uuid;
 
-    showRFProtocol: function () {
-        location.hash = '#/rf_protocol/' +  this.model_uuid + '/' + this.tx_uuid;;
+        document.querySelector('#app-model_details-mixer').setAttribute(
+            'data-url', '#/mixer/' +  this.model_uuid + '/' + this.tx_uuid);
+        document.querySelector('#app-model_details-rf_protocol').setAttribute(
+            'data-url', '#/rf_protocol/' +  this.model_uuid + '/' + this.tx_uuid);
+
+        this.setTextfield('#app-model_details-name', 'NAME');
+        // var name = ModelDatabase.get(this.model_uuid, 'NAME');
+        // document.querySelector('#app-model_details-name').value = name;
     },
 
     route: function () {
-        // FIXME: error handling: uuids given; uuids exist in db
-        if (this.params.model_uuid) {
-            ModelDetails.model_uuid = this.params.model_uuid;
-            ModelDetails.tx_uuid = this.params.tx_uuid;
-            ModelDetails.populate();
-            showPage('model_details');
-        }
-        else {
-            location.hash = '#/';
-        }
+        ModelDetails.init(this.params);
+        showPage('model_details');
     }
 };
 

@@ -15,7 +15,7 @@ var Limits = {
     setSlider: MDLHelper.setSlider,
 
     onChangeHandler: function (event) {
-        console.log(event.target);
+        console.log(event.target.getAttribute('data-source'));
     },
 
     init: function (params) {

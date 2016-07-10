@@ -6,11 +6,17 @@ var Mixer = {
     model_uuid: null,
     tx_uuid: null,
 
-    populate: function () {
-        let unused = typeLookupByNumber(MODEL.MIXER_UNITS_SRC.t, 0);
+    db: ModelDatabase,
+    offset: 0,
+    setTextContent: MDLHelper.setTextContent,
+    setSwitch: MDLHelper.setSwitch,
 
+    init: function (params) {
+        this.model_uuid = params.model_uuid;
+        this.tx_uuid = params.tx_uuid;
+
+        let unused = typeLookupByNumber(MODEL.MIXER_UNITS_SRC.t, 0);
         let mixer_list = document.querySelector('#app-mixer-list');
-        let t = document.querySelector('#app-mixer-template');
 
         // Clear the app-mixer-list based on the class we've added when
         // instantiating the template
@@ -18,6 +24,8 @@ var Mixer = {
             let elem = mixer_list.querySelector('.can-delete');
             elem.parentNode.removeChild(elem);
         }
+
+        let t = document.querySelector('#app-mixer-template');
 
         for (let i = 0; i < MODEL.MIXER_UNITS.c; i++) {
             let offset = i * MODEL.MIXER_UNITS.s;
@@ -42,16 +50,8 @@ var Mixer = {
     },
 
     route: function () {
-        // FIXME: error handling: uuids given; uuids exist in db
-        if (this.params.model_uuid) {
-            Mixer.model_uuid = this.params.model_uuid;
-            Mixer.tx_uuid = this.params.tx_uuid;
-            Mixer.populate();
-            showPage('mixer');
-        }
-        else {
-            location.hash = '#/';
-        }
+        Mixer.init(this.params);
+        showPage('mixer');
     }
 };
 

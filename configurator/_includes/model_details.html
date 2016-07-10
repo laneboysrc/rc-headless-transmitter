@@ -30,8 +30,8 @@
         <div class="mdl-card__actions">
           <form>
             <div class="mdl-textfield mdl-js-textfield">
-              <input class="mdl-textfield__input" type="text" id="app__model_details__name" pattern="[A-Z,a-z,0-9 ]{1,16}" value="Model001">
-              <label class="mdl-textfield__label" for="app__model_details__name">Model name ...</label>
+              <input class="mdl-textfield__input" type="text" id="app-model_details-name" pattern="[A-Z,a-z,0-9 ]{1,16}" value="Model001">
+              <label class="mdl-textfield__label" for="app-model_details-name">Model name ...</label>
               <span class="mdl-textfield__error">1 to 10 letters, numbers and spaces only</span>
             </div>
           </form>
@@ -41,7 +41,7 @@
 
     <!-- Mixer name Card -->
     <section class="section--center mdl-grid">
-      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="ModelDetails.showMixer()">
+      <div id="app-model_details-mixer" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
         <div class="mdl-card__title">
           <h2 class="mdl-card__title-text">Mixer</h2>
         </div>
@@ -59,7 +59,7 @@
 
     <!-- RF protocol name Card -->
     <section class="section--center mdl-grid">
-      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="ModelDetails.showRFProtocol()">
+      <div id="app-model_details-rf_protocol" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
         <div class="mdl-card__title">
           <h2 class="mdl-card__title-text">RF protocol</h2>
         </div>

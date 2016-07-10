@@ -42,16 +42,6 @@ i.icon--largeicon--large {
   padding-right: 16px;
 }
 
-.background-image-yt {
-  background-image: url("images/laneboysrc-yt.jpg");
-  background-size: cover;
-}
-
-.background-image-blog {
-  background-image: url("images/laneboysrc-blog.jpg");
-  background-size: cover;
-}
-
 /* Make the table fill the card and hide the border */
 .mdl-card .mdl-data-table {
   width: 100%;

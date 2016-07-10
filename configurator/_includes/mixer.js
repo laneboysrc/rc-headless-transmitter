@@ -7,7 +7,7 @@ var Mixer = {
     tx_uuid: null,
 
     populate: function () {
-        let unused = typeLookupByNumber(MODEL.types[MODEL.MIXER_UNITS_SRC.t], 0);
+        let unused = typeLookupByNumber(MODEL.MIXER_UNITS_SRC.t, 0);
 
         let mixer_list = document.querySelector('#app-mixer-list');
         let t = document.querySelector('#app-mixer-template');

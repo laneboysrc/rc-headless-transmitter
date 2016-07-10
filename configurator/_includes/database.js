@@ -57,11 +57,15 @@ function isNumber(obj) {
 }
 
 
-function typeLookupByNumber(types, entry) {
-    for (let n in types) {
-        if (types.hasOwnProperty(n)) {
-            if (entry === types[n]) {
-                return n;
+function typeLookupByNumber(type_name, entry) {
+    let types = TYPES[type_name];
+
+    if (types) {
+        for (let n in types) {
+            if (types.hasOwnProperty(n)) {
+                if (entry === types[n]) {
+                    return n;
+                }
             }
         }
     }
@@ -180,7 +184,7 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
             break;
 
         default:
-            if (! (item.t in this.schema.types)) {
+            if (! (item.t in TYPES)) {
                 console.error('Database(): schema type "' + item.t
                     + '" for key "' + key + '" not defined');
                 return null;
@@ -190,7 +194,7 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
             result = []
             for (let n of bytes.entries()) {
                 let entry = n[1];
-                let element = typeLookupByNumber(this.schema.types[item.t], entry);
+                let element = typeLookupByNumber(item.t, entry);
                 if (element !== null) {
                     result.push(element);
                 }

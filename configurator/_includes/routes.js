@@ -6,18 +6,6 @@ var routes = {
     // path: name
     '#/': 'main',
     '#/about': 'about',
-    '#/edit_curve': 'edit_curve',
-    '#/edit_switch': 'edit_switch',
-    '#/limits': 'limits',
-    // '#/mixer': 'mixer',
-    '#/mixer_unit': 'mixer_unit',
-    // '#/model_details(/:model_uuid)(/:transmitter_uuid)': 'model_details',
-    '#/model_list': 'model_list',
-    '#/rf_protocol': 'rf_protocol',
-    '#/select_multiple': 'select_multiple',
-    '#/select_single': 'select_single',
-    '#/transmitter_details': 'transmitter_details',
-    '#/transmitter_list': 'transmitter_list',
 };
 
 function showPage(name) {
@@ -51,6 +39,7 @@ for (var path in routes) {
 // FIXME: this needs to be generalized
 Path.map('#/model_details/:model_uuid/:tx_uuid').to(ModelDetails.route);
 Path.map('#/mixer/:model_uuid/:tx_uuid').to(Mixer.route);
+Path.map('#/mixer_unit/:model_uuid/:tx_uuid/:index').to(MixerUnit.route);
 Path.map('#/limits/:model_uuid/:tx_uuid/:channel').to(Limits.route);
 Path.map('#/rf_protocol(/:model_uuid)(/:tx_uuid)').to(RFProtocol.route);
 

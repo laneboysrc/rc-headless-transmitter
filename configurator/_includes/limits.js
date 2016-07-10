@@ -3,49 +3,41 @@
 "use strict";
 
 var Limits = {
+    db: ModelDatabase,
     model_uuid: undefined,
     tx_uuid: undefined,
     channel: undefined,
+    channel_index: undefined,
+
+    setTextContent: MDLHelper.setTextContent,
+    setSwitch: MDLHelper.setSwitch,
+    setSlider: MDLHelper.setSlider,
 
     onChangeHandler: function (event) {
         console.log(event.target);
     },
 
-    populate: function () {
-        let channel_index = channel2index(this.channel);
-        let offset = MODEL.LIMITS.s * channel_index;
+    init: function (params) {
+        this.model_uuid = params.model_uuid;
+        this.tx_uuid = params.tx_uuid;
+        this.channel = params.channel;
 
-        function setSlider(selector, item) {
-            let value = ModelDatabase.get(Limits.model_uuid, item, offset);
-            let element = document.querySelector(selector);
-            element.MaterialSlider.change(value);
-            element.onchange = Limits.onChangeHandler;
-        }
+        this.channel_index = channel2index(this.channel);
+        this.offset = MODEL.LIMITS.s * this.channel_index;
 
-        function setSwitch(selector, item) {
-            let value = ModelDatabase.get(Limits.model_uuid, item, offset);
-            let element = document.querySelector(selector);
-            element.checked = value;
-            element.parentNode.MaterialSwitch.checkToggleState();
-            element.onchange = Limits.onChangeHandler;
-        }
+        this.setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');
+        this.setSlider('#app-limits-ep_l', 'LIMITS_EP_L');
+        this.setSlider('#app-limits-ep_h', 'LIMITS_EP_H');
+        this.setSlider('#app-limits-limit_l', 'LIMITS_LIMIT_L');
+        this.setSlider('#app-limits-limit_h', 'LIMITS_LIMIT_H');
+        this.setSlider('#app-limits-failsafe', 'LIMITS_FAILSAFE');
+        this.setSlider('#app-limits-speed', 'LIMITS_SPEED');
 
-        setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');
-        setSlider('#app-limits-ep_l', 'LIMITS_EP_L');
-        setSlider('#app-limits-ep_h', 'LIMITS_EP_H');
-        setSlider('#app-limits-limit_l', 'LIMITS_LIMIT_L');
-        setSlider('#app-limits-limit_h', 'LIMITS_LIMIT_H');
-        setSlider('#app-limits-failsafe', 'LIMITS_FAILSAFE');
-        setSlider('#app-limits-speed', 'LIMITS_SPEED');
-
-        setSwitch('#app-limits-invert', 'LIMITS_INVERT');
+        this.setSwitch('#app-limits-invert', 'LIMITS_INVERT');
     },
 
     route: function () {
-        Limits.model_uuid = this.params.model_uuid;
-        Limits.tx_uuid = this.params.tx_uuid;
-        Limits.channel = this.params.channel;
-        Limits.populate();
+        Limits.init(this.params);
         showPage('limits');
     }
 };

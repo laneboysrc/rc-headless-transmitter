@@ -1,0 +1,23 @@
+"use strict";
+
+var MDLHelper = {
+    setTextContent: function (selector, item) {
+        let value = this.db.get(this.model_uuid, item, this.offset);
+        document.querySelector(selector).textContent = value;
+    },
+
+    setSwitch: function (selector, item) {
+        let value = this.db.get(this.model_uuid, item, this.offset);
+        let element = document.querySelector(selector);
+        element.checked = value;
+        element.parentNode.MaterialSwitch.checkToggleState();
+        element.onchange = this.onChangeHandler;
+    },
+
+   setSlider: function (selector, item) {
+        let value = this.db.get(this.model_uuid, item, this.offset);
+        let element = document.querySelector(selector);
+        element.MaterialSlider.change(value);
+        element.onchange = this.onChangeHandler;
+    }
+};

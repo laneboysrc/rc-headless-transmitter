@@ -3,12 +3,12 @@
 "use strict";
 
 var MixerUnit = {
-    db: ModelDatabase,
     model_uuid: undefined,
     tx_uuid: undefined,
     index: undefined,
-    offset: 0,
 
+    db: ModelDatabase,
+    offset: 0,
     setTextContent: MDLHelper.setTextContent,
     setSwitch: MDLHelper.setSwitch,
 
@@ -24,10 +24,12 @@ var MixerUnit = {
         this.offset = MODEL.MIXER_UNITS.s * this.index;
 
         this.setTextContent('#app-mixer_unit-src', 'MIXER_UNITS_SRC')
+        this.setSwitch('#app-mixer_unit-invert_source', 'MIXER_UNITS_INVERT_SOURCE');
         this.setTextContent('#app-mixer_unit-dst', 'MIXER_UNITS_DST')
+        this.setTextContent('#app-mixer_unit-curve', 'MIXER_UNITS_CURVE_TYPE')
+        this.setTextContent('#app-mixer_unit-sw', 'MIXER_UNITS_SW_SW')
         this.setTextContent('#app-mixer_unit-op', 'MIXER_UNITS_OP')
         this.setSwitch('#app-mixer_unit-apply_trim', 'MIXER_UNITS_APPLY_TRIM');
-        this.setSwitch('#app-mixer_unit-invert_source', 'MIXER_UNITS_INVERT_SOURCE');
     },
 
     route: function () {

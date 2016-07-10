@@ -3,12 +3,13 @@
 "use strict";
 
 var Limits = {
-    db: ModelDatabase,
     model_uuid: undefined,
     tx_uuid: undefined,
     channel: undefined,
     channel_index: undefined,
 
+    db: ModelDatabase,
+    offset: 0,
     setTextContent: MDLHelper.setTextContent,
     setSwitch: MDLHelper.setSwitch,
     setSlider: MDLHelper.setSlider,

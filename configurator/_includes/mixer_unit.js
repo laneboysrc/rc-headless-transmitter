@@ -11,7 +11,11 @@ var MixerUnit = {
     setSwitch: MDLHelper.setSwitch,
 
     onChangeHandler: function (event) {
-        console.log(event.target.getAttribute('data-source'));
+        let element = event.target;
+        let item = element.getAttribute('data-source');
+        let value = element.checked ? 1 : 0;
+
+        Database.set(MixerUnit.uuid, item, value, MixerUnit.offset);
     },
 
     init: function (params) {

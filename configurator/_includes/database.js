@@ -259,8 +259,9 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
     return result;
 };
 
-DatabaseClass.prototype.set = function (uuid, key, index=null) {
-    // FIXME: not implemented yet
+DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) {
+    console.log('Database().set: uuid=' + uuid + ' key=' + key + ' value="'
+        + value + '" offset=' + offset + ' index=' + index);
 };
 
 DatabaseClass.prototype.list = function () {

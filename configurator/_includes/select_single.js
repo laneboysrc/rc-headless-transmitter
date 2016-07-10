@@ -8,6 +8,16 @@ var SelectSingle = {
 
     offset: 0,
 
+    accept_choice: function () {
+        let list = document.querySelector('#app-select_single-list');
+        let value = list.querySelector('input[type="radio"]:checked').value;
+        console.log('Selected: ' + value);
+
+        Database.set(SelectSingle.uuid, SelectSingle.item, value, SelectSingle.offset);
+        // FIXME: save new item here
+        history.go(-1);
+    },
+
     init: function (params) {
         this.uuid = params.uuid;
         this.item = params.item;
@@ -26,16 +36,14 @@ var SelectSingle = {
         let type = Database.getType(this.uuid, this.item);
         let choices = Object.keys(TYPES[type]);
 
-        console.log(this.uuid, this.item, this.offset);
         let current_choice = Database.get(this.uuid, this.item, this.offset);
-        console.log(current_choice);
-
 
         for (let i = 0; i < choices.length; i++) {
             let entry = choices[i];
 
             t.content.querySelector('span').textContent = entry;
             t.content.querySelector('input').id = 'app-select_single__item' + i;
+            t.content.querySelector('input').value = entry;
             t.content.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
 
             let clone = document.importNode(t.content, true);

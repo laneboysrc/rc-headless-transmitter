@@ -10,7 +10,11 @@ var ModelDetails = {
     setTextfield: MDLHelper.setTextfield,
 
     onChangeHandler: function (event) {
-        console.log(event.target.getAttribute('data-source'));
+        let element = event.target;
+        let item = element.getAttribute('data-source');
+        let value = element.value;
+
+        Database.set(ModelDetails.uuid, item, value, ModelDetails.offset);
     },
 
     init: function (params) {

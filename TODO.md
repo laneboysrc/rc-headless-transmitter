@@ -19,6 +19,6 @@
 
 - Fix `OUTPUT_CHANNEL_TAG_OFFSET` appearing in select_single
 
-- Add Fab button to confirm selection on select_single
+- Fix Fab button position on select_single
 
 - We need to limit destination channels, so we have to use something else than label_t

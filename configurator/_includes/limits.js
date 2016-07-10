@@ -14,7 +14,18 @@ var Limits = {
     setSlider: MDLHelper.setSlider,
 
     onChangeHandler: function (event) {
-        console.log(event.target.getAttribute('data-source'));
+        let element = event.target;
+        let item = element.getAttribute('data-source');
+        let value;
+
+        if (element.type === 'checkbox') {
+            value = element.checked ? 1 : 0;
+        }
+        else {
+            value = element.value;
+        }
+
+        Database.set(Limits.uuid, item, value, Limits.offset);
     },
 
     init: function (params) {

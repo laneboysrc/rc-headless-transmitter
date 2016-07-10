@@ -230,7 +230,7 @@ static void dump_javascript_5(void) {
     printf("    LIMITS_EP_L: {o: %u, s: %u, c: 1, t: 'i'},\n",
         offsetof(config_t, model.limits[0].ep_l) - o,
         membersizeof(config_t, model.limits[0].ep_l));
-    printf("    LIMITS_EP_R: {o: %u, s: %u, c: 1, t: 'i'},\n",
+    printf("    LIMITS_EP_H: {o: %u, s: %u, c: 1, t: 'i'},\n",
         offsetof(config_t, model.limits[0].ep_h) - o,
         membersizeof(config_t, model.limits[0].ep_h));
     printf("    LIMITS_SUBTRIM: {o: %u, s: %u, c: 1, t: 'i'},\n",

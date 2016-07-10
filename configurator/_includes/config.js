@@ -55,7 +55,7 @@ var MODEL = {
     MIXER_UNITS_APPLY_TRIM: {o: 57, s: 1, c: 1, t: 'u'},
     LIMITS: {o: 2632, s: 28, c: 8, t: 's'},
     LIMITS_EP_L: {o: 2632, s: 4, c: 1, t: 'i'},
-    LIMITS_EP_R: {o: 2636, s: 4, c: 1, t: 'i'},
+    LIMITS_EP_H: {o: 2636, s: 4, c: 1, t: 'i'},
     LIMITS_SUBTRIM: {o: 2640, s: 4, c: 1, t: 'i'},
     LIMITS_LIMIT_L: {o: 2644, s: 4, c: 1, t: 'i'},
     LIMITS_LIMIT_H: {o: 2648, s: 4, c: 1, t: 'i'},

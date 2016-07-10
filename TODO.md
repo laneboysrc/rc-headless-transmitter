@@ -14,3 +14,11 @@
 - Host MDL an fonts locally for better speed
 - Offline mode
 
+- Add timestamp to model and tx configuration
+- Add config version to schema
+
+- Fix `OUTPUT_CHANNEL_TAG_OFFSET` appearing in select_single
+
+- Add Fab button to confirm selection on select_single
+
+- We need to limit destination channels, so we have to use something else than label_t

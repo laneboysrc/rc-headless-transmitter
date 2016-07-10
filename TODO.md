@@ -14,3 +14,4 @@
 - Host MDL an fonts locally for better speed
 - Offline mode
 
+- ABOUT: use <div class="mdl-card__media"> for images!

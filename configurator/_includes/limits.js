@@ -25,6 +25,7 @@ var Limits = {
         this.channel_index = channel2index(this.channel);
         this.offset = MODEL.LIMITS.s * this.channel_index;
 
+        document.querySelector('#app-limits-channel').textContent = this.channel;
         this.setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');
         this.setSlider('#app-limits-ep_l', 'LIMITS_EP_L');
         this.setSlider('#app-limits-ep_h', 'LIMITS_EP_H');

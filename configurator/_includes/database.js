@@ -70,7 +70,39 @@ function typeLookupByNumber(type_name, entry) {
         }
     }
 
-    return null;
+    return undefined;
+}
+
+
+// Convert a given channel name (like 'CH1') to the index that matches the
+// appropriate limits array element.
+function channel2index(channel_name) {
+    let labels = TYPES.label_t;
+
+    if (! (channel_name in labels)) {
+        console.error('channel2index(): label_t does not contain channel "'
+            + channel_name + '"');
+        return undefined;
+    }
+
+    let label_number = labels[channel_name];
+
+    // The output channel labels must be in sequence by design. The number of
+    // output channels can be retrieved by looking at the number of *limits*
+    // entries present. We can therefore calculate the tag number of the
+    // last output channel as such, which we use to chekc whether the given
+    // channel name is indeed an output channel and not just any of the other
+    // labels.
+    let first = labels.OUTPUT_CHANNEL_TAG_OFFSET;
+    let last = first + MODEL.LIMITS.c - 1;
+
+    if (label_number < first  || label_number > last) {
+        console.error('channel2index(): "' + channel_name +
+            '" is not a valid output channel name (e.g. CH1)');
+        return undefined;
+    }
+
+    return label_number - first;
 }
 
 
@@ -94,12 +126,12 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
 
     if (! (uuid in this.data)) {
         console.log('Database(): uuid "' + uuid + '" not present.');
-        return null;
+        return undefined;
     }
 
     if (! (key && key in this.schema)) {
         console.log('Database(): key "' + key + '" not in schema.');
-        return null;
+        return undefined;
     }
 
     var data = this.data[uuid];
@@ -109,7 +141,7 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
         if (! isNumber(index)) {
             console.error('Database(): Requested index "' + index
                 + '" is not an Integer');
-            return null;
+            return undefined;
         }
 
         // In case the index is a float we convert it to an integer
@@ -119,7 +151,7 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
             console.error('Database(): Requested index "' + index
                 + '" for key "' + key + '" but item contains only '
                 + item.c + ' elements');
-            return null;
+            return undefined;
         }
     }
 
@@ -143,7 +175,7 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
                 default:
                     console.error('Database(): "unsigned" schema size not '
                         + '1, 2 or 4 for key "' + key + '"');
-                    return null;
+                    return undefined;
             }
             break;
 
@@ -164,7 +196,7 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
                 default:
                     console.error('Database(): "signed int" schema size not '
                         + '1, 2 or 4 for key "' + key + '"');
-                    return null;
+                    return undefined;
             }
             break;
 
@@ -183,11 +215,15 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
             }
             break;
 
+        case 'uuid':
+            bytes = new Uint8Array(data.buffer, item_offset, item.c);
+            return uuid2string(bytes);
+
         default:
             if (! (item.t in TYPES)) {
                 console.error('Database(): schema type "' + item.t
                     + '" for key "' + key + '" not defined');
-                return null;
+                return undefined;
             }
 
             bytes = new Uint8Array(data.buffer, item_offset, item.c);
@@ -195,7 +231,7 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
             for (let n of bytes.entries()) {
                 let entry = n[1];
                 let element = typeLookupByNumber(item.t, entry);
-                if (element !== null) {
+                if (element) {
                     result.push(element);
                 }
                 else {

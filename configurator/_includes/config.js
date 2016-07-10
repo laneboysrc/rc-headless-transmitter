@@ -1,7 +1,3 @@
-/*jslint browser: true */
-/*global  */
-"use strict";
-
 var CONFIG = {
     o: 0, s: 4604, c: 1, t: 's',
     VERSION: {o: 0, s: 4, c: 1, t: 'u'},
@@ -11,7 +7,7 @@ var CONFIG = {
 
 var TX = {
     o: 0, s: 1716, c: 1, t: 's',
-    UUID: {o: 0, s: 1, c: 16, t: 'u'},
+    UUID: {o: 0, s: 1, c: 16, t: 'uuid'},
     NAME: {o: 16, s: 1, c: 16, t: 'c'},
     HARDWARE_INPUTS: {o: 32, s: 32, c: 32, t: 's'},
     HARDWARE_INPUTS_PCB_INPUT: {o: 32, s: 24, c: 1, t: 's'},
@@ -38,7 +34,7 @@ var TX = {
 
 var MODEL = {
     o: 0, s: 2884, c: 1, t: 's',
-    UUID: {o: 0, s: 1, c: 16, t: 'u'},
+    UUID: {o: 0, s: 1, c: 16, t: 'uuid'},
     NAME: {o: 16, s: 1, c: 16, t: 'c'},
     MIXER_UNITS: {o: 32, s: 26, c: 100, t: 's'},
     MIXER_UNITS_CURVE: {o: 32, s: 15, c: 1, t: 's'},
@@ -160,6 +156,7 @@ var TYPES = {
         VIRTUAL8: 53,
         VIRTUAL9: 54,
         VIRTUAL10: 55,
+        OUTPUT_CHANNEL_TAG_OFFSET: 38,
     },
     rf_protocol_type_t: {
         RF_PROTOCOL_HK310: 0,

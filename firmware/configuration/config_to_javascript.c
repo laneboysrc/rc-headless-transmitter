@@ -54,7 +54,7 @@ void CONFIG_dump_javascript_information(void)
 
     printf("var TX = {\n");
     printf("    o: 0, s: %u, c: 1, t: 's',\n", membersizeof(config_t, tx));
-    printf("    UUID: {o: %u, s: 1, c: %u, t: 'u'},\n",
+    printf("    UUID: {o: %u, s: 1, c: %u, t: 'uuid'},\n",
         offsetof(config_t, tx.uuid) - o,
         membersizeof(config_t, tx.uuid));
     printf("    NAME: {o: %u, s: 1, c: %u, t: 'c'},\n",
@@ -152,7 +152,7 @@ static void dump_javascript_3(void) {
 
     printf("var MODEL = {\n");
     printf("    o: 0, s: %u, c: 1, t: 's',\n", membersizeof(config_t, model));
-    printf("    UUID: {o: %u, s: 1, c: %u, t: 'u'},\n",
+    printf("    UUID: {o: %u, s: 1, c: %u, t: 'uuid'},\n",
         offsetof(config_t, model.uuid) - o,
         membersizeof(config_t, model.uuid));
     printf("    NAME: {o: %u, s: 1, c: %u, t: 'c'},\n",
@@ -366,6 +366,7 @@ static void dump_javascript_8(void) {
     printf("        VIRTUAL8: %d,\n", VIRTUAL8);
     printf("        VIRTUAL9: %d,\n", VIRTUAL9);
     printf("        VIRTUAL10: %d,\n", VIRTUAL10);
+    printf("        OUTPUT_CHANNEL_TAG_OFFSET: %d,\n", OUTPUT_CHANNEL_TAG_OFFSET);
     printf("    },\n");
     SYSTICK_set_callback(dump_javascript_9, 200);
 }

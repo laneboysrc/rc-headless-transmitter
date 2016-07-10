@@ -4,10 +4,8 @@
 
 var Main = {
     'connect': function () {
-        var dev = new Device();
-        dev.useDummyDevice();
-        var model_uuid = dev.model.uuid;
-        var tx_uuid = dev.tx.uuid;
+        let model_uuid = ModelDatabase.get(ModelDatabase.list(), 'UUID');
+        let tx_uuid = TransmitterDatabase.get(TransmitterDatabase.list(), 'UUID');
 
         location.hash = '#/model_details/' + model_uuid + '/' + tx_uuid;
     }

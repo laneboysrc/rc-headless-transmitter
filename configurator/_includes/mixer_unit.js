@@ -3,11 +3,10 @@
 "use strict";
 
 var MixerUnit = {
-    model_uuid: undefined,
+    uuid: undefined,
     tx_uuid: undefined,
     index: undefined,
 
-    db: ModelDatabase,
     offset: 0,
     setTextContent: MDLHelper.setTextContent,
     setSwitch: MDLHelper.setSwitch,
@@ -17,7 +16,7 @@ var MixerUnit = {
     },
 
     init: function (params) {
-        this.model_uuid = params.model_uuid;
+        this.uuid = params.model_uuid;
         this.tx_uuid = params.tx_uuid;
         this.index = params.index;
 

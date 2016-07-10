@@ -2,12 +2,12 @@
 
 var MDLHelper = {
     setTextContent: function (selector, item) {
-        let value = this.db.get(this.model_uuid, item, this.offset);
+        let value = Database.get(this.uuid, item, this.offset);
         document.querySelector(selector).textContent = value;
     },
 
     setSwitch: function (selector, item) {
-        let value = this.db.get(this.model_uuid, item, this.offset);
+        let value = Database.get(this.uuid, item, this.offset);
         let element = document.querySelector(selector);
         element.checked = value;
         element.parentNode.MaterialSwitch.checkToggleState();
@@ -16,7 +16,7 @@ var MDLHelper = {
     },
 
    setSlider: function (selector, item) {
-        let value = this.db.get(this.model_uuid, item, this.offset);
+        let value = Database.get(this.uuid, item, this.offset);
         let element = document.querySelector(selector);
         element.MaterialSlider.change(value);
         element.setAttribute('data-source', item);
@@ -24,7 +24,7 @@ var MDLHelper = {
     },
 
     setTextfield: function (selector, item) {
-        let value = this.db.get(this.model_uuid, item, this.offset);
+        let value = Database.get(this.uuid, item, this.offset);
         let element = document.querySelector(selector);
         element.value = value;
         element.setAttribute('data-source', item);

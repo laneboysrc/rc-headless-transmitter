@@ -3,12 +3,11 @@
 "use strict";
 
 var Limits = {
-    model_uuid: undefined,
+    uuid: undefined,
     tx_uuid: undefined,
     channel: undefined,
     channel_index: undefined,
 
-    db: ModelDatabase,
     offset: 0,
     setTextContent: MDLHelper.setTextContent,
     setSwitch: MDLHelper.setSwitch,
@@ -19,7 +18,7 @@ var Limits = {
     },
 
     init: function (params) {
-        this.model_uuid = params.model_uuid;
+        this.uuid = params.model_uuid;
         this.tx_uuid = params.tx_uuid;
         this.channel = params.channel;
 

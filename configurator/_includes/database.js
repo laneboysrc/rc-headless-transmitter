@@ -106,21 +106,23 @@ function channel2index(channel_name) {
 }
 
 
-var Database = function (schema) {
-    this.schema = schema;
+var DatabaseClass = function () {
     this.data = {};
 };
 
-Database.prototype.add = function (data) {
-    var uuid_bytes = new Uint8Array(data, this.schema['UUID'].o, this.schema['UUID'].s);
+DatabaseClass.prototype.add = function (data, schema) {
+    var uuid_bytes = new Uint8Array(data, schema['UUID'].o, schema['UUID'].s);
     var uuid = uuid2string(uuid_bytes);
 
     console.log('Database(): New entry with UUID=' + uuid);
 
-    this.data[uuid] = data;
+    this.data[uuid] = {
+        data: data,
+        schema: schema
+    };
 };
 
-Database.prototype.get = function (uuid, key, offset=0, index=null) {
+DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
     var result;
     var bytes;
 
@@ -129,13 +131,16 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
         return undefined;
     }
 
-    if (! (key && key in this.schema)) {
+    var entry = this.data[uuid];
+    var schema = entry.schema;
+
+    if (! (key && key in schema)) {
         console.log('Database(): key "' + key + '" not in schema.');
         return undefined;
     }
 
-    var data = this.data[uuid];
-    var item = this.schema[key];
+    var data = entry.data;
+    var item = schema[key];
 
     if (index !== null) {
         if (! isNumber(index)) {
@@ -254,40 +259,73 @@ Database.prototype.get = function (uuid, key, offset=0, index=null) {
     return result;
 };
 
-Database.prototype.set = function (uuid, key, index=null) {
+DatabaseClass.prototype.set = function (uuid, key, index=null) {
     // FIXME: not implemented yet
 };
 
-Database.prototype.list = function () {
+DatabaseClass.prototype.list = function () {
     return  Object.keys(this.data);
-}
+};
+
+DatabaseClass.prototype.getSchema = function (uuid) {
+    if (! (uuid in this.data)) {
+        console.log('Database(): uuid "' + uuid + '" not present.');
+        return undefined;
+    }
+
+    return this.data[uuid].schema;
+};
 
 
-var ModelDatabase = new Database(MODEL);
-var TransmitterDatabase = new Database(TX);
+var Database = new DatabaseClass();
 
-ModelDatabase.add(TEST_CONFIG_DATA.slice(CONFIG.MODEL.o, CONFIG.MODEL.o + CONFIG.MODEL.s));
-TransmitterDatabase.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s));
 
-var mdbl = ModelDatabase.list();
-var tdbl = TransmitterDatabase.list()
+Database.add(TEST_CONFIG_DATA.slice(CONFIG.MODEL.o, CONFIG.MODEL.o + CONFIG.MODEL.s), MODEL);
+Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX);
 
-// console.log(ModelDatabase.get(mdbl[0], 'NAME'));
-// console.log(TransmitterDatabase.get(tdbl[0], 'NAME'));
-// console.log(uuid2string(TransmitterDatabase.get(tdbl[0], 'UUID')));
 
-// console.log(TransmitterDatabase.get(tdbl[0], 'BIND_TIMEOUT_MS'));
+// ****************************************************************************
+// Database tests
 
-// console.log(ModelDatabase.get(mdbl[0], 'RF_PROTOCOL_HK310_ADDRESS'));
-// console.log(ModelDatabase.get(mdbl[0], 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
+// let dbl = Database.list();
+// console.log(dbl);
 
-// console.log(TransmitterDatabase.get(tdbl[0], 'BIND_TIMEOUT_MS'));
+// let model_uuid = undefined;
+// let tx_uuid = undefined;
 
-// console.log(TransmitterDatabase.get(tdbl[0], 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
-// console.log(TransmitterDatabase.get(tdbl[0], 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
+// for (let entry in dbl) {
+//     let uuid = dbl[entry];
+//     if (Database.getSchema(uuid) === MODEL) {
+//         model_uuid = uuid;
+//     }
+//     else if (Database.getSchema(uuid) === TX) {
+//         tx_uuid = uuid;
+//     }
 
-// console.log(ModelDatabase.get(mdbl[0], 'MIXER_UNITS_CURVE_TYPE'));
-// console.log(TransmitterDatabase.get(tdbl[0], 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
+//     if (model_uuid && tx_uuid) {
+//         break;
+//     }
+// }
+
+
+// console.log('MODEL=' + model_uuid + ' TX=' + tx_uuid);
+
+// console.log(Database.get(model_uuid, 'NAME'));
+// console.log(Database.get(tx_uuid, 'NAME'));
+// console.log(uuid2string(Database.get(tx_uuid, 'UUID')));
+
+// console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
+
+// console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS'));
+// console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
+
+// console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
+
+// console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
+// console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
+
+// console.log(Database.get(model_uuid, 'MIXER_UNITS_CURVE_TYPE'));
+// console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
 
 
 

@@ -3,10 +3,9 @@
 "use strict";
 
 var ModelDetails = {
-    model_uuid: undefined,
+    uuid: undefined,
     tx_uuid: undefined,
 
-    db: ModelDatabase,
     offset: 0,
     setTextfield: MDLHelper.setTextfield,
 
@@ -15,17 +14,15 @@ var ModelDetails = {
     },
 
     init: function (params) {
-        this.model_uuid = params.model_uuid;
+        this.uuid = params.model_uuid;
         this.tx_uuid = params.tx_uuid;
 
         document.querySelector('#app-model_details-mixer').setAttribute(
-            'data-url', '#/mixer/' +  this.model_uuid + '/' + this.tx_uuid);
+            'data-url', '#/mixer/' +  this.uuid + '/' + this.tx_uuid);
         document.querySelector('#app-model_details-rf_protocol').setAttribute(
-            'data-url', '#/rf_protocol/' +  this.model_uuid + '/' + this.tx_uuid);
+            'data-url', '#/rf_protocol/' +  this.uuid + '/' + this.tx_uuid);
 
         this.setTextfield('#app-model_details-name', 'NAME');
-        // var name = ModelDatabase.get(this.model_uuid, 'NAME');
-        // document.querySelector('#app-model_details-name').value = name;
     },
 
     route: function () {

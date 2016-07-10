@@ -3,18 +3,17 @@
 "use strict";
 
 var RFProtocol = {
-    model_uuid: undefined,
+    uuid: undefined,
     tx_uuid: undefined,
 
-    db: ModelDatabase,
     offset: 0,
 
     init: function (params) {
-        this.model_uuid = params.model_uuid;
+        this.uuid = params.model_uuid;
         this.tx_uuid = params.tx_uuid;
 
-        var address = ModelDatabase.get(this.model_uuid, 'RF_PROTOCOL_HK310_ADDRESS');
-        var hop_channels = ModelDatabase.get(this.model_uuid, 'RF_PROTOCOL_HK310_HOP_CHANNELS');
+        var address = Database.get(this.uuid, 'RF_PROTOCOL_HK310_ADDRESS');
+        var hop_channels = Database.get(this.uuid, 'RF_PROTOCOL_HK310_HOP_CHANNELS');
         var value = '';
 
         value += byte2string(address[0]) + ':';

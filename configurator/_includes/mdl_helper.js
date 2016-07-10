@@ -29,5 +29,11 @@ var MDLHelper = {
         element.value = value;
         element.setAttribute('data-source', item);
         element.onblur = this.onChangeHandler;
+    },
+
+    setDataURL: function (selector, list) {
+        let element = document.querySelector(selector);
+        let url = '#/' + list.join('/');
+        element.setAttribute('data-url', url);
     }
 };

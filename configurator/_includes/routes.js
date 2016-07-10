@@ -20,6 +20,7 @@ var routes = {
     '#/mixer_unit/:model_uuid/:index': MixerUnit.route,
     '#/limits/:model_uuid/:channel': Limits.route,
     '#/rf_protocol/:model_uuid': RFProtocol.route,
+    '#/select_single/:uuid/:item/:offset': SelectSingle.route,
 };
 
 for (var path in routes) {

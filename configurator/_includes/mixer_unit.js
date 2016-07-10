@@ -26,6 +26,13 @@ var MixerUnit = {
         this.setTextContent('#app-mixer_unit-sw', 'MIXER_UNITS_SW_SW')
         this.setTextContent('#app-mixer_unit-op', 'MIXER_UNITS_OP')
         this.setSwitch('#app-mixer_unit-apply_trim', 'MIXER_UNITS_APPLY_TRIM');
+
+        MDLHelper.setDataURL('#app-mixer_unit-src__edit',
+            ['select_single', this.uuid, 'MIXER_UNITS_SRC', this.offset]);
+        MDLHelper.setDataURL('#app-mixer_unit-dst__edit',
+            ['select_single', this.uuid, 'MIXER_UNITS_DST', this.offset]);
+        MDLHelper.setDataURL('#app-mixer_unit-op__edit',
+            ['select_single', this.uuid, 'MIXER_UNITS_OP', this.offset]);
     },
 
     route: function () {

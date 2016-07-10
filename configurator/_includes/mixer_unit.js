@@ -4,7 +4,6 @@
 
 var MixerUnit = {
     uuid: undefined,
-    tx_uuid: undefined,
     index: undefined,
 
     offset: 0,
@@ -17,7 +16,6 @@ var MixerUnit = {
 
     init: function (params) {
         this.uuid = params.model_uuid;
-        this.tx_uuid = params.tx_uuid;
         this.index = params.index;
 
         this.offset = MODEL.MIXER_UNITS.s * this.index;

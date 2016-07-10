@@ -4,7 +4,6 @@
 
 var Mixer = {
     uuid: null,
-    tx_uuid: null,
 
     offset: 0,
     setTextContent: MDLHelper.setTextContent,
@@ -12,7 +11,6 @@ var Mixer = {
 
     init: function (params) {
         this.uuid = params.model_uuid;
-        this.tx_uuid = params.tx_uuid;
 
         let unused = typeLookupByNumber(MODEL.MIXER_UNITS_SRC.t, 0);
         let mixer_list = document.querySelector('#app-mixer-list');
@@ -40,9 +38,9 @@ var Mixer = {
             t.content.querySelector('tr').classList.add('can-delete');
             t.content.querySelector('#app-mixer-template-src').textContent = src;
             t.content.querySelector('#app-mixer-template-mixer_unit').textContent = curve_type + ' ' + op;
-            t.content.querySelector('#app-mixer-template-mixer_unit').setAttribute('data-url', '#/mixer_unit/' + this.uuid + '/' + this.tx_uuid + '/' + i);
+            t.content.querySelector('#app-mixer-template-mixer_unit').setAttribute('data-url', '#/mixer_unit/' + this.uuid + '/' + i);
             t.content.querySelector('#app-mixer-template-dst').textContent = dst;
-            t.content.querySelector('#app-mixer-template-dst').setAttribute('data-url', '#/limits/' + this.uuid + '/' + this.tx_uuid + '/' + dst);
+            t.content.querySelector('#app-mixer-template-dst').setAttribute('data-url', '#/limits/' + this.uuid + '/' + dst);
             let clone = document.importNode(t.content, true);
             mixer_list.appendChild(clone);
         }

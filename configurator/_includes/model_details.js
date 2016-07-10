@@ -17,12 +17,15 @@ var ModelDetails = {
         this.uuid = params.model_uuid;
         this.tx_uuid = params.tx_uuid;
 
-        document.querySelector('#app-model_details-mixer').setAttribute(
-            'data-url', '#/mixer/' +  this.uuid + '/' + this.tx_uuid);
-        document.querySelector('#app-model_details-rf_protocol').setAttribute(
-            'data-url', '#/rf_protocol/' +  this.uuid + '/' + this.tx_uuid);
-
         this.setTextfield('#app-model_details-name', 'NAME');
+
+        document.querySelector('#app-model_details-mixer').setAttribute(
+            'data-url', '#/mixer/' +  this.uuid);
+        document.querySelector('#app-model_details-rf_protocol').setAttribute(
+            'data-url', '#/rf_protocol/' +  this.uuid );
+
+        // FIXME: show/hide the menu depending on whether tx_uuid is undefined
+
     },
 
     route: function () {

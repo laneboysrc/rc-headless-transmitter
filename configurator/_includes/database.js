@@ -264,7 +264,7 @@ DatabaseClass.prototype.set = function (uuid, key, index=null) {
 };
 
 DatabaseClass.prototype.list = function () {
-    return  Object.keys(this.data);
+    return Object.keys(this.data);
 };
 
 DatabaseClass.prototype.getSchema = function (uuid) {
@@ -275,6 +275,22 @@ DatabaseClass.prototype.getSchema = function (uuid) {
 
     return this.data[uuid].schema;
 };
+
+DatabaseClass.prototype.getType = function (uuid, item) {
+    let schema = this.getSchema(uuid);
+    let type = undefined;
+
+    if (schema) {
+        if (! (item in schema)) {
+            console.log('Database(): uuid "' + uuid
+                + '" schema does not contain "' + item + '"');
+            return undefined;
+        }
+        return schema[item].t;
+    }
+    return type;
+}
+
 
 
 var Database = new DatabaseClass();

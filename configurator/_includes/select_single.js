@@ -13,6 +13,12 @@ var SelectSingle = {
         this.item = params.item;
         this.offset = params.offset;
 
+        let t = document.querySelector('#app-select_single-template');
+        let type = Database.getType(this.uuid, this.item);
+        console.log(type);
+        let choices = Object.keys(TYPES[type]);
+        console.log(choices);
+
 
 
     },

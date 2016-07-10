@@ -5,7 +5,7 @@
         <i class="material-icons">arrow_back</i>
       </a>
       <div class="mdl-layout-spacer"></div>
-      <span class="mdl-layout-title">Select single</span>
+      <span class="mdl-layout-title">Pick an item</span>
       <div class="mdl-layout-spacer"></div>
     </div>
   </header>
@@ -22,18 +22,14 @@
           Item description.
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="item1">
-            <input checked class="mdl-radio__button" id="item1" name="selection" type="radio" value="on">
-            <span class="mdl-radio__label">ST</span>
+
+          <template id="app-select_single-template">
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="">
+            <input type="radio" id="" class="mdl-radio__button" name="selection" >
+            <span class="mdl-radio__label"></span>
           </label>
-          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="item2">
-            <input checked class="mdl-radio__button" id="item2" name="selection" type="radio">
-            <span class="mdl-radio__label">TH</span>
-          </label>
-          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="item3">
-            <input checked class="mdl-radio__button" id="item3" name="selection" type="radio">
-            <span class="mdl-radio__label">AIL</span>
-          </label>
+          </template>
+
         </div>
       </div>
     </section>

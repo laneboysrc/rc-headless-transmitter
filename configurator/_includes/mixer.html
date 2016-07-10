@@ -29,14 +29,14 @@
             <tr>
               <td id="app-mixer-template-src" class="mdl-data-table__cell--non-numeric"></td>
               <td class="mdl-data-table__cell--non-numeric">
-                <a id="app-mixer-template-mixer_unit" class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/mixer_unit"></a>
+                <button id="app-mixer-template-mixer_unit" class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="location.hash = this.getAttribute('data-url')"></button>
               </td>
-              </span>
               <td class="mdl-data-table__cell--non-numeric">
-                <a id="app-mixer-template-dst" class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" href="#/limits"></a>
+                <button id="app-mixer-template-dst" class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="location.hash = this.getAttribute('data-url')"></button>
               </td>
             </tr>
             </template>
+
           </tbody>
           </table>
         </div>

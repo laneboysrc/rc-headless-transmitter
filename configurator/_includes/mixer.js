@@ -32,8 +32,10 @@ var Mixer = {
 
             t.content.querySelector('tr').classList.add('can-delete');
             t.content.querySelector('#app-mixer-template-src').textContent = src;
-            t.content.querySelector('#app-mixer-template-dst').textContent = dst;
             t.content.querySelector('#app-mixer-template-mixer_unit').textContent = curve_type + ' ' + op;
+            t.content.querySelector('#app-mixer-template-mixer_unit').setAttribute('data-url', '#/mixer_unit/' + this.model_uuid + '/' + this.tx_uuid + '/' + i);
+            t.content.querySelector('#app-mixer-template-dst').textContent = dst;
+            t.content.querySelector('#app-mixer-template-dst').setAttribute('data-url', '#/limits/' + this.model_uuid + '/' + this.tx_uuid + '/' + dst);
             let clone = document.importNode(t.content, true);
             mixer_list.appendChild(clone);
         }

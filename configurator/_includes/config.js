@@ -44,7 +44,7 @@ var MODEL = {
     MIXER_UNITS_SRC: {o: 47, s: 1, c: 1, t: 'label_t'},
     MIXER_UNITS_DST: {o: 48, s: 1, c: 1, t: 'label_t'},
     MIXER_UNITS_SW: {o: 49, s: 3, c: 1, t: 's'},
-    MIXER_UNITS_SW_SW: {o: 49, s: 1, c: 1, t: 'u'},
+    MIXER_UNITS_SW_SW: {o: 49, s: 1, c: 1, t: 'label_t'},
     MIXER_UNITS_SW_CMP: {o: 50, s: 1, c: 1, t: 'comparison_t'},
     MIXER_UNITS_SW_VALUE: {o: 51, s: 1, c: 1, t: 'u'},
     MIXER_UNITS_OP: {o: 52, s: 1, c: 1, t: 'operation_type_t'},

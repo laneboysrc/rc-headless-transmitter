@@ -190,7 +190,7 @@ static void dump_javascript_4(void) {
     printf("    MIXER_UNITS_SW: {o: %u, s: %u, c: 1, t: 's'},\n",
         offsetof(config_t, model.mixer_units[0].sw) - o,
         membersizeof(config_t, model.mixer_units[0].sw));
-    printf("    MIXER_UNITS_SW_SW: {o: %u, s: %u, c: 1, t: 'u'},\n",
+    printf("    MIXER_UNITS_SW_SW: {o: %u, s: %u, c: 1, t: 'label_t'},\n",
         offsetof(config_t, model.mixer_units[0].sw.sw) - o,
         membersizeof(config_t, model.mixer_units[0].sw.sw));
     printf("    MIXER_UNITS_SW_CMP: {o: %u, s: %u, c: 1, t: 'comparison_t'},\n",

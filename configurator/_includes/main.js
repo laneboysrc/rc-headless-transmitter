@@ -4,23 +4,8 @@
 
 var Main = {
     'connect': function () {
-        let dbl = Database.list();
-        let model_uuid = undefined;
-        let tx_uuid = undefined;
-
-        for (let entry in dbl) {
-            let uuid = dbl[entry];
-            if (Database.getSchema(uuid) === MODEL) {
-                model_uuid = uuid;
-            }
-            else if (Database.getSchema(uuid) === TX) {
-                tx_uuid = uuid;
-            }
-
-            if (model_uuid && tx_uuid) {
-                break;
-            }
-        }
+        let model_uuid = Database.list(MODEL)[0]
+        let tx_uuid = Database.list(TX)[0]
 
         location.hash = '#/model_details/' + model_uuid + '/' + tx_uuid;
     }

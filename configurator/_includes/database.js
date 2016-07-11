@@ -264,7 +264,18 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         + value + '" offset=' + offset + ' index=' + index);
 };
 
-DatabaseClass.prototype.list = function () {
+DatabaseClass.prototype.list = function (schema=null) {
+    if (schema) {
+        let result = [];
+        for (let uuid in this.data) {
+            if (this.data[uuid].schema === schema) {
+                result.push(uuid);
+            }
+        }
+
+        return result;
+    }
+
     return Object.keys(this.data);
 };
 
@@ -296,7 +307,7 @@ DatabaseClass.prototype.getType = function (uuid, item) {
 
 var Database = new DatabaseClass();
 
-
+// Add a test model and transmitter to the database
 Database.add(TEST_CONFIG_DATA.slice(CONFIG.MODEL.o, CONFIG.MODEL.o + CONFIG.MODEL.s), MODEL);
 Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX);
 
@@ -304,26 +315,9 @@ Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX)
 // ****************************************************************************
 // Database tests
 
-// let dbl = Database.list();
-// console.log(dbl);
 
-// let model_uuid = undefined;
-// let tx_uuid = undefined;
-
-// for (let entry in dbl) {
-//     let uuid = dbl[entry];
-//     if (Database.getSchema(uuid) === MODEL) {
-//         model_uuid = uuid;
-//     }
-//     else if (Database.getSchema(uuid) === TX) {
-//         tx_uuid = uuid;
-//     }
-
-//     if (model_uuid && tx_uuid) {
-//         break;
-//     }
-// }
-
+// let model_uuid = Database.list(MODEL)[0];
+// let tx_uuid = Database.list(TX)[0]
 
 // console.log('MODEL=' + model_uuid + ' TX=' + tx_uuid);
 

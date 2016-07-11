@@ -5,7 +5,6 @@
 - Programming box BT protocol
 
 ## configurator
-- Make types resolvable by human readable name and number
 - Make type names human readable
 - Make utils.js
 
@@ -22,3 +21,6 @@
 - Fix Fab button position on select_single
 
 - We need to limit destination channels, so we have to use something else than label_t
+
+- Fix issue with mixer.html not showing properly on small mobile
+

@@ -381,19 +381,28 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         return setters[type][bytesPerElement];
     }
 
+    function storageLogger(offset, count) {
+        console.warn(uuid + ' changed: offset=' + offset + ' count=' + count);
+    }
+
     function storeArray(values, setter=DataView.prototype.setUint8) {
-        let dv = new DataView(data.buffer, item_offset, item.c * item.s);
+        let count = item.c * item.s;
+        let dv = new DataView(data.buffer, item_offset, count);
 
         for (let i = 0; i < item.c; i++) {
             let byteOffset = i * item.s;
             setter.apply(dv, [byteOffset, values[i], true]);
         }
+
+        storageLogger(item_offset, count);
     }
 
     function storeScalar(value, index, setter=DataView.prototype.setUint8) {
         let dv = new DataView(data.buffer, item_offset, item.c * item.s);
         let byteOffset = index * item.s;
         setter.apply(dv, [byteOffset, value, true]);
+
+        storageLogger(item_offset + byteOffset, item.s);
     }
 
     function setString() {
@@ -417,25 +426,49 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
     }
 
     function setTypedItem() {
-        function setTypedItemElement(value, index) {
+        function type2number(value) {
             let type = TYPES[item.t];
 
             if (! (value in type)) {
                 console.error('Database(): Key ' + value + ' is not in type '
                     + item.t);
-                return;
+                return undefined;
             }
-
-            storeScalar(type[value], index);
+            return type[value];
         }
 
+        // C enums can be either signed or unsigned, depending on what the
+        // compiler choses.
+        //
+        // http://stackoverflow.com/questions/159034/are-c-enums-signed-or-unsigned
+        //
+        // The GCC documentation says:
+        //      -fshort-enums
+        //      Allocate to an enum type only as many bytes as it needs for the
+        //      declared range of possible values. Specifically, the enum type
+        //      is equivalent to the smallest integer type that has enough room.
+        //
+        // While we are not using -fshort-enums, GCC for ARM still uses a
+        // int8_t for small enums. So small enum can go from -128 to
+        // 127; once the value is 128 or greater GCC uses an int16_t.
+
+        let setter = getSetter(item.s, 'i');
         if (isNumber(index)) {
-            setTypedItemElement(value, index);
+            let numeric_value = type2number(value);
+            if (isNumber(numeric_value)) {
+                storeScalar(numeric_value, index, setter);
+            }
         }
         else {
+            let numeric_values = [];
             for (let i = 0; i < item.c; i += 1) {
-                setTypedItemElement(value[i], i);
+                let numeric_value = type2number(value[i]);
+                if (!isNumber(numeric_value)) {
+                    return;
+                }
+                numeric_values.push(numeric_value);
             }
+            storeArray(numeric_values, setter);
         }
     }
 

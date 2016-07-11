@@ -11,10 +11,8 @@ var SelectSingle = {
     accept_choice: function () {
         let list = document.querySelector('#app-select_single-list');
         let value = list.querySelector('input[type="radio"]:checked').value;
-        console.log('Selected: ' + value);
 
         Database.set(SelectSingle.uuid, SelectSingle.item, value, SelectSingle.offset);
-        // FIXME: save new item here
         history.go(-1);
     },
 

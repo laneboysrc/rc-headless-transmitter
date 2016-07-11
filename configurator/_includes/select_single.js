@@ -21,6 +21,10 @@ var SelectSingle = {
         this.item = params.item;
         this.offset = parseInt(params.offset);
 
+        document.querySelector('#app-select_single-name').textContent = this.item;
+        // FIXME: need to get item description
+        document.querySelector('#app-select_single-description').textContent = 'FIXME';
+
         let list = document.querySelector('#app-select_single-list');
 
         // Clear the app-mixer-list based on the class we've added when

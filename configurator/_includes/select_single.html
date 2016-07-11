@@ -13,15 +13,15 @@
   <main class="mdl-layout__content" >
 
 
-    <!-- RF protocol type Card -->
+    <!-- Select Single Card -->
     <section class="section--center mdl-grid">
 
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
 
         <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">Item name</h2>
+          <h2 id="app-select_single-name" class="mdl-card__title-text">Item name</h2>
         </div>
-        <div class="mdl-card__supporting-text">
+        <div id="app-select_single-description" class="mdl-card__supporting-text">
           Item description.
         </div>
 
@@ -38,6 +38,7 @@
       </div>
     </section>
 
+    <!-- Floating Action Button to confirm the selection -->
     <div class="app-floating-fab">
       <div>
         <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onclick="SelectSingle.accept_choice()">

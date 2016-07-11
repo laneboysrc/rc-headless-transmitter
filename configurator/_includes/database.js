@@ -37,6 +37,34 @@ function uuid2string(uuid_bytes) {
     return result;
 }
 
+function string2uuid(s) {
+    // "c91cabaa-44c9-11e6-9bc2-03ac25e30b5b"
+    let result = new Uint8Array(16);
+
+    result[0] = parseInt(s.slice(0, 2), 16);
+    result[1] = parseInt(s.slice(2, 4), 16);
+    result[2] = parseInt(s.slice(4, 6), 16);
+    result[3] = parseInt(s.slice(6, 8), 16);
+
+    result[4] = parseInt(s.slice(9, 11), 16);
+    result[5] = parseInt(s.slice(11, 13), 16);
+
+    result[6] = parseInt(s.slice(14, 16), 16);
+    result[7] = parseInt(s.slice(16, 18), 16);
+
+    result[8] = parseInt(s.slice(19, 21), 16);
+    result[9] = parseInt(s.slice(21, 23), 16);
+
+    result[10] = parseInt(s.slice(24, 26), 16);
+    result[11] = parseInt(s.slice(26, 28), 16);
+    result[12] = parseInt(s.slice(28, 30), 16);
+    result[13] = parseInt(s.slice(30, 32), 16);
+    result[14] = parseInt(s.slice(32, 34), 16);
+    result[15] = parseInt(s.slice(34, 36), 16);
+
+    return result;
+}
+
 function uint8array2string(bytes) {
     let result = '';
 
@@ -49,6 +77,16 @@ function uint8array2string(bytes) {
     };
 
     return result;
+}
+
+function string2uint8array(s, byte_count) {
+    let bytes = new Uint8ClampedArray(byte_count);
+    let count = s.length < byte_count ? s.length : byte_count;
+
+    for (let i = 0; i < count; i++) {
+        bytes[i] = s.charCodeAt(i);
+    }
+    return bytes;
 }
 
 // Source: http://stackoverflow.com/questions/1303646/check-whether-variable-is-number-or-string-in-javascript
@@ -146,9 +184,9 @@ DatabaseClass.prototype.isValid = function (uuid, key, index) {
 
         // Convert index to an Integer to handle the case where a string
         // representation or a float was given
-        let index_int = parseInt(index);
+        index = parseInt(index);
 
-        if (index_int < 0  ||  index_int >= item.c) {
+        if (index < 0  ||  index >= item.c) {
             console.error('Database(): Requested index "' + index
                 + '" for key "' + key + '" but item contains only '+ item.c
                 + ' elements');
@@ -176,7 +214,9 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 
     // Convert index to an Integer to handle the case where a string
     // representation or a float was given
-    let index_int = parseInt(index);
+    // If index is 'null' then it will become NaN, which is what we check
+    // during the rest of the code
+    index = parseInt(index);
 
     switch (item.t) {
         case 'u':
@@ -226,8 +266,8 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
             return uint8array2string(bytes);
 
         case 's':
-            if (index !== null) {
-                return new Uint8Array(data.buffer, item_offset + (item.s * index_int), item.s);
+            if (isNumber(index)) {
+                return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s);
             }
 
             result = [];
@@ -264,8 +304,8 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
             }
     }
 
-    if (index !== null) {
-        return result[index_int];
+    if (isNumber(index)) {
+        return result[index];
     }
 
     // Items with count == 1 are returned directly, otherwise we return an array.
@@ -278,6 +318,60 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) {
     console.log('Database().set: uuid=' + uuid + ' key=' + key + ' value="'
         + value + '" offset=' + offset + ' index=' + index);
+
+    if (! this.isValid(uuid, key, index)) {
+        return undefined;
+    }
+
+    // Since we passed isValid() these will all succeed
+    let entry = this.data[uuid];
+    let schema = entry.schema;
+    let data = entry.data;
+    let item = schema[key];
+    let item_offset = item.o + offset;
+
+    // Convert index to an Integer to handle the case where a string
+    // representation or a float was given
+    // If index is 'null' then it will become NaN, which is what we check
+    // during the rest of the code
+    index = parseInt(index);
+
+    function storeUint8array(bytes) {
+        let dv = new DataView(data.buffer, item_offset, item.c);
+        for (let i = 0; i < item.c; i++) {
+            dv.setUint8(i, bytes[i]);
+        }
+    }
+
+    function setString() {
+        let bytes = string2uint8array(value, item.c);
+        storeUint8array(bytes);
+    }
+
+    function setUUID() {
+        let bytes = string2uuid(value, item.c);
+        storeUint8array(bytes);
+    }
+
+    switch (item.t) {
+        case 'c':
+            setString();
+            break;
+
+        case 's':
+            console.error('Database(): Key ' + key
+                + ': Writing a structure is not supported')
+            break;
+
+        case 'uuid':
+            setUUID();
+            break;
+
+        case 'u':
+        case 'i':
+        default:
+            break;
+    }
 };
 
 DatabaseClass.prototype.list = function (schema=null) {
@@ -331,33 +425,43 @@ Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX)
 // ****************************************************************************
 // Database tests
 
+if (1) {
+    let model_uuid = Database.list(MODEL)[0];
+    let tx_uuid = Database.list(TX)[0]
 
-let model_uuid = Database.list(MODEL)[0];
-let tx_uuid = Database.list(TX)[0]
+    console.info('Tests for Database.get()');
+    console.log('MODEL=' + model_uuid + ' TX=' + tx_uuid);
 
-console.log('MODEL=' + model_uuid + ' TX=' + tx_uuid);
+    console.log(Database.get(model_uuid, 'NAME'));
+    console.log(Database.get(tx_uuid, 'NAME'));
+    console.log(Database.get(tx_uuid, 'UUID'));
 
-console.log(Database.get(model_uuid, 'NAME'));
-console.log(Database.get(tx_uuid, 'NAME'));
-console.log(uuid2string(Database.get(tx_uuid, 'UUID')));
+    console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
 
-console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
+    console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS'));
+    console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
 
-console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS'));
-console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
+    console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
+    console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
 
-console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
+    console.log(Database.get(model_uuid, 'MIXER_UNITS_CURVE_TYPE'));
+    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
+    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 2*TX.LOGICAL_INPUTS.s, 1));
 
-console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
-console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
+    console.info('Tests that should fail and return "undefined":');
+    console.log(Database.get('wrong-uuid', 'MIXER_UNITS_CURVE_TYPE'));
+    console.log(Database.get(tx_uuid, 'MIXER_UNITS_CURVE_TYPE'));
+    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s, 5));
+    console.log(Database.get(model_uuid, 'MIXER_UNITS', 0, 'three'));
 
-console.log(Database.get(model_uuid, 'MIXER_UNITS_CURVE_TYPE'));
-console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
+    console.log(Database.get(model_uuid, 'NAME'));
 
-console.error('Tests that should fail and return "undefined":');
-console.log(Database.get('wrong-uuid', 'MIXER_UNITS_CURVE_TYPE'));
-console.log(Database.get(tx_uuid, 'MIXER_UNITS_CURVE_TYPE'));
-console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 0, 5));
-console.log(Database.get(model_uuid, 'MIXER_UNITS', 0, 'three'));
+    console.info('Tests for Database.set()');
+    Database.set(model_uuid, 'NAME', 'ChangedName');
+    console.log(Database.get(model_uuid, 'NAME'));
 
+    Database.set(tx_uuid, 'UUID', 'cafebabe-dead-beef-1234-010203040506');
+    console.log(Database.get(tx_uuid, 'UUID'));
+
+}
 

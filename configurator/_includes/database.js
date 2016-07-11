@@ -95,13 +95,11 @@ function isNumber(obj) {
 }
 
 
-function typeLookupByNumber(type_name, entry) {
-    let types = TYPES[type_name];
-
-    if (types) {
-        for (let n in types) {
-            if (types.hasOwnProperty(n)) {
-                if (entry === types[n]) {
+function typeLookupByNumber(type, entry) {
+    if (type) {
+        for (let n in type) {
+            if (type.hasOwnProperty(n)) {
+                if (entry === type[n]) {
                     return n;
                 }
             }
@@ -114,8 +112,8 @@ function typeLookupByNumber(type_name, entry) {
 
 // Convert a given channel name (like 'CH1') to the index that matches the
 // appropriate limits array element.
-function channel2index(channel_name) {
-    let labels = TYPES.label_t;
+function channel2index(config, channel_name) {
+    let labels = config.TYPES.label_t;
 
     if (! (channel_name in labels)) {
         console.error('channel2index(): label_t does not contain channel "'
@@ -132,7 +130,7 @@ function channel2index(channel_name) {
     // channel name is indeed an output channel and not just any of the other
     // labels.
     let first = labels.OUTPUT_CHANNEL_TAG_OFFSET;
-    let last = first + MODEL.LIMITS.c - 1;
+    let last = first + config.MODEL.LIMITS.c - 1;
 
     if (label_number < first  || label_number > last) {
         console.error('channel2index(): "' + channel_name +
@@ -148,7 +146,7 @@ var DatabaseClass = function () {
     this.data = {};
 };
 
-DatabaseClass.prototype.add = function (data, schema) {
+DatabaseClass.prototype.add = function (data, config, schema) {
     var uuid_bytes = new Uint8Array(data, schema['UUID'].o, schema['UUID'].s);
     var uuid = uuid2string(uuid_bytes);
 
@@ -156,7 +154,8 @@ DatabaseClass.prototype.add = function (data, schema) {
 
     this.data[uuid] = {
         data: data,
-        schema: schema
+        schema: schema,
+        config: config
     };
 };
 
@@ -207,8 +206,9 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 
     // Since we passed isValid() these will all succeed
     let entry = this.data[uuid];
-    let schema = entry.schema;
     let data = entry.data;
+    let schema = entry.schema;
+    let types = entry.config.TYPES;
     let item = schema[key];
     let item_offset = item.o + offset;
 
@@ -281,7 +281,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
             return uuid2string(bytes);
 
         default:
-            if (! (item.t in TYPES)) {
+            if (! (item.t in types)) {
                 console.error('Database(): schema type "' + item.t
                     + '" for key "' + key + '" not defined');
                 return undefined;
@@ -291,7 +291,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
             result = []
             for (let n of bytes.entries()) {
                 let entry = n[1];
-                let element = typeLookupByNumber(item.t, entry);
+                let element = typeLookupByNumber(types[item.t], entry);
                 if (element) {
                     result.push(element);
                 }
@@ -325,8 +325,9 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
 
     // Since we passed isValid() these will all succeed
     let entry = this.data[uuid];
-    let schema = entry.schema;
     let data = entry.data;
+    let schema = entry.schema;
+    let types = entry.config.TYPES;
     let item = schema[key];
     let item_offset = item.o + offset;
 
@@ -458,7 +459,7 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
 
     function setTypedItem() {
         function type2number(value) {
-            let type = TYPES[item.t];
+            let type = types[item.t];
 
             if (! (value in type)) {
                 console.error('Database(): Key ' + value + ' is not in type '
@@ -523,7 +524,7 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
             break;
 
         default:
-            if (item.t in TYPES) {
+            if (item.t in types) {
                 setTypedItem();
             }
             else {
@@ -538,7 +539,7 @@ DatabaseClass.prototype.list = function (schema=null) {
     if (schema) {
         let result = [];
         for (let uuid in this.data) {
-            if (this.data[uuid].schema === schema) {
+            if (this.data[uuid].schema.t === schema) {
                 result.push(uuid);
             }
         }
@@ -556,6 +557,15 @@ DatabaseClass.prototype.getSchema = function (uuid) {
     }
 
     return this.data[uuid].schema;
+};
+
+DatabaseClass.prototype.getConfig = function (uuid) {
+    if (! (uuid in this.data)) {
+        console.log('Database(): uuid "' + uuid + '" not present.');
+        return undefined;
+    }
+
+    return this.data[uuid].config;
 };
 
 DatabaseClass.prototype.getType = function (uuid, item) {
@@ -578,17 +588,21 @@ DatabaseClass.prototype.getType = function (uuid, item) {
 var Database = new DatabaseClass();
 
 // Add a test model and transmitter to the database
-let config_version = new Uint32Array(TEST_CONFIG_DATA.buffer, CONFIG.VERSION.o, 1)[0];
-Database.add(TEST_CONFIG_DATA.slice(CONFIG.MODEL.o, CONFIG.MODEL.o + CONFIG.MODEL.s), MODEL);
-Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX);
+// NOTE: the version element is always at offset 0 regardles of the config version!
+let config_version = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
+
+let config = CONFIG_VERSIONS[config_version];
+
+Database.add(TEST_CONFIG_DATA.slice(config.MODEL.o, config.MODEL.o + config.MODEL.s), config, config.MODEL);
+Database.add(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), config, config.TX);
 
 
 // ****************************************************************************
 // Database tests
 
 if (0) {
-    let model_uuid = Database.list(MODEL)[0];
-    let tx_uuid = Database.list(TX)[0]
+    let model_uuid = Database.list('MODEL')[0];
+    let tx_uuid = Database.list('TX')[0]
 
     console.info('---------------------------------');
     console.info('Tests for Database.get()');
@@ -603,12 +617,12 @@ if (0) {
     console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS'));
     console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
 
-    console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
-    console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
+    console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', 2*config.TX.HARDWARE_INPUTS.s));
+    console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', config.TX.HARDWARE_INPUTS.s));
 
     console.log(Database.get(model_uuid, 'MIXER_UNITS_CURVE_TYPE'));
-    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
-    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 2*TX.LOGICAL_INPUTS.s, 1));
+    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*config.TX.LOGICAL_INPUTS.s));
+    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 2*config.TX.LOGICAL_INPUTS.s, 1));
 
     console.info('---------------------------------');
     console.info('Tests for Database.set()');
@@ -648,15 +662,15 @@ if (0) {
     testSet(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', [1234, 2345, 3456]);
     testSet(model_uuid, 'MIXER_UNITS_SRC', 'FLAPS');
     testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', 'GEAR', 0, 2);
-    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'ELE_DR', 'NONE'], 2*TX.LOGICAL_INPUTS.s);
+    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'ELE_DR', 'NONE'], 2*config.TX.LOGICAL_INPUTS.s);
 
     console.info('---------------------------------');
     console.info('Tests that should fail and return "undefined":');
     console.log(Database.get('wrong-uuid', 'MIXER_UNITS_CURVE_TYPE'));
     console.log(Database.get(tx_uuid, 'MIXER_UNITS_CURVE_TYPE'));
-    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s, 5));
+    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*config.TX.LOGICAL_INPUTS.s, 5));
     console.log(Database.get(model_uuid, 'MIXER_UNITS', 0, 'three'));
-    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'NONE'], 2*TX.LOGICAL_INPUTS.s);
+    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'NONE'], 2*config.TX.LOGICAL_INPUTS.s);
 
 }
 

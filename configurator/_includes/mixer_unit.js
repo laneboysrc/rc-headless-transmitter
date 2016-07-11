@@ -22,7 +22,8 @@ var MixerUnit = {
         this.uuid = params.model_uuid;
         this.index = params.index;
 
-        this.offset = MODEL.MIXER_UNITS.s * this.index;
+        let config = Database.getConfig(this.uuid);
+        this.offset = config.MODEL.MIXER_UNITS.s * this.index;
 
         this.setTextContent('#app-mixer_unit-src', 'MIXER_UNITS_SRC')
         this.setSwitch('#app-mixer_unit-invert_source', 'MIXER_UNITS_INVERT_SOURCE');

@@ -11,8 +11,6 @@
 - Host MDL and fonts locally for better speed
 - Offline mode
 
-- Change config.js so that we can have different config versions
-
 
 - We need to limit destination channels, so we have to use something else than label_t
     - There are actually 3 lists:

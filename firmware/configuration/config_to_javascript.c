@@ -39,8 +39,10 @@ void CONFIG_dump_javascript_information(void)
     size_t o = offsetof(config_t, tx);
 
     print_separator();
-    printf("var CONFIG = {\n");
-    printf("    o: 0, s: %u, c: 1, t: 's',\n", sizeof(config));
+    printf("var CONFIG_VERSIONS = CONFIG_VERSIONS || {};\n\n");
+    printf("CONFIG_VERSIONS[%lu] = {\n", config.version);
+    printf("    CONFIG: {\n");
+    printf("    o: 0, s: %u, c: 1, t: 'CONFIG',\n", sizeof(config));
     printf("    VERSION: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, version),
         membersizeof(config_t, version));
@@ -50,10 +52,10 @@ void CONFIG_dump_javascript_information(void)
     printf("    MODEL: {o: %u, s: %u, c: 1, t: 's'},\n",
         offsetof(config_t, model),
         membersizeof(config_t, model));
-    printf("};\n\n");
+    printf("    },\n\n");
 
-    printf("var TX = {\n");
-    printf("    o: %u, s: %u, c: 1, t: 's',\n",
+    printf("    TX: {\n");
+    printf("    o: %u, s: %u, c: 1, t: 'TX',\n",
         offsetof(config_t, tx), membersizeof(config_t, tx));
     printf("    UUID: {o: %u, s: 1, c: %u, t: 'uuid'},\n",
         offsetof(config_t, tx.uuid) - o,
@@ -148,14 +150,14 @@ static void dump_javascript_2(void) {
         offsetof(config_t, tx.led_pwm_percent) - o,
         membersizeof(config_t, tx.led_pwm_percent));
     SYSTICK_set_callback(dump_javascript_3, 200);
-    printf("};\n\n");
+    printf("    },\n\n");
 }
 
 static void dump_javascript_3(void) {
     size_t o = offsetof(config_t, model);
 
-    printf("var MODEL = {\n");
-    printf("    o: %u, s: %u, c: 1, t: 's',\n",
+    printf("    MODEL: {\n");
+    printf("    o: %u, s: %u, c: 1, t: 'MODEL',\n",
         offsetof(config_t, model), membersizeof(config_t, model));
     printf("    UUID: {o: %u, s: 1, c: %u, t: 'uuid'},\n",
         offsetof(config_t, model.uuid) - o,
@@ -275,11 +277,11 @@ static void dump_javascript_5(void) {
         offsetof(config_t, model.rf.protocol_hk310.address) - o,
         membersizeof(config_t, model.rf.protocol_hk310.address));
     SYSTICK_set_callback(dump_javascript_6, 300);
-    printf("};\n\n");
+    printf("    },\n\n");
 }
 
 static void dump_javascript_6(void) {
-    printf("var TYPES = {\n");
+    printf("    TYPES: {\n");
     printf("    pcb_inputut_type_t: {\n");
     printf("        PCB_INPUT_NOT_USED: %d,\n", PCB_INPUT_NOT_USED);
     printf("        ANALOG_DIGITAL: %d,\n", ANALOG_DIGITAL);
@@ -419,6 +421,7 @@ static void dump_javascript_9(void) {
     printf("        INTERPOLATION_LINEAR: %d,\n", INTERPOLATION_LINEAR);
     printf("        INTERPOLATION_SMOOTHING: %d,\n", INTERPOLATION_SMOOTHING);
     printf("    },\n");
+    printf("    }\n");
     printf("};\n");
     SYSTICK_set_callback(dump_javascript_10, 200);
 }

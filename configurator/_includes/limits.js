@@ -33,8 +33,10 @@ var Limits = {
         this.tx_uuid = params.tx_uuid;
         this.channel = params.channel;
 
-        this.channel_index = channel2index(this.channel);
-        this.offset = MODEL.LIMITS.s * this.channel_index;
+        let config = Database.getConfig(this.uuid);
+
+        this.channel_index = channel2index(config, this.channel);
+        this.offset = config.MODEL.LIMITS.s * this.channel_index;
 
         document.querySelector('#app-limits-channel').textContent = this.channel;
         this.setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');

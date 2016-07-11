@@ -1,12 +1,15 @@
-var CONFIG = {
-    o: 0, s: 4612, c: 1, t: 's',
+var CONFIG_VERSIONS = CONFIG_VERSIONS || {};
+
+CONFIG_VERSIONS[1] = {
+    CONFIG: {
+    o: 0, s: 4612, c: 1, t: 'CONFIG',
     VERSION: {o: 0, s: 4, c: 1, t: 'u'},
     TX: {o: 4, s: 1720, c: 1, t: 's'},
     MODEL: {o: 1724, s: 2888, c: 1, t: 's'},
-};
+    },
 
-var TX = {
-    o: 4, s: 1720, c: 1, t: 's',
+    TX: {
+    o: 4, s: 1720, c: 1, t: 'TX',
     UUID: {o: 0, s: 1, c: 16, t: 'uuid'},
     NAME: {o: 16, s: 1, c: 16, t: 'c'},
     LAST_CHANGED: {o: 32, s: 4, c: 1, t: 'u'},
@@ -31,10 +34,10 @@ var TX = {
     BIND_TIMEOUT_MS: {o: 1708, s: 4, c: 1, t: 'u'},
     DOUBLE_CLICK_TIMEOUT_MS: {o: 1712, s: 4, c: 1, t: 'u'},
     LED_PWM_PERCENT: {o: 1716, s: 1, c: 1, t: 'u'},
-};
+    },
 
-var MODEL = {
-    o: 1724, s: 2888, c: 1, t: 's',
+    MODEL: {
+    o: 1724, s: 2888, c: 1, t: 'MODEL',
     UUID: {o: 0, s: 1, c: 16, t: 'uuid'},
     NAME: {o: 16, s: 1, c: 16, t: 'c'},
     LAST_CHANGED: {o: 32, s: 4, c: 1, t: 'u'},
@@ -69,9 +72,9 @@ var MODEL = {
     RF_PROTOCOL_HK310: {o: 2861, s: 25, c: 1, t: 's'},
     RF_PROTOCOL_HK310_HOP_CHANNELS: {o: 2861, s: 1, c: 20, t: 'u'},
     RF_PROTOCOL_HK310_ADDRESS: {o: 2881, s: 1, c: 5, t: 'u'},
-};
+    },
 
-var TYPES = {
+    TYPES: {
     pcb_inputut_type_t: {
         PCB_INPUT_NOT_USED: 0,
         ANALOG_DIGITAL: 1,
@@ -199,4 +202,5 @@ var TYPES = {
         INTERPOLATION_LINEAR: 0,
         INTERPOLATION_SMOOTHING: 1,
     },
+    }
 };

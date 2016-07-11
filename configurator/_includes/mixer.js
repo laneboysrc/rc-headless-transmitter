@@ -12,7 +12,10 @@ var Mixer = {
     init: function (params) {
         this.uuid = params.model_uuid;
 
-        let unused = typeLookupByNumber(MODEL.MIXER_UNITS_SRC.t, 0);
+        let config = Database.getConfig(this.uuid);
+        let types = config.TYPES;
+        let src_choices = types[config.MODEL.MIXER_UNITS_SRC.t];
+        let unused = typeLookupByNumber(src_choices, 0);
         let mixer_list = document.querySelector('#app-mixer-list');
 
         // Clear the app-mixer-list based on the class we've added when
@@ -24,8 +27,8 @@ var Mixer = {
 
         let t = document.querySelector('#app-mixer-template');
 
-        for (let i = 0; i < MODEL.MIXER_UNITS.c; i++) {
-            let offset = i * MODEL.MIXER_UNITS.s;
+        for (let i = 0; i < config.MODEL.MIXER_UNITS.c; i++) {
+            let offset = i * config.MODEL.MIXER_UNITS.s;
             let src = Database.get(this.uuid, 'MIXER_UNITS_SRC', offset);
             if (src === unused) {
                 break;

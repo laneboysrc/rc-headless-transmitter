@@ -36,7 +36,8 @@ var SelectSingle = {
 
         let t = document.querySelector('#app-select_single-template');
         let type = Database.getType(this.uuid, this.item);
-        let choices = Object.keys(TYPES[type]);
+        let config = Database.getConfig(this.uuid);
+        let choices = Object.keys(config.TYPES[type]);
 
         let current_choice = Database.get(this.uuid, this.item, this.offset);
 

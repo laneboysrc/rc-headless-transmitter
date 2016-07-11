@@ -13,10 +13,6 @@
 
 - Change config.js so that we can have different config versions
 
-- Add timestamp to model and tx configuration
-    - use JS Date.now() / 1000, store in uint32_t
-    - This will overflow in 2106...
-
 
 - We need to limit destination channels, so we have to use something else than label_t
     - There are actually 3 lists:
@@ -28,3 +24,4 @@
 
 - Fix issue with mixer.html not showing properly on small screens
 
+- Show which src labels are supported by the transmitter when selecting items

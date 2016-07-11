@@ -386,6 +386,34 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         // schema.o describes the offset within the overall configuration
         console.warn(uuid + ' changed: offset=' + offset + ' count=' + count
             + ' config-offset=' + (offset + schema.o));
+
+        // Add last change time stamp
+        if (key !== 'LAST_CHANGED'  &&  'LAST_CHANGED' in schema) {
+
+            // Ok... We are calling ourselves here recursively. This only works
+            // because storageLogger is basically the last function called
+            // in set(); because the recursive call destroys the variables
+            // all the local functions rely on.
+
+            // This will overflow in the year 2106 ...
+            Database.set(uuid, 'LAST_CHANGED', Date.now() / 1000);
+
+
+            // Alternative function in case the recursive call gives us
+            // issues. Not tested yet.
+
+            // let last_changed_offset = schema.LAST_CHANGED.o;
+            // let last_changed_count = schema.LAST_CHANGED.s;
+
+            // let setter = getSetter(schema.LAST_CHANGED.s, schema.LAST_CHANGED.t);
+
+            // let dv = new DataView(data.buffer, last_changed_offset , last_changed_count);
+            // setter.apply(dv, [0, Date.now() / 1000, true]);
+
+            // console.warn(uuid + ' changed: offset=' + last_changed_offset
+            //     + ' count=' + last_changed_count
+            //     + ' config-offset=' + (last_changed_offset + schema.o));
+        }
     }
 
     function storeArray(values, setter=DataView.prototype.setUint8) {

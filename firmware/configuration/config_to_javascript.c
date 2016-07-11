@@ -61,6 +61,9 @@ void CONFIG_dump_javascript_information(void)
     printf("    NAME: {o: %u, s: 1, c: %u, t: 'c'},\n",
         offsetof(config_t, tx.name) - o,
         membersizeof(config_t, tx.name));
+    printf("    LAST_CHANGED: {o: %u, s: %u, c: 1, t: 'u'},\n",
+        offsetof(config_t, tx.last_changed) - o,
+        membersizeof(config_t, tx.last_changed));
     SYSTICK_set_callback(dump_javascript_1, 300);
 }
 
@@ -160,6 +163,9 @@ static void dump_javascript_3(void) {
     printf("    NAME: {o: %u, s: 1, c: %u, t: 'c'},\n",
         offsetof(config_t, model.name) - o,
         membersizeof(config_t, model.name));
+    printf("    LAST_CHANGED: {o: %u, s: %u, c: 1, t: 'u'},\n",
+        offsetof(config_t, model.last_changed) - o,
+        membersizeof(config_t, model.last_changed));
     printf("    MIXER_UNITS: {o: %u, s: %u, c: %u, t: 's'},\n",
         offsetof(config_t, model.mixer_units) - o,
         sizeof(mixer_unit_t),
@@ -420,7 +426,7 @@ static void dump_javascript_9(void) {
 static void dump_javascript_10(void) {
 
     print_separator();
-    // SYSTICK_set_callback(dump_javascript_config, 200);
+    SYSTICK_set_callback(dump_javascript_config, 200);
 }
 
 static void dump_javascript_config(void)

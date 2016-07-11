@@ -316,8 +316,8 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 };
 
 DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) {
-    console.log('Database().set: uuid=' + uuid + ' key=' + key + ' value="'
-        + value + '" offset=' + offset + ' index=' + index);
+    // console.log('Database().set: uuid=' + uuid + ' key=' + key + ' value="'
+    //     + value + '" offset=' + offset + ' index=' + index);
 
     if (! this.isValid(uuid, key, index)) {
         return undefined;
@@ -336,21 +336,60 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
     // during the rest of the code
     index = parseInt(index);
 
-    function storeUint8array(bytes) {
-        let dv = new DataView(data.buffer, item_offset, item.c);
-        for (let i = 0; i < item.c; i++) {
-            dv.setUint8(i, bytes[i]);
+    // If we are dealing with an element with count=1 then we treat it
+    // as if a single element update of element[0] was requested. This
+    // simplifies further code.
+    if (item.c === 1) {
+        index = 0;
+    }
+
+    // FIXME: check that value given has item.c elements if !isNumber(index)
+
+    function getUintSetter(bytesPerElement) {
+        let setters = {
+            1: DataView.prototype.setUint8,
+            2: DataView.prototype.setUint16,
+            4: DataView.prototype.setUint32
+        };
+
+        if (! (bytesPerElement in setters)) {
+            console.error("Database() getDataViewSetter: bytesPerElement must be 1, 2 or 4");
         }
+
+        return setters[bytesPerElement];
+    }
+
+    function storeArray(values, setter=DataView.prototype.setUint8) {
+        let dv = new DataView(data.buffer, item_offset, item.c * item.s);
+
+        for (let i = 0; i < item.c; i++) {
+            setter.apply(dv, [i, values[i], true]);
+        }
+    }
+
+    function storeScalar(value, index, setter=DataView.prototype.setUint8) {
+        let dv = new DataView(data.buffer, item_offset, item.c * item.s);
+        setter.apply(dv, [index, value, true]);
     }
 
     function setString() {
         let bytes = string2uint8array(value, item.c);
-        storeUint8array(bytes);
+        storeArray(bytes);
     }
 
     function setUUID() {
         let bytes = string2uuid(value, item.c);
-        storeUint8array(bytes);
+        storeArray(bytes);
+    }
+
+    function setUnsigned() {
+        let setter = getUintSetter(item.s);
+        if (isNumber(index)) {
+            storeScalar(value, index, setter);
+        }
+        else {
+            storeArray(value, setter);
+        }
     }
 
     switch (item.t) {
@@ -368,6 +407,9 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
             break;
 
         case 'u':
+            setUnsigned();
+            break;
+
         case 'i':
         default:
             break;
@@ -456,12 +498,28 @@ if (1) {
 
     console.log(Database.get(model_uuid, 'NAME'));
 
-    console.info('Tests for Database.set()');
-    Database.set(model_uuid, 'NAME', 'ChangedName');
-    console.log(Database.get(model_uuid, 'NAME'));
+    console.warn('---------------------------------');
+    console.warn('Tests for Database.set()');
 
-    Database.set(tx_uuid, 'UUID', 'cafebabe-dead-beef-1234-010203040506');
-    console.log(Database.get(tx_uuid, 'UUID'));
+    function testSet(uuid, item, new_value) {
+        console.info('Changing ' + item + ' to ' + new_value);
+
+        let original = Database.get(uuid, item);
+        Database.set(uuid, item, new_value);
+        let changed = Database.get(uuid, item);
+
+        if (new_value != changed) {
+            console.error('' + new_value + ' != ' + changed);
+        }
+        else {
+            console.log('Ok');
+        }
+    }
+
+    testSet(model_uuid, 'NAME', 'ChangedName');
+    testSet(tx_uuid, 'UUID', 'cafebabe-dead-beef-1234-010203040506');
+    testSet(tx_uuid, 'LED_PWM_PERCENT', '42');
+    testSet(tx_uuid, 'BIND_TIMEOUT_MS', 1234);
 
 }
 

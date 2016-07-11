@@ -14,6 +14,8 @@ var ModelDetails = {
         let item = element.getAttribute('data-source');
         let value = element.value;
 
+        // FIXME: check if value changed. If not, don't update the database
+
         Database.set(ModelDetails.uuid, item, value, ModelDetails.offset);
     },
 

@@ -554,7 +554,7 @@ Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX)
 // ****************************************************************************
 // Database tests
 
-if (1) {
+if (0) {
     let model_uuid = Database.list(MODEL)[0];
     let tx_uuid = Database.list(TX)[0]
 

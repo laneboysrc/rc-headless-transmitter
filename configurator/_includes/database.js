@@ -343,7 +343,15 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         index = 0;
     }
 
-    // FIXME: check that value given has item.c elements if !isNumber(index)
+    if (!isNumber(index)) {
+        if (! (item.t in {'c':1, 'uuid':1})) {
+            if (value.length !== item.c) {
+                console.error('Database() set: ' + key + ' requires ' + item.c
+                    + ' elements but ' + value.length + ' provided');
+                return;
+            }
+        }
+    }
 
     function getSetter(bytesPerElement, type) {
         let setters = {
@@ -360,12 +368,13 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         };
 
         if (! (type in setters)) {
-            console.error('Database() getSetter: item.t must be "u" or "i"');
+            console.error('Database() getSetter: invalid type ' + type);
             return undefined;
         }
 
         if (! (bytesPerElement in setters[type])) {
-            console.error('Database() getSetter: bytesPerElement must be 1, 2 or 4');
+            console.error('Database() getSetter: bytesPerElement is '
+                + bytesPerElement + ' but must be 1, 2 or 4');
             return undefined;
         }
 
@@ -408,7 +417,26 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
     }
 
     function setTypedItem() {
+        function setTypedItemElement(value, index) {
+            let type = TYPES[item.t];
 
+            if (! (value in type)) {
+                console.error('Database(): Key ' + value + ' is not in type '
+                    + item.t);
+                return;
+            }
+
+            storeScalar(type[value], index);
+        }
+
+        if (isNumber(index)) {
+            setTypedItemElement(value, index);
+        }
+        else {
+            for (let i = 0; i < item.c; i += 1) {
+                setTypedItemElement(value[i], i);
+            }
+        }
     }
 
     switch (item.t) {
@@ -431,6 +459,13 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
             break;
 
         default:
+            if (item.t in TYPES) {
+                setTypedItem();
+            }
+            else {
+                console.error('Database(): schema type "' + item.t
+                    + '" for key "' + key + '" not defined');
+            }
             break;
     }
 };
@@ -490,6 +525,7 @@ if (1) {
     let model_uuid = Database.list(MODEL)[0];
     let tx_uuid = Database.list(TX)[0]
 
+    console.info('---------------------------------');
     console.info('Tests for Database.get()');
     console.log('MODEL=' + model_uuid + ' TX=' + tx_uuid);
 
@@ -509,23 +545,15 @@ if (1) {
     console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
     console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 2*TX.LOGICAL_INPUTS.s, 1));
 
-    console.info('Tests that should fail and return "undefined":');
-    console.log(Database.get('wrong-uuid', 'MIXER_UNITS_CURVE_TYPE'));
-    console.log(Database.get(tx_uuid, 'MIXER_UNITS_CURVE_TYPE'));
-    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s, 5));
-    console.log(Database.get(model_uuid, 'MIXER_UNITS', 0, 'three'));
+    console.info('---------------------------------');
+    console.info('Tests for Database.set()');
 
-    console.log(Database.get(model_uuid, 'NAME'));
+    function testSet(uuid, item, new_value, offset=0, index=null) {
+        console.log('Changing ' + item + ' to ' + new_value);
 
-    console.warn('---------------------------------');
-    console.warn('Tests for Database.set()');
-
-    function testSet(uuid, item, new_value) {
-        console.info('Changing ' + item + ' to ' + new_value);
-
-        let original = Database.get(uuid, item);
-        Database.set(uuid, item, new_value);
-        let changed = Database.get(uuid, item);
+        let original = Database.get(uuid, item, offset, index);
+        Database.set(uuid, item, new_value, offset, index);
+        let changed = Database.get(uuid, item, offset, index);
 
 
         if (new_value == changed) {
@@ -553,6 +581,17 @@ if (1) {
     testSet(tx_uuid, 'BIND_TIMEOUT_MS', 1234);
     testSet(model_uuid, 'LIMITS_LIMIT_L', -42);
     testSet(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', [1234, 2345, 3456]);
+    testSet(model_uuid, 'MIXER_UNITS_SRC', 'FLAPS');
+    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', 'GEAR', 0, 2);
+    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'ELE_DR', 'NONE'], 2*TX.LOGICAL_INPUTS.s);
+
+    console.info('---------------------------------');
+    console.info('Tests that should fail and return "undefined":');
+    console.log(Database.get('wrong-uuid', 'MIXER_UNITS_CURVE_TYPE'));
+    console.log(Database.get(tx_uuid, 'MIXER_UNITS_CURVE_TYPE'));
+    console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s, 5));
+    console.log(Database.get(model_uuid, 'MIXER_UNITS', 0, 'three'));
+    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'NONE'], 2*TX.LOGICAL_INPUTS.s);
 
 }
 

@@ -53,7 +53,8 @@ void CONFIG_dump_javascript_information(void)
     printf("};\n\n");
 
     printf("var TX = {\n");
-    printf("    o: 0, s: %u, c: 1, t: 's',\n", membersizeof(config_t, tx));
+    printf("    o: %u, s: %u, c: 1, t: 's',\n",
+        offsetof(config_t, tx), membersizeof(config_t, tx));
     printf("    UUID: {o: %u, s: 1, c: %u, t: 'uuid'},\n",
         offsetof(config_t, tx.uuid) - o,
         membersizeof(config_t, tx.uuid));
@@ -151,7 +152,8 @@ static void dump_javascript_3(void) {
     size_t o = offsetof(config_t, model);
 
     printf("var MODEL = {\n");
-    printf("    o: 0, s: %u, c: 1, t: 's',\n", membersizeof(config_t, model));
+    printf("    o: %u, s: %u, c: 1, t: 's',\n",
+        offsetof(config_t, model), membersizeof(config_t, model));
     printf("    UUID: {o: %u, s: 1, c: %u, t: 'uuid'},\n",
         offsetof(config_t, model.uuid) - o,
         membersizeof(config_t, model.uuid));

@@ -6,7 +6,7 @@ var CONFIG = {
 };
 
 var TX = {
-    o: 0, s: 1716, c: 1, t: 's',
+    o: 4, s: 1716, c: 1, t: 's',
     UUID: {o: 0, s: 1, c: 16, t: 'uuid'},
     NAME: {o: 16, s: 1, c: 16, t: 'c'},
     HARDWARE_INPUTS: {o: 32, s: 32, c: 32, t: 's'},
@@ -33,7 +33,7 @@ var TX = {
 };
 
 var MODEL = {
-    o: 0, s: 2884, c: 1, t: 's',
+    o: 1720, s: 2884, c: 1, t: 's',
     UUID: {o: 0, s: 1, c: 16, t: 'uuid'},
     NAME: {o: 16, s: 1, c: 16, t: 'c'},
     MIXER_UNITS: {o: 32, s: 26, c: 100, t: 's'},

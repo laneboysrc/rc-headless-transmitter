@@ -148,8 +148,7 @@ var DatabaseClass = function () {
     this.data = {};
 };
 
-// offset describes the offset within the overall configuration
-DatabaseClass.prototype.add = function (data, schema, offset) {
+DatabaseClass.prototype.add = function (data, schema) {
     var uuid_bytes = new Uint8Array(data, schema['UUID'].o, schema['UUID'].s);
     var uuid = uuid2string(uuid_bytes);
 
@@ -157,8 +156,7 @@ DatabaseClass.prototype.add = function (data, schema, offset) {
 
     this.data[uuid] = {
         data: data,
-        schema: schema,
-        offset: offset
+        schema: schema
     };
 };
 
@@ -385,9 +383,9 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
     }
 
     function storageLogger(offset, count) {
-        // entry.offset describes the offset within the overall configuration
+        // schema.o describes the offset within the overall configuration
         console.warn(uuid + ' changed: offset=' + offset + ' count=' + count
-            + ' config-offset=' + (offset + entry.offset));
+            + ' config-offset=' + (offset + schema.o));
     }
 
     function storeArray(values, setter=DataView.prototype.setUint8) {
@@ -553,8 +551,8 @@ var Database = new DatabaseClass();
 
 // Add a test model and transmitter to the database
 let config_version = new Uint32Array(TEST_CONFIG_DATA.buffer, CONFIG.VERSION.o, 1)[0];
-Database.add(TEST_CONFIG_DATA.slice(CONFIG.MODEL.o, CONFIG.MODEL.o + CONFIG.MODEL.s), MODEL, CONFIG.MODEL.o);
-Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX, CONFIG.TX.o);
+Database.add(TEST_CONFIG_DATA.slice(CONFIG.MODEL.o, CONFIG.MODEL.o + CONFIG.MODEL.s), MODEL);
+Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX);
 
 
 // ****************************************************************************

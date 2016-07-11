@@ -23,6 +23,8 @@ var RFProtocol = {
         value += byte2string(address[4]);
         document.querySelector('#app-rf_protocol-address').value = value;
 
+        // FIXME: make hop channel edit field wider
+
         value = ''
         for (let channel of hop_channels) {
             value += channel.toString() + " ";

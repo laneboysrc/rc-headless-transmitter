@@ -103,3 +103,18 @@ table.limits .mdl-switch {
   margin-left: 20px;
 }
 
+/* Fab button on cards like select_single and select_multiple. The button
+   stays always visible on the right-bottom of the card */
+.app-floating-fab {
+  position: fixed;
+  top: 100px;
+  width: 100%;
+  z-index: 2;
+}
+
+.app-floating-fab > div {
+  max-width: 560px;
+  margin: auto;
+  padding-right: 40px;
+  text-align: right;
+}

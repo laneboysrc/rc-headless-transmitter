@@ -17,8 +17,6 @@
 
 - Add config version to schema
 
-- Fix Fab button position on select_single
-
 - We need to limit destination channels, so we have to use something else than label_t
     - There are actually 3 lists:
         * labels that can be assigned to logical inputs

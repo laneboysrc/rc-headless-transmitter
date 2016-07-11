@@ -122,45 +122,61 @@ DatabaseClass.prototype.add = function (data, schema) {
     };
 };
 
+DatabaseClass.prototype.isValid = function (uuid, key, index) {
+    if (! (uuid in this.data)) {
+        console.error('Database(): uuid "' + uuid + '" not in database.');
+        return false;
+    }
+
+    let entry = this.data[uuid];
+    let schema = entry.schema;
+
+    if (! (key && key in schema)) {
+        console.error('Database(): key "' + key + '" not in schema.');
+        return false;
+    }
+
+    if (index !== null) {
+        if (! isNumber(index)) {
+            console.error('Database(): index "' + index + '" is not an Integer');
+            return false;
+        }
+
+        let item = schema[key];
+
+        // Convert index to an Integer to handle the case where a string
+        // representation or a float was given
+        let index_int = parseInt(index);
+
+        if (index_int < 0  ||  index_int >= item.c) {
+            console.error('Database(): Requested index "' + index
+                + '" for key "' + key + '" but item contains only '+ item.c
+                + ' elements');
+            return false;
+        }
+    }
+
+    return true;
+};
+
 DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
     var result;
     var bytes;
 
-    if (! (uuid in this.data)) {
-        console.log('Database(): uuid "' + uuid + '" not present.');
+    if (! this.isValid(uuid, key, index)) {
         return undefined;
     }
 
-    var entry = this.data[uuid];
-    var schema = entry.schema;
+    // Since we passed isValid() these will all succeed
+    let entry = this.data[uuid];
+    let schema = entry.schema;
+    let data = entry.data;
+    let item = schema[key];
+    let item_offset = item.o + offset;
 
-    if (! (key && key in schema)) {
-        console.log('Database(): key "' + key + '" not in schema.');
-        return undefined;
-    }
-
-    var data = entry.data;
-    var item = schema[key];
-
-    if (index !== null) {
-        if (! isNumber(index)) {
-            console.error('Database(): Requested index "' + index
-                + '" is not an Integer');
-            return undefined;
-        }
-
-        // In case the index is a float we convert it to an integer
-        index = parseInt(index);
-
-        if (index < 0  ||  index >= item.c) {
-            console.error('Database(): Requested index "' + index
-                + '" for key "' + key + '" but item contains only '
-                + item.c + ' elements');
-            return undefined;
-        }
-    }
-
-    var item_offset = item.o + offset;
+    // Convert index to an Integer to handle the case where a string
+    // representation or a float was given
+    let index_int = parseInt(index);
 
     switch (item.t) {
         case 'u':
@@ -211,7 +227,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 
         case 's':
             if (index !== null) {
-                return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s);
+                return new Uint8Array(data.buffer, item_offset + (item.s * index_int), item.s);
             }
 
             result = [];
@@ -249,7 +265,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
     }
 
     if (index !== null) {
-        return result[index];
+        return result[index_int];
     }
 
     // Items with count == 1 are returned directly, otherwise we return an array.
@@ -316,27 +332,32 @@ Database.add(TEST_CONFIG_DATA.slice(CONFIG.TX.o, CONFIG.TX.o + CONFIG.TX.s), TX)
 // Database tests
 
 
-// let model_uuid = Database.list(MODEL)[0];
-// let tx_uuid = Database.list(TX)[0]
+let model_uuid = Database.list(MODEL)[0];
+let tx_uuid = Database.list(TX)[0]
 
-// console.log('MODEL=' + model_uuid + ' TX=' + tx_uuid);
+console.log('MODEL=' + model_uuid + ' TX=' + tx_uuid);
 
-// console.log(Database.get(model_uuid, 'NAME'));
-// console.log(Database.get(tx_uuid, 'NAME'));
-// console.log(uuid2string(Database.get(tx_uuid, 'UUID')));
+console.log(Database.get(model_uuid, 'NAME'));
+console.log(Database.get(tx_uuid, 'NAME'));
+console.log(uuid2string(Database.get(tx_uuid, 'UUID')));
 
-// console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
+console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
 
-// console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS'));
-// console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
+console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS'));
+console.log(Database.get(model_uuid, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3));
 
-// console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
+console.log(Database.get(tx_uuid, 'BIND_TIMEOUT_MS'));
 
-// console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
-// console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
+console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', 2*TX.HARDWARE_INPUTS.s));
+console.log(Database.get(tx_uuid, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', TX.HARDWARE_INPUTS.s));
 
-// console.log(Database.get(model_uuid, 'MIXER_UNITS_CURVE_TYPE'));
-// console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
+console.log(Database.get(model_uuid, 'MIXER_UNITS_CURVE_TYPE'));
+console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*TX.LOGICAL_INPUTS.s));
 
+console.error('Tests that should fail and return "undefined":');
+console.log(Database.get('wrong-uuid', 'MIXER_UNITS_CURVE_TYPE'));
+console.log(Database.get(tx_uuid, 'MIXER_UNITS_CURVE_TYPE'));
+console.log(Database.get(tx_uuid, 'LOGICAL_INPUTS_LABELS', 0, 5));
+console.log(Database.get(model_uuid, 'MIXER_UNITS', 0, 'three'));
 
 

@@ -345,31 +345,46 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
 
     // FIXME: check that value given has item.c elements if !isNumber(index)
 
-    function getUintSetter(bytesPerElement) {
+    function getSetter(bytesPerElement, type) {
         let setters = {
-            1: DataView.prototype.setUint8,
-            2: DataView.prototype.setUint16,
-            4: DataView.prototype.setUint32
+            'u': {
+                1: DataView.prototype.setUint8,
+                2: DataView.prototype.setUint16,
+                4: DataView.prototype.setUint32
+            },
+            'i': {
+                1: DataView.prototype.setInt8,
+                2: DataView.prototype.setInt16,
+                4: DataView.prototype.setInt32
+            }
         };
 
-        if (! (bytesPerElement in setters)) {
-            console.error("Database() getDataViewSetter: bytesPerElement must be 1, 2 or 4");
+        if (! (type in setters)) {
+            console.error('Database() getSetter: item.t must be "u" or "i"');
+            return undefined;
         }
 
-        return setters[bytesPerElement];
+        if (! (bytesPerElement in setters[type])) {
+            console.error('Database() getSetter: bytesPerElement must be 1, 2 or 4');
+            return undefined;
+        }
+
+        return setters[type][bytesPerElement];
     }
 
     function storeArray(values, setter=DataView.prototype.setUint8) {
         let dv = new DataView(data.buffer, item_offset, item.c * item.s);
 
         for (let i = 0; i < item.c; i++) {
-            setter.apply(dv, [i, values[i], true]);
+            let byteOffset = i * item.s;
+            setter.apply(dv, [byteOffset, values[i], true]);
         }
     }
 
     function storeScalar(value, index, setter=DataView.prototype.setUint8) {
         let dv = new DataView(data.buffer, item_offset, item.c * item.s);
-        setter.apply(dv, [index, value, true]);
+        let byteOffset = index * item.s;
+        setter.apply(dv, [byteOffset, value, true]);
     }
 
     function setString() {
@@ -382,8 +397,8 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         storeArray(bytes);
     }
 
-    function setUnsigned() {
-        let setter = getUintSetter(item.s);
+    function setInteger() {
+        let setter = getSetter(item.s, item.t);
         if (isNumber(index)) {
             storeScalar(value, index, setter);
         }
@@ -392,7 +407,16 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         }
     }
 
+    function setTypedItem() {
+
+    }
+
     switch (item.t) {
+        case 'u':
+        case 'i':
+            setInteger();
+            break;
+
         case 'c':
             setString();
             break;
@@ -406,11 +430,6 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
             setUUID();
             break;
 
-        case 'u':
-            setUnsigned();
-            break;
-
-        case 'i':
         default:
             break;
     }
@@ -508,18 +527,32 @@ if (1) {
         Database.set(uuid, item, new_value);
         let changed = Database.get(uuid, item);
 
-        if (new_value != changed) {
-            console.error('' + new_value + ' != ' + changed);
-        }
-        else {
+
+        if (new_value == changed) {
             console.log('Ok');
+            return;
         }
+
+        if (typeof(changed) === 'object') {
+            for (let i = 0; i < new_value.length; i += 1) {
+                if (changed[i != new_value[i]]) {
+                    console.error('' + new_value + ' != ' + changed);
+                    return;
+                }
+            }
+            console.log('Ok');
+            return;
+        }
+
+        console.error('' + new_value + ' != ' + changed);
     }
 
     testSet(model_uuid, 'NAME', 'ChangedName');
     testSet(tx_uuid, 'UUID', 'cafebabe-dead-beef-1234-010203040506');
     testSet(tx_uuid, 'LED_PWM_PERCENT', '42');
     testSet(tx_uuid, 'BIND_TIMEOUT_MS', 1234);
+    testSet(model_uuid, 'LIMITS_LIMIT_L', -42);
+    testSet(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', [1234, 2345, 3456]);
 
 }
 

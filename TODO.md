@@ -11,11 +11,14 @@
 - Host MDL and fonts locally for better speed
 - Offline mode
 
+- Change config.js so that we can have different config versions
+- Address mapping of uuids to the right firmware offsets
+    - Maybe add an 'offset' field to each database entry that points into CONFIG?
+
 - Add timestamp to model and tx configuration
     - use JS Date.now() / 1000, store in uint32_t
     - This will overflow in 2106...
 
-- Add config version to schema
 
 - We need to limit destination channels, so we have to use something else than label_t
     - There are actually 3 lists:

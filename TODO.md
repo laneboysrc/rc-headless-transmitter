@@ -28,3 +28,10 @@
 
 - Show which src labels are supported by the transmitter when selecting items
 
+- Delete mixer units
+
+- Add mixer units
+
+- Switch editing
+
+- Curve editing

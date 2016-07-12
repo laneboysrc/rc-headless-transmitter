@@ -22,7 +22,6 @@
 ## configurator
 - Make utils.js
 
-- Host MDL and fonts locally for better speed
 - Offline mode
 
 - Fix issue with mixer.html not showing properly on small screens

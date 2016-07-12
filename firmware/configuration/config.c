@@ -93,7 +93,7 @@ const config_t config_flash = {
                  0x03, 0xac, 0x25, 0xe3, 0x0b, 0x5b},
         .mixer_units = {
             {
-                .src = AIL,
+                .src = IN_AIL,
                 .dst = CH1,
                 .curve = {
                     .type = CURVE_NONE,
@@ -104,7 +104,7 @@ const config_t config_flash = {
                 .apply_trim = true
             },
             {
-                .src = ELE,
+                .src = IN_ELE,
                 .dst = CH2,
                 .curve = {
                     .type = CURVE_NONE,
@@ -114,7 +114,7 @@ const config_t config_flash = {
                 .apply_trim = true
             },
             {
-                .src = THR,
+                .src = IN_THR,
                 .dst = CH3,
                 .curve = {
                     .type = CURVE_NONE,
@@ -124,7 +124,7 @@ const config_t config_flash = {
                 .apply_trim = true
             },
             {
-                .src = RUD,
+                .src = IN_RUD,
                 .dst = CH4,
                 .curve = {
                     .type = CURVE_NONE,

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include <ring_buffer.h>
 
@@ -76,4 +77,11 @@ RING_BUFFER_SIZE_T RING_BUFFER_read(RING_BUFFER_T *ring, uint8_t *data, RING_BUF
     }
 
     return i;
+}
+
+
+// ****************************************************************************
+bool RING_BUFFER_is_empty(RING_BUFFER_T *ring)
+{
+    return (ring->begin == ring->end);
 }

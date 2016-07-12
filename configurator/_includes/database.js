@@ -287,7 +287,8 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
                 return undefined;
             }
 
-            bytes = new Uint8Array(data.buffer, item_offset, item.c);
+            // FIXME: this may not be Int8!
+            bytes = new Int8Array(data.buffer, item_offset, item.c);
             result = []
             for (let n of bytes.entries()) {
                 let entry = n[1];
@@ -611,7 +612,7 @@ Database.add(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), con
 // ****************************************************************************
 // Database tests
 
-if (1) {
+if (0) {
     let model_uuid = Database.list('MODEL')[0];
     let tx_uuid = Database.list('TX')[0]
 

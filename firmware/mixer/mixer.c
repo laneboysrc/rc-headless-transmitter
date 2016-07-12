@@ -45,13 +45,45 @@ static bool is_mixer_enabled(mixer_switch_t *sw)
 
 
 // ****************************************************************************
+static int32_t get_value(src_label_t src)
+{
+    if (src >= FIRST_INPUT_LABEL &&  src <= LAST_INPUT_LABEL) {
+        input_label_t input_src = src - FIRST_INPUT_LABEL;
+
+        return INPUTS_get_value(input_src);
+    }
+
+    if (src >= FIRST_CHANNEL_LABEL &&  src <= LAST_CHANNEL_LABEL) {
+        channel_label_t ch = src - FIRST_CHANNEL_LABEL;
+
+        return channels[ch];
+    }
+
+    // Something went wrong, let's return 0 ...
+    return 0;
+}
+
+
+// ****************************************************************************
+static int32_t get_trim(src_label_t src)
+{
+    if (src >= FIRST_INPUT_LABEL &&  src <= LAST_INPUT_LABEL) {
+        input_label_t input_src = src - FIRST_INPUT_LABEL;
+
+        return INPUTS_get_trim(input_src);
+    }
+    return 0;
+}
+
+
+// ****************************************************************************
 // if (Switch) then
 //     Destination  op  f(Curve, Source) * Scalar + Offset (+ Trim)
 // endif
 static void apply_mixer_unit(mixer_unit_t *m)
 {
     int32_t value;
-    int32_t *p_channel = &channels[m->dst - OUTPUT_CHANNEL_TAG_OFFSET];
+    int32_t *p_channel = &channels[m->dst];
 
     // STEP 1: Check switch and bail out if condition not met
     if (!is_mixer_enabled(&m->sw)) {
@@ -59,7 +91,7 @@ static void apply_mixer_unit(mixer_unit_t *m)
     }
 
     // STEP 2: Get source value; invert if necessary
-    value = INPUTS_get_value(m->src) * (m->invert_source ? -1 : 1);
+    value = get_value(m->src) * (m->invert_source ? -1 : 1);
 
     // STEP 3: Apply curve
     value = CURVE_evaluate(&m->curve, value);
@@ -94,7 +126,7 @@ static void apply_mixer_unit(mixer_unit_t *m)
     if (m->apply_trim) {
         int32_t trim;
 
-        trim = INPUTS_get_trim(m->src) * (m->invert_source ? -1 : 1);
+        trim = get_trim(m->src) * (m->invert_source ? -1 : 1);
         *p_channel += trim;
     }
 }
@@ -105,13 +137,13 @@ void MIXER_evaluate(void)
 {
     INPUTS_filter_and_normalize();
 
-    for (uint8_t i = 0; i < NUMBER_OF_CHANNELS; i++) {
+    for (unsigned i = 0; i < NUMBER_OF_CHANNELS; i++) {
         channels[i] = 0;
     }
 
     for (unsigned i = 0; i < MAX_MIXER_UNITS; i++) {
         mixer_unit_t *m = &config.model.mixer_units[i];
-        if (m->src == NONE) {
+        if (m->src == SRC_NONE) {
             break;
         }
 
@@ -123,5 +155,5 @@ void MIXER_evaluate(void)
 // ****************************************************************************
 void MIXER_init(void)
 {
-
+    // Nothing to do ...
 }

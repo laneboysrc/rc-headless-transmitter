@@ -983,13 +983,8 @@ void INPUTS_filter_and_normalize(void)
 
 
 // ****************************************************************************
-int32_t INPUTS_get_value(label_t input)
+int32_t INPUTS_get_value(input_label_t input)
 {
-    // Special handling of output channels and virtual channels
-    if (input >= OUTPUT_CHANNEL_TAG_OFFSET) {
-        return channels[input - OUTPUT_CHANNEL_TAG_OFFSET];
-    }
-
     for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
 
@@ -1010,15 +1005,8 @@ int32_t INPUTS_get_value(label_t input)
 
 
 // ****************************************************************************
-uint8_t INPUTS_get_switch_value(label_t input)
+uint8_t INPUTS_get_switch_value(input_label_t input)
 {
-    // Special handling of output channels and virtual channels
-    // We treat them like analog channels, returing either 0 or 1 depending
-    // on whether the channel is negative or positive.
-    if (input >= OUTPUT_CHANNEL_TAG_OFFSET) {
-        return (channels[input - OUTPUT_CHANNEL_TAG_OFFSET] > 0) ? 1 : 0;
-    }
-
     for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
 
@@ -1039,13 +1027,8 @@ uint8_t INPUTS_get_switch_value(label_t input)
 
 
 // ****************************************************************************
-int32_t INPUTS_get_trim(label_t input)
+int32_t INPUTS_get_trim(input_label_t input)
 {
-    // Output channels and virtual channels do not have trim values
-    if (input >= OUTPUT_CHANNEL_TAG_OFFSET) {
-        return 0;
-    }
-
     for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {
         logical_input_t *li = &config.tx.logical_inputs[i];
 

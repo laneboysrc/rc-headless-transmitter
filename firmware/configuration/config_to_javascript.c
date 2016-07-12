@@ -1,9 +1,11 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include <config.h>
 #include <systick.h>
+#include <uart.h>
 
 
 // Source: http://stackoverflow.com/questions/3553296/c-sizeof-single-struct-member
@@ -20,7 +22,22 @@ static void dump_javascript_7(void);
 static void dump_javascript_8(void);
 static void dump_javascript_9(void);
 static void dump_javascript_10(void);
+static void dump_javascript_11(void);
+static void dump_javascript_12(void);
 static void dump_javascript_config(void);
+
+
+// ****************************************************************************
+// static void sync_printf(const char *fmt, ...)
+// {
+//     va_list ap;
+
+//     va_start(ap, fmt);
+//     vprintf(fmt, ap);
+//     va_end(ap);
+
+//     UART_sync();
+// }
 
 
 // ****************************************************************************
@@ -106,7 +123,6 @@ static void dump_javascript_1(void) {
         offsetof(config_t, tx.hardware_inputs[0].calibration) - o,
         sizeof(config.tx.hardware_inputs[0].calibration[0]),
         membersizeof(config_t, tx.hardware_inputs[0].calibration) / sizeof(config.tx.hardware_inputs[0].calibration[0]));
-
     SYSTICK_set_callback(dump_javascript_2, 200);
 }
 
@@ -130,10 +146,10 @@ static void dump_javascript_2(void) {
         offsetof(config_t, tx.logical_inputs[0].hardware_inputs) - o,
         sizeof(port_t),
         membersizeof(config_t, tx.logical_inputs[0].hardware_inputs) / sizeof(port_t));
-    printf("    LOGICAL_INPUTS_LABELS: {o: %u, s: %u, c: %u, t: 'label_t'},\n",
+    printf("    LOGICAL_INPUTS_LABELS: {o: %u, s: %u, c: %u, t: 'input_label_t'},\n",
         offsetof(config_t, tx.logical_inputs[0].labels) - o,
-        sizeof(label_t),
-        membersizeof(config_t, tx.logical_inputs[0].labels) / sizeof(label_t));
+        sizeof(input_label_t),
+        membersizeof(config_t, tx.logical_inputs[0].labels) / sizeof(input_label_t));
     printf("    TRIM_RANGE: {o: %u, s: %u, c: 1, t: 'i'},\n",
         offsetof(config_t, tx.trim_range) - o,
         membersizeof(config_t, tx.trim_range));
@@ -149,8 +165,8 @@ static void dump_javascript_2(void) {
     printf("    LED_PWM_PERCENT: {o: %u, s: %u, c: 1, t: 'u'},\n",
         offsetof(config_t, tx.led_pwm_percent) - o,
         membersizeof(config_t, tx.led_pwm_percent));
-    SYSTICK_set_callback(dump_javascript_3, 200);
     printf("    },\n\n");
+    SYSTICK_set_callback(dump_javascript_3, 200);
 }
 
 static void dump_javascript_3(void) {
@@ -184,7 +200,6 @@ static void dump_javascript_3(void) {
     printf("    MIXER_UNITS_CURVE_POINTS: {o: %u, s: %u, c: 1, t: 'i'},\n",
         offsetof(config_t, model.mixer_units[0].curve.points) - o,
         membersizeof(config_t, model.mixer_units[0].curve.points));
-
     SYSTICK_set_callback(dump_javascript_4, 300);
 }
 
@@ -316,7 +331,7 @@ static void dump_javascript_6(void) {
 }
 
 static void dump_javascript_7(void) {
-    printf("    label_t: {\n");
+    printf("    input_label_t: {\n");
     printf("        NONE: %d,\n", NONE);
     printf("        ST: %d,\n", ST);
     printf("        TH: %d,\n", TH);
@@ -354,10 +369,12 @@ static void dump_javascript_7(void) {
     printf("        SW7: %d,\n", SW7);
     printf("        SW8: %d,\n", SW8);
     printf("        SW9: %d,\n", SW9);
+    printf("    },\n");
     SYSTICK_set_callback(dump_javascript_8, 200);
 }
 
 static void dump_javascript_8(void) {
+    printf("    channel_label_t: {\n");
     printf("        CH1: %d,\n", CH1);
     printf("        CH2: %d,\n", CH2);
     printf("        CH3: %d,\n", CH3);
@@ -376,12 +393,80 @@ static void dump_javascript_8(void) {
     printf("        VIRTUAL8: %d,\n", VIRTUAL8);
     printf("        VIRTUAL9: %d,\n", VIRTUAL9);
     printf("        VIRTUAL10: %d,\n", VIRTUAL10);
-    printf("        OUTPUT_CHANNEL_TAG_OFFSET: %d,\n", OUTPUT_CHANNEL_TAG_OFFSET);
+    // NOTE: skip hidden channels, they are not needed in the UI
     printf("    },\n");
     SYSTICK_set_callback(dump_javascript_9, 200);
 }
 
 static void dump_javascript_9(void) {
+    printf("    src_label_t: {\n");
+    printf("        NONE: %d,\n", SRC_NONE);
+
+    printf("        NONE: %d,\n", IN_NONE);
+    printf("        ST: %d,\n", IN_ST);
+    printf("        TH: %d,\n", IN_TH);
+    printf("        THR: %d,\n", IN_THR);
+    printf("        RUD: %d,\n", IN_RUD);
+    printf("        AIL: %d,\n", IN_AIL);
+    printf("        ELE: %d,\n", IN_ELE);
+    printf("        AUX: %d,\n", IN_AUX);
+    printf("        ST_DR: %d,\n", IN_ST_DR);
+    printf("        RUD_DR: %d,\n", IN_RUD_DR);
+    printf("        AIL_DR: %d,\n", IN_AIL_DR);
+    printf("        ELE_DR: %d,\n", IN_ELE_DR);
+    printf("        TH_DR: %d,\n", IN_TH_DR);
+    printf("        THR_DR: %d,\n", IN_THR_DR);
+    printf("        TH_HOLD: %d,\n", IN_TH_HOLD);
+    printf("        GEAR: %d,\n", IN_GEAR);
+    printf("        FLAPS: %d,\n", IN_FLAPS);
+    printf("        TRAINER: %d,\n", IN_TRAINER);
+    printf("        SIDE_L: %d,\n", IN_SIDE_L);
+    printf("        SIDE_R: %d,\n", IN_SIDE_R);
+    printf("        POT1: %d,\n", IN_POT1);
+    printf("        POT2: %d,\n", IN_POT2);
+    printf("        POT3: %d,\n", IN_POT3);
+    printf("        POT4: %d,\n", IN_POT4);
+    printf("        POT5: %d,\n", IN_POT5);
+    printf("        POT6: %d,\n", IN_POT6);
+    printf("        POT7: %d,\n", IN_POT7);
+    printf("        POT8: %d,\n", IN_POT8);
+    printf("        POT9: %d,\n", IN_POT9);
+    printf("        SW1: %d,\n", IN_SW1);
+    printf("        SW2: %d,\n", IN_SW2);
+    printf("        SW3: %d,\n", IN_SW3);
+    printf("        SW4: %d,\n", IN_SW4);
+    printf("        SW5: %d,\n", IN_SW5);
+    printf("        SW7: %d,\n", IN_SW7);
+    printf("        SW8: %d,\n", IN_SW8);
+    printf("        SW9: %d,\n", IN_SW9);
+    SYSTICK_set_callback(dump_javascript_10, 200);
+}
+
+static void dump_javascript_10(void) {
+    printf("        CH1: %d,\n", CH_CH1);
+    printf("        CH2: %d,\n", CH_CH2);
+    printf("        CH3: %d,\n", CH_CH3);
+    printf("        CH4: %d,\n", CH_CH4);
+    printf("        CH5: %d,\n", CH_CH5);
+    printf("        CH6: %d,\n", CH_CH6);
+    printf("        CH7: %d,\n", CH_CH7);
+    printf("        CH8: %d,\n", CH_CH8);
+    printf("        VIRTUAL1: %d,\n", CH_VIRTUAL1);
+    printf("        VIRTUAL2: %d,\n", CH_VIRTUAL2);
+    printf("        VIRTUAL3: %d,\n", CH_VIRTUAL3);
+    printf("        VIRTUAL4: %d,\n", CH_VIRTUAL4);
+    printf("        VIRTUAL5: %d,\n", CH_VIRTUAL5);
+    printf("        VIRTUAL6: %d,\n", CH_VIRTUAL6);
+    printf("        VIRTUAL7: %d,\n", CH_VIRTUAL7);
+    printf("        VIRTUAL8: %d,\n", CH_VIRTUAL8);
+    printf("        VIRTUAL9: %d,\n", CH_VIRTUAL9);
+    printf("        VIRTUAL10: %d,\n", CH_VIRTUAL10);
+    // NOTE: skip hidden channels, they are not needed in the UI
+    printf("    },\n");
+    SYSTICK_set_callback(dump_javascript_11, 200);
+}
+
+static void dump_javascript_11(void) {
     printf("    rf_protocol_type_t: {\n");
     printf("        RF_PROTOCOL_HK310: %d,\n", RF_PROTOCOL_HK310);
     printf("    },\n");
@@ -423,10 +508,10 @@ static void dump_javascript_9(void) {
     printf("    },\n");
     printf("    }\n");
     printf("};\n");
-    SYSTICK_set_callback(dump_javascript_10, 200);
+    SYSTICK_set_callback(dump_javascript_12, 200);
 }
 
-static void dump_javascript_10(void) {
+static void dump_javascript_12(void) {
 
     print_separator();
     SYSTICK_set_callback(dump_javascript_config, 200);

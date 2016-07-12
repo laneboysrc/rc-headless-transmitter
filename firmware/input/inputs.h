@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <stdint.h>
 
 #include <channels.h>
@@ -96,8 +95,11 @@ typedef enum {
     DOUBLE_CLICK_DECREMENT
 } input_sub_type_t;
 
+// IMPORTANT:
+// ==========
+// If you modify this list, update src_label_t in mixer.h to match!
 typedef enum {
-    NONE = 0,
+    NONE = 0,   // Identifier when no label is assigned
     ST,
     TH,
     THR,
@@ -135,51 +137,7 @@ typedef enum {
     SW7,
     SW8,
     SW9,
-
-    // IMPORTANT:
-    // ==========
-    // The following items must be in sequence, and the output channels must be
-    // followed by the virtual channels. No tag that does not describe an output
-    // channel must follow this section.
-    //
-    // The variables defined in channels.c and from where the INPUT_get_value()
-    // function get their depend on this order. OUTPUT_CHANNEL_TAG_OFFSET
-    // defines the first element (CH1) in this list, which corresponds to the
-    // first element in the channels[], output_channels[] and failsafe[] arrays.
-    //
-    // There must be NUMBER_OF_OUTPUT_CHANNELS output channels (CH1..CHxxx),
-    // NUMBER_OF_VIRTUAL_CHANNELS virtual channels (VIRTUAL1..VIRTUALxxx),
-    // and NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS hidden channels to be used by the
-    // complex mixer UI (HIDDEN1..HIDDENxxx)
-
-    // Tags to access the output channels
-    CH1,
-    CH2,
-    CH3,
-    CH4,
-    CH5,
-    CH6,
-    CH7,
-    CH8,
-
-    VIRTUAL1,
-    VIRTUAL2,
-    VIRTUAL3,
-    VIRTUAL4,
-    VIRTUAL5,
-    VIRTUAL6,
-    VIRTUAL7,
-    VIRTUAL8,
-    VIRTUAL9,
-    VIRTUAL10,
-
-    HIDDEN1,
-    HIDDEN_LAST = HIDDEN1 + NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS,
-    // FIXME: Do we need all tags here?
-
-} label_t;
-
-#define OUTPUT_CHANNEL_TAG_OFFSET CH1
+} input_label_t;
 
 // State machine for momentary button handling
 typedef enum {
@@ -207,7 +165,7 @@ typedef struct {
     input_sub_type_t sub_type;
     uint8_t position_count;
     port_t hardware_inputs[MAX_POSITION_COUNT];
-    label_t labels[MAX_LABELS];
+    input_label_t labels[MAX_LABELS];
 } logical_input_t;
 
 
@@ -217,9 +175,9 @@ extern const logical_input_value_t logical_inputs_flash[MAX_LOGICAL_INPUTS];
 
 
 void INPUTS_init(void);
-int32_t INPUTS_get_value(label_t input);
-uint8_t INPUTS_get_switch_value(label_t input);
-int32_t INPUTS_get_trim(label_t input);
+int32_t INPUTS_get_value(input_label_t input);
+uint8_t INPUTS_get_switch_value(input_label_t input);
+int32_t INPUTS_get_trim(input_label_t input);
 void INPUTS_filter_and_normalize(void);
 void INPUTS_dump_adc(void);
 uint32_t INPUTS_get_battery_voltage(void);

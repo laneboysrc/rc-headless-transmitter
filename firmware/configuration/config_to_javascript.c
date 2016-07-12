@@ -72,7 +72,7 @@ void CONFIG_dump_javascript_information(void)
     // Member with human readable string
     const char *h = "        %s: {t: '%s', h: '%s', o: %u, s: %u, c: %u},\n";
     // Named type entry
-    const char *t = "            %s: %d,\n";
+    const char *t = "            '%s': %d,\n";
 
     print_separator();
 
@@ -162,7 +162,7 @@ void CONFIG_dump_javascript_information(void)
         membersizeof(tx_t, hardware_inputs[0].type),
         1);
 
-    sync_printf(m, "HARDWARE_INPUTS_CALIBRATION:", "u",
+    sync_printf(m, "HARDWARE_INPUTS_CALIBRATION", "u",
         offsetof(tx_t, hardware_inputs[0].calibration),
         sizeof(config.tx.hardware_inputs[0].calibration[0]),
         membersizeof(tx_t, hardware_inputs[0].calibration) / sizeof(config.tx.hardware_inputs[0].calibration[0]));

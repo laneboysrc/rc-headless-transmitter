@@ -8,6 +8,7 @@
 
 #include <ring_buffer.h>
 #include <uart.h>
+#include <watchdog.h>
 
 
 // ****************************************************************************
@@ -87,6 +88,8 @@ void UART_sync(void)
     while (! RING_BUFFER_is_empty(&tx_ring_buffer)) {
         // Put the CPU to sleep until an interrupt triggers.
         __WFI();
+
+        WATCHDOG_reset();
     }
 }
 

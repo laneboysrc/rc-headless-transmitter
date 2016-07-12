@@ -611,7 +611,7 @@ Database.add(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), con
 // ****************************************************************************
 // Database tests
 
-if (0) {
+if (1) {
     let model_uuid = Database.list('MODEL')[0];
     let tx_uuid = Database.list('TX')[0]
 
@@ -673,7 +673,7 @@ if (0) {
     testSet(tx_uuid, 'HARDWARE_INPUTS_CALIBRATION', [1234, 2345, 3456]);
     testSet(model_uuid, 'MIXER_UNITS_SRC', 'FLAPS');
     testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', 'GEAR', 0, 2);
-    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'ELE_DR', 'NONE'], 2*config.TX.LOGICAL_INPUTS.s);
+    testSet(tx_uuid, 'LOGICAL_INPUTS_LABELS', ['ST-DR', 'RUD-DR', 'AIL-DR', 'ELE-DR', 'NONE'], 2*config.TX.LOGICAL_INPUTS.s);
 
     console.info('---------------------------------');
     console.info('Tests that should fail and return "undefined":');

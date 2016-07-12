@@ -67,412 +67,513 @@ static void dump_javascript_config(void)
 // ****************************************************************************
 void CONFIG_dump_javascript_information(void)
 {
-    size_t o;
+    const char *m = "        %s: {t: '%s', o: %u, s: %u, c: %u},\n";
+    const char *t = "            %s: %d,\n";
 
     print_separator();
 
     sync_printf("var CONFIG_VERSIONS = CONFIG_VERSIONS || {};\n\n");
     sync_printf("CONFIG_VERSIONS[%lu] = {\n", config.version);
     sync_printf("    CONFIG: {\n");
-    sync_printf("    o: 0, s: %u, c: 1, t: 'CONFIG',\n", sizeof(config));
-    sync_printf("    VERSION: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, version),
-        membersizeof(config_t, version));
-    sync_printf("    TX: {o: %u, s: %u, c: 1, t: 's'},\n",
-        offsetof(config_t, tx),
-        membersizeof(config_t, tx));
-    sync_printf("    MODEL: {o: %u, s: %u, c: 1, t: 's'},\n",
-        offsetof(config_t, model),
-        membersizeof(config_t, model));
+    sync_printf("        t: 'CONFIG', o: 0, s: %u, c: 1,\n", sizeof(config));
+    sync_printf("        VERSION: {o: %u, s: %u, c: 1, t: 'u'},\n", offsetof(config_t, version), membersizeof(config_t, version));
+    sync_printf("        TX: {o: %u, s: %u, c: 1, t: 's'},\n", offsetof(config_t, tx), membersizeof(config_t, tx));
+    sync_printf("        MODEL: {o: %u, s: %u, c: 1, t: 's'},\n", offsetof(config_t, model), membersizeof(config_t, model));
     sync_printf("    },\n\n");
 
-    o = offsetof(config_t, tx);
 
     sync_printf("    TX: {\n");
-    sync_printf("    o: %u, s: %u, c: 1, t: 'TX',\n",
-        offsetof(config_t, tx), membersizeof(config_t, tx));
-    sync_printf("    UUID: {o: %u, s: 1, c: %u, t: 'uuid'},\n",
-        offsetof(config_t, tx.uuid) - o,
-        membersizeof(config_t, tx.uuid));
-    sync_printf("    NAME: {o: %u, s: 1, c: %u, t: 'c'},\n",
-        offsetof(config_t, tx.name) - o,
-        membersizeof(config_t, tx.name));
-    sync_printf("    LAST_CHANGED: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, tx.last_changed) - o,
-        membersizeof(config_t, tx.last_changed));
-    sync_printf("    HARDWARE_INPUTS: {o: %u, s: %u, c: %u, t: 's'},\n",
-        offsetof(config_t, tx.hardware_inputs) - o,
+    sync_printf("        o: %u, s: %u, c: 1, t: 'TX',\n", offsetof(config_t, tx), sizeof(tx_t));
+
+    sync_printf(m, "UUID", "uuid",
+        offsetof(tx_t, uuid),
+        1,
+        membersizeof(tx_t, uuid));
+
+    sync_printf(m, "NAME", "c",
+        offsetof(tx_t, name),
+        1,
+        membersizeof(tx_t, name));
+
+    sync_printf(m, "LAST_CHANGED", "u",
+        offsetof(tx_t, last_changed),
+        membersizeof(tx_t, last_changed),
+        1);
+
+    sync_printf(m, "HARDWARE_INPUTS", "s",
+        offsetof(tx_t, hardware_inputs),
         sizeof(hardware_input_t),
-        membersizeof(config_t, tx.hardware_inputs) / sizeof(hardware_input_t));
-    sync_printf("    HARDWARE_INPUTS_PCB_INPUT: {o: %u, s: %u, c: 1, t: 's'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].pcb_input) - o,
-        membersizeof(config_t, tx.hardware_inputs[0].pcb_input));
-    sync_printf("    HARDWARE_INPUTS_PCB_INPUT_GPIOPORT: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].pcb_input.gpioport) - o,
-        membersizeof(config_t, tx.hardware_inputs[0].pcb_input.gpioport));
-    sync_printf("    HARDWARE_INPUTS_PCB_INPUT_GPIO: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].pcb_input.gpio) - o,
-        membersizeof(config_t, tx.hardware_inputs[0].pcb_input.gpio));
-    sync_printf("    HARDWARE_INPUTS_PCB_INPUT_ADC_CHANNEL: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].pcb_input.adc_channel) - o,
-        membersizeof(config_t, tx.hardware_inputs[0].pcb_input.adc_channel) );
-    sync_printf("    HARDWARE_INPUTS_PCB_INPUT_TYPE: {o: %u, s: %u, c: 1, t: 'pcb_input_type_t'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].pcb_input.type) - o,
-        membersizeof(config_t, tx.hardware_inputs[0].pcb_input.type));
-    sync_printf("    HARDWARE_INPUTS_PCB_INPUT_PIN_NAME: {o: %u, s: %u, c: %u, t: 'c'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].pcb_input.pin_name) - o,
-        sizeof(config.tx.hardware_inputs[0].pcb_input.pin_name[0]),
-        membersizeof(config_t, tx.hardware_inputs[0].pcb_input.pin_name) / sizeof(config.tx.hardware_inputs[0].pcb_input.pin_name[0]));
-    sync_printf("    HARDWARE_INPUTS_PCB_INPUT_SCHEMATIC_REFERENCE: {o: %u, s: %u, c: %u, t: 'c'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].pcb_input.schematic_reference) - o,
-        sizeof(config.tx.hardware_inputs[0].pcb_input.schematic_reference[0]),
-        membersizeof(config_t, tx.hardware_inputs[0].pcb_input.schematic_reference) / sizeof(config.tx.hardware_inputs[0].pcb_input.schematic_reference[0]));
-    sync_printf("    HARDWARE_INPUTS_TYPE: {o: %u, s: %u, c: 1, t: 'hardware_input_type_t'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].type) - o,
-        membersizeof(config_t, tx.hardware_inputs[0].type));
-    sync_printf("    HARDWARE_INPUTS_CALIBRATION: {o: %u, s: %u, c: %u, t: 'u'},\n",
-        offsetof(config_t, tx.hardware_inputs[0].calibration) - o,
+        membersizeof(tx_t, hardware_inputs) / sizeof(hardware_input_t));
+
+    sync_printf(m, "HARDWARE_INPUTS_PCB_INPUT", "s",
+        offsetof(tx_t, hardware_inputs[0].pcb_input),
+        membersizeof(tx_t, hardware_inputs[0].pcb_input),
+        1);
+
+    sync_printf(m, "HARDWARE_INPUTS_PCB_INPUT_GPIOPORT", "u",
+        offsetof(tx_t, hardware_inputs[0].pcb_input.gpioport),
+        membersizeof(tx_t, hardware_inputs[0].pcb_input.gpioport),
+        1);
+
+    sync_printf(m, "HARDWARE_INPUTS_PCB_INPUT_GPIO", "u",
+        offsetof(tx_t, hardware_inputs[0].pcb_input.gpio),
+        membersizeof(tx_t, hardware_inputs[0].pcb_input.gpio),
+        1);
+
+    sync_printf(m, "HARDWARE_INPUTS_PCB_INPUT_ADC_CHANNEL", "u",
+        offsetof(tx_t, hardware_inputs[0].pcb_input.adc_channel),
+        membersizeof(tx_t, hardware_inputs[0].pcb_input.adc_channel),
+        1);
+
+    sync_printf(m, "HARDWARE_INPUTS_PCB_INPUT_TYPE", "pcb_input_type_t",
+        offsetof(tx_t, hardware_inputs[0].pcb_input.type),
+        membersizeof(tx_t, hardware_inputs[0].pcb_input.type),
+        1);
+
+    sync_printf(m, "HARDWARE_INPUTS_PCB_INPUT_PIN_NAME", "c",
+        offsetof(tx_t, hardware_inputs[0].pcb_input.pin_name),
+        1,
+        membersizeof(tx_t, hardware_inputs[0].pcb_input.pin_name) / sizeof(config.tx.hardware_inputs[0].pcb_input.pin_name[0]));
+
+    sync_printf(m, "HARDWARE_INPUTS_PCB_INPUT_SCHEMATIC_REFERENCE", "c",
+        offsetof(tx_t, hardware_inputs[0].pcb_input.schematic_reference),
+        1,
+        membersizeof(tx_t, hardware_inputs[0].pcb_input.schematic_reference) / sizeof(config.tx.hardware_inputs[0].pcb_input.schematic_reference[0]));
+
+    sync_printf(m, "HARDWARE_INPUTS_TYPE", "hardware_input_type_t",
+        offsetof(tx_t, hardware_inputs[0].type),
+        membersizeof(tx_t, hardware_inputs[0].type),
+        1);
+
+    sync_printf(m, "HARDWARE_INPUTS_CALIBRATION:", "u",
+        offsetof(tx_t, hardware_inputs[0].calibration),
         sizeof(config.tx.hardware_inputs[0].calibration[0]),
-        membersizeof(config_t, tx.hardware_inputs[0].calibration) / sizeof(config.tx.hardware_inputs[0].calibration[0]));
-    sync_printf("    LOGICAL_INPUTS: {o: %u, s: %u, c: %u, t: 's'},\n",
-        offsetof(config_t, tx.logical_inputs) - o,
+        membersizeof(tx_t, hardware_inputs[0].calibration) / sizeof(config.tx.hardware_inputs[0].calibration[0]));
+
+    sync_printf(m, "LOGICAL_INPUTS", "s",
+        offsetof(tx_t, logical_inputs),
         sizeof(logical_input_t),
-        membersizeof(config_t, tx.logical_inputs) / sizeof(logical_input_t));
-    sync_printf("    LOGICAL_INPUTS_TYPE: {o: %u, s: %u, c: 1, t: 'input_type_t'},\n",
-        offsetof(config_t, tx.logical_inputs[0].type) - o,
-        membersizeof(config_t, tx.logical_inputs[0].type));
-    sync_printf("    LOGICAL_INPUTS_SUB_TYPE: {o: %u, s: %u, c: 1, t: 'input_sub_type_t'},\n",
-        offsetof(config_t, tx.logical_inputs[0].sub_type) - o,
-        membersizeof(config_t, tx.logical_inputs[0].sub_type));
-    sync_printf("    LOGICAL_INPUTS_POSITION_COUNT: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, tx.logical_inputs[0].position_count) - o,
-        membersizeof(config_t, tx.logical_inputs[0].position_count));
-    sync_printf("    LOGICAL_INPUTS_HARDWARE_INPUTS: {o: %u, s: %u, c: %u, t: 'u'},\n",
-        offsetof(config_t, tx.logical_inputs[0].hardware_inputs) - o,
+        membersizeof(tx_t, logical_inputs) / sizeof(logical_input_t));
+
+    sync_printf(m, "LOGICAL_INPUTS_TYPE", "input_type_t",
+        offsetof(tx_t, logical_inputs[0].type),
+        membersizeof(tx_t, logical_inputs[0].type),
+        1);
+
+    sync_printf(m, "LOGICAL_INPUTS_SUB_TYPE", "input_sub_type_t",
+        offsetof(tx_t, logical_inputs[0].sub_type),
+        membersizeof(tx_t, logical_inputs[0].sub_type),
+        1);
+
+    sync_printf(m, "LOGICAL_INPUTS_POSITION_COUNT", "u",
+        offsetof(tx_t, logical_inputs[0].position_count),
+        membersizeof(tx_t, logical_inputs[0].position_count),
+        1);
+
+    sync_printf(m, "LOGICAL_INPUTS_HARDWARE_INPUTS", "u",
+        offsetof(tx_t, logical_inputs[0].hardware_inputs),
         sizeof(port_t),
-        membersizeof(config_t, tx.logical_inputs[0].hardware_inputs) / sizeof(port_t));
-    sync_printf("    LOGICAL_INPUTS_LABELS: {o: %u, s: %u, c: %u, t: 'input_label_t'},\n",
-        offsetof(config_t, tx.logical_inputs[0].labels) - o,
+        membersizeof(tx_t, logical_inputs[0].hardware_inputs) / sizeof(port_t));
+
+    sync_printf(m, "LOGICAL_INPUTS_LABELS", "input_label_t",
+        offsetof(tx_t, logical_inputs[0].labels),
         sizeof(input_label_t),
-        membersizeof(config_t, tx.logical_inputs[0].labels) / sizeof(input_label_t));
-    sync_printf("    TRIM_RANGE: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, tx.trim_range) - o,
-        membersizeof(config_t, tx.trim_range));
-    sync_printf("    TRIM_STEP_SIZE: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, tx.trim_step_size) - o,
-        membersizeof(config_t, tx.trim_step_size));
-    sync_printf("    BIND_TIMEOUT_MS: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, tx.bind_timeout_ms) - o,
-        membersizeof(config_t, tx.bind_timeout_ms));
-    sync_printf("    DOUBLE_CLICK_TIMEOUT_MS: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, tx.double_click_timeout_ms) - o,
-        membersizeof(config_t, tx.double_click_timeout_ms));
-    sync_printf("    LED_PWM_PERCENT: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, tx.led_pwm_percent) - o,
-        membersizeof(config_t, tx.led_pwm_percent));
+        membersizeof(tx_t, logical_inputs[0].labels) / sizeof(input_label_t));
+
+    sync_printf(m, "TRIM_RANGE", "i",
+        offsetof(tx_t, trim_range),
+        membersizeof(tx_t, trim_range),
+        1);
+
+    sync_printf(m, "TRIM_STEP_SIZE", "i",
+        offsetof(tx_t, trim_step_size),
+        membersizeof(tx_t, trim_step_size),
+        1);
+
+    sync_printf(m, "BIND_TIMEOUT_MS", "u",
+        offsetof(tx_t, bind_timeout_ms),
+        membersizeof(tx_t, bind_timeout_ms),
+        1);
+
+    sync_printf(m, "DOUBLE_CLICK_TIMEOUT_MS", "u",
+        offsetof(tx_t, double_click_timeout_ms),
+        membersizeof(tx_t, double_click_timeout_ms),
+        1);
+
+    sync_printf(m, "LED_PWM_PERCENT", "u",
+        offsetof(tx_t, led_pwm_percent),
+        membersizeof(tx_t, led_pwm_percent),
+        1);
+
     sync_printf("    },\n\n");
 
-    o = offsetof(config_t, model);
-
     sync_printf("    MODEL: {\n");
-    sync_printf("    o: %u, s: %u, c: 1, t: 'MODEL',\n",
+    sync_printf("        o: %u, s: %u, c: 1, t: 'MODEL',\n",
         offsetof(config_t, model), membersizeof(config_t, model));
-    sync_printf("    UUID: {o: %u, s: 1, c: %u, t: 'uuid'},\n",
-        offsetof(config_t, model.uuid) - o,
-        membersizeof(config_t, model.uuid));
-    sync_printf("    NAME: {o: %u, s: 1, c: %u, t: 'c'},\n",
-        offsetof(config_t, model.name) - o,
-        membersizeof(config_t, model.name));
-    sync_printf("    LAST_CHANGED: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, model.last_changed) - o,
-        membersizeof(config_t, model.last_changed));
-    sync_printf("    MIXER_UNITS: {o: %u, s: %u, c: %u, t: 's'},\n",
-        offsetof(config_t, model.mixer_units) - o,
+
+    sync_printf(m, "UUID", "uuid",
+        offsetof(model_t, uuid),
+        1,
+        membersizeof(model_t, uuid));
+
+    sync_printf(m, "NAME", "c",
+        offsetof(model_t, name),
+        1,
+        membersizeof(model_t, name));
+
+    sync_printf(m, "LAST_CHANGED", "u",
+        offsetof(model_t, last_changed),
+        membersizeof(model_t, last_changed),
+        1);
+
+    sync_printf(m, "MIXER_UNITS", "s",
+        offsetof(model_t, mixer_units),
         sizeof(mixer_unit_t),
-        membersizeof(config_t, model.mixer_units) / sizeof(mixer_unit_t));
-    sync_printf("    MIXER_UNITS_CURVE: {o: %u, s: %u, c: 1, t: 's'},\n",
-        offsetof(config_t, model.mixer_units[0].curve) - o,
-        membersizeof(config_t, model.mixer_units[0].curve));
-    sync_printf("    MIXER_UNITS_CURVE_TYPE: {o: %u, s: %u, c: 1, t: 'curve_type_t'},\n",
-        offsetof(config_t, model.mixer_units[0].curve.type) - o,
-        membersizeof(config_t, model.mixer_units[0].curve.type));
-    sync_printf("    MIXER_UNITS_CURVE_SMOOTHING: {o: %u, s: %u, c: 1, t: 'interpolation_type_t'},\n",
-        offsetof(config_t, model.mixer_units[0].curve.smoothing) - o,
-        membersizeof(config_t, model.mixer_units[0].curve.smoothing));
-    sync_printf("    MIXER_UNITS_CURVE_POINTS: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.mixer_units[0].curve.points) - o,
-        membersizeof(config_t, model.mixer_units[0].curve.points));
-    sync_printf("    MIXER_UNITS_SRC: {o: %u, s: %u, c: 1, t: 'label_t'},\n",
-        offsetof(config_t, model.mixer_units[0].src) - o,
-        membersizeof(config_t, model.mixer_units[0].src));
-    sync_printf("    MIXER_UNITS_DST: {o: %u, s: %u, c: 1, t: 'label_t'},\n",
-        offsetof(config_t, model.mixer_units[0].dst) - o,
-        membersizeof(config_t, model.mixer_units[0].dst));
-    sync_printf("    MIXER_UNITS_SW: {o: %u, s: %u, c: 1, t: 's'},\n",
-        offsetof(config_t, model.mixer_units[0].sw) - o,
-        membersizeof(config_t, model.mixer_units[0].sw));
-    sync_printf("    MIXER_UNITS_SW_SW: {o: %u, s: %u, c: 1, t: 'label_t'},\n",
-        offsetof(config_t, model.mixer_units[0].sw.sw) - o,
-        membersizeof(config_t, model.mixer_units[0].sw.sw));
-    sync_printf("    MIXER_UNITS_SW_CMP: {o: %u, s: %u, c: 1, t: 'comparison_t'},\n",
-        offsetof(config_t, model.mixer_units[0].sw.cmp) - o,
-        membersizeof(config_t, model.mixer_units[0].sw.cmp));
-    sync_printf("    MIXER_UNITS_SW_VALUE: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, model.mixer_units[0].sw.value) - o,
-        membersizeof(config_t, model.mixer_units[0].sw.value));
-    sync_printf("    MIXER_UNITS_OP: {o: %u, s: %u, c: 1, t: 'operation_type_t'},\n",
-        offsetof(config_t, model.mixer_units[0].op) - o,
-        membersizeof(config_t, model.mixer_units[0].op));
-    sync_printf("    MIXER_UNITS_SCALAR: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.mixer_units[0].scalar) - o,
-        membersizeof(config_t, model.mixer_units[0].scalar));
-    sync_printf("    MIXER_UNITS_OFFSET: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.mixer_units[0].offset) - o,
-        membersizeof(config_t, model.mixer_units[0].offset));
-    sync_printf("    MIXER_UNITS_TAG: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, model.mixer_units[0].tag) - o,
-        membersizeof(config_t, model.mixer_units[0].tag));
-    sync_printf("    MIXER_UNITS_INVERT_SOURCE: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, model.mixer_units[0].invert_source) - o,
-        membersizeof(config_t, model.mixer_units[0].invert_source));
-    sync_printf("    MIXER_UNITS_APPLY_TRIM: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, model.mixer_units[0].apply_trim) - o,
-        membersizeof(config_t, model.mixer_units[0].apply_trim));
-    sync_printf("    LIMITS: {o: %u, s: %u, c: %u, t: 's'},\n",
-        offsetof(config_t, model.limits) - o,
+        membersizeof(model_t, mixer_units) / sizeof(mixer_unit_t));
+
+    sync_printf(m, "MIXER_UNITS_CURVE", "s",
+        offsetof(model_t, mixer_units[0].curve),
+        membersizeof(model_t, mixer_units[0].curve),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_CURVE_TYPE", "curve_type_t",
+        offsetof(model_t, mixer_units[0].curve.type),
+        membersizeof(model_t, mixer_units[0].curve.type),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_CURVE_SMOOTHING", "interpolation_type_t",
+        offsetof(model_t, mixer_units[0].curve.smoothing),
+        membersizeof(model_t, mixer_units[0].curve.smoothing),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_CURVE_POINTS", "i",
+        offsetof(model_t, mixer_units[0].curve.points),
+        sizeof(config.model.mixer_units[0].curve.points[0]),
+        membersizeof(model_t, mixer_units[0].curve.points) / sizeof(config.model.mixer_units[0].curve.points[0]));
+
+    sync_printf(m, "MIXER_UNITS_SRC", "src_label_t",
+        offsetof(model_t, mixer_units[0].src),
+        membersizeof(model_t, mixer_units[0].src),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_DST", "channel_label_t",
+        offsetof(model_t, mixer_units[0].dst),
+        membersizeof(model_t, mixer_units[0].dst),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_SW", "s",
+        offsetof(model_t, mixer_units[0].sw),
+        membersizeof(model_t, mixer_units[0].sw),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_SW_SW", "input_label_t",
+        offsetof(model_t, mixer_units[0].sw.sw),
+        membersizeof(model_t, mixer_units[0].sw.sw),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_SW_CMP", "comparison_t",
+        offsetof(model_t, mixer_units[0].sw.cmp),
+        membersizeof(model_t, mixer_units[0].sw.cmp),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_SW_VALUE", "u",
+        offsetof(model_t, mixer_units[0].sw.value),
+        membersizeof(model_t, mixer_units[0].sw.value),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_OP", "operation_type_t",
+        offsetof(model_t, mixer_units[0].op),
+        membersizeof(model_t, mixer_units[0].op),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_SCALAR", "i",
+        offsetof(model_t, mixer_units[0].scalar),
+        membersizeof(model_t, mixer_units[0].scalar),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_OFFSET", "i",
+        offsetof(model_t, mixer_units[0].offset),
+        membersizeof(model_t, mixer_units[0].offset),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_TAG", "u",
+        offsetof(model_t, mixer_units[0].tag),
+        membersizeof(model_t, mixer_units[0].tag),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_INVERT_SOURCE", "u",
+        offsetof(model_t, mixer_units[0].invert_source),
+        membersizeof(model_t, mixer_units[0].invert_source),
+        1);
+
+    sync_printf(m, "MIXER_UNITS_APPLY_TRIM", "u",
+        offsetof(model_t, mixer_units[0].apply_trim),
+        membersizeof(model_t, mixer_units[0].apply_trim),
+        1);
+
+    sync_printf(m, "LIMITS", "s",
+        offsetof(model_t, limits),
         sizeof(limits_t),
-        membersizeof(config_t, model.limits) / sizeof(limits_t));
-    sync_printf("    LIMITS_EP_L: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.limits[0].ep_l) - o,
-        membersizeof(config_t, model.limits[0].ep_l));
-    sync_printf("    LIMITS_EP_H: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.limits[0].ep_h) - o,
-        membersizeof(config_t, model.limits[0].ep_h));
-    sync_printf("    LIMITS_SUBTRIM: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.limits[0].subtrim) - o,
-        membersizeof(config_t, model.limits[0].subtrim));
-    sync_printf("    LIMITS_LIMIT_L: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.limits[0].limit_l) - o,
-        membersizeof(config_t, model.limits[0].limit_l));
-    sync_printf("    LIMITS_LIMIT_H: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.limits[0].limit_h) - o,
-        membersizeof(config_t, model.limits[0].limit_h));
-    sync_printf("    LIMITS_FAILSAFE: {o: %u, s: %u, c: 1, t: 'i'},\n",
-        offsetof(config_t, model.limits[0].failsafe) - o,
-        membersizeof(config_t, model.limits[0].failsafe));
-    sync_printf("    LIMITS_SPEED: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, model.limits[0].speed) - o,
-        membersizeof(config_t, model.limits[0].speed));
-    sync_printf("    LIMITS_INVERT: {o: %u, s: %u, c: 1, t: 'u'},\n",
-        offsetof(config_t, model.limits[0].invert) - o,
-        membersizeof(config_t, model.limits[0].invert));
-    sync_printf("    RF_PROTOCOL_TYPE: {o: %u, s: %u, c: 1, t: 'rf_protocol_type_t'},\n",
-        offsetof(config_t, model.rf_protocol_type) - o,
-        membersizeof(config_t, model.rf_protocol_type));
-    sync_printf("    RF: {o: %u, s: %u, c: 1, t: 's'},\n",
-        offsetof(config_t, model.rf) - o,
-        membersizeof(config_t, model.rf));
-    sync_printf("    RF_PROTOCOL_HK310: {o: %u, s: %u, c: 1, t: 's'},\n",
-        offsetof(config_t, model.rf.protocol_hk310) - o,
-        membersizeof(config_t, model.rf.protocol_hk310));
-    sync_printf("    RF_PROTOCOL_HK310_HOP_CHANNELS: {o: %u, s: 1, c: %u, t: 'u'},\n",
-        offsetof(config_t, model.rf.protocol_hk310.hop_channels) - o,
-        membersizeof(config_t, model.rf.protocol_hk310.hop_channels));
-    sync_printf("    RF_PROTOCOL_HK310_ADDRESS: {o: %u, s: 1, c: %u, t: 'u'},\n",
-        offsetof(config_t, model.rf.protocol_hk310.address) - o,
-        membersizeof(config_t, model.rf.protocol_hk310.address));
+        membersizeof(model_t, limits) / sizeof(limits_t));
+
+    sync_printf(m, "LIMITS_EP_L", "i",
+        offsetof(model_t, limits[0].ep_l),
+        membersizeof(model_t, limits[0].ep_l),
+        1);
+
+    sync_printf(m, "LIMITS_EP_H", "i",
+        offsetof(model_t, limits[0].ep_h),
+        membersizeof(model_t, limits[0].ep_h),
+        1);
+
+    sync_printf(m, "LIMITS_SUBTRIM", "i",
+        offsetof(model_t, limits[0].subtrim),
+        membersizeof(model_t, limits[0].subtrim),
+        1);
+
+    sync_printf(m, "LIMITS_LIMIT_L", "i",
+        offsetof(model_t, limits[0].limit_l),
+        membersizeof(model_t, limits[0].limit_l),
+        1);
+
+    sync_printf(m, "LIMITS_LIMIT_H", "i",
+        offsetof(model_t, limits[0].limit_h),
+        membersizeof(model_t, limits[0].limit_h),
+        1);
+
+    sync_printf(m, "LIMITS_FAILSAFE", "i",
+        offsetof(model_t, limits[0].failsafe),
+        membersizeof(model_t, limits[0].failsafe),
+        1);
+
+    sync_printf(m, "LIMITS_SPEED", "u",
+        offsetof(model_t, limits[0].speed),
+        membersizeof(model_t, limits[0].speed),
+        1);
+
+    sync_printf(m, "LIMITS_INVERT", "u",
+        offsetof(model_t, limits[0].invert),
+        membersizeof(model_t, limits[0].invert),
+        1);
+
+    sync_printf(m, "RF_PROTOCOL_TYPE", "rf_protocol_type_t",
+        offsetof(model_t, rf_protocol_type),
+        membersizeof(model_t, rf_protocol_type),
+        1);
+
+    sync_printf(m, "RF", "s",
+        offsetof(model_t, rf),
+        membersizeof(model_t, rf),
+        1);
+
+    sync_printf(m, "RF_PROTOCOL_HK310", "s",
+        offsetof(model_t, rf.protocol_hk310),
+        membersizeof(model_t, rf.protocol_hk310),
+        1);
+
+    sync_printf(m, "RF_PROTOCOL_HK310_HOP_CHANNELS", "u",
+        offsetof(model_t, rf.protocol_hk310.hop_channels),
+        sizeof(config.model.rf.protocol_hk310.hop_channels[0]),
+        membersizeof(model_t, rf.protocol_hk310.hop_channels));
+
+    sync_printf(m, "RF_PROTOCOL_HK310_ADDRESS", "u",
+        offsetof(model_t, rf.protocol_hk310.address),
+        sizeof(config.model.rf.protocol_hk310.address[0]),
+        membersizeof(model_t, rf.protocol_hk310.address));
+
     sync_printf("    },\n\n");
 
     sync_printf("    TYPES: {\n");
-    sync_printf("    pcb_inputut_type_t: {\n");
-    sync_printf("        PCB_INPUT_NOT_USED: %d,\n", PCB_INPUT_NOT_USED);
-    sync_printf("        ANALOG_DIGITAL: %d,\n", ANALOG_DIGITAL);
-    sync_printf("        DIGITAL: %d,\n", DIGITAL);
-    sync_printf("    },\n");
-    sync_printf("    hardware_input_type_t: {\n");
-    sync_printf("        TRANSMITTER_INPUT_NOT_USED: %d,\n", TRANSMITTER_INPUT_NOT_USED);
-    sync_printf("        ANALOG_WITH_CENTER: %d,\n", ANALOG_WITH_CENTER);
-    sync_printf("        ANALOG_NO_CENTER: %d,\n", ANALOG_NO_CENTER);
-    sync_printf("        ANALOG_NO_CENTER_POSITIVE_ONLY: %d,\n", ANALOG_NO_CENTER_POSITIVE_ONLY);
-    sync_printf("        SWITCH_ON_OFF: %d,\n", SWITCH_ON_OFF);
-    sync_printf("        SWITCH_ON_OPEN_OFF: %d,\n", SWITCH_ON_OPEN_OFF);
-    sync_printf("        MOMENTARY_ON_OFF: %d,\n", MOMENTARY_ON_OFF);
-    sync_printf("    },\n");
-    sync_printf("    input_type_t: {\n");
-    sync_printf("        LOGICAL_INPUT_NOT_USED: %d,\n", LOGICAL_INPUT_NOT_USED);
-    sync_printf("        ANALOG: %d,\n", ANALOG);
-    sync_printf("        SWITCH: %d,\n", SWITCH);
-    sync_printf("        BCD_SWITCH: %d,\n", BCD_SWITCH);
-    sync_printf("        MOMENTARY: %d,\n", MOMENTARY);
-    sync_printf("        TRIM: %d,\n", TRIM);
-    sync_printf("    },\n");
-    sync_printf("    input_sub_type_t: {\n");
-    sync_printf("        SUB_TYPE_NOT_APPLICABLE: %d,\n", SUB_TYPE_NOT_APPLICABLE);
-    sync_printf("        UP_DOWN_BUTTONS: %d,\n", UP_DOWN_BUTTONS);
-    sync_printf("        INCREMENT_AND_LOOP: %d,\n", INCREMENT_AND_LOOP);
-    sync_printf("        DECREMENT_AND_LOOP: %d,\n", DECREMENT_AND_LOOP);
-    sync_printf("        SAW_TOOTH: %d,\n", SAW_TOOTH);
-    sync_printf("        DOUBLE_CLICK_DECREMENT: %d,\n", DOUBLE_CLICK_DECREMENT);
-    sync_printf("    },\n");
-    sync_printf("    input_label_t: {\n");
-    sync_printf("        NONE: %d,\n", NONE);
-    sync_printf("        ST: %d,\n", ST);
-    sync_printf("        TH: %d,\n", TH);
-    sync_printf("        THR: %d,\n", THR);
-    sync_printf("        RUD: %d,\n", RUD);
-    sync_printf("        AIL: %d,\n", AIL);
-    sync_printf("        ELE: %d,\n", ELE);
-    sync_printf("        AUX: %d,\n", AUX);
-    sync_printf("        ST_DR: %d,\n", ST_DR);
-    sync_printf("        RUD_DR: %d,\n", RUD_DR);
-    sync_printf("        AIL_DR: %d,\n", AIL_DR);
-    sync_printf("        ELE_DR: %d,\n", ELE_DR);
-    sync_printf("        TH_DR: %d,\n", TH_DR);
-    sync_printf("        THR_DR: %d,\n", THR_DR);
-    sync_printf("        TH_HOLD: %d,\n", TH_HOLD);
-    sync_printf("        GEAR: %d,\n", GEAR);
-    sync_printf("        FLAPS: %d,\n", FLAPS);
-    sync_printf("        TRAINER: %d,\n", TRAINER);
-    sync_printf("        SIDE_L: %d,\n", SIDE_L);
-    sync_printf("        SIDE_R: %d,\n", SIDE_R);
-    sync_printf("        POT1: %d,\n", POT1);
-    sync_printf("        POT2: %d,\n", POT2);
-    sync_printf("        POT3: %d,\n", POT3);
-    sync_printf("        POT4: %d,\n", POT4);
-    sync_printf("        POT5: %d,\n", POT5);
-    sync_printf("        POT6: %d,\n", POT6);
-    sync_printf("        POT7: %d,\n", POT7);
-    sync_printf("        POT8: %d,\n", POT8);
-    sync_printf("        POT9: %d,\n", POT9);
-    sync_printf("        SW1: %d,\n", SW1);
-    sync_printf("        SW2: %d,\n", SW2);
-    sync_printf("        SW3: %d,\n", SW3);
-    sync_printf("        SW4: %d,\n", SW4);
-    sync_printf("        SW5: %d,\n", SW5);
-    sync_printf("        SW7: %d,\n", SW7);
-    sync_printf("        SW8: %d,\n", SW8);
-    sync_printf("        SW9: %d,\n", SW9);
-    sync_printf("    },\n");
-    sync_printf("    channel_label_t: {\n");
-    sync_printf("        CH1: %d,\n", CH1);
-    sync_printf("        CH2: %d,\n", CH2);
-    sync_printf("        CH3: %d,\n", CH3);
-    sync_printf("        CH4: %d,\n", CH4);
-    sync_printf("        CH5: %d,\n", CH5);
-    sync_printf("        CH6: %d,\n", CH6);
-    sync_printf("        CH7: %d,\n", CH7);
-    sync_printf("        CH8: %d,\n", CH8);
-    sync_printf("        VIRTUAL1: %d,\n", VIRTUAL1);
-    sync_printf("        VIRTUAL2: %d,\n", VIRTUAL2);
-    sync_printf("        VIRTUAL3: %d,\n", VIRTUAL3);
-    sync_printf("        VIRTUAL4: %d,\n", VIRTUAL4);
-    sync_printf("        VIRTUAL5: %d,\n", VIRTUAL5);
-    sync_printf("        VIRTUAL6: %d,\n", VIRTUAL6);
-    sync_printf("        VIRTUAL7: %d,\n", VIRTUAL7);
-    sync_printf("        VIRTUAL8: %d,\n", VIRTUAL8);
-    sync_printf("        VIRTUAL9: %d,\n", VIRTUAL9);
-    sync_printf("        VIRTUAL10: %d,\n", VIRTUAL10);
+    sync_printf("        pcb_inputut_type_t: {\n");
+    sync_printf(t, "PCB_INPUT_NOT_USED", PCB_INPUT_NOT_USED);
+    sync_printf(t, "ANALOG_DIGITAL", ANALOG_DIGITAL);
+    sync_printf(t, "DIGITAL", DIGITAL);
+    sync_printf("        },\n");
+    sync_printf("        hardware_input_type_t: {\n");
+    sync_printf(t, "TRANSMITTER_INPUT_NOT_USED", TRANSMITTER_INPUT_NOT_USED);
+    sync_printf(t, "ANALOG_WITH_CENTER", ANALOG_WITH_CENTER);
+    sync_printf(t, "ANALOG_NO_CENTER", ANALOG_NO_CENTER);
+    sync_printf(t, "ANALOG_NO_CENTER_POSITIVE_ONLY", ANALOG_NO_CENTER_POSITIVE_ONLY);
+    sync_printf(t, "SWITCH_ON_OFF", SWITCH_ON_OFF);
+    sync_printf(t, "SWITCH_ON_OPEN_OFF", SWITCH_ON_OPEN_OFF);
+    sync_printf(t, "MOMENTARY_ON_OFF", MOMENTARY_ON_OFF);
+    sync_printf("        },\n");
+    sync_printf("        input_type_t: {\n");
+    sync_printf(t, "LOGICAL_INPUT_NOT_USED", LOGICAL_INPUT_NOT_USED);
+    sync_printf(t, "ANALOG", ANALOG);
+    sync_printf(t, "SWITCH", SWITCH);
+    sync_printf(t, "BCD_SWITCH", BCD_SWITCH);
+    sync_printf(t, "MOMENTARY", MOMENTARY);
+    sync_printf(t, "TRIM", TRIM);
+    sync_printf("        },\n");
+    sync_printf("        input_sub_type_t: {\n");
+    sync_printf(t, "SUB_TYPE_NOT_APPLICABLE", SUB_TYPE_NOT_APPLICABLE);
+    sync_printf(t, "UP_DOWN_BUTTONS", UP_DOWN_BUTTONS);
+    sync_printf(t, "INCREMENT_AND_LOOP", INCREMENT_AND_LOOP);
+    sync_printf(t, "DECREMENT_AND_LOOP", DECREMENT_AND_LOOP);
+    sync_printf(t, "SAW_TOOTH", SAW_TOOTH);
+    sync_printf(t, "DOUBLE_CLICK_DECREMENT", DOUBLE_CLICK_DECREMENT);
+    sync_printf("        },\n");
+    sync_printf("        input_label_t: {\n");
+    sync_printf(t, "NONE", NONE);
+    sync_printf(t, "ST", ST);
+    sync_printf(t, "TH", TH);
+    sync_printf(t, "THR", THR);
+    sync_printf(t, "RUD", RUD);
+    sync_printf(t, "AIL", AIL);
+    sync_printf(t, "ELE", ELE);
+    sync_printf(t, "AUX", AUX);
+    sync_printf(t, "ST_DR", ST_DR);
+    sync_printf(t, "RUD_DR", RUD_DR);
+    sync_printf(t, "AIL_DR", AIL_DR);
+    sync_printf(t, "ELE_DR", ELE_DR);
+    sync_printf(t, "TH_DR", TH_DR);
+    sync_printf(t, "THR_DR", THR_DR);
+    sync_printf(t, "TH_HOLD", TH_HOLD);
+    sync_printf(t, "GEAR", GEAR);
+    sync_printf(t, "FLAPS", FLAPS);
+    sync_printf(t, "TRAINER", TRAINER);
+    sync_printf(t, "SIDE_L", SIDE_L);
+    sync_printf(t, "SIDE_R", SIDE_R);
+    sync_printf(t, "POT1", POT1);
+    sync_printf(t, "POT2", POT2);
+    sync_printf(t, "POT3", POT3);
+    sync_printf(t, "POT4", POT4);
+    sync_printf(t, "POT5", POT5);
+    sync_printf(t, "POT6", POT6);
+    sync_printf(t, "POT7", POT7);
+    sync_printf(t, "POT8", POT8);
+    sync_printf(t, "POT9", POT9);
+    sync_printf(t, "SW1", SW1);
+    sync_printf(t, "SW2", SW2);
+    sync_printf(t, "SW3", SW3);
+    sync_printf(t, "SW4", SW4);
+    sync_printf(t, "SW5", SW5);
+    sync_printf(t, "SW7", SW7);
+    sync_printf(t, "SW8", SW8);
+    sync_printf(t, "SW9", SW9);
+    sync_printf("        },\n");
+    sync_printf("        channel_label_t: {\n");
+    sync_printf(t, "CH1", CH1);
+    sync_printf(t, "CH2", CH2);
+    sync_printf(t, "CH3", CH3);
+    sync_printf(t, "CH4", CH4);
+    sync_printf(t, "CH5", CH5);
+    sync_printf(t, "CH6", CH6);
+    sync_printf(t, "CH7", CH7);
+    sync_printf(t, "CH8", CH8);
+    sync_printf(t, "VIRTUAL1", VIRTUAL1);
+    sync_printf(t, "VIRTUAL2", VIRTUAL2);
+    sync_printf(t, "VIRTUAL3", VIRTUAL3);
+    sync_printf(t, "VIRTUAL4", VIRTUAL4);
+    sync_printf(t, "VIRTUAL5", VIRTUAL5);
+    sync_printf(t, "VIRTUAL6", VIRTUAL6);
+    sync_printf(t, "VIRTUAL7", VIRTUAL7);
+    sync_printf(t, "VIRTUAL8", VIRTUAL8);
+    sync_printf(t, "VIRTUAL9", VIRTUAL9);
+    sync_printf(t, "VIRTUAL10", VIRTUAL10);
     // NOTE: skip hidden channels, they are not needed in the UI
-    sync_printf("    },\n");
-    sync_printf("    src_label_t: {\n");
-    sync_printf("        NONE: %d,\n", SRC_NONE);
+    sync_printf("        },\n");
+    sync_printf("        src_label_t: {\n");
+    sync_printf(t, "NONE", SRC_NONE);
 
-    sync_printf("        NONE: %d,\n", IN_NONE);
-    sync_printf("        ST: %d,\n", IN_ST);
-    sync_printf("        TH: %d,\n", IN_TH);
-    sync_printf("        THR: %d,\n", IN_THR);
-    sync_printf("        RUD: %d,\n", IN_RUD);
-    sync_printf("        AIL: %d,\n", IN_AIL);
-    sync_printf("        ELE: %d,\n", IN_ELE);
-    sync_printf("        AUX: %d,\n", IN_AUX);
-    sync_printf("        ST_DR: %d,\n", IN_ST_DR);
-    sync_printf("        RUD_DR: %d,\n", IN_RUD_DR);
-    sync_printf("        AIL_DR: %d,\n", IN_AIL_DR);
-    sync_printf("        ELE_DR: %d,\n", IN_ELE_DR);
-    sync_printf("        TH_DR: %d,\n", IN_TH_DR);
-    sync_printf("        THR_DR: %d,\n", IN_THR_DR);
-    sync_printf("        TH_HOLD: %d,\n", IN_TH_HOLD);
-    sync_printf("        GEAR: %d,\n", IN_GEAR);
-    sync_printf("        FLAPS: %d,\n", IN_FLAPS);
-    sync_printf("        TRAINER: %d,\n", IN_TRAINER);
-    sync_printf("        SIDE_L: %d,\n", IN_SIDE_L);
-    sync_printf("        SIDE_R: %d,\n", IN_SIDE_R);
-    sync_printf("        POT1: %d,\n", IN_POT1);
-    sync_printf("        POT2: %d,\n", IN_POT2);
-    sync_printf("        POT3: %d,\n", IN_POT3);
-    sync_printf("        POT4: %d,\n", IN_POT4);
-    sync_printf("        POT5: %d,\n", IN_POT5);
-    sync_printf("        POT6: %d,\n", IN_POT6);
-    sync_printf("        POT7: %d,\n", IN_POT7);
-    sync_printf("        POT8: %d,\n", IN_POT8);
-    sync_printf("        POT9: %d,\n", IN_POT9);
-    sync_printf("        SW1: %d,\n", IN_SW1);
-    sync_printf("        SW2: %d,\n", IN_SW2);
-    sync_printf("        SW3: %d,\n", IN_SW3);
-    sync_printf("        SW4: %d,\n", IN_SW4);
-    sync_printf("        SW5: %d,\n", IN_SW5);
-    sync_printf("        SW7: %d,\n", IN_SW7);
-    sync_printf("        SW8: %d,\n", IN_SW8);
-    sync_printf("        SW9: %d,\n", IN_SW9);
-    sync_printf("        CH1: %d,\n", CH_CH1);
-    sync_printf("        CH2: %d,\n", CH_CH2);
-    sync_printf("        CH3: %d,\n", CH_CH3);
-    sync_printf("        CH4: %d,\n", CH_CH4);
-    sync_printf("        CH5: %d,\n", CH_CH5);
-    sync_printf("        CH6: %d,\n", CH_CH6);
-    sync_printf("        CH7: %d,\n", CH_CH7);
-    sync_printf("        CH8: %d,\n", CH_CH8);
-    sync_printf("        VIRTUAL1: %d,\n", CH_VIRTUAL1);
-    sync_printf("        VIRTUAL2: %d,\n", CH_VIRTUAL2);
-    sync_printf("        VIRTUAL3: %d,\n", CH_VIRTUAL3);
-    sync_printf("        VIRTUAL4: %d,\n", CH_VIRTUAL4);
-    sync_printf("        VIRTUAL5: %d,\n", CH_VIRTUAL5);
-    sync_printf("        VIRTUAL6: %d,\n", CH_VIRTUAL6);
-    sync_printf("        VIRTUAL7: %d,\n", CH_VIRTUAL7);
-    sync_printf("        VIRTUAL8: %d,\n", CH_VIRTUAL8);
-    sync_printf("        VIRTUAL9: %d,\n", CH_VIRTUAL9);
-    sync_printf("        VIRTUAL10: %d,\n", CH_VIRTUAL10);
+    sync_printf(t, "NONE", IN_NONE);
+    sync_printf(t, "ST", IN_ST);
+    sync_printf(t, "TH", IN_TH);
+    sync_printf(t, "THR", IN_THR);
+    sync_printf(t, "RUD", IN_RUD);
+    sync_printf(t, "AIL", IN_AIL);
+    sync_printf(t, "ELE", IN_ELE);
+    sync_printf(t, "AUX", IN_AUX);
+    sync_printf(t, "ST_DR", IN_ST_DR);
+    sync_printf(t, "RUD_DR", IN_RUD_DR);
+    sync_printf(t, "AIL_DR", IN_AIL_DR);
+    sync_printf(t, "ELE_DR", IN_ELE_DR);
+    sync_printf(t, "TH_DR", IN_TH_DR);
+    sync_printf(t, "THR_DR", IN_THR_DR);
+    sync_printf(t, "TH_HOLD", IN_TH_HOLD);
+    sync_printf(t, "GEAR", IN_GEAR);
+    sync_printf(t, "FLAPS", IN_FLAPS);
+    sync_printf(t, "TRAINER", IN_TRAINER);
+    sync_printf(t, "SIDE_L", IN_SIDE_L);
+    sync_printf(t, "SIDE_R", IN_SIDE_R);
+    sync_printf(t, "POT1", IN_POT1);
+    sync_printf(t, "POT2", IN_POT2);
+    sync_printf(t, "POT3", IN_POT3);
+    sync_printf(t, "POT4", IN_POT4);
+    sync_printf(t, "POT5", IN_POT5);
+    sync_printf(t, "POT6", IN_POT6);
+    sync_printf(t, "POT7", IN_POT7);
+    sync_printf(t, "POT8", IN_POT8);
+    sync_printf(t, "POT9", IN_POT9);
+    sync_printf(t, "SW1", IN_SW1);
+    sync_printf(t, "SW2", IN_SW2);
+    sync_printf(t, "SW3", IN_SW3);
+    sync_printf(t, "SW4", IN_SW4);
+    sync_printf(t, "SW5", IN_SW5);
+    sync_printf(t, "SW7", IN_SW7);
+    sync_printf(t, "SW8", IN_SW8);
+    sync_printf(t, "SW9", IN_SW9);
+
+    sync_printf(t, "CH1", CH_CH1);
+    sync_printf(t, "CH2", CH_CH2);
+    sync_printf(t, "CH3", CH_CH3);
+    sync_printf(t, "CH4", CH_CH4);
+    sync_printf(t, "CH5", CH_CH5);
+    sync_printf(t, "CH6", CH_CH6);
+    sync_printf(t, "CH7", CH_CH7);
+    sync_printf(t, "CH8", CH_CH8);
+    sync_printf(t, "VIRTUAL1", CH_VIRTUAL1);
+    sync_printf(t, "VIRTUAL2", CH_VIRTUAL2);
+    sync_printf(t, "VIRTUAL3", CH_VIRTUAL3);
+    sync_printf(t, "VIRTUAL4", CH_VIRTUAL4);
+    sync_printf(t, "VIRTUAL5", CH_VIRTUAL5);
+    sync_printf(t, "VIRTUAL6", CH_VIRTUAL6);
+    sync_printf(t, "VIRTUAL7", CH_VIRTUAL7);
+    sync_printf(t, "VIRTUAL8", CH_VIRTUAL8);
+    sync_printf(t, "VIRTUAL9", CH_VIRTUAL9);
+    sync_printf(t, "VIRTUAL10", CH_VIRTUAL10);
     // NOTE: skip hidden channels, they are not needed in the UI
-    sync_printf("    },\n");
-    sync_printf("    rf_protocol_type_t: {\n");
-    sync_printf("        RF_PROTOCOL_HK310: %d,\n", RF_PROTOCOL_HK310);
-    sync_printf("    },\n");
-    sync_printf("    operation_type_t: {\n");
-    sync_printf("        OP_REPLACE: %d,\n", OP_REPLACE);
-    sync_printf("        OP_ADD: %d,\n", OP_ADD);
-    sync_printf("        OP_MULTIPLY: %d,\n", OP_MULTIPLY);
-    sync_printf("        OP_MIN: %d,\n", OP_MIN);
-    sync_printf("        OP_MAX: %d,\n", OP_MAX);
-    sync_printf("    },\n");
-    sync_printf("    comparison_t: {\n");
-    sync_printf("        EQUAL: %d,\n", EQUAL);
-    sync_printf("        NON_EQUAL: %d,\n", NON_EQUAL);
-    sync_printf("        GREATER: %d,\n", GREATER);
-    sync_printf("        GREATER_OR_EQUAL: %d,\n", GREATER_OR_EQUAL);
-    sync_printf("        SMALLER: %d,\n", SMALLER);
-    sync_printf("        SMALLER_OR_EQUAL: %d,\n", SMALLER_OR_EQUAL);
-    sync_printf("    },\n");
-    sync_printf("    curve_type_t: {\n");
-    sync_printf("        CURVE_NONE: %d,\n", CURVE_NONE);
-    sync_printf("        CURVE_FIXED: %d,\n", CURVE_FIXED);
-    sync_printf("        CURVE_MIN_MAX: %d,\n", CURVE_MIN_MAX);
-    sync_printf("        CURVE_ZERO_MAX: %d,\n", CURVE_ZERO_MAX);
-    sync_printf("        CURVE_GT_ZERO: %d,\n", CURVE_GT_ZERO);
-    sync_printf("        CURVE_LT_ZERO: %d,\n", CURVE_LT_ZERO);
-    sync_printf("        CURVE_ABSVAL: %d,\n", CURVE_ABSVAL);
-    sync_printf("        CURVE_EXPO: %d,\n", CURVE_EXPO);
-    sync_printf("        CURVE_DEADBAND: %d,\n", CURVE_DEADBAND);
-    sync_printf("        CURVE_3POINT: %d,\n", CURVE_3POINT);
-    sync_printf("        CURVE_5POINT: %d,\n", CURVE_5POINT);
-    sync_printf("        CURVE_7POINT: %d,\n", CURVE_7POINT);
-    sync_printf("        CURVE_9POINT: %d,\n", CURVE_9POINT);
-    sync_printf("        CURVE_11POINT: %d,\n", CURVE_11POINT);
-    sync_printf("        CURVE_13POINT: %d,\n", CURVE_13POINT);
-    sync_printf("    },\n");
-    sync_printf("    interpolation_type_t: {\n");
-    sync_printf("        INTERPOLATION_LINEAR: %d,\n", INTERPOLATION_LINEAR);
-    sync_printf("        INTERPOLATION_SMOOTHING: %d,\n", INTERPOLATION_SMOOTHING);
-    sync_printf("    },\n");
+    sync_printf("        },\n");
+    sync_printf("        rf_protocol_type_t: {\n");
+    sync_printf(t, "RF_PROTOCOL_HK310", RF_PROTOCOL_HK310);
+    sync_printf("        },\n");
+    sync_printf("        operation_type_t: {\n");
+    sync_printf(t, "OP_REPLACE", OP_REPLACE);
+    sync_printf(t, "OP_ADD", OP_ADD);
+    sync_printf(t, "OP_MULTIPLY", OP_MULTIPLY);
+    sync_printf(t, "OP_MIN", OP_MIN);
+    sync_printf(t, "OP_MAX", OP_MAX);
+    sync_printf("        },\n");
+    sync_printf("        comparison_t: {\n");
+    sync_printf(t, "EQUAL", EQUAL);
+    sync_printf(t, "NON_EQUAL", NON_EQUAL);
+    sync_printf(t, "GREATER", GREATER);
+    sync_printf(t, "GREATER_OR_EQUAL", GREATER_OR_EQUAL);
+    sync_printf(t, "SMALLER", SMALLER);
+    sync_printf(t, "SMALLER_OR_EQUAL", SMALLER_OR_EQUAL);
+    sync_printf("        },\n");
+    sync_printf("        curve_type_t: {\n");
+    sync_printf(t, "CURVE_NONE", CURVE_NONE);
+    sync_printf(t, "CURVE_FIXED", CURVE_FIXED);
+    sync_printf(t, "CURVE_MIN_MAX", CURVE_MIN_MAX);
+    sync_printf(t, "CURVE_ZERO_MAX", CURVE_ZERO_MAX);
+    sync_printf(t, "CURVE_GT_ZERO", CURVE_GT_ZERO);
+    sync_printf(t, "CURVE_LT_ZERO", CURVE_LT_ZERO);
+    sync_printf(t, "CURVE_ABSVAL", CURVE_ABSVAL);
+    sync_printf(t, "CURVE_EXPO", CURVE_EXPO);
+    sync_printf(t, "CURVE_DEADBAND", CURVE_DEADBAND);
+    sync_printf(t, "CURVE_3POINT", CURVE_3POINT);
+    sync_printf(t, "CURVE_5POINT", CURVE_5POINT);
+    sync_printf(t, "CURVE_7POINT", CURVE_7POINT);
+    sync_printf(t, "CURVE_9POINT", CURVE_9POINT);
+    sync_printf(t, "CURVE_11POINT", CURVE_11POINT);
+    sync_printf(t, "CURVE_13POINT", CURVE_13POINT);
+    sync_printf("        },\n");
+    sync_printf("        interpolation_type_t: {\n");
+    sync_printf(t, "INTERPOLATION_LINEAR", INTERPOLATION_LINEAR);
+    sync_printf(t, "INTERPOLATION_SMOOTHING", INTERPOLATION_SMOOTHING);
+    sync_printf("        },\n");
     sync_printf("    }\n");
     sync_printf("};\n");
 

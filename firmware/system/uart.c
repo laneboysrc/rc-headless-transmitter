@@ -81,6 +81,17 @@ void usart1_isr(void)
 
 
 // ****************************************************************************
+// Wait until the UART transmit buffer is empty
+void UART_sync(void)
+{
+    while (! RING_BUFFER_is_empty(&tx_ring_buffer)) {
+        // Put the CPU to sleep until an interrupt triggers.
+        __WFI();
+    }
+}
+
+
+// ****************************************************************************
 int _write(int file, char *ptr, int len)
 {
     RING_BUFFER_SIZE_T written;

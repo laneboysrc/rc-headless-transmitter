@@ -20,18 +20,22 @@
 
 
 ## configurator
-- Make utils.js
-
 - Offline mode
+- Persistent data storage
 
 - Fix issue with mixer.html not showing properly on small screens
 
 - Show which src labels are supported by the transmitter when selecting items
 
 - Delete mixer units
-
 - Add mixer units
-
 - Switch editing
-
 - Curve editing
+
+- Do not use mixer_unit.src==None as "mixer unit disabled". Rather have a
+  separate in-use flag. This way we can separate setting the source from
+  deleting the mixer unit more easily.
+
+- "Screen" object that
+  - shows a screen
+  - delete can-delete items

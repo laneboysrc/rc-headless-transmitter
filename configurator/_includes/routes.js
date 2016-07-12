@@ -1,6 +1,4 @@
-/*jslint browser: true */
-/*globals Path */
-"use strict";
+'use strict';
 
 function showPage(name) {
     // Hide all sections with class 'app-page'

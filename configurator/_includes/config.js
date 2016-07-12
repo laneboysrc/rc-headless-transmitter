@@ -178,7 +178,6 @@ CONFIG_VERSIONS[1] = {
         },
         src_label_t: {
             'NONE': 0,
-            'NONE': 1,
             'ST': 2,
             'TH': 3,
             'THR': 4,

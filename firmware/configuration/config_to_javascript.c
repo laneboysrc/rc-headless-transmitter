@@ -494,7 +494,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf("        src_label_t: {\n");
     sync_printf(t, "NONE", SRC_NONE);
 
-    sync_printf(t, "NONE", IN_NONE);
+    // sync_printf(t, "NONE", IN_NONE);     // input_label_t NONE must not be used in the UI
     sync_printf(t, "ST", IN_ST);
     sync_printf(t, "TH", IN_TH);
     sync_printf(t, "THR", IN_THR);

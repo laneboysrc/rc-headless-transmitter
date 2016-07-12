@@ -550,15 +550,6 @@ DatabaseClass.prototype.list = function (schema=null) {
     return Object.keys(this.data);
 };
 
-DatabaseClass.prototype.getSchema = function (uuid) {
-    if (! (uuid in this.data)) {
-        console.log('Database(): uuid "' + uuid + '" not present.');
-        return undefined;
-    }
-
-    return this.data[uuid].schema;
-};
-
 DatabaseClass.prototype.getConfig = function (uuid) {
     if (! (uuid in this.data)) {
         console.log('Database(): uuid "' + uuid + '" not present.');
@@ -568,9 +559,17 @@ DatabaseClass.prototype.getConfig = function (uuid) {
     return this.data[uuid].config;
 };
 
+DatabaseClass.prototype.getSchema = function (uuid) {
+    if (! (uuid in this.data)) {
+        console.log('Database(): uuid "' + uuid + '" not present.');
+        return undefined;
+    }
+
+    return this.data[uuid].schema;
+};
+
 DatabaseClass.prototype.getType = function (uuid, item) {
     let schema = this.getSchema(uuid);
-    let type = undefined;
 
     if (schema) {
         if (! (item in schema)) {
@@ -580,9 +579,21 @@ DatabaseClass.prototype.getType = function (uuid, item) {
         }
         return schema[item].t;
     }
-    return type;
+    return undefined;
 }
 
+// Return a human-friendly text representation of the given item.
+// This is stored in the [item].h field of the schema, which is optional.
+// If we can't access the [item].h field we return the item name.
+DatabaseClass.prototype.getHumanFriendlyText = function (uuid, item) {
+    let schema = this.getSchema(uuid);
+
+    if (schema  &&  (item in schema)  &&  ('h' in schema[item])) {
+        return schema[item].h;
+    }
+
+    return item;
+}
 
 
 var Database = new DatabaseClass();

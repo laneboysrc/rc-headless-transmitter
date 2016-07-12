@@ -21,7 +21,8 @@ var SelectSingle = {
         this.item = params.item;
         this.offset = parseInt(params.offset);
 
-        document.querySelector('#app-select_single-name').textContent = this.item;
+        let name = Database.getHumanFriendlyText(this.uuid, this.item);
+        document.querySelector('#app-select_single-name').textContent = name;
         // FIXME: need to get item description
         document.querySelector('#app-select_single-description').textContent = 'FIXME';
 

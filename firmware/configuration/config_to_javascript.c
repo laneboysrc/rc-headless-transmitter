@@ -81,6 +81,7 @@ void CONFIG_dump_javascript_information(void)
         "// o: offset with the parent structure\n"
         "// s: element size (number of bytes)\n"
         "// c: count (number of elements)\n"
+        "// h: human-friendly name (optional)\n"
         "// t: type\n"
         "//      'u': unsigned integer\n"
         "//      'i': signed integer\n"

@@ -1,0 +1,22 @@
+{
+  "node": true,
+  "browser": true,
+  "esnext": true,
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "newcap": true,
+  "noarg": true,
+  "undef": true,
+  "unused": "vars",
+  "strict": true,
+  "sub": true,
+  "globals": {
+    "MDLHelper": true,
+    "Mixer": true,
+    "Database": true,
+    "typeLookupByNumber": true,
+    "showPage": true
+  }
+}

@@ -20,6 +20,8 @@
     "MixerUnit": true,
     "Database": true,
     "typeLookupByNumber": true,
-    "showPage": true
+    "showPage": true,
+    "TEST_CONFIG_DATA": true,
+    "CONFIG_VERSIONS": true
   }
 }

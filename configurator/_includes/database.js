@@ -7,12 +7,29 @@
     window['Database'] = new Database();
 
 
+    // Custom database exception
     function DatabaseException(message) {
-        this.message = message;
         this.name = "DatabaseException";
+        this.message = message;
     }
 
 
+    // Add a new entry to the database. The entry can be either model data
+    // or transmitter data.
+    //
+    // data: Array of bytes that hold the data to store.
+    // config: The configuration entry in CONFIG_VERSIONS[] that descrones the
+    //         data.
+    // schema: Either config.MODEL or config.TX to indicate whether the entry
+    //         is for a model or a transmitter.
+    //
+    // Example:
+    //      modeldata = new Uint8Array(...);
+    //      txdata = new Uint8Array(...);
+    //      config = CONFIG_VERSIONS[1];
+    //      Database.add(modeldata, config, config.MODEL);
+    //      Database.add(txdata, config, config.TX);
+    //
     Database.prototype.add = function (data, config, schema) {
         var uuid_bytes = new Uint8Array(data, schema['UUID'].o, schema['UUID'].s);
         var uuid = Utils.uuid2string(uuid_bytes);
@@ -26,8 +43,14 @@
         };
     };
 
+    // This function performs basic checks on the most common inputs to
+    // many of the database function.
+    //
+    // In case an issue is found a console.error() message is written and a
+    // DatabaseException() is thrown.
     Database.prototype.validateInputs = function (uuid, key=null, index=null) {
-        if (! (uuid in this.data)) {
+        //
+        if (! this.data.hasOwnProperty(uuid)) {
             let message = 'uuid "' + uuid + '" not in database.';
             console.error(message);
             throw new DatabaseException(message);
@@ -35,7 +58,7 @@
 
         var schema = this.data[uuid].schema;
 
-        if (key  &&  !(key in schema)) {
+        if (key  &&  !schema.hasOwnProperty(key)) {
             let message = 'Key "' + key + '" not in schema.';
             console.error(message);
             throw new DatabaseException(message);
@@ -59,14 +82,14 @@
                     '" but item contains only ' + item.c + ' elements';
                 console.error(message);
                 throw new DatabaseException(message);
-
             }
         }
     };
 
-    // Translates a value that corresponds to type, which corresponds to a C
-    // enumeration, into the human readable name. If the value is not in the type
-    // then the value is returned verbatim.
+
+    // Translates a value that corresponds to type (which corresponds to a C
+    // enumeration) into the human readable name. If the value is not in the
+    // type then the value is returned verbatim.
     Database.prototype.typeLookupByNumber = function (type, value) {
         if (type) {
             for (let n in type) {
@@ -81,6 +104,10 @@
         return value;
     };
 
+
+    // Return a list of all uuids in the database.
+    // The list can be narrowed down to models or transmitters by passing
+    // CONFIG_VERSIONS[x].MODEL or CONFIG_VERSIONS[x].TX
     Database.prototype.list = function (schema=null) {
         if (schema) {
             let result = [];
@@ -96,36 +123,58 @@
         return Object.keys(this.data);
     };
 
+
+    // Returns the configuration for a given uuid.
+    // The configuration is the metadata for the uuid contents. It holds the
+    // MODEL and TX schemas as well as the TYPES (enumeration values used in
+    // the schema)
     Database.prototype.getConfig = function (uuid) {
         this.validateInputs(uuid);
-
         return this.data[uuid].config;
     };
 
+
+    // Returns the schema of a database entry. The schema describes the
+    // structure of the content.
     Database.prototype.getSchema = function (uuid) {
         this.validateInputs(uuid);
-
         return this.data[uuid].schema;
     };
 
+
+    // Return the type of a particulare entry in the schema.
+    // The type can be one of the following:
+    //  u': unsigned integer
+    //      'i': signed integer
+    //      'c': string (Note: may not be 0 terminated if it fills the element)
+    //      'uuid': 128-bit (16 bytes) universally unique identifier
+    //      <any other value>: refers to named elements in this.config.TYPES[],
+    //          which correspond to enums in the firmware.
+    //
+    // Example
+    //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
+    //      var type = Database.getType(uuid, 'HARDWARE_INPUTS_CALIBRATION');
+    //
+    //      > type == 'u' because the HARDWARE_INPUTS_CALIBRATION is an array
+    //                    of three uint16_t values in the firmware.
     Database.prototype.getType = function (uuid, key) {
         this.validateInputs(uuid, key);
-
         return this.data[uuid].schema[key].t;
     };
 
+
     Database.prototype.getNumberOfTypeMember = function (uuid, key, value) {
         this.validateInputs(uuid, key);
-
         var type = this.data[uuid].schema[key].t;
         return this.data[uuid].config.TYPES[type][value];
     };
 
+
     Database.prototype.getTypeMembers = function (uuid, type) {
         this.validateInputs(uuid);
-
         return Object.keys(this.data[uuid].config.TYPES[type]);
     };
+
 
     // Return a human-friendly text representation of the given item.
     // This is stored in the [key].h field of the schema, which is optional.
@@ -135,12 +184,13 @@
 
         var schema = this.getSchema(uuid);
 
-        if ('h' in schema[key]) {
+        if (schema[key].hasOwnProperty('h')) {
             return schema[key].h;
         }
 
         return key;
     };
+
 
     Database.prototype.get = function (uuid, key, offset=0, index=null) {
         this.validateInputs(uuid, key, index);
@@ -161,6 +211,13 @@
         var result;
         var bytes;
         var message;
+
+        // If we are dealing with an element with count=1 then we treat it
+        // as if a single element update of element[0] was requested. This
+        // simplifies further code.
+        if (item.c === 1) {
+            index = 0;
+        }
 
         switch (item.t) {
             case 'u':
@@ -211,6 +268,10 @@
                 bytes = new Uint8Array(data.buffer, item_offset, item.c);
                 return Utils.uint8array2string(bytes);
 
+            case 'uuid':
+                bytes = new Uint8Array(data.buffer, item_offset, item.c);
+                return Utils.uuid2string(bytes);
+
             case 's':
                 if (Utils.isNumber(index)) {
                     return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s);
@@ -222,20 +283,16 @@
                 }
                 break;
 
-            case 'uuid':
-                bytes = new Uint8Array(data.buffer, item_offset, item.c);
-                return Utils.uuid2string(bytes);
-
             default:
-                if (! (item.t in types)) {
+                if (! types.hasOwnProperty(item.t)) {
                     let message = 'Schema type "' + item.t + '" for key "' +
                         key + '" not defined';
                     console.error(message);
                     throw new DatabaseException(message);
                 }
 
-                // FIXME: this may not be Int8!
-                bytes = new Int8Array(data.buffer, item_offset, item.c);
+                // FIXME: this may not be Int8 but Int16 or Int32!
+                bytes = new Int8Array(data.buffer, item_offset, item.s * item.c);
                 result = [];
                 for (let n of bytes.entries()) {
                     let entry = n[1];
@@ -248,13 +305,9 @@
         if (Utils.isNumber(index)) {
             return result[index];
         }
-
-        // Items with count == 1 are returned directly, otherwise we return an array.
-        if (item.c === 1) {
-            return result[0];
-        }
         return result;
     };
+
 
     Database.prototype.set = function (uuid, key, value, offset=0, index=null) {
         this.validateInputs(uuid, key, index);
@@ -291,7 +344,7 @@
         }
 
         function getSetter(bytesPerElement, type) {
-            let setters = {
+            var setters = {
                 'u': {
                     1: DataView.prototype.setUint8,
                     2: DataView.prototype.setUint16,
@@ -304,13 +357,13 @@
                 }
             };
 
-            if (! (type in setters)) {
+            if (! setters.hasOwnProperty(type)) {
                 let message = 'Invalid type ' + type;
                 console.error(message);
                 throw new DatabaseException(message);
             }
 
-            if (! (bytesPerElement in setters[type])) {
+            if (! setters[type].hasOwnProperty(bytesPerElement)) {
                 let message = 'bytesPerElement is '+ bytesPerElement +
                     ' but must be 1, 2 or 4';
                 console.error(message);
@@ -396,7 +449,7 @@
 
         function setTypedItem() {
             function type2number(value) {
-                let type = types[item.t];
+                var type = types[item.t];
 
                 if (! (value in type)) {
                     if (Utils.isNumber(value)) {
@@ -419,26 +472,21 @@
             //      -fshort-enums
             //      Allocate to an enum type only as many bytes as it needs for the
             //      declared range of possible values. Specifically, the enum type
-            //      is equivalent to the smallest integer type that has enough room.
+            //      is equivalent to the smallest *integer* type that has enough room.
             //
             // While we are not using -fshort-enums, GCC for ARM still uses a
             // int8_t for small enums. So small enum can go from -128 to
             // 127; once the value is 128 or greater GCC uses an int16_t.
 
-            let setter = getSetter(item.s, 'i');
+            var setter = getSetter(item.s, 'i');
             if (Utils.isNumber(index)) {
                 let numeric_value = type2number(value);
-                if (Utils.isNumber(numeric_value)) {
-                    storeScalar(numeric_value, index, setter);
-                }
+                storeScalar(numeric_value, index, setter);
             }
             else {
                 let numeric_values = [];
                 for (let i = 0; i < item.c; i += 1) {
                     let numeric_value = type2number(value[i]);
-                    if (!Utils.isNumber(numeric_value)) {
-                        return;
-                    }
                     numeric_values.push(numeric_value);
                 }
                 storeArray(numeric_values, setter);
@@ -479,10 +527,11 @@
     };
 })();
 
+
+// Add a test model and transmitter to the database
 (function () {
     'use strict';
 
-    // Add a test model and transmitter to the database
     // NOTE: the version element is always at offset 0 regardles of the config version!
     var config_version = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
     var config = CONFIG_VERSIONS[config_version];

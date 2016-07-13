@@ -95,25 +95,28 @@ function isNumber(obj) {
 }
 
 
-function typeLookupByNumber(type, entry) {
+// Translates a value that corresponds to type, which corresponds to a C
+// enumeration, into the human readable name. If the value is not in the type
+// then the value is returned verbatim.
+function typeLookupByNumber(type, value) {
     if (type) {
         for (let n in type) {
             if (type.hasOwnProperty(n)) {
-                if (entry === type[n]) {
+                if (value === type[n]) {
                     return n;
                 }
             }
         }
     }
 
-    return undefined;
+    return value;
 }
 
 
 // Convert a given channel name (like 'CH1') to the index that matches the
 // appropriate limits array element.
 function channel2index(config, channel_name) {
-    let labels = config.TYPES.label_t;
+    let labels = config.TYPES.channel_label_t;
 
     if (! (channel_name in labels)) {
         console.error('channel2index(): label_t does not contain channel "'
@@ -293,15 +296,8 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
             for (let n of bytes.entries()) {
                 let entry = n[1];
                 let element = typeLookupByNumber(types[item.t], entry);
-                if (element) {
-                    result.push(element);
-                }
-                else {
-                    result.push(entry);
-                    console.warn('Database(): schema type "' + item.t
-                        + '" for key "' + key + '" does not contain entry "'
-                        + entry + '"');
-                }
+
+                result.push(element);
             }
     }
 

@@ -32,7 +32,7 @@
         mdl.setDataURL('#app-mixer_unit-op__edit',
             ['select_single', this.uuid, 'MIXER_UNITS_OP', this.offset]);
 
-        showPage('mixer_unit');
+        Utils.showPage('mixer_unit');
     };
 })();
 

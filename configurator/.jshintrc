@@ -14,13 +14,15 @@
   "sub": true,
   "globals": {
     "MDLHelper": true,
+    "Utils": true,
+    "Path": true,
     "Mixer": true,
     "ModelDetails": true,
     "Limits": true,
     "MixerUnit": true,
     "Database": true,
-    "typeLookupByNumber": true,
-    "showPage": true,
+    "RFProtocol": true,
+    "SelectSingle": true,
     "TEST_CONFIG_DATA": true,
     "CONFIG_VERSIONS": true
   }

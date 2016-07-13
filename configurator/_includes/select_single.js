@@ -1,5 +1,3 @@
-/*jslint browser: true */
-/*global Path, Device, showPage */
 "use strict";
 
 var SelectSingle = {
@@ -60,7 +58,7 @@ var SelectSingle = {
 
     route: function () {
         SelectSingle.init(this.params);
-        showPage('select_single');
+        Utils.showPage('select_single');
     }
 };
 

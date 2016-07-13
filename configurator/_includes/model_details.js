@@ -20,7 +20,7 @@
 
         // FIXME: show/hide the menu depending on whether tx_uuid is undefined
 
-        showPage('model_details');
+        Utils.showPage('model_details');
     };
 })();
 

@@ -32,7 +32,7 @@
 
         mdl.setSwitch('#app-limits-invert', 'LIMITS_INVERT');
 
-        showPage('limits');
+        Utils.showPage('limits');
     };
 })();
 

@@ -1,17 +1,17 @@
-/*jslint browser: true */
-/*global Path, Device */
-"use strict";
+(function () {
+    'use strict';
 
-var Main = {
-    'connect': function () {
+    var Main = function Main() {
+        this.uuid = undefined;
+        this.tx_uuid = undefined;
+        this.channel = undefined;
+    };
+    window['Main'] = new Main();
 
-        let config = CONFIG_VERSIONS[1];
-
-        let model_uuid = Database.list('MODEL')[0]
-        let tx_uuid = Database.list('TX')[0]
+    Main.prototype.connect = function () {
+        var model_uuid = Database.list('MODEL')[0];
+        var tx_uuid = Database.list('TX')[0];
 
         location.hash = '#/model_details/' + model_uuid + '/' + tx_uuid;
-    }
-};
-
-
+    };
+})();

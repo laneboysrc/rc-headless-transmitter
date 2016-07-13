@@ -1,5 +1,3 @@
-/*jslint browser: true */
-/*global Path, Device, showPage */
 "use strict";
 
 var RFProtocol = {
@@ -16,16 +14,16 @@ var RFProtocol = {
         var hop_channels = Database.get(this.uuid, 'RF_PROTOCOL_HK310_HOP_CHANNELS');
         var value = '';
 
-        value += byte2string(address[0]) + ':';
-        value += byte2string(address[1]) + ':';
-        value += byte2string(address[2]) + ':';
-        value += byte2string(address[3]) + ':';
-        value += byte2string(address[4]);
+        value += Utils.byte2string(address[0]) + ':';
+        value += Utils.byte2string(address[1]) + ':';
+        value += Utils.byte2string(address[2]) + ':';
+        value += Utils.byte2string(address[3]) + ':';
+        value += Utils.byte2string(address[4]);
         document.querySelector('#app-rf_protocol-address').value = value;
 
         // FIXME: make hop channel edit field wider
 
-        value = ''
+        value = '';
         for (let channel of hop_channels) {
             value += channel.toString() + " ";
         }
@@ -34,7 +32,7 @@ var RFProtocol = {
 
     route: function () {
         RFProtocol.init(this.params);
-        showPage('rf_protocol');
+        Utils.showPage('rf_protocol');
     }
 };
 

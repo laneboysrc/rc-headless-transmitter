@@ -46,7 +46,7 @@
             this.mixer_list.appendChild(clone);
         }
 
-        showPage('mixer');
+        Utils.showPage('mixer');
     };
 })();
 

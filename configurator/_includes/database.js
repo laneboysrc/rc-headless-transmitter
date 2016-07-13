@@ -447,13 +447,18 @@ DatabaseClass.prototype.getType = function (uuid, key) {
     return this.data[uuid].schema[key].t;
 };
 
-DatabaseClass.prototype.getNumberOfTypeMember = function (uuid, key, value ) {
+DatabaseClass.prototype.getNumberOfTypeMember = function (uuid, key, value) {
     this.validateInputs(uuid, key);
 
     var type = this.data[uuid].schema[key].t;
     return this.data[uuid].config.TYPES[type][value];
 };
 
+DatabaseClass.prototype.getTypeMembers = function (uuid, type) {
+    this.validateInputs(uuid);
+
+    return Object.keys(this.data[uuid].config.TYPES[type]);
+};
 
 // Return a human-friendly text representation of the given item.
 // This is stored in the [key].h field of the schema, which is optional.

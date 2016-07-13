@@ -1,64 +1,70 @@
-"use strict";
+(function () {
+    'use strict';
 
-var SelectSingle = {
-    uuid: undefined,
-    item: undefined,
+    var SelectSingle = function SelectSingle() {
+        this.uuid = undefined;
+        this.item = undefined;
+        this.offset = 0;
 
-    offset: 0,
+        this.template = document.querySelector('#app-select_single-template').content;
+        this.list = document.querySelector('#app-select_single-list');
 
-    accept_choice: function () {
-        let list = document.querySelector('#app-select_single-list');
-        let value = list.querySelector('input[type="radio"]:checked').value;
+    };
+    window['SelectSingle'] = new SelectSingle();
 
-        Database.set(SelectSingle.uuid, SelectSingle.item, value, SelectSingle.offset);
+    //*************************************************************************
+    SelectSingle.prototype.accept_choice = function () {
+        var list = document.querySelector('#app-select_single-list');
+        var value = list.querySelector('input[type="radio"]:checked').value;
+
+        Database.set(this.uuid, this.item, value, this.offset);
         history.go(-1);
-    },
+    };
 
-    init: function (params) {
+    //*************************************************************************
+    SelectSingle.prototype.init = function (params) {
         this.uuid = params.uuid;
         this.item = params.item;
         this.offset = parseInt(params.offset);
 
-        let name = Database.getHumanFriendlyText(this.uuid, this.item);
-        document.querySelector('#app-select_single-name').textContent = name;
+        var mdl = new MDLHelper(this.uuid);
+
+        // Ged rid of existing elements
+        mdl.clearDynamicElements(this.list);
+
+        var name = Database.getHumanFriendlyText(this.uuid, this.item);
+        mdl.setTextContentRaw('#app-select_single-name', name);
         // FIXME: need to get item description
-        document.querySelector('#app-select_single-description').textContent = 'FIXME';
+        mdl.setTextContentRaw('#app-select_single-description', 'FIXME');
 
-        let list = document.querySelector('#app-select_single-list');
+        var current_choice = Database.get(this.uuid, this.item, this.offset);
 
-        // Clear the app-mixer-list based on the class we've added when
-        // instantiating the template
-        while (list.querySelector('.can-delete')) {
-            let elem = list.querySelector('.can-delete');
-            elem.parentNode.removeChild(elem);
-        }
+        var type = Database.getType(this.uuid, this.item);
+        var choices = Database.getTypeMembers(this.uuid, type);
 
-        let t = document.querySelector('#app-select_single-template');
-        let type = Database.getType(this.uuid, this.item);
-        let config = Database.getConfig(this.uuid);
-        let choices = Object.keys(config.TYPES[type]);
-
-        let current_choice = Database.get(this.uuid, this.item, this.offset);
+        var t = this.template;
 
         for (let i = 0; i < choices.length; i++) {
-            let entry = choices[i];
+            var entry = choices[i];
 
-            t.content.querySelector('span').textContent = entry;
-            t.content.querySelector('input').id = 'app-select_single__item' + i;
-            t.content.querySelector('input').value = entry;
-            t.content.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
+            t.querySelector('span').textContent = entry;
+            t.querySelector('input').id = 'app-select_single__item' + i;
+            t.querySelector('input').value = entry;
+            t.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
 
-            let clone = document.importNode(t.content, true);
+            var clone = document.importNode(t, true);
             if (entry === current_choice) {
                 clone.querySelector('input').checked = true;
             }
-            list.appendChild(clone);
+            this.list.appendChild(clone);
         }
-    },
 
-    route: function () {
-        SelectSingle.init(this.params);
         Utils.showPage('select_single');
-    }
+    };
+})();
+
+SelectSingle.route = function () {
+    'use strict';
+    SelectSingle.init(this.params);
 };
 

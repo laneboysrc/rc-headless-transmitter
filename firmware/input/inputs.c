@@ -682,7 +682,9 @@ static void read_trim(logical_input_t *li, logical_input_value_t *v)
     hardware_input_t *t = &config.tx.hardware_inputs[first_port];
 
 
-    if (t->type == ANALOG_WITH_CENTER  ||  t->type == ANALOG_NO_CENTER) {
+    if (t->type == ANALOG_WITH_CENTER_AUTO_RETURN  ||
+        t->type == ANALOG_NO_CENTER                ||
+        t->type ==ANALOG_WITH_CENTER ){
         v->value = get_normalized_input(first_port) * config.tx.trim_range / CHANNEL_100_PERCENT;
     }
     else {
@@ -740,6 +742,7 @@ static void normalize_analog_input(hardware_input_t *t)
                 adc_array_calibrated[adc_index] = (raw - t->calibration[0]) * (ADC_VALUE_MAX + 1) / (t->calibration[2] - t->calibration[0]);
                 break;
 
+            case ANALOG_WITH_CENTER_AUTO_RETURN:
             case ANALOG_WITH_CENTER:
             default:
                 if (raw == t->calibration[1]) {
@@ -761,6 +764,7 @@ static void normalize_analog_input(hardware_input_t *t)
             normalized_inputs[adc_index] = adc_array_calibrated[adc_index] * CHANNEL_100_PERCENT / ADC_VALUE_MAX;
             break;
 
+        case ANALOG_WITH_CENTER_AUTO_RETURN:
         case ANALOG_WITH_CENTER:
         case ANALOG_NO_CENTER:
         default:
@@ -781,9 +785,10 @@ static void compute_hardware_inputs(void)
 
 
         switch (t->type) {
+            case ANALOG_WITH_CENTER_AUTO_RETURN:
+            case ANALOG_WITH_CENTER:
             case ANALOG_NO_CENTER:
             case ANALOG_NO_CENTER_POSITIVE_ONLY:
-            case ANALOG_WITH_CENTER:
                 normalize_analog_input(t);
                 break;
 
@@ -889,6 +894,7 @@ void INPUTS_configure(void)
         }
 
         switch (t->type) {
+            case ANALOG_WITH_CENTER_AUTO_RETURN:
             case ANALOG_WITH_CENTER:
             case ANALOG_NO_CENTER:
             case ANALOG_NO_CENTER_POSITIVE_ONLY:

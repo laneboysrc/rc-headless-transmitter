@@ -37,16 +37,16 @@ const config_t config_flash = {
         .uuid = {0x43, 0x53, 0x8f, 0xe8, 0x44, 0xc9, 0x11, 0xe6, 0x9f, 0x17,
                  0xaf, 0x7b, 0xe9, 0xc4, 0x47, 0x9e},
         .hardware_inputs = {
-            {.type = ANALOG_WITH_CENTER,                    // PA1/ADC1 Ailerons
+            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // PA1/ADC1 Ailerons
              .calibration = {510, 1962, 3380}},
 
-            {.type = ANALOG_WITH_CENTER,                    // PA2/ADC2 Elevator
+            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // PA2/ADC2 Elevator
              .calibration = {590, 1943, 3240}},
 
             {.type = ANALOG_NO_CENTER,                      // PA3/ADC3 Throttle
              .calibration = {670, ADC_VALUE_HALF, 3370}},
 
-            {.type = ANALOG_WITH_CENTER,                    // PA4/ADC4 Rudder
+            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // PA4/ADC4 Rudder
              .calibration = {580, 1874, 3410}},
 
             {.type = TRANSMITTER_INPUT_NOT_USED},           // PA5/ADC5

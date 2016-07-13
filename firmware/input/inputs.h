@@ -59,7 +59,10 @@ typedef struct {
 // properties
 typedef enum {
     TRANSMITTER_INPUT_NOT_USED = 0,
-    ANALOG_WITH_CENTER,                 // CHANNEL_N100_PERCENT .. 0 .. CHANNEL_100_PERCENT
+    ANALOG_WITH_CENTER_AUTO_RETURN,     // CHANNEL_N100_PERCENT .. 0 .. CHANNEL_100_PERCENT,
+                                        //    when not operated the input returns to 0
+    ANALOG_WITH_CENTER,                 // CHANNEL_N100_PERCENT .. 0 .. CHANNEL_100_PERCENT,
+                                        //    when not operated the input stays at the last position
     ANALOG_NO_CENTER,                   // CHANNEL_N100_PERCENT .. CHANNEL_100_PERCENT
     ANALOG_NO_CENTER_POSITIVE_ONLY,     // 0 .. CHANNEL_100_PERCENT
     SWITCH_ON_OFF,                      // On / Off latching switch input

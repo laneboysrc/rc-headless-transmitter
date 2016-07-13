@@ -407,7 +407,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf("        },\n");
     sync_printf("        hardware_input_type_t: {\n");
     sync_printf(t, "Input not used", TRANSMITTER_INPUT_NOT_USED);
-    // sync_printf(t, "Analog, returns to center", ANALOG_WITH_CENTER_AUTO_RETURN;
+    sync_printf(t, "Analog, returns to center", ANALOG_WITH_CENTER_AUTO_RETURN);
     sync_printf(t, "Analog, center detent", ANALOG_WITH_CENTER);
     sync_printf(t, "Analog", ANALOG_NO_CENTER);
     sync_printf(t, "Analog, positive only", ANALOG_NO_CENTER_POSITIVE_ONLY);

@@ -17,6 +17,7 @@
     "Mixer": true,
     "ModelDetails": true,
     "Limits": true,
+    "MixerUnit": true,
     "Database": true,
     "typeLookupByNumber": true,
     "showPage": true

@@ -132,18 +132,24 @@ DatabaseClass.prototype.add = function (data, config, schema) {
 
 DatabaseClass.prototype.validateInputs = function (uuid, key=undefined, index=undefined) {
     if (! (uuid in this.data)) {
-        throw new DatabaseException('uuid "' + uuid + '" not in database.');
+        let message = 'uuid "' + uuid + '" not in database.';
+        console.error(message);
+        throw new DatabaseException(message);
     }
 
     var schema = this.data[uuid].schema;
 
     if (! (key  &&  key in schema)) {
-        throw new DatabaseException('Key "' + key + '" not in schema.');
+        let message = 'Key "' + key + '" not in schema.';
+        console.error(message);
+        throw new DatabaseException(message);
     }
 
     if (index !== null) {
         if (! isNumber(index)) {
-            throw new DatabaseException('Index "' + index + '" is not an Integer');
+            let message = 'Index "' + index + '" is not an Integer';
+            console.error(message);
+            throw new DatabaseException(message);
         }
 
         var  item = schema[key];
@@ -153,9 +159,11 @@ DatabaseClass.prototype.validateInputs = function (uuid, key=undefined, index=un
         index = parseInt(index);
 
         if (index < 0  ||  index >= item.c) {
-            throw new DatabaseException('Requested index "' + index +
-                '" for key "' + key + '" but item contains only '+ item.c +
-                ' elements');
+            let message = 'Requested index "' + index + '" for key "' + key +
+                '" but item contains only ' + item.c + ' elements';
+            console.error(message);
+            throw new DatabaseException(message);
+
         }
     }
 };
@@ -194,8 +202,10 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
                     break;
 
                 default:
-                    throw new DatabaseException('"unsigned" schema size not ' +
-                        '1, 2 or 4 for key "' + key + '"');
+                    let message = '"unsigned" schema size not ' +
+                        '1, 2 or 4 for key "' + key + '"';
+                    console.error(message);
+                    throw new DatabaseException(message);
             }
             break;
 
@@ -214,8 +224,10 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
                     break;
 
                 default:
-                    throw new DatabaseException('"signed int" schema size ' +
-                        'not 1, 2 or 4 for key "' + key + '"');
+                    let message = '"signed int" schema size not ' +
+                        '1, 2 or 4 for key "' + key + '"';
+                    console.error(message);
+                    throw new DatabaseException(message);
             }
             break;
 
@@ -240,8 +252,10 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 
         default:
             if (! (item.t in types)) {
-                throw 'Database(): schema type "' + item.t + '" for key "' +
+                let message = 'Schema type "' + item.t + '" for key "' +
                     key + '" not defined';
+                console.error(message);
+                throw new DatabaseException(message);
             }
 
             // FIXME: this may not be Int8!
@@ -292,8 +306,10 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
     if (!isNumber(index)) {
         if (! (item.t in {'c':1, 'uuid':1})) {
             if (value.length !== item.c) {
-                throw new DatabaseException('' + key + ' requires ' + item.c +
-                    ' elements but ' + value.length + ' provided');
+                let message = '' + key + ' requires ' + item.c +
+                    ' elements but ' + value.length + ' provided';
+                console.error(message);
+                throw new DatabaseException(message);
             }
         }
     }
@@ -313,12 +329,16 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         };
 
         if (! (type in setters)) {
-            throw new DatabaseException('Invalid type ' + type);
+            let message = 'Invalid type ' + type;
+            console.error(message);
+            throw new DatabaseException(message);
         }
 
         if (! (bytesPerElement in setters[type])) {
-            throw new DatabaseException('bytesPerElement is '+ bytesPerElement +
-                ' but must be 1, 2 or 4');
+            let message = 'bytesPerElement is '+ bytesPerElement +
+                ' but must be 1, 2 or 4';
+            console.error(message);
+            throw new DatabaseException(message);
         }
 
         return setters[type][bytesPerElement];
@@ -406,8 +426,10 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
                 if (isNumber(value)) {
                     return value;
                 }
-                throw new DatabaseException('Key ' + value +
-                    ' is not in type ' + item.t);
+
+                let message = 'Key ' + value + ' is not in type ' + item.t;
+                console.error(message);
+                throw new DatabaseException(message);
             }
             return type[value];
         }
@@ -458,8 +480,9 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
             break;
 
         case 's':
-            throw new DatabaseException('Key ' + key +
-                ': Writing a structure is not supported');
+            let message = 'Key ' + key + ': Writing a structure is not supported';
+            console.error(message);
+            throw new DatabaseException(message);
 
         case 'uuid':
             setUUID();
@@ -470,8 +493,10 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
                 setTypedItem();
             }
             else {
-                throw new DatabaseException('Schema type "' + item.t +
-                    '" for key "' + key + '" not defined');
+                let message = 'Schema type "' + item.t + '" for key "' +
+                    key + '" not defined';
+                console.error(message);
+                throw new DatabaseException(message);
             }
             break;
     }
@@ -562,7 +587,7 @@ if (1) {
             value = Database.get(uuid, item, offset, index);
         }
         catch (e) {
-            console.error(e.name, e.message);
+            return;
         }
 
         var device = uuid;
@@ -574,18 +599,18 @@ if (1) {
 
     var testSet = function (uuid, item, new_value, offset=0, index=null) {
         console.log('Changing ' + item + ' to ' + new_value);
+        var changed;
 
         try {
             Database.set(uuid, item, new_value, offset, index);
-            var changed = Database.get(uuid, item, offset, index);
+            changed = Database.get(uuid, item, offset, index);
         }
         catch (e) {
-            console.error(e.name, e.message);
             return;
         }
 
 
-        if (new_value === changed) {
+        if (new_value == changed) {     // IMPORTANT: use  ==  and not  ===
             console.log('Ok');
             return;
         }

@@ -1,58 +1,43 @@
-/*jslint browser: true */
-/*global Path, Device, showPage */
-"use strict";
+(function () {
+    'use strict';
 
-var Limits = {
-    uuid: undefined,
-    tx_uuid: undefined,
-    channel: undefined,
-    channel_index: undefined,
+    var Limits = function Limits() {
+        this.uuid = undefined;
+        this.tx_uuid = undefined;
+        this.channel = undefined;
+    };
+    window['Limits'] = new Limits();
 
-    offset: 0,
-    setTextContent: MDLHelper.setTextContent,
-    setSwitch: MDLHelper.setSwitch,
-    setSlider: MDLHelper.setSlider,
-
-    onChangeHandler: function (event) {
-        let element = event.target;
-        let item = element.getAttribute('data-source');
-        let value;
-
-        if (element.type === 'checkbox') {
-            value = element.checked ? 1 : 0;
-        }
-        else {
-            value = element.value;
-        }
-
-        Database.set(Limits.uuid, item, value, Limits.offset);
-    },
-
-    init: function (params) {
+    //*************************************************************************
+    Limits.prototype.init = function (params) {
         this.uuid = params.model_uuid;
         this.tx_uuid = params.tx_uuid;
         this.channel = params.channel;
 
-        let config = Database.getConfig(this.uuid);
+        var limits = Database.getSchema(this.uuid)['LIMITS'];
+        var channel_index = Database.getNumberOfTypeMember(this.uuid, 'MIXER_UNITS_DST', this.channel);
 
-        this.channel_index = channel2index(config, this.channel);
-        this.offset = config.MODEL.LIMITS.s * this.channel_index;
+        var offset = limits.s * channel_index;
 
-        document.querySelector('#app-limits-channel').textContent = this.channel;
-        this.setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');
-        this.setSlider('#app-limits-ep_l', 'LIMITS_EP_L');
-        this.setSlider('#app-limits-ep_h', 'LIMITS_EP_H');
-        this.setSlider('#app-limits-limit_l', 'LIMITS_LIMIT_L');
-        this.setSlider('#app-limits-limit_h', 'LIMITS_LIMIT_H');
-        this.setSlider('#app-limits-failsafe', 'LIMITS_FAILSAFE');
-        this.setSlider('#app-limits-speed', 'LIMITS_SPEED');
+        var mdl = new MDLHelper(this.uuid, offset);
 
-        this.setSwitch('#app-limits-invert', 'LIMITS_INVERT');
-    },
+        mdl.setTextContentRaw('#app-limits-channel', this.channel);
+        mdl.setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');
+        mdl.setSlider('#app-limits-ep_l', 'LIMITS_EP_L');
+        mdl.setSlider('#app-limits-ep_h', 'LIMITS_EP_H');
+        mdl.setSlider('#app-limits-limit_l', 'LIMITS_LIMIT_L');
+        mdl.setSlider('#app-limits-limit_h', 'LIMITS_LIMIT_H');
+        mdl.setSlider('#app-limits-failsafe', 'LIMITS_FAILSAFE');
+        mdl.setSlider('#app-limits-speed', 'LIMITS_SPEED');
 
-    route: function () {
-        Limits.init(this.params);
+        mdl.setSwitch('#app-limits-invert', 'LIMITS_INVERT');
+
         showPage('limits');
-    }
+    };
+})();
+
+Limits.route = function () {
+    'use strict';
+    Limits.init(this.params);
 };
 

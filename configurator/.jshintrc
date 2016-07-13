@@ -1,5 +1,5 @@
 {
-  "node": true,
+  "node": false,
   "browser": true,
   "esnext": true,
   "bitwise": true,
@@ -16,6 +16,7 @@
     "MDLHelper": true,
     "Mixer": true,
     "ModelDetails": true,
+    "Limits": true,
     "Database": true,
     "typeLookupByNumber": true,
     "showPage": true

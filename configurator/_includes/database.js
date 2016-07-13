@@ -115,34 +115,19 @@ function typeLookupByNumber(type, value) {
 
 // Convert a given channel name (like 'CH1') to the index that matches the
 // appropriate limits array element.
-function channel2index(config, channel_name) {
-    let labels = config.TYPES.channel_label_t;
+// function channel2index(config, channel_name) {
+//     let labels = config.TYPES.channel_label_t;
 
-    if (! (channel_name in labels)) {
-        console.error('channel2index(): label_t does not contain channel "'
-            + channel_name + '"');
-        return undefined;
-    }
+//     if (! (channel_name in labels)) {
+//         console.error('channel2index(): label_t does not contain channel "' +
+//             channel_name + '"');
+//         return undefined;
+//     }
 
-    let label_number = labels[channel_name];
+//     let label_number = labels[channel_name];
 
-    // The output channel labels must be in sequence by design. The number of
-    // output channels can be retrieved by looking at the number of *limits*
-    // entries present. We can therefore calculate the tag number of the
-    // last output channel as such, which we use to chekc whether the given
-    // channel name is indeed an output channel and not just any of the other
-    // labels.
-    let first = labels.OUTPUT_CHANNEL_TAG_OFFSET;
-    let last = first + config.MODEL.LIMITS.c - 1;
-
-    if (label_number < first  || label_number > last) {
-        console.error('channel2index(): "' + channel_name +
-            '" is not a valid output channel name (e.g. CH1)');
-        return undefined;
-    }
-
-    return label_number - first;
-}
+//     return label_number;
+// }
 
 
 var DatabaseClass = function () {
@@ -570,14 +555,20 @@ DatabaseClass.prototype.getType = function (uuid, item) {
 
     if (schema) {
         if (! (item in schema)) {
-            console.log('Database(): uuid "' + uuid
-                + '" schema does not contain "' + item + '"');
+            console.log('Database(): uuid "' + uuid +
+                '" schema does not contain "' + item + '"');
             return undefined;
         }
         return schema[item].t;
     }
     return undefined;
-}
+};
+
+DatabaseClass.prototype.getNumberOfTypeMember = function (uuid, item, value ) {
+    var type = this.data[uuid].schema[item].t;
+    return this.data[uuid].config.TYPES[type][value];
+};
+
 
 // Return a human-friendly text representation of the given item.
 // This is stored in the [item].h field of the schema, which is optional.

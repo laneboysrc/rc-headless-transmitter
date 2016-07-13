@@ -27,6 +27,9 @@
   center or not.
 
 - Fix issue with mixer.html not showing properly on small screens
+- Make hop channel edit field wider
+- Check all Text field validations and handle in code
+  - Can we use the same regex to parse the result?
 
 - Show which src labels are supported by the transmitter when selecting items
 
@@ -36,6 +39,4 @@
 - Curve editing
 
 
-- "Page" object that
-  - shows a screen
-  - delete can-delete items
+

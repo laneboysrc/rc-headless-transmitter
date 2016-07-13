@@ -13,7 +13,7 @@
     Mixer.prototype.init = function (params) {
         this.uuid = params.model_uuid;
 
-        var mdl = new MDLHelper(this);
+        var mdl = new MDLHelper(this.uuid);
         var mixer_units = Database.getSchema(this.uuid)['MIXER_UNITS'];
 
         // Empty the list of mixers
@@ -45,12 +45,14 @@
             var clone = document.importNode(t, true);
             this.mixer_list.appendChild(clone);
         }
+
+        showPage('mixer');
     };
 })();
 
 
 Mixer.route = function () {
+    'use strict';
     Mixer.init(this.params);
-    showPage('mixer');
 };
 

@@ -23,9 +23,6 @@
 - Offline mode
 - Persistent data storage
 
-- Add type to distinguish whether analog-with-center returns spring-loaded to
-  center or not.
-
 - Fix issue with mixer.html not showing properly on small screens
 - Make hop channel edit field wider
 - Check all Text field validations and handle in code

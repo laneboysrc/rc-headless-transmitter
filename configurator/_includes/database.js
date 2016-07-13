@@ -1,94 +1,5 @@
 'use strict';
 
-function byte2string(byte) {
-    var s = byte.toString(16);
-
-    return (s.length < 2) ? ('0' + s)  : s;
-}
-
-function uuid2string(uuid_bytes) {
-    let result = '';
-
-    result += byte2string(uuid_bytes[0]);
-    result += byte2string(uuid_bytes[1]);
-    result += byte2string(uuid_bytes[2]);
-    result += byte2string(uuid_bytes[3]);
-    result += '-';
-    result += byte2string(uuid_bytes[4]);
-    result += byte2string(uuid_bytes[5]);
-    result += '-';
-    result += byte2string(uuid_bytes[6]);
-    result += byte2string(uuid_bytes[7]);
-    result += '-';
-    result += byte2string(uuid_bytes[8]);
-    result += byte2string(uuid_bytes[9]);
-    result += '-';
-    result += byte2string(uuid_bytes[10]);
-    result += byte2string(uuid_bytes[11]);
-    result += byte2string(uuid_bytes[12]);
-    result += byte2string(uuid_bytes[13]);
-    result += byte2string(uuid_bytes[14]);
-    result += byte2string(uuid_bytes[15]);
-
-    return result;
-}
-
-function string2uuid(s) {
-    // "c91cabaa-44c9-11e6-9bc2-03ac25e30b5b"
-    let result = new Uint8Array(16);
-
-    result[0] = parseInt(s.slice(0, 2), 16);
-    result[1] = parseInt(s.slice(2, 4), 16);
-    result[2] = parseInt(s.slice(4, 6), 16);
-    result[3] = parseInt(s.slice(6, 8), 16);
-
-    result[4] = parseInt(s.slice(9, 11), 16);
-    result[5] = parseInt(s.slice(11, 13), 16);
-
-    result[6] = parseInt(s.slice(14, 16), 16);
-    result[7] = parseInt(s.slice(16, 18), 16);
-
-    result[8] = parseInt(s.slice(19, 21), 16);
-    result[9] = parseInt(s.slice(21, 23), 16);
-
-    result[10] = parseInt(s.slice(24, 26), 16);
-    result[11] = parseInt(s.slice(26, 28), 16);
-    result[12] = parseInt(s.slice(28, 30), 16);
-    result[13] = parseInt(s.slice(30, 32), 16);
-    result[14] = parseInt(s.slice(32, 34), 16);
-    result[15] = parseInt(s.slice(34, 36), 16);
-
-    return result;
-}
-
-function uint8array2string(bytes) {
-    let result = '';
-
-    for (let n of bytes.entries()) {
-        let code = n[1];
-        if (code === 0) {
-            return result;
-        }
-        result += String.fromCharCode(code);
-    }
-
-    return result;
-}
-
-function string2uint8array(s, byte_count) {
-    let bytes = new Uint8ClampedArray(byte_count);
-    let count = s.length < byte_count ? s.length : byte_count;
-
-    for (let i = 0; i < count; i++) {
-        bytes[i] = s.charCodeAt(i);
-    }
-    return bytes;
-}
-
-// Source: http://stackoverflow.com/questions/1303646/check-whether-variable-is-number-or-string-in-javascript
-function isNumber(obj) {
-    return !isNaN(parseInt(obj));
-}
 
 
 // Translates a value that corresponds to type, which corresponds to a C
@@ -119,7 +30,7 @@ var DatabaseClass = function () {
 
 DatabaseClass.prototype.add = function (data, config, schema) {
     var uuid_bytes = new Uint8Array(data, schema['UUID'].o, schema['UUID'].s);
-    var uuid = uuid2string(uuid_bytes);
+    var uuid = Utils.uuid2string(uuid_bytes);
 
     console.log('Database(): New entry with UUID=' + uuid);
 
@@ -130,7 +41,7 @@ DatabaseClass.prototype.add = function (data, config, schema) {
     };
 };
 
-DatabaseClass.prototype.validateInputs = function (uuid, key=undefined, index=undefined) {
+DatabaseClass.prototype.validateInputs = function (uuid, key=null, index=null) {
     if (! (uuid in this.data)) {
         let message = 'uuid "' + uuid + '" not in database.';
         console.error(message);
@@ -139,14 +50,14 @@ DatabaseClass.prototype.validateInputs = function (uuid, key=undefined, index=un
 
     var schema = this.data[uuid].schema;
 
-    if (! (key  &&  key in schema)) {
+    if (key  &&  !(key in schema)) {
         let message = 'Key "' + key + '" not in schema.';
         console.error(message);
         throw new DatabaseException(message);
     }
 
     if (index !== null) {
-        if (! isNumber(index)) {
+        if (! Utils.isNumber(index)) {
             let message = 'Index "' + index + '" is not an Integer';
             console.error(message);
             throw new DatabaseException(message);
@@ -179,6 +90,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 
     var result;
     var bytes;
+    var message;
 
     // Convert index to an Integer to handle the case where a string
     // representation or a float was given
@@ -202,7 +114,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
                     break;
 
                 default:
-                    let message = '"unsigned" schema size not ' +
+                    message = '"unsigned" schema size not ' +
                         '1, 2 or 4 for key "' + key + '"';
                     console.error(message);
                     throw new DatabaseException(message);
@@ -224,7 +136,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
                     break;
 
                 default:
-                    let message = '"signed int" schema size not ' +
+                    message = '"signed int" schema size not ' +
                         '1, 2 or 4 for key "' + key + '"';
                     console.error(message);
                     throw new DatabaseException(message);
@@ -233,10 +145,10 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 
         case 'c':
             bytes = new Uint8Array(data.buffer, item_offset, item.c);
-            return uint8array2string(bytes);
+            return Utils.uint8array2string(bytes);
 
         case 's':
-            if (isNumber(index)) {
+            if (Utils.isNumber(index)) {
                 return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s);
             }
 
@@ -248,7 +160,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
 
         case 'uuid':
             bytes = new Uint8Array(data.buffer, item_offset, item.c);
-            return uuid2string(bytes);
+            return Utils.uuid2string(bytes);
 
         default:
             if (! (item.t in types)) {
@@ -269,7 +181,7 @@ DatabaseClass.prototype.get = function (uuid, key, offset=0, index=null) {
             }
     }
 
-    if (isNumber(index)) {
+    if (Utils.isNumber(index)) {
         return result[index];
     }
 
@@ -303,7 +215,7 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         index = 0;
     }
 
-    if (!isNumber(index)) {
+    if (!Utils.isNumber(index)) {
         if (! (item.t in {'c':1, 'uuid':1})) {
             if (value.length !== item.c) {
                 let message = '' + key + ' requires ' + item.c +
@@ -399,18 +311,18 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
     }
 
     function setString() {
-        let bytes = string2uint8array(value, item.c);
+        let bytes = Utils.string2uint8array(value, item.c);
         storeArray(bytes);
     }
 
     function setUUID() {
-        let bytes = string2uuid(value, item.c);
+        let bytes = Utils.string2uuid(value, item.c);
         storeArray(bytes);
     }
 
     function setInteger() {
         let setter = getSetter(item.s, item.t);
-        if (isNumber(index)) {
+        if (Utils.isNumber(index)) {
             storeScalar(value, index, setter);
         }
         else {
@@ -423,7 +335,7 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
             let type = types[item.t];
 
             if (! (value in type)) {
-                if (isNumber(value)) {
+                if (Utils.isNumber(value)) {
                     return value;
                 }
 
@@ -450,9 +362,9 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
         // 127; once the value is 128 or greater GCC uses an int16_t.
 
         let setter = getSetter(item.s, 'i');
-        if (isNumber(index)) {
+        if (Utils.isNumber(index)) {
             let numeric_value = type2number(value);
-            if (isNumber(numeric_value)) {
+            if (Utils.isNumber(numeric_value)) {
                 storeScalar(numeric_value, index, setter);
             }
         }
@@ -460,7 +372,7 @@ DatabaseClass.prototype.set = function (uuid, key, value, offset=0, index=null) 
             let numeric_values = [];
             for (let i = 0; i < item.c; i += 1) {
                 let numeric_value = type2number(value[i]);
-                if (!isNumber(numeric_value)) {
+                if (!Utils.isNumber(numeric_value)) {
                     return;
                 }
                 numeric_values.push(numeric_value);

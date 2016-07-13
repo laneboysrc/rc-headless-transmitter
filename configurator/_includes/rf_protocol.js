@@ -1,12 +1,14 @@
-"use strict";
+(function () {
+    'use strict';
 
-var RFProtocol = {
-    uuid: undefined,
-    tx_uuid: undefined,
+    var RFProtocol = function RFProtocol() {
+        this.uuid = undefined;
+        this.tx_uuid = undefined;
+    };
+    window['RFProtocol'] = new RFProtocol();
 
-    offset: 0,
-
-    init: function (params) {
+    //*************************************************************************
+    RFProtocol.prototype.init = function (params) {
         this.uuid = params.model_uuid;
         this.tx_uuid = params.tx_uuid;
 
@@ -21,18 +23,17 @@ var RFProtocol = {
         value += Utils.byte2string(address[4]);
         document.querySelector('#app-rf_protocol-address').value = value;
 
-        // FIXME: make hop channel edit field wider
-
         value = '';
         for (let channel of hop_channels) {
             value += channel.toString() + " ";
         }
         document.querySelector('#app-rf_protocol-hop_channels').value = value;
-    },
 
-    route: function () {
-        RFProtocol.init(this.params);
         Utils.showPage('rf_protocol');
-    }
-};
+    };
+})();
 
+RFProtocol.route = function () {
+    'use strict';
+    RFProtocol.init(this.params);
+};

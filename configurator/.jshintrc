@@ -15,6 +15,7 @@
   "globals": {
     "MDLHelper": true,
     "Mixer": true,
+    "ModelDetails": true,
     "Database": true,
     "typeLookupByNumber": true,
     "showPage": true

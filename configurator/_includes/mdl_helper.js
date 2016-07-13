@@ -1,9 +1,9 @@
 (function () {
     'use strict';
-    var MDLHelper = function MDLHelper(uuid, offset=0, onChangeHandler=undefined) {
-        this.uuid = uuid;
-        this.offset = offset;
-        this.onChangeHandler = onChangeHandler;
+    var MDLHelper = function MDLHelper(master) {
+        this.uuid = master.uuid;
+        this.offset = master.offset || 0;
+        this.onChangeHandler = master.onChangeHandler;
     };
 
     window['MDLHelper'] = MDLHelper;

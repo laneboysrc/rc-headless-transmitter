@@ -2,7 +2,7 @@
     'use strict';
 
     var Mixer = function Mixer() {
-        this.uuid = null;
+        this.uuid = undefined;
 
         this.template = document.querySelector('#app-mixer-template').content;
         this.mixer_list = document.querySelector('#app-mixer-list');
@@ -13,7 +13,7 @@
     Mixer.prototype.init = function (params) {
         this.uuid = params.model_uuid;
 
-        var mdl = new MDLHelper(this.uuid);
+        var mdl = new MDLHelper(this);
         var mixer_units = Database.getSchema(this.uuid)['MIXER_UNITS'];
 
         // Empty the list of mixers

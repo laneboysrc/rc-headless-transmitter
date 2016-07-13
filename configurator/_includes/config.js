@@ -88,12 +88,12 @@ CONFIG_VERSIONS[1] = {
 
     TYPES: {
         pcb_input_type_t: {
-            'Input not present': 0,
+            // 'Input not present': 0,
             'Analog/Digital': 1,
             'Digital': 2,
         },
         hardware_input_type_t: {
-            'Input not used': 0,
+            // 'Input not used': 0,
             'Analog, center detent': 1,
             'Analog': 2,
             'Analog, positive only': 3,
@@ -102,7 +102,7 @@ CONFIG_VERSIONS[1] = {
             'Push-button': 6,
         },
         input_type_t: {
-            'Input not used': 0,
+            // 'Input not used': 0,
             'Analog': 1,
             'Switch': 2,
             'BCD switch': 3,
@@ -110,7 +110,7 @@ CONFIG_VERSIONS[1] = {
             'Trim': 5,
         },
         input_sub_type_t: {
-            'SUB_TYPE_NOT_APPLICABLE': 0,
+            // 'SUB_TYPE_NOT_APPLICABLE': 0,
             'Up/Down buttons': 1,
             'Increment-and-loop': 2,
             'Decrement-and-loop': 3,
@@ -118,7 +118,7 @@ CONFIG_VERSIONS[1] = {
             'Double-click for decrement': 5,
         },
         input_label_t: {
-            'NONE': 0,
+            // 'NONE': 0,
             'ST': 1,
             'TH': 2,
             'THR': 3,
@@ -177,7 +177,7 @@ CONFIG_VERSIONS[1] = {
             'VIRTUAL10': 17,
         },
         src_label_t: {
-            'NONE': 0,
+            // 'NONE': 0,
             'ST': 2,
             'TH': 3,
             'THR': 4,

@@ -401,7 +401,7 @@ void CONFIG_dump_javascript_information(void)
 
     sync_printf("    TYPES: {\n");
     sync_printf("        pcb_input_type_t: {\n");
-    sync_printf(t, "Input not present", PCB_INPUT_NOT_USED);
+    // sync_printf(t, "Input not present", PCB_INPUT_NOT_USED); // Hide from UI
     sync_printf(t, "Analog/Digital", ANALOG_DIGITAL);
     sync_printf(t, "Digital", DIGITAL);
     sync_printf("        },\n");
@@ -416,7 +416,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "Push-button", MOMENTARY_ON_OFF);
     sync_printf("        },\n");
     sync_printf("        input_type_t: {\n");
-    sync_printf(t, "Input not used", LOGICAL_INPUT_NOT_USED);
+    // sync_printf(t, "Input not used", LOGICAL_INPUT_NOT_USED); // Hide from UI
     sync_printf(t, "Analog", ANALOG);
     sync_printf(t, "Switch", SWITCH);
     sync_printf(t, "BCD switch", BCD_SWITCH);
@@ -424,7 +424,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "Trim", TRIM);
     sync_printf("        },\n");
     sync_printf("        input_sub_type_t: {\n");
-    sync_printf(t, "SUB_TYPE_NOT_APPLICABLE", SUB_TYPE_NOT_APPLICABLE);
+    // sync_printf(t, "SUB_TYPE_NOT_APPLICABLE", SUB_TYPE_NOT_APPLICABLE); // Hide from UI
     sync_printf(t, "Up/Down buttons", UP_DOWN_BUTTONS);
     sync_printf(t, "Increment-and-loop", INCREMENT_AND_LOOP);
     sync_printf(t, "Decrement-and-loop", DECREMENT_AND_LOOP);
@@ -432,7 +432,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "Double-click for decrement", DOUBLE_CLICK_DECREMENT);
     sync_printf("        },\n");
     sync_printf("        input_label_t: {\n");
-    sync_printf(t, "NONE", NONE);
+    // sync_printf(t, "NONE", NONE); // Hide from UI
     sync_printf(t, "ST", ST);
     sync_printf(t, "TH", TH);
     sync_printf(t, "THR", THR);

@@ -63,7 +63,6 @@
     };
 
     function onChangeHandler (event) {
-        console.log('MDLHelper.onChangeHandler');
         var element = event.target;
         var item = element.getAttribute('data-source');
         var uuid = element.getAttribute('data-uuid');

@@ -43,6 +43,7 @@
         };
     };
 
+
     // This function performs basic checks on the most common inputs to
     // many of the database function.
     //
@@ -107,13 +108,19 @@
 
     // Return a list of all uuids in the database.
     // The list can be narrowed down to models or transmitters by passing
-    // CONFIG_VERSIONS[x].MODEL or CONFIG_VERSIONS[x].TX
+    // 'MODEL' or 'TX'
+    //
+    // Example:
+    //      var list_of_uuids_of_all_models = Database.list('MODEL');
+    //
     Database.prototype.list = function (schema=null) {
         if (schema) {
-            let result = [];
+            var result = [];
             for (let uuid in this.data) {
-                if (this.data[uuid].schema.t === schema) {
-                    result.push(uuid);
+                if (this.data.hasOwnProperty(uuid)) {
+                    if (this.data[uuid].schema.t === schema) {
+                        result.push(uuid);
+                    }
                 }
             }
 
@@ -135,7 +142,7 @@
 
 
     // Returns the schema of a database entry. The schema describes the
-    // structure of the content.
+    // structure of the database entry, i.e. which elements it has.
     Database.prototype.getSchema = function (uuid) {
         this.validateInputs(uuid);
         return this.data[uuid].schema;
@@ -151,18 +158,28 @@
     //      <any other value>: refers to named elements in this.config.TYPES[],
     //          which correspond to enums in the firmware.
     //
-    // Example
+    // Example:
     //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
     //      var type = Database.getType(uuid, 'HARDWARE_INPUTS_CALIBRATION');
     //
     //      > type == 'u' because the HARDWARE_INPUTS_CALIBRATION is an array
     //                    of three uint16_t values in the firmware.
+    //
     Database.prototype.getType = function (uuid, key) {
         this.validateInputs(uuid, key);
         return this.data[uuid].schema[key].t;
     };
 
 
+    // Obtains the type (corresponds to C enum) for 'key' and returns the value
+    // for named element 'value' in that type.
+    //
+    // Example:
+    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
+    //      var n = Database.getNumberOfTypeMember(uuid, 'MIXER_UNITS_DST', 'CH7');
+    //
+    //      > n == 6 as the enum in the firmware is CH1=0, CH2, CH3 ...
+    //
     Database.prototype.getNumberOfTypeMember = function (uuid, key, value) {
         this.validateInputs(uuid, key);
         var type = this.data[uuid].schema[key].t;
@@ -170,6 +187,14 @@
     };
 
 
+    // Returns a list of all members of a given type (C enum)
+    //
+    // Example:
+    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
+    //      var m = Database.getTypeMembers(uuid, 'interpolation_type_t');
+    //
+    //      > Array [ "Linear", "Smoothing" ]
+    //
     Database.prototype.getTypeMembers = function (uuid, type) {
         this.validateInputs(uuid);
         return Object.keys(this.data[uuid].config.TYPES[type]);
@@ -179,6 +204,13 @@
     // Return a human-friendly text representation of the given item.
     // This is stored in the [key].h field of the schema, which is optional.
     // If we can't access the [key].h field we return the key name.
+    //
+    // Example:
+    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
+    //      var n = Database.getHumanFriendlyText(uuid, 'MIXER_UNITS_SW_CMP');
+    //
+    //      > n == "Comparison"
+    //
     Database.prototype.getHumanFriendlyText = function (uuid, key) {
         this.validateInputs(uuid, key);
 
@@ -192,6 +224,89 @@
     };
 
 
+    // Retrieve an element from a model or transmitter entry in the database.
+    //
+    // The entry is referenced by 'uuid'. The element to retrieve is passed in
+    // 'key'.
+    //
+    // Example:
+    //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
+    //      var ms = Database.get(uuid, 'BIND_TIMEOUT_MS');
+    //
+    //      > ms == 10000 (10 seconds)
+    //
+    //
+    // The type of the value returned depends on the element type:
+    // - Signed and unsigned integers (types 'u' and 'i') are returned as
+    //   numbers.
+    // - C-strings (type 'c') are returned as JavaScript string.
+    // - UUIDs (type 'uuid') are returned as JavaScript string.
+    // - Elements that describe a C structure (type 's') are returned as
+    //   Uint8Array().
+    // - Typed elements (type is any other value than described above) are
+    //   returned as JavaScript string representation of the element value.
+    //   If a particular element value does not have a a string representation
+    //   then the number is returned.
+    //
+    // Example:
+    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
+    //      var rf = Database.get(uuid, 'RF_PROTOCOL_TYPE');
+    //
+    //      > rf == "HobbyKing HKR3000", which is the string representation
+    //              of the value 0 for the 'rf_protocol_t' enum in the firmware.
+    //
+    // If the requested element is an array then by default all array elements
+    // are returned.
+    //
+    // Example:
+    //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
+    //      var l = Database.get(uuid, 'LOGICAL_INPUTS_LABELS');
+    //
+    //      > l == Array [ "AIL", 0, 0, 0, 0 ]; Notice all but the first
+    //             value are returned as number as input_labels_t does not
+    //             have an entry for the value 0. This is on purpose as
+    //             0 means "label not used" and is not supposed to be presented
+    //             to the user.
+    //
+    // In order to obtain a particular item within an array element, one
+    // can specify the 'index' parameter when invoking the get() function.
+    //
+    // Example:
+    //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
+    //      var offset = 0;   // No offset, see below for description
+    //      var index = 0;    // 1st element
+    //      var e = Database.get(uuid, 'LOGICAL_INPUTS_LABELS', offset, index);
+    //
+    //      > e == "AIL"
+    //
+    //
+    // Some elements are arrays of structures. In order facilitate retrieving
+    // an element within an array of a structure, the parent of the element
+    // can pass an offset to the element so that it accesses the correct
+    // array index.
+    // This is different from the 'index' parameter in a sense that 'index'
+    // describes the index of the elemement, while 'offset' relates to an
+    // indexes of parents of the element, without specifying any details.
+    //
+    // [It may have been better to implement something like XPath, but 'offset'
+    // was simple to implement and has the advantage that it is a single value
+    // thatcan be passed down a hierarchy. Each node in the hierarchy can add
+    // to offset if it is an array itself.]
+    //
+    // Example:
+    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
+    //      var mu = Database.getSchema(uuid)['MIXER_UNITS'];
+    //      var offset = 3 * mu.s;     // Offset of the 4th mixer unit
+    //
+    //      // Pass 'offset' to another module
+    //
+    //      // Access the MIXER_UNIT_SRC element of the 4th mixer_unit. The
+    //      // function blindly applies the offset it received; it doesn't have
+    //      // to know the hierarchy below it.
+    //      var s = Database.get(uuid, 'MIXER_UNITS_SRC', offset);
+    //
+    //      > s == "RUD"
+    //
     Database.prototype.get = function (uuid, key, offset=0, index=null) {
         this.validateInputs(uuid, key, index);
 
@@ -309,6 +424,17 @@
     };
 
 
+    // Set a new value for a given element in the database.
+    //
+    // For a detailed parameter description please refer to the Database.get()
+    // function.
+    //
+    // The set() function expects value to be in the same format as it is
+    // returned by the get() function.
+    //
+    // Note that writing an element of type s' (C structure) is not supported.
+    //
+    // Every time a value is set, the LAST_CHANGED element is updated as well.
     Database.prototype.set = function (uuid, key, value, offset=0, index=null) {
         this.validateInputs(uuid, key, index);
 
@@ -319,11 +445,11 @@
         index = parseInt(index);
         offset = parseInt(offset);
 
-        let data = this.data[uuid].data;
-        let schema = this.data[uuid].schema;
-        let types = this.data[uuid].config.TYPES;
-        let item = schema[key];
-        let item_offset = item.o + offset;
+        var data = this.data[uuid].data;
+        var schema = this.data[uuid].schema;
+        var types = this.data[uuid].config.TYPES;
+        var item = schema[key];
+        var item_offset = item.o + offset;
 
         // If we are dealing with an element with count=1 then we treat it
         // as if a single element update of element[0] was requested. This
@@ -333,7 +459,11 @@
         }
 
         if (!Utils.isNumber(index)) {
-            if (! (item.t in {'c':1, 'uuid':1})) {
+            let ignore = ['c', 'uuid'];
+
+            // indexOf is >=0 when item is found
+            // http://stackoverflow.com/questions/7378228/check-if-an-element-is-present-in-an-array
+            if (ignore.indexOf(item.t) < 0) {
                 if (value.length !== item.c) {
                     let message = '' + key + ' requires ' + item.c +
                         ' elements but ' + value.length + ' provided';
@@ -373,37 +503,26 @@
             return setters[type][bytesPerElement];
         }
 
+        // This function logs metadata of all changes to the database.
+        // Whenever a value is set, its uuid, offset and size are recorded.
+        //
+        // This will enable differential updates when connected to a
+        // transmitter.
         function storageLogger(offset, count) {
             // schema.o describes the offset within the overall configuration
-            console.warn(uuid + ' changed: offset=' + offset + ' count=' + count +
-                ' config-offset=' + (offset + schema.o));
+            console.log(uuid + ' changed: offset=' + offset + ' count=' +
+                count + ' config-offset=' + (offset + schema.o));
 
             // Add last change time stamp
-            if (key !== 'LAST_CHANGED'  &&  'LAST_CHANGED' in schema) {
+            if (key !== 'LAST_CHANGED'  &&  schema.hasOwnProperty('LAST_CHANGED')) {
+                let now = Date.now() / 1000;
+                let lc = schema.LAST_CHANGED;
+                let setter = getSetter(lc.s, lc.t);
+                let dv = new DataView(data.buffer, lc.o , lc.s);
+                setter.apply(dv, [0, now, true]);
 
-                // Ok... We are calling ourselves here recursively. This only works
-                // because storageLogger is basically the last function called
-                // in set(); because the recursive call destroys the variables
-                // all the local functions rely on.
-
-                // This will overflow in the year 2106 ...
-                window['Database'].set(uuid, 'LAST_CHANGED', Date.now() / 1000);
-
-
-                // Alternative function in case the recursive call gives us
-                // issues. Not tested yet.
-
-                // let last_changed_offset = schema.LAST_CHANGED.o;
-                // let last_changed_count = schema.LAST_CHANGED.s;
-
-                // let setter = getSetter(schema.LAST_CHANGED.s, schema.LAST_CHANGED.t);
-
-                // let dv = new DataView(data.buffer, last_changed_offset , last_changed_count);
-                // setter.apply(dv, [0, Date.now() / 1000, true]);
-
-                // console.warn(uuid + ' changed: offset=' + last_changed_offset
-                //     + ' count=' + last_changed_count
-                //     + ' config-offset=' + (last_changed_offset + schema.o));
+                console.log(uuid + ' changed: offset=' + lc.o + ' count=' +
+                    lc.s + ' config-offset=' + (lc.o + schema.o));
             }
         }
 
@@ -451,7 +570,7 @@
             function type2number(value) {
                 var type = types[item.t];
 
-                if (! (value in type)) {
+                if (! type.hasOwnProperty(value)) {
                     if (Utils.isNumber(value)) {
                         return value;
                     }
@@ -513,7 +632,7 @@
                 break;
 
             default:
-                if (item.t in types) {
+                if (types.hasOwnProperty(item.t)) {
                     setTypedItem();
                 }
                 else {

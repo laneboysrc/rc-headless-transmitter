@@ -30,10 +30,14 @@
 
 - Show which src labels are supported by the transmitter when selecting items
 
+- Use addEventListener instead onclick and such
+- Use input even on slider as it is active during sliding.
+
 - Delete mixer units
 - Add mixer units
 - Switch editing
 - Curve editing
+
 
 
 

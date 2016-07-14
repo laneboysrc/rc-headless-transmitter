@@ -2,6 +2,8 @@
 
 - Configurator nRF protocol
 - Configurator Wi-Fi protocol
+  - Using UART and Websocket, Python
+  - Using nRF and Websocket, ESP8622
 - Configurator UART protocol
 - Configurator BT protocol
 

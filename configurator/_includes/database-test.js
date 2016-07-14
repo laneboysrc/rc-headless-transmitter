@@ -20,6 +20,10 @@
             value = Database.get(uuid, item, offset, index);
         }
         catch (e) {
+            if (e.hasOwnProperty('name') && e.name === 'DatabaseException') {
+                return;
+            }
+            console.error(e);
             return;
         }
 
@@ -40,6 +44,10 @@
             changed = Database.get(uuid, item, offset, index);
         }
         catch (e) {
+            if (e.hasOwnProperty('name') && e.name === 'DatabaseException') {
+                return;
+            }
+            console.error(e);
             return;
         }
 
@@ -79,6 +87,7 @@
     testGet(model_uuid, 'MIXER_UNITS_CURVE_TYPE');
     testGet(tx_uuid, 'LOGICAL_INPUTS_LABELS', 3*config.TX.LOGICAL_INPUTS.s);
     testGet(tx_uuid, 'LOGICAL_INPUTS_LABELS', 2*config.TX.LOGICAL_INPUTS.s, 1);
+    testGet(model_uuid, 'MIXER_UNITS_SRC', 0);
 
     console.log('\nTests for Database.set()');
     console.log('------------------------');

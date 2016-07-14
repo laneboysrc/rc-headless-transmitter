@@ -43,7 +43,7 @@ static void dump_javascript_config(void)
     size_t remaining = sizeof(config);
     uint8_t *p = (uint8_t *)(&config);
 
-    sync_printf("var TEST_CONFIG_DATA = new Uint8Array([\n    ");
+    sync_printf("var TEST_CONFIG_DATA = new Uint8Array([\n");
 
     while (remaining) {
         if (remaining < elements_per_line) {
@@ -60,7 +60,7 @@ static void dump_javascript_config(void)
         remaining -= elements_per_line;
     }
 
-    sync_printf("\n]);\n");
+    sync_printf("]);\n");
 }
 
 
@@ -68,39 +68,39 @@ static void dump_javascript_config(void)
 void CONFIG_dump_javascript_information(void)
 {
     // Member
-    const char *m = "        %s: {t: '%s', o: %u, s: %u, c: %u},\n";
+    const char *m = "            %s: {t: '%s', o: %u, s: %u, c: %u},\n";
     // Member with human readable string
-    const char *h = "        %s: {t: '%s', h: '%s', o: %u, s: %u, c: %u},\n";
+    const char *h = "            %s: {t: '%s', h: '%s', o: %u, s: %u, c: %u},\n";
     // Named type entry
-    const char *t = "            '%s': %d,\n";
+    const char *t = "                '%s': %d,\n";
 
     print_separator();
 
-    sync_printf("var CONFIG_VERSIONS = CONFIG_VERSIONS || {};\n\n"
-        "// Legend:\n"
-        "// o: offset with the parent structure\n"
-        "// s: element size (number of bytes)\n"
-        "// c: count (number of elements)\n"
-        "// h: human-friendly name (optional)\n"
-        "// t: type\n"
-        "//      'u': unsigned integer\n"
-        "//      'i': signed integer\n"
-        "//      'c': string (Note: may not be 0 terminated if it fills the element)\n"
-        "//      'uuid': 128-bit (16 bytes) universally unique identifier\n"
-        "//      'CONFIG': schema describes the overall config structure\n"
-        "//      'TX': schema describes a transmitter\n"
-        "//      'MODEL': schema describes a model\n"
-        "//      any other value: refers to named elements in TYPES[]\n\n");
+    sync_printf("const CONFIG_VERSIONS = {   // jshint ignore:line\n"
+        "    1: {\n"
+        "        // Legend:\n"
+        "        // o: offset with the parent structure\n"
+        "        // s: element size (number of bytes)\n"
+        "        // c: count (number of elements)\n"
+        "        // h: human-friendly name (optional)\n"
+        "        // t: type\n"
+        "        //   'u': unsigned integer\n"
+        "        //   'i': signed integer\n"
+        "        //   'c': string (Note: may not be 0 terminated if it fills the element)\n"
+        "        //   'uuid': 128-bit (16 bytes) universally unique identifier\n"
+        "        //   'CONFIG': schema describes the overall config structure\n"
+        "        //   'TX': schema describes a transmitter\n"
+        "        //   'MODEL': schema describes a model\n"
+        "        //   any other value: refers to named elements in TYPES[]\n\n");
 
-    sync_printf("CONFIG_VERSIONS[%lu] = {\n", config.version);
-    sync_printf("    CONFIG: { t: 'CONFIG', o: 0, s: %u, c: 1,\n", sizeof(config));
-    sync_printf("        VERSION: {o: %u, s: %u, c: 1, t: 'u'},\n", offsetof(config_t, version), membersizeof(config_t, version));
-    sync_printf("        TX: {o: %u, s: %u, c: 1, t: 's'},\n", offsetof(config_t, tx), membersizeof(config_t, tx));
-    sync_printf("        MODEL: {o: %u, s: %u, c: 1, t: 's'},\n", offsetof(config_t, model), membersizeof(config_t, model));
-    sync_printf("    },\n\n");
+    sync_printf("        CONFIG: { t: 'CONFIG', o: 0, s: %u, c: 1,\n", sizeof(config));
+    sync_printf("            VERSION: {o: %u, s: %u, c: 1, t: 'u'},\n", offsetof(config_t, version), membersizeof(config_t, version));
+    sync_printf("            TX: {o: %u, s: %u, c: 1, t: 's'},\n", offsetof(config_t, tx), membersizeof(config_t, tx));
+    sync_printf("            MODEL: {o: %u, s: %u, c: 1, t: 's'},\n", offsetof(config_t, model), membersizeof(config_t, model));
+    sync_printf("        },\n\n");
 
 
-    sync_printf("    TX: { o: %u, s: %u, c: 1, t: 'TX',\n", offsetof(config_t, tx), sizeof(tx_t));
+    sync_printf("        TX: { o: %u, s: %u, c: 1, t: 'TX',\n", offsetof(config_t, tx), sizeof(tx_t));
 
     sync_printf(m, "UUID", "uuid",
         offsetof(tx_t, uuid),
@@ -222,9 +222,9 @@ void CONFIG_dump_javascript_information(void)
         membersizeof(tx_t, led_pwm_percent),
         1);
 
-    sync_printf("    },\n\n");
+    sync_printf("        },\n\n");
 
-    sync_printf("    MODEL: { o: %u, s: %u, c: 1, t: 'MODEL',\n",
+    sync_printf("        MODEL: { o: %u, s: %u, c: 1, t: 'MODEL',\n",
         offsetof(config_t, model), membersizeof(config_t, model));
 
     sync_printf(m, "UUID", "uuid",
@@ -397,15 +397,15 @@ void CONFIG_dump_javascript_information(void)
         sizeof(config.model.rf.protocol_hk310.address[0]),
         membersizeof(model_t, rf.protocol_hk310.address));
 
-    sync_printf("    },\n\n");
+    sync_printf("        },\n\n");
 
-    sync_printf("    TYPES: {\n");
-    sync_printf("        pcb_input_type_t: {\n");
+    sync_printf("        TYPES: {\n");
+    sync_printf("            pcb_input_type_t: {\n");
     // sync_printf(t, "Input not present", PCB_INPUT_NOT_USED); // Hide from UI
     sync_printf(t, "Analog/Digital", ANALOG_DIGITAL);
     sync_printf(t, "Digital", DIGITAL);
-    sync_printf("        },\n");
-    sync_printf("        hardware_input_type_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            hardware_input_type_t: {\n");
     sync_printf(t, "Input not used", TRANSMITTER_INPUT_NOT_USED);
     sync_printf(t, "Analog, returns to center", ANALOG_WITH_CENTER_AUTO_RETURN);
     sync_printf(t, "Analog, center detent", ANALOG_WITH_CENTER);
@@ -414,24 +414,24 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "On/Off switch", SWITCH_ON_OFF);
     sync_printf(t, "On/Off/On switch", SWITCH_ON_OPEN_OFF);
     sync_printf(t, "Push-button", MOMENTARY_ON_OFF);
-    sync_printf("        },\n");
-    sync_printf("        input_type_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            input_type_t: {\n");
     // sync_printf(t, "Input not used", LOGICAL_INPUT_NOT_USED); // Hide from UI
     sync_printf(t, "Analog", ANALOG);
     sync_printf(t, "Switch", SWITCH);
     sync_printf(t, "BCD switch", BCD_SWITCH);
     sync_printf(t, "Momentary switch", MOMENTARY);
     sync_printf(t, "Trim", TRIM);
-    sync_printf("        },\n");
-    sync_printf("        input_sub_type_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            input_sub_type_t: {\n");
     // sync_printf(t, "SUB_TYPE_NOT_APPLICABLE", SUB_TYPE_NOT_APPLICABLE); // Hide from UI
     sync_printf(t, "Up/Down buttons", UP_DOWN_BUTTONS);
     sync_printf(t, "Increment-and-loop", INCREMENT_AND_LOOP);
     sync_printf(t, "Decrement-and-loop", DECREMENT_AND_LOOP);
     sync_printf(t, "Sawtooth", SAW_TOOTH);
     sync_printf(t, "Double-click for decrement", DOUBLE_CLICK_DECREMENT);
-    sync_printf("        },\n");
-    sync_printf("        input_label_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            input_label_t: {\n");
     // sync_printf(t, "NONE", NONE); // Hide from UI
     sync_printf(t, "ST", ST);
     sync_printf(t, "TH", TH);
@@ -469,8 +469,8 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "SW7", SW7);
     sync_printf(t, "SW8", SW8);
     sync_printf(t, "SW9", SW9);
-    sync_printf("        },\n");
-    sync_printf("        channel_label_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            channel_label_t: {\n");
     sync_printf(t, "CH1", CH1);
     sync_printf(t, "CH2", CH2);
     sync_printf(t, "CH3", CH3);
@@ -490,8 +490,8 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "VIRTUAL9", VIRTUAL9);
     sync_printf(t, "VIRTUAL10", VIRTUAL10);
     // NOTE: skip hidden channels, they are not needed in the UI
-    sync_printf("        },\n");
-    sync_printf("        src_label_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            src_label_t: {\n");
     sync_printf(t, "NONE", SRC_NONE);
 
     // sync_printf(t, "NONE", IN_NONE);     // input_label_t NONE must not be used in the UI
@@ -551,26 +551,26 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "VIRTUAL9", CH_VIRTUAL9);
     sync_printf(t, "VIRTUAL10", CH_VIRTUAL10);
     // NOTE: skip hidden channels, they are not needed in the UI
-    sync_printf("        },\n");
-    sync_printf("        rf_protocol_type_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            rf_protocol_type_t: {\n");
     sync_printf(t, "HobbyKing HKR3000", RF_PROTOCOL_HK310);
-    sync_printf("        },\n");
-    sync_printf("        operation_type_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            operation_type_t: {\n");
     sync_printf(t, "=", OP_REPLACE);
     sync_printf(t, "+", OP_ADD);
     sync_printf(t, "*", OP_MULTIPLY);
     sync_printf(t, "MIN", OP_MIN);
     sync_printf(t, "MAX", OP_MAX);
-    sync_printf("        },\n");
-    sync_printf("        comparison_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            comparison_t: {\n");
     sync_printf(t, "==", EQUAL);
     sync_printf(t, "!=", NON_EQUAL);
     sync_printf(t, ">", GREATER);
     sync_printf(t, ">=", GREATER_OR_EQUAL);
     sync_printf(t, "<", SMALLER);
     sync_printf(t, "<=", SMALLER_OR_EQUAL);
-    sync_printf("        },\n");
-    sync_printf("        curve_type_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            curve_type_t: {\n");
     sync_printf(t, "Linear", CURVE_NONE);
     sync_printf(t, "Fixed value", CURVE_FIXED);
     sync_printf(t, "Min/Max", CURVE_MIN_MAX);
@@ -586,11 +586,12 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "9-Point", CURVE_9POINT);
     sync_printf(t, "11-Point", CURVE_11POINT);
     sync_printf(t, "13-Point", CURVE_13POINT);
-    sync_printf("        },\n");
-    sync_printf("        interpolation_type_t: {\n");
+    sync_printf("            },\n");
+    sync_printf("            interpolation_type_t: {\n");
     sync_printf(t, "Linear", INTERPOLATION_LINEAR);
     sync_printf(t, "Smoothing", INTERPOLATION_SMOOTHING);
-    sync_printf("        },\n");
+    sync_printf("            },\n");
+    sync_printf("        }\n");
     sync_printf("    }\n");
     sync_printf("};\n");
 

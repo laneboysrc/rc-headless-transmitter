@@ -333,7 +333,7 @@
         }
 
         function getGetter(bytesPerElement, type) {
-            var getters = {
+            const getters = {
                 'u': {
                     1: Uint8Array,
                     2: Uint16Array,
@@ -488,7 +488,7 @@
         }
 
         function getSetter(bytesPerElement, type) {
-            var setters = {
+            const setters = {
                 'u': {
                     1: DataView.prototype.setUint8,
                     2: DataView.prototype.setUint16,

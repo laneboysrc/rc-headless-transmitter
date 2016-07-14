@@ -324,8 +324,6 @@
         var item_offset = item.o + offset;
 
         var result;
-        var bytes;
-        var message;
 
         // If we are dealing with an element with count=1 then we treat it
         // as if a single element update of element[0] was requested. This
@@ -334,87 +332,103 @@
             index = 0;
         }
 
+        function getGetter(bytesPerElement, type) {
+            var getters = {
+                'u': {
+                    1: Uint8Array,
+                    2: Uint16Array,
+                    4: Uint32Array
+                },
+                'i': {
+                    1: Int8Array,
+                    2: Int16Array,
+                    4: Int32Array
+                }
+            };
+
+            if (! getters.hasOwnProperty(type)) {
+                let message = 'Invalid type ' + type;
+                console.error(message);
+                throw new DatabaseException(message);
+            }
+
+            if (! getters[type].hasOwnProperty(bytesPerElement)) {
+                let message = 'bytesPerElement is '+ bytesPerElement +
+                    ' but must be 1, 2 or 4';
+                console.error(message);
+                throw new DatabaseException(message);
+            }
+
+            return getters[type][bytesPerElement];
+        }
+
+        function getInteger() {
+            let TypedArray = getGetter(item.s, item.t);
+            return new TypedArray(data.buffer, item_offset, item.c);
+        }
+
+        function getString() {
+            let bytes = new Uint8Array(data.buffer, item_offset, item.c);
+            return Utils.uint8array2string(bytes);
+        }
+
+        function getUUID() {
+            let bytes = new Uint8Array(data.buffer, item_offset, item.c);
+            return Utils.uuid2string(bytes);
+        }
+
+        function getStructure() {
+            if (Utils.isNumber(index)) {
+                return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s);
+            }
+
+            let result = [];
+            for (let i = 0; i < item.c; i++) {
+                result.push(new Uint8Array(data.buffer, item_offset + (i * item.s), item.s));
+            }
+            return result;
+        }
+
+        function getTypedItem() {
+            if (! types.hasOwnProperty(item.t)) {
+                let message = 'Schema type "' + item.t + '" for key "' +
+                    key + '" not defined';
+                console.error(message);
+                throw new DatabaseException(message);
+            }
+
+            let TypedArray = getGetter(item.s, 'i');
+            let bytes = new TypedArray(data.buffer, item_offset, item.c);
+            let result = [];
+            for (let n of bytes.entries()) {
+                let entry = n[1];
+                let element = window['Database'].typeLookupByNumber(types[item.t], entry);
+
+                result.push(element);
+            }
+            return result;
+        }
+
         switch (item.t) {
             case 'u':
-                switch(item.s) {
-                    case 1:
-                        result = new Uint8Array(data.buffer, item_offset, item.c);
-                        break;
-
-                    case 2:
-                        result = new Uint16Array(data.buffer, item_offset, item.c);
-                        break;
-
-                    case 4:
-                        result = new Uint32Array(data.buffer, item_offset, item.c);
-                        break;
-
-                    default:
-                        message = '"unsigned" schema size not ' +
-                            '1, 2 or 4 for key "' + key + '"';
-                        console.error(message);
-                        throw new DatabaseException(message);
-                }
-                break;
-
             case 'i':
-                switch(item.s) {
-                    case 1:
-                        result = new Int8Array(data.buffer, item_offset, item.c);
-                        break;
-
-                    case 2:
-                        result = new Int16Array(data.buffer, item_offset, item.c);
-                        break;
-
-                    case 4:
-                        result = new Int32Array(data.buffer, item_offset, item.c);
-                        break;
-
-                    default:
-                        message = '"signed int" schema size not ' +
-                            '1, 2 or 4 for key "' + key + '"';
-                        console.error(message);
-                        throw new DatabaseException(message);
-                }
+                result = getInteger();
                 break;
 
             case 'c':
-                bytes = new Uint8Array(data.buffer, item_offset, item.c);
-                return Utils.uint8array2string(bytes);
+                return getString();
 
             case 'uuid':
-                bytes = new Uint8Array(data.buffer, item_offset, item.c);
-                return Utils.uuid2string(bytes);
+                return getUUID();
 
             case 's':
-                if (Utils.isNumber(index)) {
-                    return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s);
-                }
-
-                result = [];
-                for (let i = 0; i < item.c; i++) {
-                    result.push(new Uint8Array(data.buffer, item_offset + (i * item.s), item.s));
-                }
-                break;
+                // Note: Function is already optimized to return a single
+                // element if an index is requested!
+                return getStructure();
 
             default:
-                if (! types.hasOwnProperty(item.t)) {
-                    let message = 'Schema type "' + item.t + '" for key "' +
-                        key + '" not defined';
-                    console.error(message);
-                    throw new DatabaseException(message);
-                }
-
-                // FIXME: this may not be Int8 but Int16 or Int32!
-                bytes = new Int8Array(data.buffer, item_offset, item.s * item.c);
-                result = [];
-                for (let n of bytes.entries()) {
-                    let entry = n[1];
-                    let element = this.typeLookupByNumber(types[item.t], entry);
-
-                    result.push(element);
-                }
+                result = getTypedItem();
+                break;
         }
 
         if (Utils.isNumber(index)) {

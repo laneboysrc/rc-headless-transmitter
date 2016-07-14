@@ -32,3 +32,17 @@ er9x/ersky9x radio firmware
 http://libopencm3.org/
 
 Open Source ARM cortex m microcontroller library.
+
+
+### Material Design Lite
+### Jekyll
+### JSHint
+### Gnu GCC
+### https://github.com/Pithikos/python-websocket-server
+### MDN
+### StackOverflow
+### DuckDuckGo
+### Nordic
+### STM
+
+

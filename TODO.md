@@ -23,6 +23,10 @@
 
 ## configurator
 - Offline mode
+- Database syncing
+  - Which protocol?
+    - File storage using JSON?
+    - Custom REST protocol?
 - Persistent data storage
 
 - Fix issue with mixer.html not showing properly on small screens
@@ -42,4 +46,20 @@
 
 - Use var instead of let to make Safari work?
 
+- Refactor URL: use global variable for model and tx uuid
+- Database: Add load function to cache a list of uuids
+  - Because the database works async we but we need pages to access elements sync
+- Database: add last_changed field direct access copy for syncing
+- Rename database class to "device" (find a better name...) since the
+  refactoring means it represents a tx/model combination
+  - Maybe we really need to think about Tx and Model classes, with an underlying
+    device class
 
+- Database: add list function that retrieves entries for a given schema, with
+  configurable values to  retrieve (e.g. name, tag, ...)
+  - Works async as it directly accesses the storage
+
+- Add tag to MODEL and TX that we can use e.g. to store a model type (airplane,
+  car ...) or transmitter type (stick radio, vintage, 4-ch...)
+
+- Add settings page to configure things like sync URL

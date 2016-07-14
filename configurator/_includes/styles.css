@@ -118,3 +118,15 @@ table.limits .mdl-switch {
   padding-right: 40px;
   text-align: right;
 }
+
+/*
+
+.mdl-slider.is-upgraded.is-lowest-value:focus:not(:active)::-moz-range-thumb {
+  box-shadow: 0 0 0 10px rgb(255,87,34);
+  background: rgb(255,87,34);
+}
+
+.mdl-slider.is-upgraded.is-lowest-value::-moz-range-thumb {
+  background: rgb(255,87,34);
+  border: none;
+}*/

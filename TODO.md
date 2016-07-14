@@ -38,10 +38,6 @@
 - Switch editing
 - Curve editing
 
-- Instead of storing config and config.schema, we should store the version and
-  'TX' or 'MODEL'. This way when serializing the data we don't drag along the
-  constants
-
 - Use var instead of let to make Safari work?
 
 

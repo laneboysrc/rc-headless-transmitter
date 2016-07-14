@@ -173,7 +173,6 @@ const CONFIG_VERSIONS = {   // jshint ignore:line
                 'VIRTUAL10': 17,
             },
             src_label_t: {
-                'NONE': 0,
                 'ST': 2,
                 'TH': 3,
                 'THR': 4,

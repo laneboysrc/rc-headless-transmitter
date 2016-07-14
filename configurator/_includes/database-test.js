@@ -3,7 +3,7 @@
 (function () {
     'use strict';
 
-    if (0) {
+    if (1) {
         return;
     }
 

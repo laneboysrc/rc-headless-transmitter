@@ -492,7 +492,7 @@ void CONFIG_dump_javascript_information(void)
     // NOTE: skip hidden channels, they are not needed in the UI
     sync_printf("            },\n");
     sync_printf("            src_label_t: {\n");
-    sync_printf(t, "NONE", SRC_NONE);
+    // sync_printf(t, "NONE", SRC_NONE);    // src_label_t NONE must not be used in the UI
 
     // sync_printf(t, "NONE", IN_NONE);     // input_label_t NONE must not be used in the UI
     sync_printf(t, "ST", IN_ST);

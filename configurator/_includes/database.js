@@ -30,7 +30,10 @@
     //      Database.add(modeldata, config, config.MODEL);
     //      Database.add(txdata, config, config.TX);
     //
-    Database.prototype.add = function (data, config, schema) {
+    Database.prototype.add = function (data, config_version, schema_name) {
+        var config = CONFIG_VERSIONS[config_version];
+        var schema = config[schema_name];
+
         var uuid_bytes = new Uint8Array(data, schema['UUID'].o, schema['UUID'].s);
         var uuid = Utils.uuid2string(uuid_bytes);
 
@@ -38,8 +41,8 @@
 
         this.data[uuid] = {
             data: data,
-            schema: schema,
-            config: config
+            schema_name: schema_name,
+            config_version: config_version
         };
     };
 
@@ -57,7 +60,9 @@
             throw new DatabaseException(message);
         }
 
-        var schema = this.data[uuid].schema;
+        var entry = this.data[uuid];
+        var config = CONFIG_VERSIONS[entry.config_version];
+        var schema = config[entry.schema_name];
 
         if (key  &&  !schema.hasOwnProperty(key)) {
             let message = 'Key "' + key + '" not in schema.';
@@ -113,12 +118,16 @@
     // Example:
     //      var list_of_uuids_of_all_models = Database.list('MODEL');
     //
-    Database.prototype.list = function (schema=null) {
-        if (schema) {
+    Database.prototype.list = function (schema_name=null) {
+        if (schema_name) {
             var result = [];
             for (let uuid in this.data) {
                 if (this.data.hasOwnProperty(uuid)) {
-                    if (this.data[uuid].schema.t === schema) {
+                    var entry = this.data[uuid];
+                    var config = CONFIG_VERSIONS[entry.config_version];
+                    var schema = config[entry.schema_name];
+
+                    if (schema.t === schema_name) {
                         result.push(uuid);
                     }
                 }
@@ -137,7 +146,9 @@
     // the schema)
     Database.prototype.getConfig = function (uuid) {
         this.validateInputs(uuid);
-        return this.data[uuid].config;
+
+        var entry = this.data[uuid];
+        return CONFIG_VERSIONS[entry.config_version];
     };
 
 
@@ -145,7 +156,10 @@
     // structure of the database entry, i.e. which elements it has.
     Database.prototype.getSchema = function (uuid) {
         this.validateInputs(uuid);
-        return this.data[uuid].schema;
+
+        var entry = this.data[uuid];
+        var config = CONFIG_VERSIONS[entry.config_version];
+        return config[entry.schema_name];
     };
 
 
@@ -167,7 +181,11 @@
     //
     Database.prototype.getType = function (uuid, key) {
         this.validateInputs(uuid, key);
-        return this.data[uuid].schema[key].t;
+
+        var entry = this.data[uuid];
+        var config = CONFIG_VERSIONS[entry.config_version];
+        var schema = config[entry.schema_name];
+        return schema[key].t;
     };
 
 
@@ -182,8 +200,12 @@
     //
     Database.prototype.getNumberOfTypeMember = function (uuid, key, value) {
         this.validateInputs(uuid, key);
-        var type = this.data[uuid].schema[key].t;
-        return this.data[uuid].config.TYPES[type][value];
+
+        var entry = this.data[uuid];
+        var config = CONFIG_VERSIONS[entry.config_version];
+        var schema = config[entry.schema_name];
+        var type = schema[key].t;
+        return config.TYPES[type][value];
     };
 
 
@@ -197,7 +219,10 @@
     //
     Database.prototype.getTypeMembers = function (uuid, type) {
         this.validateInputs(uuid);
-        return Object.keys(this.data[uuid].config.TYPES[type]);
+
+        var entry = this.data[uuid];
+        var config = CONFIG_VERSIONS[entry.config_version];
+        return Object.keys(config.TYPES[type]);
     };
 
 
@@ -317,9 +342,11 @@
         index = parseInt(index);
         offset = parseInt(offset);
 
-        var data = this.data[uuid].data;
-        var schema = this.data[uuid].schema;
-        var types = this.data[uuid].config.TYPES;
+        var entry = this.data[uuid];
+        var data = entry.data;
+        var config = CONFIG_VERSIONS[entry.config_version];
+        var schema = config[entry.schema_name];
+        var types = config.TYPES;
         var item = schema[key];
         var item_offset = item.o + offset;
 
@@ -459,9 +486,11 @@
         index = parseInt(index);
         offset = parseInt(offset);
 
-        var data = this.data[uuid].data;
-        var schema = this.data[uuid].schema;
-        var types = this.data[uuid].config.TYPES;
+        var entry = this.data[uuid];
+        var data = entry.data;
+        var config = CONFIG_VERSIONS[entry.config_version];
+        var schema = config[entry.schema_name];
+        var types = config.TYPES;
         var item = schema[key];
         var item_offset = item.o + offset;
 
@@ -669,7 +698,7 @@
     var config_version = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
     var config = CONFIG_VERSIONS[config_version];
 
-    Database.add(TEST_CONFIG_DATA.slice(config.MODEL.o, config.MODEL.o + config.MODEL.s), config, config.MODEL);
-    Database.add(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), config, config.TX);
+    Database.add(TEST_CONFIG_DATA.slice(config.MODEL.o, config.MODEL.o + config.MODEL.s), config_version, 'MODEL');
+    Database.add(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), config_version, 'TX');
 })();
 

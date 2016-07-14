@@ -43,4 +43,6 @@
   'TX' or 'MODEL'. This way when serializing the data we don't drag along the
   constants
 
+- Use var instead of let to make Safari work?
+
 

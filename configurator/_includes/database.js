@@ -12,6 +12,25 @@ var dev = {
 
 
 var db;
+function getDatabaseEntry(uuid, callback) {
+    'use strict';
+
+    console.log("getDatabaseEntry()");
+    var request = db.transaction('data').objectStore('data').get(uuid);
+
+    request.onsuccess = function(event) {
+        var data = event.target.result;
+        callback(data);
+    };
+
+    request.onerror = function(event) {
+        console.error(onerror, event);
+        callback(undefined);
+    };
+}
+
+
+
 (function () {
     'use strict';
 
@@ -20,15 +39,15 @@ var db;
         var request = window.indexedDB.open("HeadlessTX", 2);
 
         request.onerror = function(event) {
-            console.error(onerror, event);
+            console.error('onerror', event);
         };
 
         request.onupgradeneeded = function(event) {
-            console.log("onupgradeneeded", event);
+            console.log('onupgradeneeded', event);
             var db = event.target.result;
 
             // Create an objectStore for this database
-            var objectStore = db.createObjectStore("data", { keyPath: "uuid" });
+            var objectStore = db.createObjectStore('data', { keyPath: 'uuid' });
 
             objectStore.transaction.oncomplete = function(event) {
                 console.log("Object store created");
@@ -40,8 +59,14 @@ var db;
             console.log("onsuccess", event);
             db = event.target.result;
 
-            getTestEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b');
-            getTestEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e');
+            // getDatabaseEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (dbObject) {
+            //     dev.MODEL = dbObject;
+            //     console.log('dev.MODEL loaded:', dbObject);
+            // });
+            // getDatabaseEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e', function (dbObject) {
+            //     dev.TX = dbObject;
+            //     console.log('dev.TX loaded:', dbObject);
+            // });
         };
 
         function addTestData(db) {
@@ -92,23 +117,7 @@ var db;
                 request.onsuccess = addSuccessHandler;
             }
         }
-
-        function getTestEntry(uuid) {
-            console.log("getTestEntry()");
-            db.transaction('data')
-              .objectStore('data')
-              .get(uuid)
-              .onsuccess = function(event) {
-                    var dbObject = event.target.result;
-                    console.log(dbObject);
-
-                    dev[dbObject.schemaName] = new DBObject();
-                    dev[dbObject.schemaName].loadObject(dbObject);
-            };
-        }
     })();
-
-
 
 
 
@@ -125,15 +134,12 @@ var db;
     // IndexedDB is a Object database: instead of rows/columns like traditional
     // relational databases it stores 'objects'. The DBObject represents one
     // of these objects in database that holds model or transmitter data.
-    var DBObject = function DBObject(uuid) {
-        this.uuid = uuid;
-
-        // FIXME: load uuid from database
-
-        this.data = undefined;
-        this.configVersion = undefined;
-        this.schemaName = undefined;
-        this.lastChanged = undefined;
+    var DBObject = function DBObject(data) {
+        this.uuid = data.uuid;
+        this.data = data.data;
+        this.configVersion = data.configVersion;
+        this.schemaName = data.schemaName;
+        this.lastChanged = data.lastChanged;
     };
     window['DBObject'] = DBObject;
 
@@ -632,7 +638,7 @@ var db;
 
             // Add last change time stamp
             if (key !== 'LAST_CHANGED'  &&  schema.hasOwnProperty('LAST_CHANGED')) {
-                let now = Date.now() / 1000;
+                let now = parseInt(Date.now() / 1000);
                 let lc = schema.LAST_CHANGED;
                 let setter = getSetter(lc.s, lc.t);
                 let dv = new DataView(data.buffer, lc.o , lc.s);
@@ -640,7 +646,13 @@ var db;
 
                 console.log(self.uuid + ' changed: offset=' + lc.o + ' count=' +
                     lc.s + ' config-offset=' + (lc.o + schema.o));
+
+                self.lastChanged = now;
             }
+
+            db.transaction('data', 'readwrite').objectStore('data').put(self).onsuccess = function (event) {
+                console.log('Database updated');
+            };
         }
 
         function storeArray(values, setter=DataView.prototype.setUint8) {

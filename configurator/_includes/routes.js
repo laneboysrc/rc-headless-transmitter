@@ -22,11 +22,24 @@
     Path.root('#/');
 
     window.onload = function() {
+
+        function loadModelAndTx() {
+            getDatabaseEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (data) {
+                dev.MODEL = new DBObject(data);
+                console.log('dev.MODEL loaded:', data);
+                getDatabaseEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e', function (data) {
+                    dev.TX = new DBObject(data);
+                    console.log('dev.TX loaded:', data);
+                    Path.listen();
+                });
+            });
+        }
+
         // FIXME: this is a hack until the database has loaded
         function waitForDatabase() {
-            if (dev.MODEL && dev.TX) {
-                console.log('Model and TX ready, listening to location.hash');
-                Path.listen();
+            if (db) {
+                console.log('Database ready, initializing app...');
+                loadModelAndTx();
             }
             else {
                 setTimeout(waitForDatabase, 0.1);

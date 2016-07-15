@@ -12,7 +12,6 @@
 
         var mdl = new MDLHelper('MODEL', this.offset);
 
-
         mdl.setTextContent('#app-edit_curve-curve_type', 'MIXER_UNITS_CURVE_TYPE');
         mdl.setDataURL('#app-edit_curve-curve_type__edit',
             ['select_single', 'MODEL', 'MIXER_UNITS_CURVE_TYPE', this.offset]);
@@ -23,13 +22,10 @@
 
         var points = dev.MODEL.get('MIXER_UNITS_CURVE_POINTS', this.offset);
 
-
         for (var i = 0; i < points.length; i += 1) {
             var point = points[i];
             console.log(i, point);
-
         }
-
 
         Utils.showPage('edit_curve');
     };

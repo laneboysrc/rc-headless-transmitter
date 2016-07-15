@@ -54,7 +54,7 @@
         <div class="mdl-card__actions mdl-card--border">
           <form>
             <div class="mdl-textfield mdl-js-textfield">
-              <input id="app-rf_protocol-address" class="mdl-textfield__input" type="text" pattern="[A-F,a-f,0-9]{2}:[A-F,a-f,0-9]{2}:[A-F,a-f,0-9]{2}:[A-F,a-f,0-9]{2}:[A-F,a-f,0-9]{2}" value="">
+              <input id="app-rf_protocol-address" class="mdl-textfield__input" type="text" pattern="^\s*([\dA-Fa-f]{1,2}):([\dA-Fa-f]{1,2}):([\dA-Fa-f]{1,2}):([\dA-Fa-f]{1,2}):([\dA-Fa-f]{1,2})\s*$">
               <!-- <label class="mdl-textfield__label" for="app-rf_protocol-address">Address ...</label> -->
               <span class="mdl-textfield__error">5 hex numbers separated by ':'</span>
             </div>

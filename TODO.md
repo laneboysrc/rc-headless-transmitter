@@ -61,3 +61,6 @@
 
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
+
+- Introduce hex type (x), same as u but is shown as hex digits
+  - Add that to automatic MDL helper for seteditfield and settextcontent

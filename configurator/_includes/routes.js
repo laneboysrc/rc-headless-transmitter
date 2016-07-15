@@ -21,31 +21,41 @@
 
     Path.root('#/');
 
-    window.onload = function() {
 
-        function loadModelAndTx() {
-            getDatabaseEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (data) {
-                dev.MODEL = new DBObject(data);
-                console.log('dev.MODEL loaded:', data);
-                getDatabaseEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e', function (data) {
-                    dev.TX = new DBObject(data);
-                    console.log('dev.TX loaded:', data);
-                    Path.listen();
-                });
-            });
+    function databaseReady() {
+        console.log('routes: Database ready, loading dev.TX and dev.MODEL');
+
+        var count = 2;
+        const topic = 'entryRetrieved';
+
+        Database.getEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (data) {
+            dev.MODEL = new DBObject(data);
+            console.log('routes: dev.MODEL loaded');
+            Utils.PubSub.publish(topic);
+        });
+
+        Database.getEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e', function (data) {
+            dev.TX = new DBObject(data);
+            console.log('routes: dev.TX loaded');
+            Utils.PubSub.publish(topic);
+        });
+
+        function entryRetrievedCallback() {
+            count = count - 1;
+            if (count) {
+                return;
+            }
+
+            console.log('routes: Both getEntry() finished, launching page');
+            Utils.PubSub.removeTopic(topic);
+
+            // Initialization complete: Launch the page matching location.hash
+            Path.listen();
         }
 
-        // FIXME: this is a hack until the database has loaded
-        function waitForDatabase() {
-            if (db) {
-                console.log('Database ready, initializing app...');
-                loadModelAndTx();
-            }
-            else {
-                setTimeout(waitForDatabase, 0.1);
-            }
-        }
+        Utils.PubSub.subscribe(topic, entryRetrievedCallback);
+    }
 
-        waitForDatabase();
-    };
+    Utils.PubSub.subscribe('databaseReady', databaseReady);
+
 })();

@@ -1,73 +1,99 @@
-
-
-
-
-
-var db;
-function getDatabaseEntry(uuid, callback) {
-    'use strict';
-
-    console.log("getDatabaseEntry()");
-    var request = db.transaction('data').objectStore('data').get(uuid);
-
-    request.onsuccess = function(event) {
-        var data = event.target.result;
-        callback(data);
-    };
-
-    request.onerror = function(event) {
-        console.error(onerror, event);
-        callback(undefined);
-    };
-}
-
-
 (function () {
     'use strict';
-    var request = window.indexedDB.open("HeadlessTX", 2);
 
-    request.onerror = function(event) {
-        console.error('onerror', event);
+    const DATABASE_NAME = 'HeadlessTX';
+    const STORE_NAME = 'Models and Transmitters';
+
+    var Database = function Database(data) {
+        this.db = undefined;
+
+        var self = this;
+
+        console.log('Database: opening database "' + DATABASE_NAME + '"');
+        var request = window.indexedDB.open(DATABASE_NAME, 2);
+
+        request.onerror = function(event) {
+            console.error('Database: onerror', event);
+        };
+
+        request.onupgradeneeded = function(event) {
+            console.log('Database: onupgradeneeded');
+            var db = event.target.result;
+
+            // Create an objectStore for this database
+            var objectStore = db.createObjectStore(STORE_NAME, { keyPath: 'uuid' });
+
+            objectStore.transaction.oncomplete = function(event) {
+                console.log("Database: Object store created");
+
+                // Populate the virgin database with a model and transmitter
+                // for testing.
+                addTestData(db);
+            };
+        };
+
+        request.onsuccess = function(event) {
+            console.log('Database: Database opened successfully');
+            self.db = event.target.result;
+
+            Utils.PubSub.publish('databaseReady');
+            Utils.PubSub.removeTopic('databaseReady');
+        };
+
+
     };
+    window['Database'] = new Database();
 
-    request.onupgradeneeded = function(event) {
-        console.log('onupgradeneeded', event);
-        var db = event.target.result;
 
-        // Create an objectStore for this database
-        var objectStore = db.createObjectStore('data', { keyPath: 'uuid' });
+    Database.prototype.getEntry = function (uuid, callback) {
+        // console.log("Database: getEntry()");
+        var request = this.db.transaction(STORE_NAME)
+                             .objectStore(STORE_NAME)
+                             .get(uuid);
 
-        objectStore.transaction.oncomplete = function(event) {
-            console.log("Object store created");
-            addTestData(db);
+        request.onsuccess = function(event) {
+            var data = event.target.result;
+            callback(data);
+        };
+
+        request.onerror = function(event) {
+            console.error('Database: getEntry() failed', event);
+            callback(undefined);
         };
     };
 
-    request.onsuccess = function(event) {
-        console.log("onsuccess", event);
-        db = event.target.result;
+    Database.prototype.setEntry = function (data, callback=undefined) {
+        // console.log("Database: setEntry()");
+        var request = this.db.transaction(STORE_NAME, 'readwrite')
+                             .objectStore(STORE_NAME)
+                             .put(data);
 
-        // getDatabaseEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (dbObject) {
-        //     dev.MODEL = dbObject;
-        //     console.log('dev.MODEL loaded:', dbObject);
-        // });
-        // getDatabaseEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e', function (dbObject) {
-        //     dev.TX = dbObject;
-        //     console.log('dev.TX loaded:', dbObject);
-        // });
+        request.onsuccess = function(event) {
+            var result = event.target.result;
+            if (callback) {
+                callback(result);
+            }
+        };
+
+        request.onerror = function(event) {
+            console.error('Database: setEntry() failed', event);
+            if (callback) {
+                callback(undefined);
+            }
+        };
     };
+
 
     function addTestData(db) {
         console.log("addTestData()");
 
-        var transaction = db.transaction("data", "readwrite");
-        transaction.oncomplete = function(event) {
-            console.log("transaction.oncomplete", event);
+        var transaction = db.transaction(STORE_NAME, 'readwrite');
 
+        transaction.oncomplete = function(event) {
+            console.log("addTestData transaction.oncomplete");
         };
 
-        var dataObjectStore = transaction.objectStore("data");
-
+        var dataObjectStore = transaction.objectStore(STORE_NAME);
 
         var configVersion = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
         var config = CONFIG_VERSIONS[configVersion];
@@ -82,7 +108,7 @@ function getDatabaseEntry(uuid, callback) {
         ];
 
         function addSuccessHandler(event) {
-            console.log("add.onsuccess", event.target.result);
+            console.log("addTestData add.onsuccess");
         }
 
         for (var i in entries) {
@@ -106,4 +132,3 @@ function getDatabaseEntry(uuid, callback) {
         }
     }
 })();
-

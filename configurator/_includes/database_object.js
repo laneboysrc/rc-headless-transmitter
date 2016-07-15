@@ -481,9 +481,9 @@
                 self.lastChanged = now;
             }
 
-            db.transaction('data', 'readwrite').objectStore('data').put(self).onsuccess = function (event) {
-                console.log('Database updated');
-            };
+            Database.setEntry(self, function (result) {
+                console.log('Database updated', result);
+            });
         }
 
         function storeArray(values, setter=DataView.prototype.setUint8) {

@@ -27,6 +27,7 @@
   - Which protocol?
     - File storage using JSON?
     - Custom REST protocol?
+  - Look into Redis
 
 - Fix issue with mixer.html not showing properly on small screens
 - Make hop channel edit field wider
@@ -38,10 +39,15 @@
 - Use addEventListener instead onclick and such
 - Use input even on slider as it is active during sliding.
 
-- Delete mixer units
-- Add mixer units
 - Switch editing
 - Curve editing
+- Delete mixer units
+  - Requires rearranging other mixers
+- Add mixer units
+  - Requires rearranging of the mixer unit order
+- Add models
+- Load models into the transmitter
+- Add settings page to configure things like sync URL
 
 - Use var instead of let to make Safari work?
 
@@ -52,4 +58,5 @@
 - Add uuid back into url so that we can retrieve the correct database entries
   on page reloads
 
-- Add settings page to configure things like sync URL
+
+- Add tabindex=0 to sliders etc (test if focusable with keyboard)

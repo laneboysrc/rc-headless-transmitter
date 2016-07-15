@@ -11,20 +11,14 @@
 
         var address = model.get('RF_PROTOCOL_HK310_ADDRESS');
         var hop_channels = model.get('RF_PROTOCOL_HK310_HOP_CHANNELS');
-        var value = '';
 
-        value += Utils.byte2string(address[0]) + ':';
-        value += Utils.byte2string(address[1]) + ':';
-        value += Utils.byte2string(address[2]) + ':';
-        value += Utils.byte2string(address[3]) + ':';
-        value += Utils.byte2string(address[4]);
-        document.querySelector('#app-rf_protocol-address').value = value;
+        // FIXME: parse address and hop channels and put them back into the db
 
-        value = '';
-        for (let channel of hop_channels) {
-            value += channel.toString() + " ";
-        }
-        document.querySelector('#app-rf_protocol-hop_channels').value = value;
+        var adress_string = address.map(Utils.byte2string).join(':');
+        document.querySelector('#app-rf_protocol-address').value = adress_string;
+
+        var hop_string = hop_channels.join(' ');
+        document.querySelector('#app-rf_protocol-hop_channels').value = hop_string;
 
         Utils.showPage('rf_protocol');
     };

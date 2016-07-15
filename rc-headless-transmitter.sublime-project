@@ -45,6 +45,20 @@
 			],
 			"name": "make terminal",
 			"working_dir": "${project_path}/firmware"
+		},
+		{
+			"cmd":
+			[
+				"xfce4-terminal",
+				"-H",
+				"-T",
+				"JEKYLL",
+				"-e",
+				"jekyll serve"
+			],
+			"name": "jekyll",
+			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
+			"working_dir": "${project_path}/configurator"
 		}
 	],
 	"folders":

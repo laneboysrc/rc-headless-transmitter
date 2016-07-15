@@ -103,5 +103,38 @@
 
         document.querySelector('#page_' + name).classList.remove('hidden');
     };
+})();
 
+(function() {
+    'use strict';
+
+    var PubSub = function PubSub() {
+        this.topics = {};
+    };
+    Utils.PubSub = new PubSub();
+
+    PubSub.prototype.getTopic = function (topic) {
+        this.topics[topic] = this.topics[topic] || [];
+        return this.topics[topic];
+    };
+
+    PubSub.prototype.subscribe = function (topic, callback) {
+        this.getTopic(topic).push(callback);
+    };
+
+    PubSub.prototype.publish = function (topic, message) {
+        this.getTopic(topic).forEach(function (callback) {
+            callback(message);
+        });
+    };
+
+    PubSub.prototype.unsubscribe =  function (topic, callback) {
+        var callbacks = this.getTopic(topic);
+        var index = callbacks.indexOf(callback);
+        delete callbacks[index];
+    };
+
+    PubSub.prototype.removeTopic =  function (topic) {
+        delete this.topics[topic];
+    };
 })();

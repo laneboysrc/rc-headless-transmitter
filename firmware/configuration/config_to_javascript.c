@@ -117,6 +117,11 @@ void CONFIG_dump_javascript_information(void)
         membersizeof(tx_t, last_changed),
         1);
 
+    sync_printf(m, "TAG", "u",
+        offsetof(tx_t, tag),
+        membersizeof(tx_t, tag),
+        1);
+
     sync_printf(m, "HARDWARE_INPUTS", "s",
         offsetof(tx_t, hardware_inputs),
         sizeof(hardware_input_t),
@@ -240,6 +245,11 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(m, "LAST_CHANGED", "u",
         offsetof(model_t, last_changed),
         membersizeof(model_t, last_changed),
+        1);
+
+    sync_printf(m, "TAG", "u",
+        offsetof(model_t, tag),
+        membersizeof(model_t, tag),
         1);
 
     sync_printf(m, "MIXER_UNITS", "s",

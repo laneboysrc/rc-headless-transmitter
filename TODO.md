@@ -28,8 +28,6 @@
     - File storage using JSON?
     - Custom REST protocol?
 
-- Persistent data storage using IndexedDB
-
 - Fix issue with mixer.html not showing properly on small screens
 - Make hop channel edit field wider
 - Check all Text field validations and handle in code
@@ -50,9 +48,6 @@
 - Database: add list function that retrieves entries for a given schema, with
   configurable values to  retrieve (e.g. name, tag, ...)
   - Works async as it directly accesses the storage
-
-- Add tag to MODEL and TX that we can use e.g. to store a model type (airplane,
-  car ...) or transmitter type (stick radio, vintage, 4-ch...)
 
 - Add uuid back into url so that we can retrieve the correct database entries
   on page reloads

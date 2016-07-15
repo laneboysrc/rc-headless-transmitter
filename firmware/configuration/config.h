@@ -17,6 +17,7 @@ typedef struct {
     uint8_t uuid[16];
     char name[16];
     uint32_t last_changed;
+    uint32_t tag;               // For use by the configurator internally
     hardware_input_t hardware_inputs[MAX_TRANSMITTER_INPUTS];
     logical_input_t logical_inputs[MAX_LOGICAL_INPUTS];
     int32_t trim_range;
@@ -30,6 +31,7 @@ typedef struct {
     uint8_t uuid[16];
     char name[16];
     uint32_t last_changed;
+    uint32_t tag;               // For use by the configurator internally
     mixer_unit_t mixer_units[MAX_MIXER_UNITS];
     limits_t limits[NUMBER_OF_OUTPUT_CHANNELS];
     rf_protocol_type_t rf_protocol_type;

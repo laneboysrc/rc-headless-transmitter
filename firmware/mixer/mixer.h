@@ -173,9 +173,9 @@ typedef struct  {
     operation_type_t op;
     int8_t scalar;          // Unit: percent
     int8_t offset;          // Unit: percent
-    uint8_t tag;            // For use by the programming box internally
     uint8_t invert_source;
     uint8_t apply_trim;
+    uint8_t tag;            // For use by the configurator internally
 } mixer_unit_t;
 
 

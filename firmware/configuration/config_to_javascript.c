@@ -292,7 +292,7 @@ void CONFIG_dump_javascript_information(void)
         membersizeof(model_t, mixer_units[0].sw),
         1);
 
-    sync_printf(h, "MIXER_UNITS_SW_SW", "input_label_t", "Switch",
+    sync_printf(h, "MIXER_UNITS_SW_SW", "switch_label_t", "Switch",
         offsetof(model_t, mixer_units[0].sw.sw),
         membersizeof(model_t, mixer_units[0].sw.sw),
         1);
@@ -443,6 +443,47 @@ void CONFIG_dump_javascript_information(void)
     sync_printf("            },\n");
     sync_printf("            input_label_t: {\n");
     // sync_printf(t, "NONE", NONE); // Hide from UI
+    sync_printf(t, "ST", ST);
+    sync_printf(t, "TH", TH);
+    sync_printf(t, "THR", THR);
+    sync_printf(t, "RUD", RUD);
+    sync_printf(t, "AIL", AIL);
+    sync_printf(t, "ELE", ELE);
+    sync_printf(t, "AUX", AUX);
+    sync_printf(t, "ST-DR", ST_DR);
+    sync_printf(t, "RUD-DR", RUD_DR);
+    sync_printf(t, "AIL-DR", AIL_DR);
+    sync_printf(t, "ELE-DR", ELE_DR);
+    sync_printf(t, "TH-DR", TH_DR);
+    sync_printf(t, "THR-DR", THR_DR);
+    sync_printf(t, "TH-HOLD", TH_HOLD);
+    sync_printf(t, "GEAR", GEAR);
+    sync_printf(t, "FLAPS", FLAPS);
+    sync_printf(t, "TRAINER", TRAINER);
+    sync_printf(t, "SIDE-L", SIDE_L);
+    sync_printf(t, "SIDE-R", SIDE_R);
+    sync_printf(t, "POT1", POT1);
+    sync_printf(t, "POT2", POT2);
+    sync_printf(t, "POT3", POT3);
+    sync_printf(t, "POT4", POT4);
+    sync_printf(t, "POT5", POT5);
+    sync_printf(t, "POT6", POT6);
+    sync_printf(t, "POT7", POT7);
+    sync_printf(t, "POT8", POT8);
+    sync_printf(t, "POT9", POT9);
+    sync_printf(t, "SW1", SW1);
+    sync_printf(t, "SW2", SW2);
+    sync_printf(t, "SW3", SW3);
+    sync_printf(t, "SW4", SW4);
+    sync_printf(t, "SW5", SW5);
+    sync_printf(t, "SW7", SW7);
+    sync_printf(t, "SW8", SW8);
+    sync_printf(t, "SW9", SW9);
+    sync_printf("            },\n");
+    // switch_label_t is the same as input_label_t, but this time the NONE
+    // element is present as the user can select it in the UI
+    sync_printf("            switch_label_t: {\n");
+    sync_printf(t, "NONE", NONE); // Hide from UI
     sync_printf(t, "ST", ST);
     sync_printf(t, "TH", TH);
     sync_printf(t, "THR", THR);

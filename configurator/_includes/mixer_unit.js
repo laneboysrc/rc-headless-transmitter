@@ -20,6 +20,8 @@
         mdl.setTextContent('#app-mixer_unit-dst', 'MIXER_UNITS_DST');
         mdl.setTextContent('#app-mixer_unit-op', 'MIXER_UNITS_OP');
         mdl.setSwitch('#app-mixer_unit-apply_trim', 'MIXER_UNITS_APPLY_TRIM');
+        mdl.setTextContent('#app-mixer_unit-curve', 'MIXER_UNITS_CURVE_TYPE');
+        mdl.setTextContent('#app-mixer_unit-sw', 'MIXER_UNITS_SW_SW');
 
         mdl.setDataURL('#app-mixer_unit-curve__edit', ['edit_curve', this.offset]);
         mdl.setDataURL('#app-mixer_unit-sw__edit', ['edit_switch', this.offset]);

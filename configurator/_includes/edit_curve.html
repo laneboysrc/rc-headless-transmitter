@@ -12,7 +12,7 @@
 
   <main class="mdl-layout__content" >
 
-    <!-- RF protocol type Card -->
+    <!-- Curve editing Card -->
     <section class="section--center mdl-grid">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title">
@@ -31,7 +31,37 @@
           lacus placerat et.
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          FIXME: need to select curve type and curve parameters here...
+
+          <table class="mixer-unit mdl-data-table mdl-js-data-table">
+          <tbody>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                Curve type:
+              </td>
+              <td id="app-edit_curve-curve_type" class="mdl-data-table__cell--non-numeric"></td>
+              </span>
+              <td class="mdl-data-table__cell--non-numeric">
+                <button id="app-edit_curve-curve_type__edit" class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="location.hash=this.getAttribute('data-url')">
+                  <i class="material-icons">mode_edit</i>
+                </button>
+              </td>
+            </tr>
+
+            <tr id="app-edit_curve-curve_smoothing__enable">
+              <td class="mdl-data-table__cell--non-numeric">
+                Smoothing:
+              </td>
+              <td id="app-edit_curve-curve_smoothing" class="mdl-data-table__cell--non-numeric"></td>
+              </span>
+              <td class="mdl-data-table__cell--non-numeric">
+                <button id="app-edit_curve-curve_smoothing__edit" class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="location.hash=this.getAttribute('data-url')">
+                  <i class="material-icons">mode_edit</i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          </table>
+
         </div>
       </div>
     </section>

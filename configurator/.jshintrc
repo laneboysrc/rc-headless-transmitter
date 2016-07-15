@@ -22,6 +22,7 @@
     "MDLHelper": true,
     "Mixer": true,
     "MixerUnit": true,
+    "EditCurve": true,
     "ModelDetails": true,
     "Path": true,
     "RFProtocol": true,

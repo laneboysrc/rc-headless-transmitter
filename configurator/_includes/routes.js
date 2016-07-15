@@ -8,6 +8,7 @@
         '#/model_details': ModelDetails.route,
         '#/mixer': Mixer.route,
         '#/mixer_unit/:index': MixerUnit.route,
+        '#/edit_curve/:offset': EditCurve.route,
         '#/limits/:channel': Limits.route,
         '#/rf_protocol': RFProtocol.route,
         '#/select_single/:devName/:item/:offset': SelectSingle.route,

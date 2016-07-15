@@ -22,6 +22,17 @@
     Path.root('#/');
 
     window.onload = function() {
-        Path.listen();
+        // FIXME: this is a hack until the database has loaded
+        function waitForDatabase() {
+            if (dev.MODEL && dev.TX) {
+                console.log('Model and TX ready, listening to location.hash');
+                Path.listen();
+            }
+            else {
+                setTimeout(waitForDatabase, 0.1);
+            }
+        }
+
+        waitForDatabase();
     };
 })();

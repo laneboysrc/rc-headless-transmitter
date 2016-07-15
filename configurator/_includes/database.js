@@ -41,6 +41,7 @@ var db;
             db = event.target.result;
 
             getTestEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b');
+            getTestEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e');
         };
 
         function addTestData(db) {
@@ -83,7 +84,8 @@ var db;
                     data: entry.data,
                     uuid: uuid,
                     schemaName: entry.schemaName,
-                    configVersion: configVersion
+                    configVersion: configVersion,
+                    lastChanged: 0
                 };
 
                 var request = dataObjectStore.add(data_to_add);
@@ -97,11 +99,13 @@ var db;
               .objectStore('data')
               .get(uuid)
               .onsuccess = function(event) {
-                    var data = event.target.result;
-                    console.log(data);
+                    var dbObject = event.target.result;
+                    console.log(dbObject);
+
+                    dev[dbObject.schemaName] = new DBObject();
+                    dev[dbObject.schemaName].loadObject(dbObject);
             };
         }
-
     })();
 
 
@@ -118,17 +122,18 @@ var db;
 
     // DBObject: Database Object
     //
-    // IndexedDB is a Object database: instead of rows/columns it stores
-    // objects. The DBObject represents one of these objects in database that
-    // holds model or transmitter data.
-    var DBObject = function DBObject(uuid, data, configVersion, schemaName) {
+    // IndexedDB is a Object database: instead of rows/columns like traditional
+    // relational databases it stores 'objects'. The DBObject represents one
+    // of these objects in database that holds model or transmitter data.
+    var DBObject = function DBObject(uuid) {
         this.uuid = uuid;
-        this.data = data;
-        this.configVersion = configVersion;
-        this.schemaName = schemaName;
 
-        // FIXME: retrieve from data!
-        this.lastChanged = 0;
+        // FIXME: load uuid from database
+
+        this.data = undefined;
+        this.configVersion = undefined;
+        this.schemaName = undefined;
+        this.lastChanged = undefined;
     };
     window['DBObject'] = DBObject;
 
@@ -158,15 +163,26 @@ var db;
         var uuid_bytes = new Uint8Array(data, schema['UUID'].o, schema['UUID'].s);
         var uuid = Utils.uuid2string(uuid_bytes);
 
-        console.log('Database(): Loaded entry with UUID=' + uuid);
 
         this.uuid = uuid;
         this.data = data;
         this.configVersion = configVersion;
         this.schemaName = schemaName;
-
-        // FIXME: retrieve from data!
         this.lastChanged = 0;
+
+        console.log('Database(): Loaded entry with UUID=' + this.uuid);
+    };
+
+
+    DBObject.prototype.loadObject = function (dbObject) {
+        this.uuid = dbObject.uuid;
+        this.data = dbObject.data;
+        this.configVersion = dbObject.configVersion;
+        this.schemaName = dbObject.schemaName;
+        this.lastChanged = dbObject.lastChanged;
+
+        console.log('Database(): Loaded entry with UUID=' + this.uuid +
+            ' from IndexedDB');
     };
 
 
@@ -225,36 +241,7 @@ var db;
     };
 
 
-    // Return a list of all uuids in the database.
-    // The list can be narrowed down to models or transmitters by passing
-    // 'MODEL' or 'TX'
-    //
-    // Example:
-    //      var list_of_uuids_of_all_models = DBObject.list('MODEL');
-    //
-    // DBObject.prototype.list = function (schemaName=null) {
-    //     if (schemaName) {
-    //         var result = [];
-    //         for (let uuid in this.data) {
-    //             if (this.data.hasOwnProperty(uuid)) {
-    //                 var entry = this.data[uuid];
-    //                 var config = CONFIG_VERSIONS[entry.configVersion];
-    //                 var schema = config[entry.schemaName];
-
-    //                 if (schema.t === schemaName) {
-    //                     result.push(uuid);
-    //                 }
-    //             }
-    //         }
-
-    //         return result;
-    //     }
-
-    //     return Object.keys(this.data);
-    // };
-
-
-    // Returns the configuration for a given uuid.
+    // Returns the configuration of the database entry.
     // The configuration is the metadata for the uuid contents. It holds the
     // MODEL and TX schemas as well as the TYPES (enumeration values used in
     // the schema)
@@ -270,7 +257,7 @@ var db;
     };
 
 
-    // Return the type of a particulare entry in the schema.
+    // Return the type of a particular entry in the schema.
     // The type can be one of the following:
     //  u': unsigned integer
     //      'i': signed integer
@@ -280,8 +267,7 @@ var db;
     //          which correspond to enums in the firmware.
     //
     // Example:
-    //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
-    //      var type = DBObject.getType(uuid, 'HARDWARE_INPUTS_CALIBRATION');
+    //      var type = dev.TX.getType('HARDWARE_INPUTS_CALIBRATION');
     //
     //      > type == 'u' because the HARDWARE_INPUTS_CALIBRATION is an array
     //                    of three uint16_t values in the firmware.
@@ -296,8 +282,7 @@ var db;
     // for named element 'value' in that type.
     //
     // Example:
-    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var n = DBObject.getNumberOfTypeMember(uuid, 'MIXER_UNITS_DST', 'CH7');
+    //      var n = dev.MODEL.getNumberOfTypeMember('MIXER_UNITS_DST', 'CH7');
     //
     //      > n == 6 as the enum in the firmware is CH1=0, CH2, CH3 ...
     //
@@ -313,8 +298,7 @@ var db;
     // Returns a list of all members of a given type (C enum)
     //
     // Example:
-    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var m = DBObject.getTypeMembers(uuid, 'interpolation_type_t');
+    //      var m = dev.MODEL.getTypeMembers('interpolation_type_t');
     //
     //      > Array [ "Linear", "Smoothing" ]
     //
@@ -329,8 +313,7 @@ var db;
     // If we can't access the [key].h field we return the key name.
     //
     // Example:
-    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var n = DBObject.getHumanFriendlyText(uuid, 'MIXER_UNITS_SW_CMP');
+    //      var n = dev.MODEL.getHumanFriendlyText('MIXER_UNITS_SW_CMP');
     //
     //      > n == "Comparison"
     //
@@ -347,14 +330,11 @@ var db;
     };
 
 
-    // Retrieve an element from a model or transmitter entry in the database.
-    //
-    // The entry is referenced by 'uuid'. The element to retrieve is passed in
-    // 'key'.
+    // Retrieve an element from the database entry.
+    // The element to retrieve is passed in 'key'.
     //
     // Example:
-    //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
-    //      var ms = DBObject.get(uuid, 'BIND_TIMEOUT_MS');
+    //      var ms = dev.TX.get('BIND_TIMEOUT_MS');
     //
     //      > ms == 10000 (10 seconds)
     //
@@ -372,8 +352,7 @@ var db;
     //   then the number is returned.
     //
     // Example:
-    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var rf = DBObject.get(uuid, 'RF_PROTOCOL_TYPE');
+    //      var rf = dev.MODEL.get('RF_PROTOCOL_TYPE');
     //
     //      > rf == "HobbyKing HKR3000", which is the string representation
     //              of the value 0 for the 'rf_protocol_t' enum in the firmware.
@@ -382,8 +361,7 @@ var db;
     // are returned.
     //
     // Example:
-    //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
-    //      var l = DBObject.get(uuid, 'LOGICAL_INPUTS_LABELS');
+    //      var l = dev.TX.get('LOGICAL_INPUTS_LABELS');
     //
     //      > l == Array [ "AIL", 0, 0, 0, 0 ]; Notice all but the first
     //             value are returned as number as input_labels_t does not
@@ -395,30 +373,28 @@ var db;
     // can specify the 'index' parameter when invoking the get() function.
     //
     // Example:
-    //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
     //      var offset = 0;   // No offset, see below for description
     //      var index = 0;    // 1st element
-    //      var e = DBObject.get(uuid, 'LOGICAL_INPUTS_LABELS', offset, index);
+    //      var e = dev.TX.get('LOGICAL_INPUTS_LABELS', offset, index);
     //
     //      > e == "AIL"
     //
     //
     // Some elements are arrays of structures. In order facilitate retrieving
-    // an element within an array of a structure, the parent of the element
-    // can pass an offset to the element so that it accesses the correct
-    // array index.
+    // just one element of the array, the parent of the element can pass an
+    // offset to the element so that it accesses the correct array index.
+    //
     // This is different from the 'index' parameter in a sense that 'index'
     // describes the index of the elemement, while 'offset' relates to an
-    // indexes of parents of the element, without specifying any details.
+    // index of parents of the element, without specifying any details.
     //
     // [It may have been better to implement something like XPath, but 'offset'
     // was simple to implement and has the advantage that it is a single value
-    // thatcan be passed down a hierarchy. Each node in the hierarchy can add
-    // to offset if it is an array itself.]
+    // that can be passed down a hierarchy. Each node in the hierarchy can add
+    // to 'offset' if it is an array itself.]
     //
     // Example:
-    //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var mu = DBObject.getSchema(uuid)['MIXER_UNITS'];
+    //      var mu = dev.MODEL.getSchema()['MIXER_UNITS'];
     //      var offset = 3 * mu.s;     // Offset of the 4th mixer unit
     //
     //      // Pass 'offset' to another module
@@ -426,7 +402,7 @@ var db;
     //      // Access the MIXER_UNIT_SRC element of the 4th mixer_unit. The
     //      // function blindly applies the offset it received; it doesn't have
     //      // to know the hierarchy below it.
-    //      var s = DBObject.get(uuid, 'MIXER_UNITS_SRC', offset);
+    //      var s = dev.MODEL.get('MIXER_UNITS_SRC', offset);
     //
     //      > s == "RUD"
     //
@@ -563,7 +539,7 @@ var db;
     };
 
 
-    // Set a new value for a given element in the database.
+    // Set a new value for an element in the database entry.
     //
     // For a detailed parameter description please refer to the DBObject.get()
     // function.
@@ -789,17 +765,17 @@ var db;
 
 
 // Add a test model and transmitter to the database
-(function () {
-    'use strict';
+// (function () {
+//     'use strict';
 
-    // NOTE: the version element is always at offset 0 regardles of the config version!
-    var configVersion = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
-    var config = CONFIG_VERSIONS[configVersion];
+//     // NOTE: the version element is always at offset 0 regardles of the config version!
+//     var configVersion = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
+//     var config = CONFIG_VERSIONS[configVersion];
 
-    dev.MODEL = new DBObject();
-    dev.TX = new DBObject();
+//     dev.MODEL = new DBObject();
+//     dev.TX = new DBObject();
 
-    dev.MODEL.load(TEST_CONFIG_DATA.slice(config.MODEL.o, config.MODEL.o + config.MODEL.s), configVersion, 'MODEL');
-    dev.TX.load(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), configVersion, 'TX');
-})();
+//     dev.MODEL.load(TEST_CONFIG_DATA.slice(config.MODEL.o, config.MODEL.o + config.MODEL.s), configVersion, 'MODEL');
+//     dev.TX.load(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), configVersion, 'TX');
+// })();
 

@@ -26,7 +26,7 @@
         console.log('routes: Database ready, loading dev.TX and dev.MODEL');
 
         var count = 2;
-        const topic = 'entryRetrieved';
+        const topic = 'routes.entryRetrieved';
 
         Database.getEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (data) {
             dev.MODEL = new DBObject(data);

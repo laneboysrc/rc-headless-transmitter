@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    var MDLHelper = function MDLHelper(uuid, offset=0) {
-        this.uuid = uuid;
+    var MDLHelper = function MDLHelper(devName, offset=0) {
+        this.devName = devName;
         this.offset = offset;
         this.onChangeHandler = onChangeHandler;
     };
@@ -10,7 +10,7 @@
     window['MDLHelper'] = MDLHelper;
 
     MDLHelper.prototype.setTextContent = function (selector, item, root=document) {
-        var value = Database.get(this.uuid, item, this.offset);
+        var value = dev[this.devName].get(item, this.offset);
         root.querySelector(selector).textContent = value;
     };
 
@@ -19,7 +19,7 @@
     };
 
     MDLHelper.prototype.setSwitch = function (selector, item, root=document) {
-        var value = Database.get(this.uuid, item, this.offset);
+        var value = dev[this.devName].get(item, this.offset);
         var element = root.querySelector(selector);
         element.checked = value;
         element.parentNode.MaterialSwitch.checkToggleState();
@@ -27,14 +27,14 @@
     };
 
    MDLHelper.prototype.setSlider = function (selector, item, root=document) {
-        var value = Database.get(this.uuid, item, this.offset);
+        var value = dev[this.devName].get(item, this.offset);
         var element = root.querySelector(selector);
         element.MaterialSlider.change(value);
         this.setChangeHandler(element, item);
     };
 
     MDLHelper.prototype.setTextfield = function (selector, item, root=document) {
-        var value = Database.get(this.uuid, item, this.offset);
+        var value = dev[this.devName].get(item, this.offset);
         var element = root.querySelector(selector);
         element.value = value;
         this.setChangeHandler(element, item);
@@ -42,7 +42,7 @@
 
     MDLHelper.prototype.setChangeHandler = function (element, item) {
         element.setAttribute('data-source', item);
-        element.setAttribute('data-uuid', this.uuid);
+        element.setAttribute('data-dev', this.devName);
         element.setAttribute('data-offset', this.offset);
         element.onchange = this.onChangeHandler;
     };
@@ -65,7 +65,7 @@
     function onChangeHandler (event) {
         var element = event.target;
         var item = element.getAttribute('data-source');
-        var uuid = element.getAttribute('data-uuid');
+        var devName = element.getAttribute('data-dev');
         var offset = element.getAttribute('data-offset');
 
         var value = element.value;
@@ -73,7 +73,7 @@
             value = element.checked ? 1 : 0;
         }
 
-        Database.set(uuid, item, value, offset);
+        dev[devName].set(item, value, offset);
     }
 })();
 

@@ -15,7 +15,8 @@
   "undef": true,
   "unused": "vars",
   "globals": {
-    "Database": true,
+    "dev": true,
+    "DBObject": true,
     "Limits": true,
     "MDLHelper": true,
     "Mixer": true,

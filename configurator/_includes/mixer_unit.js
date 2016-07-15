@@ -2,21 +2,19 @@
     'use strict';
 
     var MixerUnit = function MixerUnit() {
-        this.uuid = undefined;
-        this.index = undefined;
         this.offset = 0;
     };
     window['MixerUnit'] = new MixerUnit();
 
     //*************************************************************************
     MixerUnit.prototype.init = function (params) {
-        this.uuid = params.model_uuid;
         this.index = params.index;
 
-        var mixer_units = Database.getSchema(this.uuid)['MIXER_UNITS'];
+        var model = dev.MODEL;
+        var mixer_units = model.getSchema()['MIXER_UNITS'];
         this.offset = mixer_units.s * this.index;
 
-        var mdl = new MDLHelper(this.uuid, this.offset);
+        var mdl = new MDLHelper('MODEL', this.offset);
 
         mdl.setTextContent('#app-mixer_unit-src', 'MIXER_UNITS_SRC');
         mdl.setSwitch('#app-mixer_unit-invert_source', 'MIXER_UNITS_INVERT_SOURCE');
@@ -26,11 +24,11 @@
         // FIXME: Add curve and switch
 
         mdl.setDataURL('#app-mixer_unit-src__edit',
-            ['select_single', this.uuid, 'MIXER_UNITS_SRC', this.offset]);
+            ['select_single', 'MODEL', 'MIXER_UNITS_SRC', this.offset]);
         mdl.setDataURL('#app-mixer_unit-dst__edit',
-            ['select_single', this.uuid, 'MIXER_UNITS_DST', this.offset]);
+            ['select_single', 'MODEL', 'MIXER_UNITS_DST', this.offset]);
         mdl.setDataURL('#app-mixer_unit-op__edit',
-            ['select_single', this.uuid, 'MIXER_UNITS_OP', this.offset]);
+            ['select_single', 'MODEL', 'MIXER_UNITS_OP', this.offset]);
 
         Utils.showPage('mixer_unit');
     };

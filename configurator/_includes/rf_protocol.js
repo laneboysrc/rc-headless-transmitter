@@ -2,18 +2,15 @@
     'use strict';
 
     var RFProtocol = function RFProtocol() {
-        this.uuid = undefined;
-        this.tx_uuid = undefined;
     };
     window['RFProtocol'] = new RFProtocol();
 
     //*************************************************************************
     RFProtocol.prototype.init = function (params) {
-        this.uuid = params.model_uuid;
-        this.tx_uuid = params.tx_uuid;
+        var model = dev.MODEL;
 
-        var address = Database.get(this.uuid, 'RF_PROTOCOL_HK310_ADDRESS');
-        var hop_channels = Database.get(this.uuid, 'RF_PROTOCOL_HK310_HOP_CHANNELS');
+        var address = model.get('RF_PROTOCOL_HK310_ADDRESS');
+        var hop_channels = model.get('RF_PROTOCOL_HK310_HOP_CHANNELS');
         var value = '';
 
         value += Utils.byte2string(address[0]) + ':';

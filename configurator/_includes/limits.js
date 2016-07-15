@@ -2,24 +2,22 @@
     'use strict';
 
     var Limits = function Limits() {
-        this.uuid = undefined;
-        this.tx_uuid = undefined;
         this.channel = undefined;
     };
     window['Limits'] = new Limits();
 
     //*************************************************************************
     Limits.prototype.init = function (params) {
-        this.uuid = params.model_uuid;
-        this.tx_uuid = params.tx_uuid;
         this.channel = params.channel;
 
-        var limits = Database.getSchema(this.uuid)['LIMITS'];
-        var channel_index = Database.getNumberOfTypeMember(this.uuid, 'MIXER_UNITS_DST', this.channel);
+        var model = dev.MODEL;
+
+        var limits = model.getSchema()['LIMITS'];
+        var channel_index = model.getNumberOfTypeMember('MIXER_UNITS_DST', this.channel);
 
         var offset = limits.s * channel_index;
 
-        var mdl = new MDLHelper(this.uuid, offset);
+        var mdl = new MDLHelper('MODEL', offset);
 
         mdl.setTextContentRaw('#app-limits-channel', this.channel);
         mdl.setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');

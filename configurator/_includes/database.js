@@ -1,5 +1,17 @@
-var db;
 
+// Global variable that holds the currently loaded transmitter and model
+// object.
+//
+// These objects determine the values shown and manipulated on almost all
+// pages of the configurator app.
+var dev = {
+    MODEL: undefined,
+    TX: undefined
+};
+
+
+
+var db;
 (function () {
     'use strict';
 
@@ -43,15 +55,15 @@ var db;
             var dataObjectStore = transaction.objectStore("data");
 
 
-            var config_version = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
-            var config = CONFIG_VERSIONS[config_version];
+            var configVersion = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
+            var config = CONFIG_VERSIONS[configVersion];
 
             var entries = [{
                     data: TEST_CONFIG_DATA.slice(config.MODEL.o, config.MODEL.o + config.MODEL.s),
-                    schema_name: 'MODEL'
+                    schemaName: 'MODEL'
                 }, {
                     data: TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s),
-                    schema_name: 'TX'
+                    schemaName: 'TX'
                 }
             ];
 
@@ -62,7 +74,7 @@ var db;
             for (var i in entries) {
                 var entry = entries[i];
                 console.log(entry);
-                var schema = config[entry.schema_name];
+                var schema = config[entry.schemaName];
 
                 var uuid_bytes = new Uint8Array(entry.data, schema['UUID'].o, schema['UUID'].s);
                 var uuid = Utils.uuid2string(uuid_bytes);
@@ -70,8 +82,8 @@ var db;
                 var data_to_add = {
                     data: entry.data,
                     uuid: uuid,
-                    schema_name: entry.schema_name,
-                    config_version: config_version
+                    schemaName: entry.schemaName,
+                    configVersion: configVersion
                 };
 
                 var request = dataObjectStore.add(data_to_add);
@@ -93,10 +105,8 @@ var db;
     })();
 
 
-    var Database = function Database(uuid, offset=0) {
-        this.data = {};
-    };
-    window['Database'] = new Database();
+
+
 
 
     // Custom database exception
@@ -106,8 +116,27 @@ var db;
     }
 
 
-    // Add a new entry to the database. The entry can be either model data
-    // or transmitter data.
+    // DBObject: Database Object
+    //
+    // IndexedDB is a Object database: instead of rows/columns it stores
+    // objects. The DBObject represents one of these objects in database that
+    // holds model or transmitter data.
+    var DBObject = function DBObject(uuid, data, configVersion, schemaName) {
+        this.uuid = uuid;
+        this.data = data;
+        this.configVersion = configVersion;
+        this.schemaName = schemaName;
+
+        // FIXME: retrieve from data!
+        this.lastChanged = 0;
+    };
+    window['DBObject'] = DBObject;
+
+
+
+    // Load a new object into the existing DBObject.
+    //
+    // FIXME: TEST FUNCTION! TO BE REMOVED!
     //
     // data: Array of bytes that hold the data to store.
     // config: The configuration entry in CONFIG_VERSIONS[] that descrones the
@@ -119,23 +148,25 @@ var db;
     //      modeldata = new Uint8Array(...);
     //      txdata = new Uint8Array(...);
     //      config = CONFIG_VERSIONS[1];
-    //      Database.add(modeldata, config, config.MODEL);
-    //      Database.add(txdata, config, config.TX);
+    //      DBObject.add(modeldata, config, config.MODEL);
+    //      DBObject.add(txdata, config, config.TX);
     //
-    Database.prototype.add = function (data, config_version, schema_name) {
-        var config = CONFIG_VERSIONS[config_version];
-        var schema = config[schema_name];
+    DBObject.prototype.load = function (data, configVersion, schemaName) {
+        var config = CONFIG_VERSIONS[configVersion];
+        var schema = config[schemaName];
 
         var uuid_bytes = new Uint8Array(data, schema['UUID'].o, schema['UUID'].s);
         var uuid = Utils.uuid2string(uuid_bytes);
 
-        console.log('Database(): New entry with UUID=' + uuid);
+        console.log('Database(): Loaded entry with UUID=' + uuid);
 
-        this.data[uuid] = {
-            data: data,
-            schema_name: schema_name,
-            config_version: config_version
-        };
+        this.uuid = uuid;
+        this.data = data;
+        this.configVersion = configVersion;
+        this.schemaName = schemaName;
+
+        // FIXME: retrieve from data!
+        this.lastChanged = 0;
     };
 
 
@@ -144,17 +175,8 @@ var db;
     //
     // In case an issue is found a console.error() message is written and a
     // DatabaseException() is thrown.
-    Database.prototype.validateInputs = function (uuid, key=null, index=null) {
-        //
-        if (! this.data.hasOwnProperty(uuid)) {
-            let message = 'uuid "' + uuid + '" not in database.';
-            console.error(message);
-            throw new DatabaseException(message);
-        }
-
-        var entry = this.data[uuid];
-        var config = CONFIG_VERSIONS[entry.config_version];
-        var schema = config[entry.schema_name];
+    DBObject.prototype.validateInputs = function (key=null, index=null) {
+        var schema = this.getSchema();
 
         if (key  &&  !schema.hasOwnProperty(key)) {
             let message = 'Key "' + key + '" not in schema.';
@@ -188,7 +210,7 @@ var db;
     // Translates a value that corresponds to type (which corresponds to a C
     // enumeration) into the human readable name. If the value is not in the
     // type then the value is returned verbatim.
-    Database.prototype.typeLookupByNumber = function (type, value) {
+    DBObject.prototype.typeLookupByNumber = function (type, value) {
         if (type) {
             for (let n in type) {
                 if (type.hasOwnProperty(n)) {
@@ -208,50 +230,43 @@ var db;
     // 'MODEL' or 'TX'
     //
     // Example:
-    //      var list_of_uuids_of_all_models = Database.list('MODEL');
+    //      var list_of_uuids_of_all_models = DBObject.list('MODEL');
     //
-    Database.prototype.list = function (schema_name=null) {
-        if (schema_name) {
-            var result = [];
-            for (let uuid in this.data) {
-                if (this.data.hasOwnProperty(uuid)) {
-                    var entry = this.data[uuid];
-                    var config = CONFIG_VERSIONS[entry.config_version];
-                    var schema = config[entry.schema_name];
+    // DBObject.prototype.list = function (schemaName=null) {
+    //     if (schemaName) {
+    //         var result = [];
+    //         for (let uuid in this.data) {
+    //             if (this.data.hasOwnProperty(uuid)) {
+    //                 var entry = this.data[uuid];
+    //                 var config = CONFIG_VERSIONS[entry.configVersion];
+    //                 var schema = config[entry.schemaName];
 
-                    if (schema.t === schema_name) {
-                        result.push(uuid);
-                    }
-                }
-            }
+    //                 if (schema.t === schemaName) {
+    //                     result.push(uuid);
+    //                 }
+    //             }
+    //         }
 
-            return result;
-        }
+    //         return result;
+    //     }
 
-        return Object.keys(this.data);
-    };
+    //     return Object.keys(this.data);
+    // };
 
 
     // Returns the configuration for a given uuid.
     // The configuration is the metadata for the uuid contents. It holds the
     // MODEL and TX schemas as well as the TYPES (enumeration values used in
     // the schema)
-    Database.prototype.getConfig = function (uuid) {
-        this.validateInputs(uuid);
-
-        var entry = this.data[uuid];
-        return CONFIG_VERSIONS[entry.config_version];
+    DBObject.prototype.getConfig = function () {
+        return CONFIG_VERSIONS[this.configVersion];
     };
 
 
     // Returns the schema of a database entry. The schema describes the
     // structure of the database entry, i.e. which elements it has.
-    Database.prototype.getSchema = function (uuid) {
-        this.validateInputs(uuid);
-
-        var entry = this.data[uuid];
-        var config = CONFIG_VERSIONS[entry.config_version];
-        return config[entry.schema_name];
+    DBObject.prototype.getSchema = function (uuid) {
+        return this.getConfig()[this.schemaName];
     };
 
 
@@ -266,18 +281,14 @@ var db;
     //
     // Example:
     //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
-    //      var type = Database.getType(uuid, 'HARDWARE_INPUTS_CALIBRATION');
+    //      var type = DBObject.getType(uuid, 'HARDWARE_INPUTS_CALIBRATION');
     //
     //      > type == 'u' because the HARDWARE_INPUTS_CALIBRATION is an array
     //                    of three uint16_t values in the firmware.
     //
-    Database.prototype.getType = function (uuid, key) {
-        this.validateInputs(uuid, key);
-
-        var entry = this.data[uuid];
-        var config = CONFIG_VERSIONS[entry.config_version];
-        var schema = config[entry.schema_name];
-        return schema[key].t;
+    DBObject.prototype.getType = function (key) {
+        this.validateInputs(key);
+        return this.getSchema()[key].t;
     };
 
 
@@ -286,17 +297,15 @@ var db;
     //
     // Example:
     //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var n = Database.getNumberOfTypeMember(uuid, 'MIXER_UNITS_DST', 'CH7');
+    //      var n = DBObject.getNumberOfTypeMember(uuid, 'MIXER_UNITS_DST', 'CH7');
     //
     //      > n == 6 as the enum in the firmware is CH1=0, CH2, CH3 ...
     //
-    Database.prototype.getNumberOfTypeMember = function (uuid, key, value) {
-        this.validateInputs(uuid, key);
+    DBObject.prototype.getNumberOfTypeMember = function (key, value) {
+        this.validateInputs(key);
 
-        var entry = this.data[uuid];
-        var config = CONFIG_VERSIONS[entry.config_version];
-        var schema = config[entry.schema_name];
-        var type = schema[key].t;
+        var config = this.getConfig();
+        var type = this.getSchema()[key].t;
         return config.TYPES[type][value];
     };
 
@@ -305,15 +314,12 @@ var db;
     //
     // Example:
     //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var m = Database.getTypeMembers(uuid, 'interpolation_type_t');
+    //      var m = DBObject.getTypeMembers(uuid, 'interpolation_type_t');
     //
     //      > Array [ "Linear", "Smoothing" ]
     //
-    Database.prototype.getTypeMembers = function (uuid, type) {
-        this.validateInputs(uuid);
-
-        var entry = this.data[uuid];
-        var config = CONFIG_VERSIONS[entry.config_version];
+    DBObject.prototype.getTypeMembers = function (type) {
+        var config = this.getConfig();
         return Object.keys(config.TYPES[type]);
     };
 
@@ -324,14 +330,14 @@ var db;
     //
     // Example:
     //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var n = Database.getHumanFriendlyText(uuid, 'MIXER_UNITS_SW_CMP');
+    //      var n = DBObject.getHumanFriendlyText(uuid, 'MIXER_UNITS_SW_CMP');
     //
     //      > n == "Comparison"
     //
-    Database.prototype.getHumanFriendlyText = function (uuid, key) {
-        this.validateInputs(uuid, key);
+    DBObject.prototype.getHumanFriendlyText = function (key) {
+        this.validateInputs(key);
 
-        var schema = this.getSchema(uuid);
+        var schema = this.getSchema();
 
         if (schema[key].hasOwnProperty('h')) {
             return schema[key].h;
@@ -348,7 +354,7 @@ var db;
     //
     // Example:
     //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
-    //      var ms = Database.get(uuid, 'BIND_TIMEOUT_MS');
+    //      var ms = DBObject.get(uuid, 'BIND_TIMEOUT_MS');
     //
     //      > ms == 10000 (10 seconds)
     //
@@ -367,7 +373,7 @@ var db;
     //
     // Example:
     //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var rf = Database.get(uuid, 'RF_PROTOCOL_TYPE');
+    //      var rf = DBObject.get(uuid, 'RF_PROTOCOL_TYPE');
     //
     //      > rf == "HobbyKing HKR3000", which is the string representation
     //              of the value 0 for the 'rf_protocol_t' enum in the firmware.
@@ -377,7 +383,7 @@ var db;
     //
     // Example:
     //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
-    //      var l = Database.get(uuid, 'LOGICAL_INPUTS_LABELS');
+    //      var l = DBObject.get(uuid, 'LOGICAL_INPUTS_LABELS');
     //
     //      > l == Array [ "AIL", 0, 0, 0, 0 ]; Notice all but the first
     //             value are returned as number as input_labels_t does not
@@ -392,7 +398,7 @@ var db;
     //      var uuid = '43538fe8-44c9-11e6-9f17-af7be9c4479e';
     //      var offset = 0;   // No offset, see below for description
     //      var index = 0;    // 1st element
-    //      var e = Database.get(uuid, 'LOGICAL_INPUTS_LABELS', offset, index);
+    //      var e = DBObject.get(uuid, 'LOGICAL_INPUTS_LABELS', offset, index);
     //
     //      > e == "AIL"
     //
@@ -412,7 +418,7 @@ var db;
     //
     // Example:
     //      var uuid = 'c91cabaa-44c9-11e6-9bc2-03ac25e30b5b';
-    //      var mu = Database.getSchema(uuid)['MIXER_UNITS'];
+    //      var mu = DBObject.getSchema(uuid)['MIXER_UNITS'];
     //      var offset = 3 * mu.s;     // Offset of the 4th mixer unit
     //
     //      // Pass 'offset' to another module
@@ -420,12 +426,12 @@ var db;
     //      // Access the MIXER_UNIT_SRC element of the 4th mixer_unit. The
     //      // function blindly applies the offset it received; it doesn't have
     //      // to know the hierarchy below it.
-    //      var s = Database.get(uuid, 'MIXER_UNITS_SRC', offset);
+    //      var s = DBObject.get(uuid, 'MIXER_UNITS_SRC', offset);
     //
     //      > s == "RUD"
     //
-    Database.prototype.get = function (uuid, key, offset=0, index=null) {
-        this.validateInputs(uuid, key, index);
+    DBObject.prototype.get = function (key, offset=0, index=null) {
+        this.validateInputs(key, index);
 
         // Convert index to an Integer to handle the case where a string
         // representation or a float was given
@@ -434,10 +440,10 @@ var db;
         index = parseInt(index);
         offset = parseInt(offset);
 
-        var entry = this.data[uuid];
-        var data = entry.data;
-        var config = CONFIG_VERSIONS[entry.config_version];
-        var schema = config[entry.schema_name];
+        var self = this;
+        var data = this.data;
+        var config = this.getConfig();
+        var schema = this.getSchema();
         var types = config.TYPES;
         var item = schema[key];
         var item_offset = item.o + offset;
@@ -521,7 +527,7 @@ var db;
             let result = [];
             for (let n of bytes.entries()) {
                 let entry = n[1];
-                let element = window['Database'].typeLookupByNumber(types[item.t], entry);
+                let element = self.typeLookupByNumber(types[item.t], entry);
 
                 result.push(element);
             }
@@ -559,7 +565,7 @@ var db;
 
     // Set a new value for a given element in the database.
     //
-    // For a detailed parameter description please refer to the Database.get()
+    // For a detailed parameter description please refer to the DBObject.get()
     // function.
     //
     // The set() function expects value to be in the same format as it is
@@ -568,8 +574,8 @@ var db;
     // Note that writing an element of type s' (C structure) is not supported.
     //
     // Every time a value is set, the LAST_CHANGED element is updated as well.
-    Database.prototype.set = function (uuid, key, value, offset=0, index=null) {
-        this.validateInputs(uuid, key, index);
+    DBObject.prototype.set = function (key, value, offset=0, index=null) {
+        this.validateInputs(key, index);
 
         // Convert index to an Integer to handle the case where a string
         // representation or a float was given
@@ -578,10 +584,10 @@ var db;
         index = parseInt(index);
         offset = parseInt(offset);
 
-        var entry = this.data[uuid];
-        var data = entry.data;
-        var config = CONFIG_VERSIONS[entry.config_version];
-        var schema = config[entry.schema_name];
+        var self = this;
+        var data = this.data;
+        var config = this.getConfig();
+        var schema = this.getSchema();
         var types = config.TYPES;
         var item = schema[key];
         var item_offset = item.o + offset;
@@ -645,7 +651,7 @@ var db;
         // transmitter.
         function storageLogger(offset, count) {
             // schema.o describes the offset within the overall configuration
-            console.log(uuid + ' changed: offset=' + offset + ' count=' +
+            console.log(self.uuid + ' changed: offset=' + offset + ' count=' +
                 count + ' config-offset=' + (offset + schema.o));
 
             // Add last change time stamp
@@ -656,7 +662,7 @@ var db;
                 let dv = new DataView(data.buffer, lc.o , lc.s);
                 setter.apply(dv, [0, now, true]);
 
-                console.log(uuid + ' changed: offset=' + lc.o + ' count=' +
+                console.log(self.uuid + ' changed: offset=' + lc.o + ' count=' +
                     lc.s + ' config-offset=' + (lc.o + schema.o));
             }
         }
@@ -787,10 +793,13 @@ var db;
     'use strict';
 
     // NOTE: the version element is always at offset 0 regardles of the config version!
-    var config_version = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
-    var config = CONFIG_VERSIONS[config_version];
+    var configVersion = new Uint32Array(TEST_CONFIG_DATA.buffer, 0, 1)[0];
+    var config = CONFIG_VERSIONS[configVersion];
 
-    Database.add(TEST_CONFIG_DATA.slice(config.MODEL.o, config.MODEL.o + config.MODEL.s), config_version, 'MODEL');
-    Database.add(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), config_version, 'TX');
+    dev.MODEL = new DBObject();
+    dev.TX = new DBObject();
+
+    dev.MODEL.load(TEST_CONFIG_DATA.slice(config.MODEL.o, config.MODEL.o + config.MODEL.s), configVersion, 'MODEL');
+    dev.TX.load(TEST_CONFIG_DATA.slice(config.TX.o, config.TX.o + config.TX.s), configVersion, 'TX');
 })();
 

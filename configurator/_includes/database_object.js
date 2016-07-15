@@ -302,7 +302,7 @@
 
         function getInteger() {
             let TypedArray = getGetter(item.s, item.t);
-            return new TypedArray(data.buffer, item_offset, item.c);
+            return Array.from(new TypedArray(data.buffer, item_offset, item.c));
         }
 
         function getString() {

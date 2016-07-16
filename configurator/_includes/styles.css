@@ -130,3 +130,24 @@ table.limits .mdl-switch {
   background: rgb(255,87,34);
   border: none;
 }*/
+
+#app-rf_protocol-hop_channels__container {
+  width: 100%;
+}
+
+/* Adjust the left and right padding from the hop channel table */
+.mdl-card .mdl-data-table.rf_protocol-hop_channels td:first-of-type {
+  padding-left: 0;
+}
+.mdl-card .mdl-data-table.rf_protocol-hop_channels td:last-of-type {
+  padding-right: 10px;
+}
+
+/* No darkening when hovering over the table */
+.mdl-data-table.rf_protocol-hop_channels tbody tr:hover {
+  background-color: transparent;
+}
+
+table.rf_protocol-hop_channels td:nth-child(2) {
+  width: 64px;
+}

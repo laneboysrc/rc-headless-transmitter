@@ -52,16 +52,16 @@
           This 5-byte hexadecimal number defines the unique nRF24 address used by this model.
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <form>
+          <div>
             <div class="mdl-textfield mdl-js-textfield">
               <input id="app-rf_protocol-address" class="mdl-textfield__input" type="text" pattern="^\s*([\dA-Fa-f]{1,2}):([\dA-Fa-f]{1,2}):([\dA-Fa-f]{1,2}):([\dA-Fa-f]{1,2}):([\dA-Fa-f]{1,2})\s*$">
               <!-- <label class="mdl-textfield__label" for="app-rf_protocol-address">Address ...</label> -->
               <span class="mdl-textfield__error">5 hex numbers separated by ':'</span>
             </div>
-          </form>
-          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+          </div>
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
             Generate random address
-          </a>
+          </button>
         </div>
       </div>
     </section>
@@ -77,19 +77,25 @@
           <p><strong>Note:</strong> for HobbyKing receivers only use a linear sequence of hope channels in the range of 0..69!</p>
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <form>
-            <div class="mdl-textfield mdl-js-textfield">
-              <input id="app-rf_protocol-hop_channels" class="mdl-textfield__input" type="text" pattern="(\d\d? ?)+" value="">
-              <!-- <label class="mdl-textfield__label" for="app-rf_protocol-hop_channels">Hop channels ...</label> -->
-              <span class="mdl-textfield__error">20 numbers between 0 and 125<span>
-            </div>
-          </form>
-          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-            Random hop sequence
-          </a>
-          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-            Linear hop sequence
-          </a>
+          <table class="rf_protocol-hop_channels mdl-data-table mdl-js-data-table">
+          <tbody>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                <div id="app-rf_protocol-hop_channels__container" class="mdl-textfield mdl-js-textfield">
+                  <input id="app-rf_protocol-hop_channels" class="mdl-textfield__input" type="text" pattern="(\d\d? ?)+" value="">
+                  <!-- <label class="mdl-textfield__label" for="app-rf_protocol-hop_channels">Hop channels ...</label> -->
+                  <span class="mdl-textfield__error">20 numbers between 0 and 125</span>
+                </div>
+              </td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
+                  <i class="material-icons">autorenew</i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          </table>
+
         </div>
       </div>
     </section>

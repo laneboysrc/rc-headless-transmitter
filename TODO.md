@@ -30,7 +30,7 @@
   - Look into Redis
 
 - Fix issue with mixer.html not showing properly on small screens
-- Make hop channel edit field wider
+- Add page for hop channel generation (radio buttons + generate button)
 
 - Curve editing: show appropriate points and adjust their name
 

@@ -11,7 +11,7 @@
     window['MDLHelper'] = MDLHelper;
 
     MDLHelper.prototype.setTextContent = function (selector, item, root=document) {
-        var value = dev[this.devName].get(item, this.offset);
+        var value = dev[this.devName].get(item, {offset: this.offset});
         root.querySelector(selector).textContent = value;
     };
 
@@ -20,7 +20,11 @@
     };
 
     MDLHelper.prototype.setSwitch = function (selector, item, root=document) {
-        var value = dev[this.devName].get(item, this.offset, this.index);
+        var options = {
+            offset: this.offset,
+            index: this.index
+        };
+        var value = dev[this.devName].get(item, options);
         var element = root.querySelector(selector);
         element.checked = value;
         element.parentNode.MaterialSwitch.checkToggleState();
@@ -28,14 +32,18 @@
     };
 
    MDLHelper.prototype.setSlider = function (selector, item, root=document) {
-        var value = dev[this.devName].get(item, this.offset, this.index);
+        var options = {
+            offset: this.offset,
+            index: this.index
+        };
+        var value = dev[this.devName].get(item, options);
         var element = root.querySelector(selector);
         element.MaterialSlider.change(value);
         this.setChangeHandler(element, item);
     };
 
     MDLHelper.prototype.setTextfield = function (selector, item, root=document) {
-        var value = dev[this.devName].get(item, this.offset);
+        var value = dev[this.devName].get(item, {offset: this.offset});
         var element = root.querySelector(selector);
         element.value = value;
         this.setChangeHandler(element, item);
@@ -76,13 +84,17 @@
         var attribute = window.atob(attributeBase64);
         var obj = JSON.parse(attribute);
 
+        var devName = obj.devName;
+        var item = obj.item;
+        var options = {offset: obj.offset, index: obj.index};
+
         var value = element.value;
         if (element.type === 'checkbox') {
             value = element.checked ? 1 : 0;
         }
 
         // Update the DBObject
-        dev[obj.devName].set(obj.item, value, obj.offset, obj.index);
+        dev[devName].set(item, value, options);
     }
 })();
 

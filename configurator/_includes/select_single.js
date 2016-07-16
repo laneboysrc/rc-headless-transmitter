@@ -17,7 +17,7 @@
         var list = document.querySelector('#app-select_single-list');
         var value = list.querySelector('input[type="radio"]:checked').value;
 
-        dev[this.devName].set(this.item, value, this.offset);
+        dev[this.devName].set(this.item, value, {offset: this.offset});
         history.go(-1);
     };
 
@@ -39,7 +39,7 @@
         // FIXME: need to get item description
         mdl.setTextContentRaw('#app-select_single-description', 'FIXME');
 
-        var current_choice = device.get(this.item, this.offset);
+        var current_choice = device.get(this.item, {offset: this.offset});
 
         var type = device.getType(this.item);
         var choices = device.getTypeMembers(type);

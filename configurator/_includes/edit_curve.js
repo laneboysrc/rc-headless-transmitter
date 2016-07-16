@@ -20,7 +20,7 @@
         mdl.setDataURL('#app-edit_curve-curve_smoothing__edit',
             ['select_single', 'MODEL', 'MIXER_UNITS_CURVE_SMOOTHING', this.offset]);
 
-        var points = dev.MODEL.get('MIXER_UNITS_CURVE_POINTS', this.offset);
+        var points = dev.MODEL.get('MIXER_UNITS_CURVE_POINTS', {offset: this.offset});
 
         for (var i = 0; i < points.length; i += 1) {
             var options = {offset: this.offset, index: i};

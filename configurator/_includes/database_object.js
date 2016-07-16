@@ -210,9 +210,8 @@
     // can specify the 'index' parameter when invoking the get() function.
     //
     // Example:
-    //      var offset = 0;   // No offset, see below for description
     //      var index = 0;    // 1st element
-    //      var e = dev.TX.get('LOGICAL_INPUTS_LABELS', offset, index);
+    //      var e = dev.TX.get('LOGICAL_INPUTS_LABELS', {index: index});
     //
     //      > e == "AIL"
     //
@@ -239,19 +238,19 @@
     //      // Access the MIXER_UNIT_SRC element of the 4th mixer_unit. The
     //      // function blindly applies the offset it received; it doesn't have
     //      // to know the hierarchy below it.
-    //      var s = dev.MODEL.get('MIXER_UNITS_SRC', offset);
+    //      var s = dev.MODEL.get('MIXER_UNITS_SRC', {offset: offset});
     //
     //      > s == "RUD"
     //
-    DBObject.prototype.get = function (key, offset=0, index=null) {
+    DBObject.prototype.get = function (key, options={offset:0, index:null}) {
         this.validateInputs(key, index);
 
         // Convert index to an Integer to handle the case where a string
         // representation or a float was given
         // If index is 'null' then it will become NaN, which is what we check
         // during the rest of the code
-        index = parseInt(index);
-        offset = parseInt(offset);
+        var index = parseInt(options.index);
+        var offset = parseInt(options.offset);
 
         var self = this;
         var data = this.data;
@@ -387,15 +386,15 @@
     // Note that writing an element of type s' (C structure) is not supported.
     //
     // Every time a value is set, the LAST_CHANGED element is updated as well.
-    DBObject.prototype.set = function (key, value, offset=0, index=null) {
-        this.validateInputs(key, index);
+    DBObject.prototype.set = function (key, value, options={offset:0, index:null}) {
+        this.validateInputs(key, options.index);
 
         // Convert index to an Integer to handle the case where a string
         // representation or a float was given
         // If index is 'null' then it will become NaN, which is what we check
         // during the rest of the code
-        index = parseInt(index);
-        offset = parseInt(offset);
+        var index = parseInt(options.index);
+        var offset = parseInt(options.offset);
 
         var self = this;
         var data = this.data;

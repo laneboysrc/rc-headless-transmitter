@@ -10,11 +10,11 @@
     var config = CONFIG_VERSIONS[1];
 
 
-    var testGet = function (dbObject, item, offset=0, index=null) {
+    var testGet = function (dbObject, item, options) {
         var value;
 
         try {
-            value = dbObject.get(item, offset, index);
+            value = dbObject.get(item, options);
         }
         catch (e) {
             if (e.hasOwnProperty('name') && e.name === 'DatabaseException') {
@@ -32,13 +32,13 @@
     };
 
 
-    var testSet = function (dbObject, item, new_value, offset=0, index=null) {
+    var testSet = function (dbObject, item, new_value, options) {
         console.log('Changing ' + item + ' to ' + new_value);
         var changed;
 
         try {
-            dbObject.set(item, new_value, offset, index);
-            changed = dbObject.get(item, offset, index);
+            dbObject.set(item, new_value, options);
+            changed = dbObject.get(item, options);
         }
         catch (e) {
             if (e.hasOwnProperty('name') && e.name === 'DatabaseException') {
@@ -78,12 +78,12 @@
     testGet(dev.TX, 'BIND_TIMEOUT_MS');
     testGet(dev.MODEL, 'RF_PROTOCOL_HK310_ADDRESS');
     testGet(dev.MODEL, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3);
-    testGet(dev.TX, 'HARDWARE_INPUTS_CALIBRATION', 2*config.TX.HARDWARE_INPUTS.s);
-    testGet(dev.TX, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', config.TX.HARDWARE_INPUTS.s);
+    testGet(dev.TX, 'HARDWARE_INPUTS_CALIBRATION', {offset: 2*config.TX.HARDWARE_INPUTS.s});
+    testGet(dev.TX, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: config.TX.HARDWARE_INPUTS.s});
     testGet(dev.MODEL, 'MIXER_UNITS_CURVE_TYPE');
-    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', 3*config.TX.LOGICAL_INPUTS.s);
-    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', 2*config.TX.LOGICAL_INPUTS.s, 1);
-    testGet(dev.MODEL, 'MIXER_UNITS_SRC', 0);
+    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', {offset: 3*config.TX.LOGICAL_INPUTS.s});
+    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', {offset: 2*config.TX.LOGICAL_INPUTS.s, index: 1});
+    testGet(dev.MODEL, 'MIXER_UNITS_SRC', {offset: 0});
 
     console.log('\nTests for Database.set()');
     console.log('------------------------');
@@ -94,15 +94,15 @@
     testSet(dev.MODEL, 'LIMITS_LIMIT_L', -42);
     testSet(dev.TX, 'HARDWARE_INPUTS_CALIBRATION', [1234, 2345, 3456]);
     testSet(dev.MODEL, 'MIXER_UNITS_SRC', 'FLAPS');
-    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', 'GEAR', 0, 2);
-    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', ['ST-DR', 'RUD-DR', 'AIL-DR', 'ELE-DR', 0], 2*config.TX.LOGICAL_INPUTS.s);
+    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', 'GEAR', {offset: 0, index: 2});
+    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', ['ST-DR', 'RUD-DR', 'AIL-DR', 'ELE-DR', 0], {offset: 2*config.TX.LOGICAL_INPUTS.s});
 
     console.log('\nTests that should fail:');
     console.log('-----------------------');
     testGet(dev.TX, 'MIXER_UNITS_CURVE_TYPE');
-    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', 3*config.TX.LOGICAL_INPUTS.s, 5);
-    testGet(dev.MODEL, 'MIXER_UNITS', 0, 'three');
-    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'NONE'], 2*config.TX.LOGICAL_INPUTS.s);
+    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', {offset: 3*config.TX.LOGICAL_INPUTS.s, index: 5});
+    testGet(dev.MODEL, 'MIXER_UNITS', {offset: 0, index: 'three'});
+    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'NONE'], {offset: 2*config.TX.LOGICAL_INPUTS.s});
 
     console.log('#################################\n');
 })();

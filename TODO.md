@@ -65,5 +65,5 @@
   - Do that in MDLHelper
     - use validity.valid on text field (if (inp.validity && inp.validity.valid) )
   - Watch out for ^, $ and white space
-- Introduce options object to MDLHelper, and have one of such options be
-  formatter and parser for address, hop channels
+
+- Add formatter and parser for address, hop channels to MDLHelper options

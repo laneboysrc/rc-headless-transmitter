@@ -53,7 +53,4 @@
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
-- Check all Text field validations and handle in code
-  - Watch out for ^, $ and white space
-
 - Add formatter and parser for address, hop channels to MDLHelper options

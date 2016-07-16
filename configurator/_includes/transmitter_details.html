@@ -166,8 +166,8 @@
             <div class="mdl-card__actions">
               <form>
                 <div class="mdl-textfield mdl-js-textfield">
-                  <input class="mdl-textfield__input" type="text" id="tx_name" pattern=".{1,10}" value="Tx001">
-                  <label class="mdl-textfield__label" for="tx_name">Transmitter name ...</label>
+                  <input class="mdl-textfield__input" type="text" id="tx_name" pattern="^\s*([A-Z,a-z,0-9 ]{1,16})\s*$">
+                  <!-- <label class="mdl-textfield__label" for="tx_name">Transmitter name ...</label> -->
                   <span class="mdl-textfield__error">1 to 10 characters only</span>
                 </div>
               </form>

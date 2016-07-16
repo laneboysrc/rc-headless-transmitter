@@ -27,7 +27,6 @@
 
     for (var path in routes) {
         if (routes.hasOwnProperty(path)) {
-            console.log(routes[path]);
             Path.map(path).to(redirect(routes[path]));
         }
     }

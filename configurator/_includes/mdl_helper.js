@@ -1,10 +1,10 @@
 (function () {
     'use strict';
 
-    var MDLHelper = function MDLHelper(devName, offset=0, index=null) {
+    var MDLHelper = function MDLHelper(devName, options={offset: 0, index: null}) {
         this.devName = devName;
-        this.offset = offset;
-        this.index = index;
+        this.offset = options.offset;
+        this.index = options.index;
         this.onChangeHandler = onChangeHandler;
     };
 

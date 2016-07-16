@@ -17,7 +17,7 @@
 
         var offset = limits.s * channel_index;
 
-        var mdl = new MDLHelper('MODEL', offset);
+        var mdl = new MDLHelper('MODEL', {offset: offset});
 
         mdl.setTextContentRaw('#app-limits-channel', this.channel);
         mdl.setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');

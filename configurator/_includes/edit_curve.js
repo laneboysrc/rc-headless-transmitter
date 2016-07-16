@@ -10,7 +10,7 @@
     EditCurve.prototype.init = function (params) {
         this.offset = params.offset;
 
-        var mdl = new MDLHelper('MODEL', this.offset);
+        var mdl = new MDLHelper('MODEL', {offset: this.offset});
 
         mdl.setTextContent('#app-edit_curve-curve_type', 'MIXER_UNITS_CURVE_TYPE');
         mdl.setDataURL('#app-edit_curve-curve_type__edit',
@@ -23,7 +23,8 @@
         var points = dev.MODEL.get('MIXER_UNITS_CURVE_POINTS', this.offset);
 
         for (var i = 0; i < points.length; i += 1) {
-            var mdlSlider = new MDLHelper('MODEL', this.offset, i);
+            var options = {offset: this.offset, index: i};
+            var mdlSlider = new MDLHelper('MODEL', options);
             mdlSlider.setSlider('#app-edit_curve-point' + (i + 1), 'MIXER_UNITS_CURVE_POINTS');
         }
 

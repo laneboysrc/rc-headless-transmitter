@@ -13,7 +13,7 @@
         var mixer_units = dev.MODEL.getSchema()['MIXER_UNITS'];
         this.offset = mixer_units.s * this.index;
 
-        var mdl = new MDLHelper('MODEL', this.offset);
+        var mdl = new MDLHelper('MODEL', {offset: this.offset});
 
         mdl.setTextContent('#app-mixer_unit-src', 'MIXER_UNITS_SRC');
         mdl.setSwitch('#app-mixer_unit-invert_source', 'MIXER_UNITS_INVERT_SOURCE');

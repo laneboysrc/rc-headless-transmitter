@@ -52,5 +52,3 @@
   - Works async as it directly accesses the storage
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
-
-- Add formatter and parser for address, hop channels to MDLHelper options

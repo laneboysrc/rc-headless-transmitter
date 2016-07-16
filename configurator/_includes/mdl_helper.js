@@ -1,17 +1,28 @@
 (function () {
     'use strict';
 
-    var MDLHelper = function MDLHelper(devName, options={offset: 0, index: null}) {
+    var MDLHelper = function MDLHelper(devName, options={offset: 0, index: null,
+            formatter: undefined, parser: undefined}) {
+
         this.devName = devName;
         this.offset = options.offset;
         this.index = options.index;
-        this.onChangeHandler = onChangeHandler;
+        this.formatter = options.formatter;
+        this.parser = options.parser;
+
+        // The change handler function is called in context of another
+        // function, so we need to bind this object to it.
+        this.onChangeHandler = this.onChangeHandler.bind(this);
     };
 
     window['MDLHelper'] = MDLHelper;
 
     MDLHelper.prototype.setTextContent = function (selector, item, root=document) {
         var value = dev[this.devName].get(item, {offset: this.offset});
+        if (this.formatter) {
+            value = this.formatter(value);
+        }
+
         root.querySelector(selector).textContent = value;
     };
 
@@ -37,6 +48,10 @@
             index: this.index
         };
         var value = dev[this.devName].get(item, options);
+        if (this.formatter) {
+            value = this.formatter(value);
+        }
+
         var element = root.querySelector(selector);
         element.MaterialSlider.change(value);
         this.setChangeHandler(element, item);
@@ -44,22 +59,17 @@
 
     MDLHelper.prototype.setTextfield = function (selector, item, root=document) {
         var value = dev[this.devName].get(item, {offset: this.offset});
+        if (this.formatter) {
+            value = this.formatter(value);
+        }
+
         var element = root.querySelector(selector);
         element.value = value;
         this.setChangeHandler(element, item);
     };
 
     MDLHelper.prototype.setChangeHandler = function (element, item) {
-        var obj = {
-            item: item,
-            devName: this.devName,
-            offset: this.offset,
-            index: this.index
-        };
-        var attribute = JSON.stringify(obj);
-        var attributeBase64 = window.btoa(attribute);
-
-        element.setAttribute('data-mdlhelper', attributeBase64);
+        element.setAttribute('data-mdlhelper', item);
         element.onchange = this.onChangeHandler;
     };
 
@@ -78,7 +88,7 @@
         }
     };
 
-    function onChangeHandler (event) {
+    MDLHelper.prototype.onChangeHandler = function (event) {
         var element = event.target;
 
         var value = element.value;
@@ -86,6 +96,9 @@
             value = element.checked ? 1 : 0;
         }
 
+        // If the element has a pattern attribute then check its validity
+        // and use the pattern to parse the value. This way we can remove
+        // whitespace, and convert string made from lists back into lists.
         if (element.validity) {
             if (! element.validity.valid) {
                 console.log(element.id + ': Input invalid, not saving!');
@@ -108,16 +121,23 @@
             }
         }
 
-        var attributeBase64 = element.getAttribute('data-mdlhelper');
-        var attribute = window.atob(attributeBase64);
-        var obj = JSON.parse(attribute);
+        // For elements where we need to do more advanced parsing than the
+        // regex in pattern can provide, and to do validation of elements,
+        // we can call a parser callback. If the callback returns 'undefine'
+        // then parsing/validation failed.
+        if (this.parser) {
+            value = this.parser(value);
+            if (typeof value === 'undefined') {
+                console.log(element.id + ': Parser returned undefined, not saving!');
+                return;
+            }
+        }
 
-        var devName = obj.devName;
-        var item = obj.item;
-        var options = {offset: obj.offset, index: obj.index};
+        var item = element.getAttribute('data-mdlhelper');
+        var options = {offset: this.offset, index: this.index};
 
         // Update the DBObject
-        dev[devName].set(item, value, options);
-    }
+        dev[this.devName].set(item, value, options);
+    };
 })();
 

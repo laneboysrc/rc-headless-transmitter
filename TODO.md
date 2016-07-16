@@ -31,8 +31,6 @@
 
 - Fix issue with mixer.html not showing properly on small screens
 - Make hop channel edit field wider
-- Check all Text field validations and handle in code
-  - Can we use the same regex to parse the result?
 
 - Show which src labels are supported by the transmitter when selecting items
 
@@ -62,5 +60,10 @@
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
-- Introduce hex type (x), same as u but is shown as hex digits
-  - Add that to automatic MDL helper for seteditfield and settextcontent
+- Check all Text field validations and handle in code
+  - Can we use the same regex to parse the result?
+  - Do that in MDLHelper
+    - use validity.valid on text field (if (inp.validity && inp.validity.valid) )
+  - Watch out for ^, $ and white space
+- Introduce options object to MDLHelper, and have one of such options be
+  formatter and parser for address, hop channels

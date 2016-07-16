@@ -23,8 +23,8 @@
         var points = dev.MODEL.get('MIXER_UNITS_CURVE_POINTS', this.offset);
 
         for (var i = 0; i < points.length; i += 1) {
-            var point = points[i];
-            console.log(i, point);
+            var mdlSlider = new MDLHelper('MODEL', this.offset, i);
+            mdlSlider.setSlider('#app-edit_curve-point' + (i + 1), 'MIXER_UNITS_CURVE_POINTS');
         }
 
         Utils.showPage('edit_curve');

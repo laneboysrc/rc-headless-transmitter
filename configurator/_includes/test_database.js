@@ -55,7 +55,7 @@
         }
 
         if (typeof(changed) === 'object') {
-            for (let i = 0; i < new_value.length; i += 1) {
+            for (var i = 0; i < new_value.length; i += 1) {
                 if (changed[i !== new_value[i]]) {
                     console.error('' + new_value + ' != ' + changed);
                     return;

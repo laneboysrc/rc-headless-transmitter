@@ -46,7 +46,7 @@
 
         var t = this.template;
 
-        for (let i = 0; i < choices.length; i++) {
+        for (var i = 0; i < choices.length; i++) {
             var entry = choices[i];
 
             t.querySelector('span').textContent = entry;

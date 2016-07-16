@@ -69,8 +69,8 @@
     Utils.prototype.uint8array2string = function (bytes) {
         var result = '';
 
-        for (let n of bytes.entries()) {
-            let code = n[1];
+        for (var n of bytes.entries()) {
+            var code = n[1];
             if (code === 0) {
                 return result;
             }
@@ -84,7 +84,7 @@
         var bytes = new Uint8ClampedArray(byte_count);
         var count = s.length < byte_count ? s.length : byte_count;
 
-        for (let i = 0; i < count; i++) {
+        for (var i = 0; i < count; i++) {
             bytes[i] = s.charCodeAt(i);
         }
         return bytes;
@@ -97,7 +97,7 @@
 
     Utils.prototype.showPage = function (name) {
         // Hide all sections with class 'app-page'
-        for (let page of document.querySelectorAll('.app-page')) {
+        for (var page of document.querySelectorAll('.app-page')) {
             page.classList.add('hidden');
         }
 

@@ -32,14 +32,14 @@
 - Fix issue with mixer.html not showing properly on small screens
 - Make hop channel edit field wider
 
+- Curve editing: show appropriate points and adjust their name
+
 - Show which src labels are supported by the transmitter when selecting items
 
 - Use addEventListener instead onclick and such
   - Add event listeners in MDLHelper, but watch out when revisiting the page
 - Use input even on slider as it is active during sliding.
 
-- Switch editing
-- Curve editing
 - Delete mixer units
   - Requires rearranging other mixers
 - Add mixer units
@@ -47,8 +47,6 @@
 - Add models
 - Load models into the transmitter
 - Add settings page to configure things like sync URL
-
-- Use var instead of let to make Safari work?
 
 - Database: add list function that retrieves entries for a given schema, with
   configurable values to  retrieve (e.g. name, tag, ...)

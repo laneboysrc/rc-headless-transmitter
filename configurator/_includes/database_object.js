@@ -29,17 +29,18 @@
     // In case an issue is found a console.error() message is written and a
     // DatabaseException() is thrown.
     DBObject.prototype.validateInputs = function (key=null, index=null) {
+        var message;
         var schema = this.getSchema();
 
         if (key  &&  !schema.hasOwnProperty(key)) {
-            let message = 'Key "' + key + '" not in schema.';
+            message = 'Key "' + key + '" not in schema.';
             console.error(message);
             throw new DatabaseException(message);
         }
 
         if (index !== null) {
             if (! Utils.isNumber(index)) {
-                let message = 'Index "' + index + '" is not an Integer';
+                message = 'Index "' + index + '" is not an Integer';
                 console.error(message);
                 throw new DatabaseException(message);
             }
@@ -51,7 +52,7 @@
             index = parseInt(index);
 
             if (index < 0  ||  index >= item.c) {
-                let message = 'Requested index "' + index + '" for key "' + key +
+                message = 'Requested index "' + index + '" for key "' + key +
                     '" but item contains only ' + item.c + ' elements';
                 console.error(message);
                 throw new DatabaseException(message);
@@ -65,7 +66,7 @@
     // type then the value is returned verbatim.
     DBObject.prototype.typeLookupByNumber = function (type, value) {
         if (type) {
-            for (let n in type) {
+            for (var n in type) {
                 if (type.hasOwnProperty(n)) {
                     if (value === type[n]) {
                         return n;
@@ -270,6 +271,8 @@
         }
 
         function getGetter(bytesPerElement, type) {
+            var message;
+
             const getters = {
                 'u': {
                     1: Uint8Array,
@@ -284,13 +287,13 @@
             };
 
             if (! getters.hasOwnProperty(type)) {
-                let message = 'Invalid type ' + type;
+                message = 'Invalid type ' + type;
                 console.error(message);
                 throw new DatabaseException(message);
             }
 
             if (! getters[type].hasOwnProperty(bytesPerElement)) {
-                let message = 'bytesPerElement is '+ bytesPerElement +
+                message = 'bytesPerElement is '+ bytesPerElement +
                     ' but must be 1, 2 or 4';
                 console.error(message);
                 throw new DatabaseException(message);
@@ -300,17 +303,17 @@
         }
 
         function getInteger() {
-            let TypedArray = getGetter(item.s, item.t);
+            var TypedArray = getGetter(item.s, item.t);
             return Array.from(new TypedArray(data.buffer, item_offset, item.c));
         }
 
         function getString() {
-            let bytes = new Uint8Array(data.buffer, item_offset, item.c);
+            var bytes = new Uint8Array(data.buffer, item_offset, item.c);
             return Utils.uint8array2string(bytes);
         }
 
         function getUUID() {
-            let bytes = new Uint8Array(data.buffer, item_offset, item.c);
+            var bytes = new Uint8Array(data.buffer, item_offset, item.c);
             return Utils.uuid2string(bytes);
         }
 
@@ -319,8 +322,8 @@
                 return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s);
             }
 
-            let result = [];
-            for (let i = 0; i < item.c; i++) {
+            var result = [];
+            for (var i = 0; i < item.c; i++) {
                 result.push(new Uint8Array(data.buffer, item_offset + (i * item.s), item.s));
             }
             return result;
@@ -328,18 +331,18 @@
 
         function getTypedItem() {
             if (! types.hasOwnProperty(item.t)) {
-                let message = 'Schema type "' + item.t + '" for key "' +
+                var message = 'Schema type "' + item.t + '" for key "' +
                     key + '" not defined';
                 console.error(message);
                 throw new DatabaseException(message);
             }
 
-            let TypedArray = getGetter(item.s, 'i');
-            let bytes = new TypedArray(data.buffer, item_offset, item.c);
-            let result = [];
-            for (let n of bytes.entries()) {
-                let entry = n[1];
-                let element = self.typeLookupByNumber(types[item.t], entry);
+            var TypedArray = getGetter(item.s, 'i');
+            var bytes = new TypedArray(data.buffer, item_offset, item.c);
+            var result = [];
+            for (var n of bytes.entries()) {
+                var entry = n[1];
+                var element = self.typeLookupByNumber(types[item.t], entry);
 
                 result.push(element);
             }
@@ -387,6 +390,8 @@
     //
     // Every time a value is set, the LAST_CHANGED element is updated as well.
     DBObject.prototype.set = function (key, value, options={offset:0, index:null}) {
+        var message;
+
         this.validateInputs(key, options.index);
 
         // Convert index to an Integer to handle the case where a string
@@ -412,13 +417,13 @@
         }
 
         if (!Utils.isNumber(index)) {
-            let ignore = ['c', 'uuid'];
+            const ignore = ['c', 'uuid'];
 
             // indexOf is >=0 when item is found
             // http://stackoverflow.com/questions/7378228/check-if-an-element-is-present-in-an-array
             if (ignore.indexOf(item.t) < 0) {
                 if (value.length !== item.c) {
-                    let message = '' + key + ' requires ' + item.c +
+                    message = '' + key + ' requires ' + item.c +
                         ' elements but ' + value.length + ' provided';
                     console.error(message);
                     throw new DatabaseException(message);
@@ -441,13 +446,13 @@
             };
 
             if (! setters.hasOwnProperty(type)) {
-                let message = 'Invalid type ' + type;
+                message = 'Invalid type ' + type;
                 console.error(message);
                 throw new DatabaseException(message);
             }
 
             if (! setters[type].hasOwnProperty(bytesPerElement)) {
-                let message = 'bytesPerElement is '+ bytesPerElement +
+                message = 'bytesPerElement is '+ bytesPerElement +
                     ' but must be 1, 2 or 4';
                 console.error(message);
                 throw new DatabaseException(message);
@@ -468,10 +473,10 @@
 
             // Add last change time stamp
             if (key !== 'LAST_CHANGED'  &&  schema.hasOwnProperty('LAST_CHANGED')) {
-                let now = parseInt(Date.now() / 1000);
-                let lc = schema.LAST_CHANGED;
-                let setter = getSetter(lc.s, lc.t);
-                let dv = new DataView(data.buffer, lc.o , lc.s);
+                var now = parseInt(Date.now() / 1000);
+                var lc = schema.LAST_CHANGED;
+                var setter = getSetter(lc.s, lc.t);
+                var dv = new DataView(data.buffer, lc.o , lc.s);
                 setter.apply(dv, [0, now, true]);
 
                 console.log(self.uuid + ' changed: offset=' + lc.o + ' count=' +
@@ -486,11 +491,11 @@
         }
 
         function storeArray(values, setter=DataView.prototype.setUint8) {
-            let count = item.c * item.s;
-            let dv = new DataView(data.buffer, item_offset, count);
+            var count = item.c * item.s;
+            var dv = new DataView(data.buffer, item_offset, count);
 
-            for (let i = 0; i < item.c; i++) {
-                let byteOffset = i * item.s;
+            for (var i = 0; i < item.c; i++) {
+                var byteOffset = i * item.s;
                 setter.apply(dv, [byteOffset, values[i], true]);
             }
 
@@ -498,25 +503,25 @@
         }
 
         function storeScalar(value, index, setter=DataView.prototype.setUint8) {
-            let dv = new DataView(data.buffer, item_offset, item.c * item.s);
-            let byteOffset = index * item.s;
+            var dv = new DataView(data.buffer, item_offset, item.c * item.s);
+            var byteOffset = index * item.s;
             setter.apply(dv, [byteOffset, value, true]);
 
             storageLogger(item_offset + byteOffset, item.s);
         }
 
         function setString() {
-            let bytes = Utils.string2uint8array(value, item.c);
+            var bytes = Utils.string2uint8array(value, item.c);
             storeArray(bytes);
         }
 
         function setUUID() {
-            let bytes = Utils.string2uuid(value, item.c);
+            var bytes = Utils.string2uuid(value, item.c);
             storeArray(bytes);
         }
 
         function setInteger() {
-            let setter = getSetter(item.s, item.t);
+            var setter = getSetter(item.s, item.t);
             if (Utils.isNumber(index)) {
                 storeScalar(value, index, setter);
             }
@@ -534,7 +539,7 @@
                         return value;
                     }
 
-                    let message = 'Key ' + value + ' is not in type ' + item.t;
+                    var message = 'Key ' + value + ' is not in type ' + item.t;
                     console.error(message);
                     throw new DatabaseException(message);
                 }
@@ -555,16 +560,16 @@
             // While we are not using -fshort-enums, GCC for ARM still uses a
             // int8_t for small enums. So small enum can go from -128 to
             // 127; once the value is 128 or greater GCC uses an int16_t.
-
+            var numeric_value;
             var setter = getSetter(item.s, 'i');
             if (Utils.isNumber(index)) {
-                let numeric_value = type2number(value);
+                numeric_value = type2number(value);
                 storeScalar(numeric_value, index, setter);
             }
             else {
-                let numeric_values = [];
-                for (let i = 0; i < item.c; i += 1) {
-                    let numeric_value = type2number(value[i]);
+                var numeric_values = [];
+                for (var i = 0; i < item.c; i += 1) {
+                    numeric_value = type2number(value[i]);
                     numeric_values.push(numeric_value);
                 }
                 storeArray(numeric_values, setter);
@@ -582,7 +587,7 @@
                 break;
 
             case 's':
-                let message = 'Key ' + key + ': Writing a structure is not supported';
+                message = 'Key ' + key + ': Writing a structure is not supported';
                 console.error(message);
                 throw new DatabaseException(message);
 
@@ -595,7 +600,7 @@
                     setTypedItem();
                 }
                 else {
-                    let message = 'Schema type "' + item.t + '" for key "' +
+                    message = 'Schema type "' + item.t + '" for key "' +
                         key + '" not defined';
                     console.error(message);
                     throw new DatabaseException(message);

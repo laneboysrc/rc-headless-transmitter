@@ -140,7 +140,7 @@ table.limits .mdl-switch {
   padding-left: 0;
 }
 .mdl-card .mdl-data-table.rf_protocol-hop_channels td:last-of-type {
-  padding-right: 10px;
+  padding-right: 0;
 }
 
 /* No darkening when hovering over the table */
@@ -150,4 +150,19 @@ table.limits .mdl-switch {
 
 table.rf_protocol-hop_channels td:nth-child(2) {
   width: 64px;
+}
+
+
+
+
+/* Adjust the left and right padding from the hop channel table */
+.is-small-screen .mdl-data-table td:first-of-type {
+  padding-left: 10px;
+}
+.is-small-screen .mdl-data-table td:last-of-type {
+  padding-right: 0;
+}
+.is-small-screen .mdl-data-table td {
+  padding-left: 5px;
+  padding-right: 5px;
 }

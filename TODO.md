@@ -29,7 +29,6 @@
     - Custom REST protocol?
   - Look into Redis
 
-- Fix issue with mixer.html not showing properly on small screens
 - Add page for hop channel generation (radio buttons + generate button)
 
 - Curve editing: show appropriate points and adjust their name

@@ -23,6 +23,7 @@
     "Mixer": true,
     "MixerUnit": true,
     "EditCurve": true,
+    "EditSwitch": true,
     "ModelDetails": true,
     "Path": true,
     "RFProtocol": true,

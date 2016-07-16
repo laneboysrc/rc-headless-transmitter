@@ -12,7 +12,7 @@
 
   <main class="mdl-layout__content" >
 
-    <!-- RF protocol type Card -->
+    <!-- Edit switch Card -->
     <section class="section--center mdl-grid">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title">
@@ -22,20 +22,49 @@
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a
           velit volutpat, maximus turpis nec, aliquam leo. Nullam vestibulum
           a lorem ut varius. Pellentesque tincidunt pretium porttitor.
-          Mauris porta hendrerit mi id aliquam. Proin commodo dolor eu nisl
-          fringilla, sit amet sodales est iaculis. Ut quis ex urna.
-          Suspendisse tristique a nisl a euismod. Donec non enim tempus,
-          venenatis ex et, tempor ante. Donec urna est, lobortis at eros
-          dapibus, porta mollis dolor. Maecenas dictum lectus pulvinar sem
-          interdum maximus. Mauris faucibus erat neque, ac sollicitudin
-          lacus placerat et.
+          Mauris porta hendrerit mi id aliquam.
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <ul>
-            <li>Select switch input</li>
-            <li>Select comparison</li>
-            <li>Select value</li>
-          </ul>
+
+          <table class="mixer-unit mdl-data-table mdl-js-data-table">
+          <tbody>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                Switch:
+              </td>
+              <td id="app-edit_switch-switch" class="mdl-data-table__cell--non-numeric"></td>
+              </span>
+              <td class="mdl-data-table__cell--non-numeric">
+                <button id="app-edit_switch-switch__edit" class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="location.hash=this.getAttribute('data-url')">
+                  <i class="material-icons">mode_edit</i>
+                </button>
+              </td>
+            </tr>
+
+            <tr id="app-edit_switch-comparison__enable">
+              <td class="mdl-data-table__cell--non-numeric">
+                Comparison:
+              </td>
+              <td id="app-edit_switch-comparison" class="mdl-data-table__cell--non-numeric"></td>
+              </span>
+              <td class="mdl-data-table__cell--non-numeric">
+                <button id="app-edit_switch-comparison__edit" class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="location.hash=this.getAttribute('data-url')">
+                  <i class="material-icons">mode_edit</i>
+                </button>
+              </td>
+            </tr>
+
+            <tr id="app-edit_switch-value__enable">
+              <td class="mdl-data-table__cell--non-numeric">
+                Value:
+              </td>
+              <td class="mdl-data-table__cell--non-numeric" colspan="2">
+                <input id="app-edit_switch-value" class="mdl-slider mdl-js-slider" type="range" min="0" max="12">
+              </td>
+            </tr>
+          </tbody>
+          </table>
+
         </div>
       </div>
     </section>

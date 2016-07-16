@@ -9,6 +9,7 @@
         '#/mixer': Mixer,
         '#/mixer_unit/:index': MixerUnit,
         '#/edit_curve/:offset': EditCurve,
+        '#/edit_switch/:offset': EditSwitch,
         '#/limits/:channel': Limits,
         '#/rf_protocol': RFProtocol,
         '#/select_single/:devName/:item/:offset': SelectSingle,

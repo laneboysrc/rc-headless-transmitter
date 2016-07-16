@@ -1,5 +1,16 @@
+// LANE Boys RC FIX: match function must clear 'params' for every route check
+// Otherwise previously matched parameters appear in params
+//
+// Example:
+// '#/select_single/m/:devName/:item/:offset/:model'
+// '#/select_single/t/:devName/:item/:offset/:tx'
+//
+// With a URL of /#/select_single/t/MODEL/MIXER_UNITS_SRC/0/uuid4
+// the params object has a 'model' and 'tx' parameter, both with the value of
+// 'uuid4'
+
 var Path = {
-    'version': "0.8.4",
+    'version': "0.8.4-LANEBOYSRC",
     'map': function (path) {
         if (Path.routes.defined.hasOwnProperty(path)) {
             return Path.routes.defined[path];
@@ -59,6 +70,8 @@ var Path = {
                 route = Path.routes.defined[route];
                 possible_routes = route.partition();
                 for (j = 0; j < possible_routes.length; j++) {
+                    // LANE Boys RC: clear params to have a fresh start
+                    params = {};
                     slice = possible_routes[j];
                     compare = path;
                     if (slice.search(/:/) > 0) {

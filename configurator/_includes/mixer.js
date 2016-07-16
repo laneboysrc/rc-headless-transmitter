@@ -46,10 +46,3 @@
         Utils.showPage('mixer');
     };
 })();
-
-
-Mixer.route = function () {
-    'use strict';
-    Mixer.init(this.params);
-};
-

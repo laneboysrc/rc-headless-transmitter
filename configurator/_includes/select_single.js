@@ -64,9 +64,3 @@
         Utils.showPage('select_single');
     };
 })();
-
-SelectSingle.route = function () {
-    'use strict';
-    SelectSingle.init(this.params);
-};
-

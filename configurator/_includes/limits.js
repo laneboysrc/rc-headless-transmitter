@@ -33,9 +33,3 @@
         Utils.showPage('limits');
     };
 })();
-
-Limits.route = function () {
-    'use strict';
-    Limits.init(this.params);
-};
-

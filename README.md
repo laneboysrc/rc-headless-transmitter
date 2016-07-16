@@ -44,5 +44,5 @@ Open Source ARM cortex m microcontroller library.
 ### DuckDuckGo
 ### Nordic
 ### STM
-
+<!-- https://github.com/mtrpcic/pathjs/blob/master/path.js -->
 

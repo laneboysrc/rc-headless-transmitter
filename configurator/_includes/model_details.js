@@ -18,8 +18,3 @@
         Utils.showPage('model_details');
     };
 })();
-
-ModelDetails.route = function () {
-    'use strict';
-    ModelDetails.init(this.params);
-};

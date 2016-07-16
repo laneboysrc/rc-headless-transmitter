@@ -6,7 +6,6 @@
     window['Main'] = new Main();
 
     Main.prototype.connect = function () {
-
         location.hash = '#/model_details';
     };
 })();

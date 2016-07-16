@@ -5,18 +5,30 @@
         // path: name
         '#/': function () { Utils.showPage('main'); },
         '#/about': function () { Utils.showPage('about'); },
-        '#/model_details': ModelDetails.route,
-        '#/mixer': Mixer.route,
-        '#/mixer_unit/:index': MixerUnit.route,
-        '#/edit_curve/:offset': EditCurve.route,
-        '#/limits/:channel': Limits.route,
-        '#/rf_protocol': RFProtocol.route,
-        '#/select_single/:devName/:item/:offset': SelectSingle.route,
+        '#/model_details': ModelDetails,
+        '#/mixer': Mixer,
+        '#/mixer_unit/:index': MixerUnit,
+        '#/edit_curve/:offset': EditCurve,
+        '#/limits/:channel': Limits,
+        '#/rf_protocol': RFProtocol,
+        '#/select_single/:devName/:item/:offset': SelectSingle,
     };
+
+    function redirect(destination) {
+        return function () {
+            if (typeof destination === "function") {
+                destination();
+            }
+            else {
+                destination.init(this.params);
+            }
+        };
+    }
 
     for (var path in routes) {
         if (routes.hasOwnProperty(path)) {
-            Path.map(path).to(routes[path]);
+            console.log(routes[path]);
+            Path.map(path).to(redirect(routes[path]));
         }
     }
 

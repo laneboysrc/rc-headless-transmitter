@@ -30,8 +30,3 @@
         Utils.showPage('edit_curve');
     };
 })();
-
-EditCurve.route = function () {
-    'use strict';
-    EditCurve.init(this.params);
-};

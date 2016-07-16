@@ -23,8 +23,3 @@
         Utils.showPage('rf_protocol');
     };
 })();
-
-RFProtocol.route = function () {
-    'use strict';
-    RFProtocol.init(this.params);
-};

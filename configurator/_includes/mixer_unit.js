@@ -35,8 +35,3 @@
         Utils.showPage('mixer_unit');
     };
 })();
-
-MixerUnit.route = function () {
-    'use strict';
-    MixerUnit.init(this.params);
-};

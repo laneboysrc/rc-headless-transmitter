@@ -69,17 +69,25 @@
 				"*.o",
 				"*.a",
 				"*.d",
-				"*.sublime-project",
-				"*.sublime-workspace",
-				"*.swp"
 			],
 			"path": "firmware"
 		},
 		{
-			"path": "configurator"
+			"path": "configurator",
+			"folder_exclude_patterns": ["_site"],
+			"follow_symlinks": false
 		},
 		{
-			"path": "."
+			"path": "doc",
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.sublime-workspace",
+			],
+			"path": ".",
+			"name": "[root]",
+			"folder_exclude_patterns": ["*"]
 		}
 	],
 	"settings":

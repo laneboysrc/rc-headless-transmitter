@@ -80,6 +80,34 @@
 
     function onChangeHandler (event) {
         var element = event.target;
+
+        var value = element.value;
+        if (element.type === 'checkbox') {
+            value = element.checked ? 1 : 0;
+        }
+
+        if (element.validity) {
+            if (! element.validity.valid) {
+                console.log(element.id + ': Input invalid, not saving!');
+                return;
+            }
+
+            var pattern = element.getAttribute('pattern');
+            if (pattern) {
+                var re = new RegExp(pattern);
+
+                var parsed = re.exec(value);
+                if (parsed) {
+                    if (parsed.length === 2) {
+                        value = parsed[1];
+                    }
+                    else {
+                        value = parsed.slice(1);
+                    }
+                }
+            }
+        }
+
         var attributeBase64 = element.getAttribute('data-mdlhelper');
         var attribute = window.atob(attributeBase64);
         var obj = JSON.parse(attribute);
@@ -87,11 +115,6 @@
         var devName = obj.devName;
         var item = obj.item;
         var options = {offset: obj.offset, index: obj.index};
-
-        var value = element.value;
-        if (element.type === 'checkbox') {
-            value = element.checked ? 1 : 0;
-        }
 
         // Update the DBObject
         dev[devName].set(item, value, options);

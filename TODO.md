@@ -55,9 +55,6 @@
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
 - Check all Text field validations and handle in code
-  - Can we use the same regex to parse the result?
-  - Do that in MDLHelper
-    - use validity.valid on text field (if (inp.validity && inp.validity.valid) )
   - Watch out for ^, $ and white space
 
 - Add formatter and parser for address, hop channels to MDLHelper options

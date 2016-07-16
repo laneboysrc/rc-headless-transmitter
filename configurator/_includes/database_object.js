@@ -89,7 +89,7 @@
 
     // Returns the schema of a database entry. The schema describes the
     // structure of the database entry, i.e. which elements it has.
-    DBObject.prototype.getSchema = function (uuid) {
+    DBObject.prototype.getSchema = function () {
         return this.getConfig()[this.schemaName];
     };
 

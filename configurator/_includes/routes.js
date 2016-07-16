@@ -12,6 +12,9 @@
         '#/edit_switch/:offset/m/:model(/t/:tx)': EditSwitch,
         '#/limits/:channel/m/:model(/t/:tx)': Limits,
         '#/rf_protocol/m/:model(/t/:tx)': RFProtocol,
+
+        // We need two entries to be able to match the four combinations of
+        // uuid availability (none, model, tx, model+tx)
         '#/select_single/:devName/:item/:offset(/t/:tx)': SelectSingle,
         '#/select_single/:devName/:item/:offset/m/:model(/t/:tx)': SelectSingle,
     };
@@ -35,24 +38,39 @@
 
     Path.root('#/');
 
+    function loadDevicesFromURL(params) {
+        console.log('Loading devices specified in URL', params);
 
-    function databaseReady() {
-        console.log('routes: Database ready, loading dev.TX and dev.MODEL');
-
-        var count = 2;
+        var count = 0;
         const topic = 'routes.entryRetrieved';
 
-        Database.getEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (data) {
-            dev.MODEL = new DBObject(data);
-            console.log('routes: dev.MODEL loaded');
-            Utils.PubSub.publish(topic);
-        });
+        if (params.model) {
+            count += 1;
+            Database.getEntry(params.model, function (data) {
+                if (data) {
+                    dev.MODEL = new DBObject(data);
+                }
+                else {
+                    console.error('Failed to load MODEL from URL ' + params.model);
+                    location.hash = '#/';
+                }
+                Utils.PubSub.publish(topic);
+            });
+        }
 
-        Database.getEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e', function (data) {
-            dev.TX = new DBObject(data);
-            console.log('routes: dev.TX loaded');
-            Utils.PubSub.publish(topic);
-        });
+        if (params.tx) {
+            count += 1;
+            Database.getEntry(params.tx, function (data) {
+                if (data) {
+                    dev.TX = new DBObject(data);
+                }
+                else {
+                    console.error('Failed to load TX from URL ' + params.model);
+                    location.hash = '#/';
+                }
+                Utils.PubSub.publish(topic);
+            });
+        }
 
         function entryRetrievedCallback() {
             count = count - 1;
@@ -60,7 +78,6 @@
                 return;
             }
 
-            console.log('routes: Both getEntry() finished, launching page');
             Utils.PubSub.removeTopic(topic);
 
             // Initialization complete: Launch the page matching location.hash
@@ -68,6 +85,22 @@
         }
 
         Utils.PubSub.subscribe(topic, entryRetrievedCallback);
+    }
+
+    function databaseReady() {
+        // FIXME: Check location.has and if it contains /m/uuid and /t/uuid
+        // then load the respective database entries before listening.
+        // On error redirect to the main page
+        console.log('routes: Database ready');
+
+        var matching_path = Path.match(location.hash, true);
+        if (matching_path  &&  (matching_path.params.model  ||  matching_path.params.tx)) {
+            loadDevicesFromURL(matching_path.params);
+            return;
+        }
+
+        // Initialization complete: Launch the page matching location.hash
+        Path.listen();
     }
 
     Utils.PubSub.subscribe('databaseReady', databaseReady);

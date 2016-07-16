@@ -88,9 +88,6 @@
     }
 
     function databaseReady() {
-        // FIXME: Check location.has and if it contains /m/uuid and /t/uuid
-        // then load the respective database entries before listening.
-        // On error redirect to the main page
         console.log('routes: Database ready');
 
         var matching_path = Path.match(location.hash, true);
@@ -103,6 +100,11 @@
         Path.listen();
     }
 
-    Utils.PubSub.subscribe('databaseReady', databaseReady);
+    if (Database.isReady()) {
+        databaseReady();
+    }
+    else {
+        Utils.PubSub.subscribe('databaseReady', databaseReady);
+    }
 
 })();

@@ -45,6 +45,11 @@
     window['Database'] = new Database();
 
 
+    Database.prototype.isReady = function () {
+        return (!!this.db);
+    };
+
+
     Database.prototype.getEntry = function (uuid, callback) {
         // console.log("Database: getEntry()");
         var request = this.db.transaction(STORE_NAME)

@@ -54,7 +54,7 @@
 				"-T",
 				"JEKYLL",
 				"-e",
-				"jekyll serve"
+				"jekyll serve --host 0.0.0.0"
 			],
 			"name": "jekyll",
 			"syntax": "Packages/Makefile/Make Output.sublime-syntax",

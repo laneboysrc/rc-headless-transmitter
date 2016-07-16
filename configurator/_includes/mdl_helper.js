@@ -1,9 +1,10 @@
 (function () {
     'use strict';
 
-    var MDLHelper = function MDLHelper(devName, offset=0) {
+    var MDLHelper = function MDLHelper(devName, offset=0, index=null) {
         this.devName = devName;
         this.offset = offset;
+        this.index = index;
         this.onChangeHandler = onChangeHandler;
     };
 
@@ -19,7 +20,7 @@
     };
 
     MDLHelper.prototype.setSwitch = function (selector, item, root=document) {
-        var value = dev[this.devName].get(item, this.offset);
+        var value = dev[this.devName].get(item, this.offset, this.index);
         var element = root.querySelector(selector);
         element.checked = value;
         element.parentNode.MaterialSwitch.checkToggleState();
@@ -27,7 +28,7 @@
     };
 
    MDLHelper.prototype.setSlider = function (selector, item, root=document) {
-        var value = dev[this.devName].get(item, this.offset);
+        var value = dev[this.devName].get(item, this.offset, this.index);
         var element = root.querySelector(selector);
         element.MaterialSlider.change(value);
         this.setChangeHandler(element, item);
@@ -41,9 +42,16 @@
     };
 
     MDLHelper.prototype.setChangeHandler = function (element, item) {
-        element.setAttribute('data-source', item);
-        element.setAttribute('data-dev', this.devName);
-        element.setAttribute('data-offset', this.offset);
+        var obj = {
+            item: item,
+            devName: this.devName,
+            offset: this.offset,
+            index: this.index
+        };
+        var attribute = JSON.stringify(obj);
+        var attributeBase64 = window.btoa(attribute);
+
+        element.setAttribute('data-mdlhelper', attributeBase64);
         element.onchange = this.onChangeHandler;
     };
 
@@ -64,16 +72,17 @@
 
     function onChangeHandler (event) {
         var element = event.target;
-        var item = element.getAttribute('data-source');
-        var devName = element.getAttribute('data-dev');
-        var offset = element.getAttribute('data-offset');
+        var attributeBase64 = element.getAttribute('data-mdlhelper');
+        var attribute = window.atob(attributeBase64);
+        var obj = JSON.parse(attribute);
 
         var value = element.value;
         if (element.type === 'checkbox') {
             value = element.checked ? 1 : 0;
         }
 
-        dev[devName].set(item, value, offset);
+        // Update the DBObject
+        dev[obj.devName].set(obj.item, value, obj.offset, obj.index);
     }
 })();
 

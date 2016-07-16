@@ -5,14 +5,14 @@
         // path: name
         '#/': function () { Utils.showPage('main'); },
         '#/about': function () { Utils.showPage('about'); },
-        '#/model_details': ModelDetails,
-        '#/mixer': Mixer,
-        '#/mixer_unit/:index': MixerUnit,
-        '#/edit_curve/:offset': EditCurve,
-        '#/edit_switch/:offset': EditSwitch,
-        '#/limits/:channel': Limits,
-        '#/rf_protocol': RFProtocol,
-        '#/select_single/:devName/:item/:offset': SelectSingle,
+        '#/:model/:tx/model_details': ModelDetails,
+        '#/:model/:tx/mixer': Mixer,
+        '#/:model/:tx/mixer_unit/:index': MixerUnit,
+        '#/:model/:tx/edit_curve/:offset': EditCurve,
+        '#/:model/:tx/edit_switch/:offset': EditSwitch,
+        '#/:model/:tx/limits/:channel': Limits,
+        '#/:model/:tx/rf_protocol': RFProtocol,
+        '#/:model/:tx/select_single/:devName/:item/:offset': SelectSingle,
     };
 
     function redirect(destination) {

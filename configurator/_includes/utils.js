@@ -105,7 +105,10 @@
     };
 
     Utils.prototype.buildURL = function (list) {
-        return '#/' + list.join('/');
+        var model_uuid = (dev.MODEL && dev.MODEL.uuid) || NO_DEVICE;
+        var tx_uuid    = (dev.TX && dev.TX.uuid)       || NO_DEVICE;
+
+        return '#/' + model_uuid + '/' + tx_uuid + '/' + list.join('/');
     };
 
 })();

@@ -16,6 +16,7 @@
   "unused": "vars",
   "globals": {
     "dev": true,
+    "NO_DEVICE": true,
     "Database": true,
     "DBObject": true,
     "Limits": true,

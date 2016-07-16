@@ -1,4 +1,4 @@
-// Global variable that holds the currently loaded transmitter and model
+// A global variable that holds the currently loaded transmitter and model
 // object.
 //
 // These objects determine the values shown and manipulated on almost all
@@ -7,3 +7,5 @@ var dev = {
     MODEL: undefined,
     TX: undefined
 };
+
+const NO_DEVICE = 'none';

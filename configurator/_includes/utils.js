@@ -103,6 +103,11 @@
 
         document.querySelector('#page_' + name).classList.remove('hidden');
     };
+
+    Utils.prototype.buildURL = function (list) {
+        return '#/' + list.join('/');
+    };
+
 })();
 
 (function() {

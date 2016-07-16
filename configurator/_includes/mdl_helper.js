@@ -65,7 +65,7 @@
 
     MDLHelper.prototype.setDataURL = function (selector, list, root=document) {
         var element = root.querySelector(selector);
-        var url = '#/' + list.join('/');
+        var url = Utils.buildURL(list);
         element.setAttribute('data-url', url);
     };
 

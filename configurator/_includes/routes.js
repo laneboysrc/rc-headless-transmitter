@@ -5,14 +5,15 @@
         // path: name
         '#/': function () { Utils.showPage('main'); },
         '#/about': function () { Utils.showPage('about'); },
-        '#/:model/:tx/model_details': ModelDetails,
-        '#/:model/:tx/mixer': Mixer,
-        '#/:model/:tx/mixer_unit/:index': MixerUnit,
-        '#/:model/:tx/edit_curve/:offset': EditCurve,
-        '#/:model/:tx/edit_switch/:offset': EditSwitch,
-        '#/:model/:tx/limits/:channel': Limits,
-        '#/:model/:tx/rf_protocol': RFProtocol,
-        '#/:model/:tx/select_single/:devName/:item/:offset': SelectSingle,
+        '#/model_details/m/:model(/t/:tx)': ModelDetails,
+        '#/mixer/m/:model(/t/:tx)': Mixer,
+        '#/mixer_unit/:index/m/:model(/t/:tx)': MixerUnit,
+        '#/edit_curve/:offset/m/:model(/t/:tx)': EditCurve,
+        '#/edit_switch/:offset/m/:model(/t/:tx)': EditSwitch,
+        '#/limits/:channel/m/:model(/t/:tx)': Limits,
+        '#/rf_protocol/m/:model(/t/:tx)': RFProtocol,
+        '#/select_single/:devName/:item/:offset(/t/:tx)': SelectSingle,
+        '#/select_single/:devName/:item/:offset/m/:model(/t/:tx)': SelectSingle,
     };
 
     function redirect(destination) {

@@ -54,10 +54,6 @@
   configurable values to  retrieve (e.g. name, tag, ...)
   - Works async as it directly accesses the storage
 
-- Add uuid back into url so that we can retrieve the correct database entries
-  on page reloads
-
-
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
 - Check all Text field validations and handle in code

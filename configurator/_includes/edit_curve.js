@@ -14,11 +14,11 @@
 
         mdl.setTextContent('#app-edit_curve-curve_type', 'MIXER_UNITS_CURVE_TYPE');
         mdl.setDataURL('#app-edit_curve-curve_type__edit',
-            ['select_single', dev.MODEL.uuid, dev.TX.uuid, 'MODEL', 'MIXER_UNITS_CURVE_TYPE', this.offset]);
+            ['select_single', 'MODEL', 'MIXER_UNITS_CURVE_TYPE', this.offset]);
 
         mdl.setTextContent('#app-edit_curve-curve_smoothing', 'MIXER_UNITS_CURVE_SMOOTHING');
         mdl.setDataURL('#app-edit_curve-curve_smoothing__edit',
-            ['select_single', dev.MODEL.uuid, dev.TX.uuid, 'MODEL', 'MIXER_UNITS_CURVE_SMOOTHING', this.offset]);
+            ['select_single', 'MODEL', 'MIXER_UNITS_CURVE_SMOOTHING', this.offset]);
 
         var points = dev.MODEL.get('MIXER_UNITS_CURVE_POINTS', {offset: this.offset});
 

@@ -105,10 +105,20 @@
     };
 
     Utils.prototype.buildURL = function (list) {
-        var model_uuid = (dev.MODEL && dev.MODEL.uuid) || NO_DEVICE;
-        var tx_uuid    = (dev.TX && dev.TX.uuid)       || NO_DEVICE;
+        var url_fragments = ['#'];
 
-        return '#/' + model_uuid + '/' + tx_uuid + '/' + list.join('/');
+        url_fragments = url_fragments.concat(list);
+
+        if (dev.MODEL && dev.MODEL.uuid) {
+            url_fragments.push('m');
+            url_fragments.push(dev.MODEL.uuid);
+        }
+        if (dev.TX && dev.TX.uuid) {
+            url_fragments.push('t');
+            url_fragments.push(dev.TX.uuid);
+        }
+
+        return url_fragments.join('/');
     };
 
 })();

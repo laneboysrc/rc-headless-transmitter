@@ -48,7 +48,7 @@
 - Add settings page to configure things like sync URL
 
 - Database: add list function that retrieves entries for a given schema, with
-  configurable values to  retrieve (e.g. name, tag, ...)
+  configurable values to retrieve (e.g. name, tag, ...)
   - Works async as it directly accesses the storage
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)

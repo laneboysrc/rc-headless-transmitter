@@ -5,21 +5,21 @@
         <i class="material-icons">arrow_back</i>
       </a>
       <div class="mdl-layout-spacer"></div>
-      <span class="mdl-layout-title"><span id="tx_name">Transmitter configuration</span></span>
+      <span id="app-transmitter_details-tx_name" class="mdl-layout-title">Transmitter configuration</span>
       <div class="mdl-layout-spacer"></div>
     </div>
 
     <!-- Tabs -->
     <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-      <a href="#hardware_tab" class="mdl-layout__tab is-active">Hardware</a>
-      <a href="#logical_tab" class="mdl-layout__tab">Logical inputs</a>
-      <a href="#name_tab" class="mdl-layout__tab">Name</a>
+      <a href="#app-transmitter_details__hardware_tab" class="mdl-layout__tab is-active">Hardware</a>
+      <a href="#app-transmitter_details__logical_tab" class="mdl-layout__tab">Logical inputs</a>
+      <a href="#app-transmitter_details__name_tab" class="mdl-layout__tab">Name</a>
     </div>
   </header>
 
   <main class="mdl-layout__content" >
     <!-- Hardware inputs Tab -->
-    <section class="mdl-layout__tab-panel is-active" id="hardware_tab">
+    <section class="mdl-layout__tab-panel is-active" id="app-transmitter_details__hardware_tab">
       <div class="page-content">
 
         <!-- Card -->
@@ -61,7 +61,7 @@
     <!-- Hardware inputs Tab -->
 
     <!-- Logical inputs Tab -->
-    <section class="mdl-layout__tab-panel" id="logical_tab">
+    <section class="mdl-layout__tab-panel" id="app-transmitter_details__logical_tab">
       <div class="page-content">
 
         <!-- Card -->
@@ -151,7 +151,7 @@
     <!-- Logical inputs Tab -->
 
     <!-- Name Tab -->
-    <section class="mdl-layout__tab-panel" id="name_tab">
+    <section class="mdl-layout__tab-panel" id="app-transmitter_details__name_tab">
       <div class="page-content">
 
         <!-- Transmitter name Card -->
@@ -166,7 +166,7 @@
             <div class="mdl-card__actions">
               <form>
                 <div class="mdl-textfield mdl-js-textfield">
-                  <input class="mdl-textfield__input" type="text" id="tx_name" pattern="^\s*([A-Z,a-z,0-9 ]{1,16})\s*$">
+                  <input class="mdl-textfield__input" type="text" id="app-transmitter_details-tx_name" pattern="^\s*([A-Z,a-z,0-9 ]{1,16})\s*$">
                   <!-- <label class="mdl-textfield__label" for="tx_name">Transmitter name ...</label> -->
                   <span class="mdl-textfield__error">1 to 10 characters only</span>
                 </div>

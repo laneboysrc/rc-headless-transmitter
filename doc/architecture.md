@@ -1,5 +1,10 @@
-# STM32F1 NRF24L01+ Headless Transmitter Architecture
+# Headless TX  |  STM32F1 NRF24L01+ Headless Transmitter Architecture
 
+## System overview
+
+'''
+    FIXME: Add overall system view with transmitter, configurator, and explain terms
+'''
 
 ## Model vs Transmitter hardware configuration
 
@@ -243,129 +248,6 @@ After all mixers have been processed, each output channel has a value that needs
 - Fail-safe value
 - Limit +/ (just hard limits, checked last)
 - Speed (0..250, speed of output change in *degrees per 100 ms*)
-
-
-## Configurator
-
-* The *configurator* allows live configuration of (sub)-trim values, end points, etc
-* The *configurator* can display the live stick position and channel outputs
-* The *configurator* shows the battery state of the Tx
-
-* Options:
-    * nRF24 based protocol
-        * requires custom *configurator* hardware
-    * Bluetooth SPP using the serial port
-        * To PC running Chrome app
-        * To Smartphone or tablet running custom app
-    * UART
-        * To PC running Chrome app
-    * Wi-Fi
-        * To PC or Smartphone running a modern web browser
-        * ESP8266 or similar to connect to Tx via UART
-        * ESP8266 contains configurator app and local server
-
-### HK300 / HK310 / X3S RF protocol
-* 20 hop channels
-* 5 byte address
-* 3 servo channels
-* Stick data sent every 5 ms
-* Hop frequency changed every 5 ms
-* Failsafe sent
-
-### Other RF protocols
-* Based on HK300 protocol
-* 8 channels
-* signed 12 bit, corresponding to 476..1500..2523 us (500 ns resolution)
-    - 8 channels, 12 bits means 12 Bytes of data, plus one frame identifier
-    - More channels can be added by introducing multiple frames. The higher channels could be sent at a slower update rate
-
-### HK310 RF protocol modified for *configurator* use
-
-* Every 5 ms:
-    * Send stick data
-    * Send stick data again (after NRF24 IRQ)
-    * Send bind packet with fixed address at low power on channel 81
-        * *NOTE: Due to hardware differences the lowest power the nRF24 module with the PA can send is still very high compared to the HK310. As such we send bind packets only for the first 10 seconds after power on*
-    * If connected:
-        * Send setup packet using Enhanced Shockburst at 2 Mbps at lowest possible power
-    * else if first hop channel
-        * Send setup packet "free to connect" on a fixed channel (111?) using Enhanced Shockburst at 2 Mbps at lowest possible power
-    * Change to the next hop channel
-    * Sleep until the next 5 ms
-
-* Setup protocol:
-    * The Tx is the master on RF, but it is the slave regarding communication with the *configurator*
-    * The Tx has to poll the *configurator* if it has a command for it to execute.
-    * The Tx must acknowledge each command in the next packet so that the *configurator* knows the command was received and executed.
-    * The setup packet uses dynamic payload up to 32 bytes at 2 Mbps (ARD must be set to 500 us)
-
-* Establishing a connection:
-    * The Tx sends a 'free to connect' paket with address hop channel info every 100 ms on channel 111. (26 byte packet: 1 byte command, 5 bytes address, 20 bytes channels)
-    * The *configurator* listens for Tx on channel 111 at 2Mbps and when receiving a "free to connect" packet it learns the address and hop channel sequence
-    * The *configurator* ACKs if it wants to connect, with a unique address to use during the setup session
-    * When the Tx receives an answer it is now "connected" and starts sending setup packets using the hop frequencies every 5 ms, with the address received from the *configurator*.
-    * Once the *configurator* has the ACK being taken by the Tx (= it received the "Free to connect") it listens to the adress on the 2nd hop channel (since the 'free to connect' is sent during the first hop channel) with the address given to the Tx. The Tx and *configurator* are now connected.
-        * Note that the *configurator* may have taken the ACK, but the Tx may not have received it. In that case the *configurator* would timeout after 600 ms as described in "Terminating a connection".
-
-* Terminating a connection
-    * If the Tx or the *configurator* do not receive anything for 600 ms they consider the connection lost and terminate the connected state. The Tx returns to sending of "Free to connect" setup packets every 100 ms on channel 111.
-    * The *configurator* can send the "Disconnect" command to the Tx. The Tx responds "Disconnecting now" and once it received the ACK from the *configurator* it terminates the connection and returns sending "Free to connect" setup packets.
-    * The *configurator* considers the connection terminated after it received the "Disconnecting now" from the Tx, or after 600 ms if not received.
-
-* *configurator* -> Tx
-    * *configurator* puts command as ACK payload
-    * Tx responds with "Acknowedledged"
-    * If *configurator* does not receive "Acknowedledged" it knows that the Tx could not receive the command and it has to resend it with the next ACK
-
-* Commands
-    * Free-to-connect [Tx->*configurator*]
-        - Only sent on channel 111, every 100 ms
-        - Sent on the vehicle address
-        - Only allows Connect command from *configurator*
-
-    * Connect [*configurator*->Tx]
-        - Only sent on channel 111
-        - Sent on the vehicle address
-        - Payload: address to use for the rest of the communication
-
-    * Tx->*configurator* Inquiry
-        - Payload: stick data (raw? channel outputs? how to deal with multiple channels?)
-    * Tx->*configurator* Acknowledged
-    * *configurator*->Tx Disconnect
-    * Tx->*configurator* Disconnecting-now
-
-    * *configurator*->Tx Read data
-        - Payload: address (uint16_t), count (uint8__t)
-    * *configurator*->Tx Write data
-        - Payload: address (uint16_t), up to 28 bytes data
-
-### Bandwidth
-
-- 32 bytes every packet
-- 1 packet every 5 ms -> 200 packets per second
-
-  => 6400 Bytes/s => 51200 Kbps (best case, realistically will be less than half due to having to wait for acks from the TX)
-
-So uploading/reading Mixer data will take about 750 ms.
-
-### UART protocol
-
-Ideally we can use the same protocol as RF over the UART. Of course we don't need to establish a connection, the TX can see the UART as always being connected.
-
-One issue is that there is no way to automatically determine package boundaries over the UART. So we need to wrap the protocol.
-We could send the number of bytes in the packet (1 Byte), and add a checksum (2 Bytes) to the end of the packet. The receiving side would shift bytes until it finds a matching CRC, then removes that packet from the buffer.
-The STM32F103 supports CRC, but only 32 bit data words. Need to figure out how to deal with variable lengths packages yet still be able to use the hardware. Maybe we expand 8 bits with leading 0 to 32 bits? And use the lower 16 bits as result.
-
-The (UART based) *configurator* shall only send 1 packet of data after receiving a packet from the TX. This way the TX can time a packet every 5 ms and we don't get an issue with swamping the TX.
-
-### What functions should the *configurator* have access to when connected to a TX?
-
-- TX hardware configuration (which inputs, their names and types, trims, invert)
-    - Function to calibrate the sticks, pots
-- Mixer configuration (applied in the next 5 ms!)
-- Output configuration (reversing, endpoints, sub-trim)
-- Live stick, pot, switch, push-button, trims and output channel data
-- Battery state
 
 
 

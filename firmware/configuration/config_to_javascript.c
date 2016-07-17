@@ -222,6 +222,11 @@ void CONFIG_dump_javascript_information(void)
         membersizeof(tx_t, double_click_timeout_ms),
         1);
 
+    sync_printf(m, "PASSPHRASE", "u",
+        offsetof(tx_t, passphrase),
+        membersizeof(tx_t, passphrase),
+        1);
+
     sync_printf(m, "LED_PWM_PERCENT", "u",
         offsetof(tx_t, led_pwm_percent),
         membersizeof(tx_t, led_pwm_percent),

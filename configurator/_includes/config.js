@@ -46,7 +46,8 @@ const CONFIG_VERSIONS = {   // jshint ignore:line
             TRIM_STEP_SIZE: {t: 'i', o: 1708, s: 4, c: 1},
             BIND_TIMEOUT_MS: {t: 'u', o: 1712, s: 4, c: 1},
             DOUBLE_CLICK_TIMEOUT_MS: {t: 'u', o: 1716, s: 4, c: 1},
-            LED_PWM_PERCENT: {t: 'u', o: 1720, s: 1, c: 1},
+            PASSPHRASE: {t: 'u', o: 1720, s: 2, c: 1},
+            LED_PWM_PERCENT: {t: 'u', o: 1722, s: 1, c: 1},
         },
 
         MODEL: { o: 1728, s: 2892, c: 1, t: 'MODEL',
@@ -311,4 +312,3 @@ const CONFIG_VERSIONS = {   // jshint ignore:line
         }
     }
 };
-

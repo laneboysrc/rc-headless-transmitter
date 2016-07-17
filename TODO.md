@@ -53,14 +53,6 @@
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
-- Add password to the RF protocol. So that you can't configure a random
-  transmitter.
-    - Also allow non-password access for physical connections, for convenience
-    - But take into account that physical may be bridged to wireless
-    - Take into account that we store the transmitter configuration, so we may
-      know the password and be able to auto-login
-        - But what if the password fails?
-
 - Add Battery and RF channels to the mixer input list so we can use this single
   list as TX_INFO source
 

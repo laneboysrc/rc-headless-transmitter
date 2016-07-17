@@ -24,6 +24,10 @@ static const config_t config_failsafe = {
                 .address = {0x0d, 0x0e, 0x0a, 0x0d, 0x00}
             }
         }
+    },
+    .tx = {
+        .name = "CONFIG CORRUPTED",
+        .passphrase = 1234,  // What else could be a default passphrase :)
     }
 };
 
@@ -36,6 +40,7 @@ const config_t config_flash = {
         .name = "E Sky 0905A",
         .uuid = {0x43, 0x53, 0x8f, 0xe8, 0x44, 0xc9, 0x11, 0xe6, 0x9f, 0x17,
                  0xaf, 0x7b, 0xe9, 0xc4, 0x47, 0x9e},
+        .passphrase = 1234,                                 // What else :)
         .hardware_inputs = {
             {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // PA1/ADC1 Ailerons
              .calibration = {510, 1962, 3380}},

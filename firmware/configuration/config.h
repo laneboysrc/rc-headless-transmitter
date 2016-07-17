@@ -24,6 +24,7 @@ typedef struct {
     int32_t trim_step_size;
     uint32_t bind_timeout_ms;
     uint32_t double_click_timeout_ms;
+    uint16_t passphrase;
     uint8_t led_pwm_percent;
 } tx_t;
 

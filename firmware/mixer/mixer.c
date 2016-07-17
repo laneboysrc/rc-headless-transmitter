@@ -59,6 +59,16 @@ static int32_t get_value(src_label_t src)
         return channels[ch];
     }
 
+    if (src >= FIRST_RF_CHANNEL_LABEL &&  src <= LAST_RF_CHANNEL_LABEL) {
+        channel_label_t ch = src - FIRST_RF_CHANNEL_LABEL;
+
+        return rf_channels[ch];
+    }
+
+    if (src == BATTERY_MV) {
+        return INPUTS_get_battery_voltage();
+    }
+
     // Something went wrong, let's return 0 ...
     return 0;
 }

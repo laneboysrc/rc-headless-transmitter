@@ -53,9 +53,6 @@
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
-- Add Battery and RF channels to the mixer input list so we can use this single
-  list as TX_INFO source
-
 - Hint numbers-only input fields for hop channels, to get the right keyboard on
   mobile
 
@@ -63,3 +60,7 @@
 
 - Build a separate executable that dumps the configuration, instead of having
   the main app do it
+
+- Consider a generic way to describe live inputs sent to the configurator. It is
+  mostly `src_label_t` inputs, but we must also be able to describe the switch
+  value, trim values, and others such as battery voltage.

@@ -34,7 +34,7 @@ typedef struct {
     uint32_t last_changed;
     uint32_t tag;               // For use by the configurator internally
     mixer_unit_t mixer_units[MAX_MIXER_UNITS];
-    limits_t limits[NUMBER_OF_OUTPUT_CHANNELS];
+    limits_t limits[NUMBER_OF_RF_CHANNELS];
     rf_protocol_type_t rf_protocol_type;
     union {
         protocol_hk310_t protocol_hk310;

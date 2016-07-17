@@ -19,7 +19,7 @@ void LIMITS_apply(void)
     elapsed_ms = milliseconds - last_ms;
     last_ms = milliseconds;
 
-    for (int i = 0; i < NUMBER_OF_OUTPUT_CHANNELS; i++) {
+    for (int i = 0; i < NUMBER_OF_RF_CHANNELS; i++) {
         limits_t *l = &config.model.limits[i];
         int32_t input_value = channels[i];
         int32_t output_value;
@@ -42,11 +42,11 @@ void LIMITS_apply(void)
             int32_t rate;
 
             rate = CHANNEL_100_PERCENT * l->speed / 60 * elapsed_ms / 100;
-            if (output_value - output_channels[i] > rate) {
-                output_value = output_channels[i] + rate;
+            if (output_value - rf_channels[i] > rate) {
+                output_value = rf_channels[i] + rate;
             }
-            else if (output_value - output_channels[i] < -rate) {
-                output_value = output_channels[i] - rate;
+            else if (output_value - rf_channels[i] < -rate) {
+                output_value = rf_channels[i] - rate;
             }
         }
 
@@ -69,7 +69,7 @@ void LIMITS_apply(void)
         failsafe_value = MAX(failsafe_value, HARD_LIMIT_L);
         failsafe_value = MIN(failsafe_value, HARD_LIMIT_H);
 
-        output_channels[i] = output_value;
+        rf_channels[i] = output_value;
         failsafe[i] = failsafe_value;
     }
 }

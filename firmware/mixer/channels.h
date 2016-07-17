@@ -20,14 +20,14 @@
 #define PERCENT_TO_CHANNEL(x) ((x) * 100)
 
 // Channels sent to the receiver
-#define NUMBER_OF_OUTPUT_CHANNELS 8
+#define NUMBER_OF_RF_CHANNELS 8
 // Virtual Channels allow users to build complex mixer chains
 #define NUMBER_OF_VIRTUAL_CHANNELS 10
 // Hidden Virtual Channels enable the UI to build complex mixer chains that
 // are hidden from the user (for high-level mixers such as Elevons, 4-wheel
 // steering ...)
 #define NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS 50
-#define NUMBER_OF_CHANNELS (NUMBER_OF_OUTPUT_CHANNELS + NUMBER_OF_VIRTUAL_CHANNELS + NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS)
+#define NUMBER_OF_CHANNELS (NUMBER_OF_RF_CHANNELS + NUMBER_OF_VIRTUAL_CHANNELS + NUMBER_OF_HIDDEN_VIRTUAL_CHANNELS)
 
 
 // Tags to access the output channels
@@ -37,7 +37,7 @@
 typedef enum {
     // The following items must be in sequence:
 
-    // NUMBER_OF_OUTPUT_CHANNELS output channels (CH1..CHxxx),
+    // NUMBER_OF_RF_CHANNELS channels (CH1..CHxxx),
     CH1 = 0,
     CH2,
     CH3,
@@ -118,5 +118,5 @@ typedef enum {
 extern int32_t channels[NUMBER_OF_CHANNELS];
 
 // Channel outputs and failsafe values passed to the radio module
-extern int32_t output_channels[NUMBER_OF_OUTPUT_CHANNELS];
-extern int32_t failsafe[NUMBER_OF_OUTPUT_CHANNELS];
+extern int32_t rf_channels[NUMBER_OF_RF_CHANNELS];
+extern int32_t failsafe[NUMBER_OF_RF_CHANNELS];

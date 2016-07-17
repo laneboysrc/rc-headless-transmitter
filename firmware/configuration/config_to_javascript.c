@@ -420,6 +420,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "Analog/Digital", ANALOG_DIGITAL);
     sync_printf(t, "Digital", DIGITAL);
     sync_printf("            },\n");
+
     sync_printf("            hardware_input_type_t: {\n");
     sync_printf(t, "Input not used", TRANSMITTER_INPUT_NOT_USED);
     sync_printf(t, "Analog, returns to center", ANALOG_WITH_CENTER_AUTO_RETURN);
@@ -430,6 +431,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "On/Off/On switch", SWITCH_ON_OPEN_OFF);
     sync_printf(t, "Push-button", MOMENTARY_ON_OFF);
     sync_printf("            },\n");
+
     sync_printf("            input_type_t: {\n");
     // sync_printf(t, "Input not used", LOGICAL_INPUT_NOT_USED); // Hide from UI
     sync_printf(t, "Analog", ANALOG);
@@ -438,6 +440,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "Momentary switch", MOMENTARY);
     sync_printf(t, "Trim", TRIM);
     sync_printf("            },\n");
+
     sync_printf("            input_sub_type_t: {\n");
     // sync_printf(t, "SUB_TYPE_NOT_APPLICABLE", SUB_TYPE_NOT_APPLICABLE); // Hide from UI
     sync_printf(t, "Up/Down buttons", UP_DOWN_BUTTONS);
@@ -446,6 +449,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "Sawtooth", SAW_TOOTH);
     sync_printf(t, "Double-click for decrement", DOUBLE_CLICK_DECREMENT);
     sync_printf("            },\n");
+
     sync_printf("            input_label_t: {\n");
     // sync_printf(t, "NONE", NONE); // Hide from UI
     sync_printf(t, "ST", ST);
@@ -485,10 +489,13 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "SW8", SW8);
     sync_printf(t, "SW9", SW9);
     sync_printf("            },\n");
+
     // switch_label_t is the same as input_label_t, but this time the NONE
-    // element is present as the user can select it in the UI
+    // element is present as the user can select it in the UI. Note that his
+    // type does not really exist in the firmware, it is just added for
+    // convenience in the configurator.
     sync_printf("            switch_label_t: {\n");
-    sync_printf(t, "NONE", NONE); // Hide from UI
+    sync_printf(t, "NONE", NONE);
     sync_printf(t, "ST", ST);
     sync_printf(t, "TH", TH);
     sync_printf(t, "THR", THR);
@@ -526,6 +533,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "SW8", SW8);
     sync_printf(t, "SW9", SW9);
     sync_printf("            },\n");
+
     sync_printf("            channel_label_t: {\n");
     sync_printf(t, "CH1", CH1);
     sync_printf(t, "CH2", CH2);
@@ -545,11 +553,62 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "VIRTUAL8", VIRTUAL8);
     sync_printf(t, "VIRTUAL9", VIRTUAL9);
     sync_printf(t, "VIRTUAL10", VIRTUAL10);
+
     // NOTE: skip hidden channels, they are not needed in the UI
+    // sync_printf(t, "HIDDEN1", CH_HIDDEN1);
+    // sync_printf(t, "HIDDEN2", CH_HIDDEN2);
+    // sync_printf(t, "HIDDEN3", CH_HIDDEN3);
+    // sync_printf(t, "HIDDEN4", CH_HIDDEN4);
+    // sync_printf(t, "HIDDEN5", CH_HIDDEN5);
+    // sync_printf(t, "HIDDEN6", CH_HIDDEN6);
+    // sync_printf(t, "HIDDEN7", CH_HIDDEN7);
+    // sync_printf(t, "HIDDEN8", CH_HIDDEN8);
+    // sync_printf(t, "HIDDEN9", CH_HIDDEN9);
+    // sync_printf(t, "HIDDEN10", CH_HIDDEN10);
+    // sync_printf(t, "HIDDEN11", CH_HIDDEN11);
+    // sync_printf(t, "HIDDEN12", CH_HIDDEN12);
+    // sync_printf(t, "HIDDEN13", CH_HIDDEN13);
+    // sync_printf(t, "HIDDEN14", CH_HIDDEN14);
+    // sync_printf(t, "HIDDEN15", CH_HIDDEN15);
+    // sync_printf(t, "HIDDEN16", CH_HIDDEN16);
+    // sync_printf(t, "HIDDEN17", CH_HIDDEN17);
+    // sync_printf(t, "HIDDEN18", CH_HIDDEN18);
+    // sync_printf(t, "HIDDEN19", CH_HIDDEN19);
+    // sync_printf(t, "HIDDEN20", CH_HIDDEN20);
+    // sync_printf(t, "HIDDEN21", CH_HIDDEN21);
+    // sync_printf(t, "HIDDEN22", CH_HIDDEN22);
+    // sync_printf(t, "HIDDEN23", CH_HIDDEN23);
+    // sync_printf(t, "HIDDEN24", CH_HIDDEN24);
+    // sync_printf(t, "HIDDEN25", CH_HIDDEN25);
+    // sync_printf(t, "HIDDEN26", CH_HIDDEN26);
+    // sync_printf(t, "HIDDEN27", CH_HIDDEN27);
+    // sync_printf(t, "HIDDEN28", CH_HIDDEN28);
+    // sync_printf(t, "HIDDEN29", CH_HIDDEN29);
+    // sync_printf(t, "HIDDEN30", CH_HIDDEN30);
+    // sync_printf(t, "HIDDEN31", CH_HIDDEN31);
+    // sync_printf(t, "HIDDEN32", CH_HIDDEN32);
+    // sync_printf(t, "HIDDEN33", CH_HIDDEN33);
+    // sync_printf(t, "HIDDEN34", CH_HIDDEN34);
+    // sync_printf(t, "HIDDEN35", CH_HIDDEN35);
+    // sync_printf(t, "HIDDEN36", CH_HIDDEN36);
+    // sync_printf(t, "HIDDEN37", CH_HIDDEN37);
+    // sync_printf(t, "HIDDEN38", CH_HIDDEN38);
+    // sync_printf(t, "HIDDEN39", CH_HIDDEN39);
+    // sync_printf(t, "HIDDEN40", CH_HIDDEN40);
+    // sync_printf(t, "HIDDEN41", CH_HIDDEN41);
+    // sync_printf(t, "HIDDEN42", CH_HIDDEN42);
+    // sync_printf(t, "HIDDEN43", CH_HIDDEN43);
+    // sync_printf(t, "HIDDEN44", CH_HIDDEN44);
+    // sync_printf(t, "HIDDEN45", CH_HIDDEN45);
+    // sync_printf(t, "HIDDEN46", CH_HIDDEN46);
+    // sync_printf(t, "HIDDEN47", CH_HIDDEN47);
+    // sync_printf(t, "HIDDEN48", CH_HIDDEN48);
+    // sync_printf(t, "HIDDEN49", CH_HIDDEN49);
+    // sync_printf(t, "HIDDEN50", CH_HIDDEN50);
     sync_printf("            },\n");
+
     sync_printf("            src_label_t: {\n");
     // sync_printf(t, "NONE", SRC_NONE);    // src_label_t NONE must not be used in the UI
-
     // sync_printf(t, "NONE", IN_NONE);     // input_label_t NONE must not be used in the UI
     sync_printf(t, "ST", IN_ST);
     sync_printf(t, "TH", IN_TH);
@@ -606,11 +665,76 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "VIRTUAL8", CH_VIRTUAL8);
     sync_printf(t, "VIRTUAL9", CH_VIRTUAL9);
     sync_printf(t, "VIRTUAL10", CH_VIRTUAL10);
-    // NOTE: skip hidden channels, they are not needed in the UI
+    // NOTE: Skip hidden channels, they are not needed in the UI
+    // sync_printf(t, "HIDDEN1", CH_HIDDEN1);
+    // sync_printf(t, "HIDDEN2", CH_HIDDEN2);
+    // sync_printf(t, "HIDDEN3", CH_HIDDEN3);
+    // sync_printf(t, "HIDDEN4", CH_HIDDEN4);
+    // sync_printf(t, "HIDDEN5", CH_HIDDEN5);
+    // sync_printf(t, "HIDDEN6", CH_HIDDEN6);
+    // sync_printf(t, "HIDDEN7", CH_HIDDEN7);
+    // sync_printf(t, "HIDDEN8", CH_HIDDEN8);
+    // sync_printf(t, "HIDDEN9", CH_HIDDEN9);
+    // sync_printf(t, "HIDDEN10", CH_HIDDEN10);
+    // sync_printf(t, "HIDDEN11", CH_HIDDEN11);
+    // sync_printf(t, "HIDDEN12", CH_HIDDEN12);
+    // sync_printf(t, "HIDDEN13", CH_HIDDEN13);
+    // sync_printf(t, "HIDDEN14", CH_HIDDEN14);
+    // sync_printf(t, "HIDDEN15", CH_HIDDEN15);
+    // sync_printf(t, "HIDDEN16", CH_HIDDEN16);
+    // sync_printf(t, "HIDDEN17", CH_HIDDEN17);
+    // sync_printf(t, "HIDDEN18", CH_HIDDEN18);
+    // sync_printf(t, "HIDDEN19", CH_HIDDEN19);
+    // sync_printf(t, "HIDDEN20", CH_HIDDEN20);
+    // sync_printf(t, "HIDDEN21", CH_HIDDEN21);
+    // sync_printf(t, "HIDDEN22", CH_HIDDEN22);
+    // sync_printf(t, "HIDDEN23", CH_HIDDEN23);
+    // sync_printf(t, "HIDDEN24", CH_HIDDEN24);
+    // sync_printf(t, "HIDDEN25", CH_HIDDEN25);
+    // sync_printf(t, "HIDDEN26", CH_HIDDEN26);
+    // sync_printf(t, "HIDDEN27", CH_HIDDEN27);
+    // sync_printf(t, "HIDDEN28", CH_HIDDEN28);
+    // sync_printf(t, "HIDDEN29", CH_HIDDEN29);
+    // sync_printf(t, "HIDDEN30", CH_HIDDEN30);
+    // sync_printf(t, "HIDDEN31", CH_HIDDEN31);
+    // sync_printf(t, "HIDDEN32", CH_HIDDEN32);
+    // sync_printf(t, "HIDDEN33", CH_HIDDEN33);
+    // sync_printf(t, "HIDDEN34", CH_HIDDEN34);
+    // sync_printf(t, "HIDDEN35", CH_HIDDEN35);
+    // sync_printf(t, "HIDDEN36", CH_HIDDEN36);
+    // sync_printf(t, "HIDDEN37", CH_HIDDEN37);
+    // sync_printf(t, "HIDDEN38", CH_HIDDEN38);
+    // sync_printf(t, "HIDDEN39", CH_HIDDEN39);
+    // sync_printf(t, "HIDDEN40", CH_HIDDEN40);
+    // sync_printf(t, "HIDDEN41", CH_HIDDEN41);
+    // sync_printf(t, "HIDDEN42", CH_HIDDEN42);
+    // sync_printf(t, "HIDDEN43", CH_HIDDEN43);
+    // sync_printf(t, "HIDDEN44", CH_HIDDEN44);
+    // sync_printf(t, "HIDDEN45", CH_HIDDEN45);
+    // sync_printf(t, "HIDDEN46", CH_HIDDEN46);
+    // sync_printf(t, "HIDDEN47", CH_HIDDEN47);
+    // sync_printf(t, "HIDDEN48", CH_HIDDEN48);
+    // sync_printf(t, "HIDDEN49", CH_HIDDEN49);
+    // sync_printf(t, "HIDDEN50", CH_HIDDEN50);
+
+    // NOTE: Skip RF channels, they are not needed in the UI
+    // sync_printf(t, "RF-CH1", RF_CH1);
+    // sync_printf(t, "RF-CH2", RF_CH2);
+    // sync_printf(t, "RF-CH3", RF_CH3);
+    // sync_printf(t, "RF-CH4", RF_CH4);
+    // sync_printf(t, "RF-CH5", RF_CH5);
+    // sync_printf(t, "RF-CH6", RF_CH6);
+    // sync_printf(t, "RF-CH7", RF_CH7);
+    // sync_printf(t, "RF-CH8", RF_CH8);
+
+    // NOTE: Skip Battery voltage, it is not needed in the UI
+    // sync_printf(t, "Battery (mV)", BATTERY_MV);
     sync_printf("            },\n");
+
     sync_printf("            rf_protocol_type_t: {\n");
     sync_printf(t, "HobbyKing HKR3000", RF_PROTOCOL_HK310);
     sync_printf("            },\n");
+
     sync_printf("            operation_type_t: {\n");
     sync_printf(t, "=", OP_REPLACE);
     sync_printf(t, "+", OP_ADD);
@@ -618,6 +742,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "MIN", OP_MIN);
     sync_printf(t, "MAX", OP_MAX);
     sync_printf("            },\n");
+
     sync_printf("            comparison_t: {\n");
     sync_printf(t, "==", EQUAL);
     sync_printf(t, "!=", NON_EQUAL);
@@ -626,6 +751,7 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "<", SMALLER);
     sync_printf(t, "<=", SMALLER_OR_EQUAL);
     sync_printf("            },\n");
+
     sync_printf("            curve_type_t: {\n");
     sync_printf(t, "Linear", CURVE_NONE);
     sync_printf(t, "Fixed value", CURVE_FIXED);
@@ -643,10 +769,12 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "11-Point", CURVE_11POINT);
     sync_printf(t, "13-Point", CURVE_13POINT);
     sync_printf("            },\n");
+
     sync_printf("            interpolation_type_t: {\n");
     sync_printf(t, "Linear", INTERPOLATION_LINEAR);
     sync_printf(t, "Smoothing", INTERPOLATION_SMOOTHING);
     sync_printf("            },\n");
+
     sync_printf("        }\n");
     sync_printf("    }\n");
     sync_printf("};\n");

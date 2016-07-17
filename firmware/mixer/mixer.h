@@ -136,11 +136,28 @@ typedef enum {
     CH_HIDDEN48,
     CH_HIDDEN49,
     CH_HIDDEN50,
+
+    // channel_label_t values that correspond to rf_channels
+    //   (= channels after applying limts)
+    RF_CH1,
+    RF_CH2,
+    RF_CH3,
+    RF_CH4,
+    RF_CH5,
+    RF_CH6,
+    RF_CH7,
+    RF_CH8,
+
+    // Battery voltage in Millivolts
+    BATTERY_MV,
+
 } src_label_t;
 #define FIRST_INPUT_LABEL IN_NONE
 #define LAST_INPUT_LABEL IN_SW9
 #define FIRST_CHANNEL_LABEL CH_CH1
 #define LAST_CHANNEL_LABEL CH_HIDDEN50
+#define FIRST_RF_CHANNEL_LABEL RF_CH1
+#define LAST_RF_CHANNEL_LABEL RF_CH8
 
 typedef enum {
     OP_REPLACE = 0,

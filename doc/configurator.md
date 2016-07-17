@@ -490,7 +490,7 @@ Commands sent by the *Headless TX* always start with `TX_`. Command sent by the
     the current value of selected mixer inputs. See below for more information.
 
     i0, i1: Identifier for the mixer inputs. Corresponds to the enumeration
-            called `mixer_input_t` in the firmware
+            called `src_label_t` in the firmware
     d0, d1: Current data of the input. Signed 16 bit integer.
 
     In total a single packet can contain info of up to 7 mixer inputs.

@@ -223,9 +223,9 @@ static void nrf_transmit_done_callback(void)
 // ****************************************************************************
 static void hk310_protocol_frame_callback(void)
 {
-    pulse_to_stickdata(channel_to_pulse_ns(output_channels[0]), &stick_packet[0]);
-    pulse_to_stickdata(channel_to_pulse_ns(output_channels[1]), &stick_packet[2]);
-    pulse_to_stickdata(channel_to_pulse_ns(output_channels[2]), &stick_packet[4]);
+    pulse_to_stickdata(channel_to_pulse_ns(rf_channels[0]), &stick_packet[0]);
+    pulse_to_stickdata(channel_to_pulse_ns(rf_channels[1]), &stick_packet[2]);
+    pulse_to_stickdata(channel_to_pulse_ns(rf_channels[2]), &stick_packet[4]);
 
     pulse_to_stickdata(channel_to_pulse_ns(failsafe[0]), &failsafe_packet[0]);
     pulse_to_stickdata(channel_to_pulse_ns(failsafe[1]), &failsafe_packet[2]);

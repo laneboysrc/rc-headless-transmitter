@@ -16,7 +16,6 @@
   "unused": "vars",
   "globals": {
     "dev": true,
-    "NO_DEVICE": true,
     "Database": true,
     "DBObject": true,
     "Limits": true,
@@ -31,9 +30,6 @@
     "SelectSingle": true,
     "Utils": true,
     "TEST_CONFIG_DATA": true,
-    "CONFIG_VERSIONS": true,
-
-    "getDatabaseEntry": true,
-    "db": true
+    "CONFIG_VERSIONS": true
   }
 }

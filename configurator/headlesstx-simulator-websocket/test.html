@@ -8,6 +8,29 @@
     var ws;
     var cfgPacket;
 
+    var packets = {
+      'CFG_REQUEST_TO_CONNECT': new Uint8Array([
+        0x31,
+        0x12, 0x13, 0x14, 0x15, 0x16,
+        0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+        0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53])
+    }
+
+    function byte2string (byte) {
+        var s = byte.toString(16);
+
+        return (s.length < 2) ? ('0' + s)  : s;
+    }
+
+    function dumpUint8Array(data) {
+      var result = [];
+      data.forEach(function (byte) {
+        result.push(byte2string(byte));
+      });
+
+      return result.join(' ');
+    }
+
     function openSocket() {
       if (ws) {
         return;
@@ -23,11 +46,32 @@
 
       ws.onmessage = function(e) {
         // e.data contains received string.
-        output("onmessage: " + e.data);
+
         if (cfgPacket) {
           ws.send(cfgPacket);
-          output("send: " + cfgPacket);
+
+          if (cfgPacket instanceof Uint8Array) {
+            output("send: " + dumpUint8Array(cfgPacket));
+          }
+          else {
+            output("send: " + cfgPacket);
+          }
           cfgPacket = undefined;
+        }
+
+        if (e.data instanceof Blob) {
+          var reader = new FileReader();
+
+          reader.addEventListener("loadend", function() {
+            var data = new Uint8Array(reader.result);
+            output("onmessage: " + dumpUint8Array(data));
+          });
+
+          reader.readAsArrayBuffer(e.data);
+        }
+        else {
+          // Process string here
+          output("onmessage: " + e.data);
         }
       };
 
@@ -44,22 +88,42 @@
     }
 
     function closeSocket() {
-      ws.close();
+      if (ws) {
+        ws.close();
+      }
     }
 
     function onSubmit() {
-      if (ws) {
-        var input = document.getElementById("input");
-        if (cfgPacket) {
-          console.warn('Overriding previous packet');
-        }
-        cfgPacket = input.value;
-        input.value = "";
-        input.focus();
-      }
-      else {
+      if (! ws) {
         console.warn('Websocket not connected, not queueing packet');
+        return;
       }
+
+      var input = document.getElementById("input");
+      if (cfgPacket) {
+        console.warn('Overriding previous packet');
+      }
+      cfgPacket = input.value;
+      input.value = "";
+      input.focus();
+    }
+
+    function sendPacket(id) {
+      if (! ws) {
+        console.warn('Websocket not connected, not queueing packet');
+        return;
+      }
+
+      if (cfgPacket) {
+        console.warn('Overriding previous packet');
+      }
+
+      if (! packets[id]) {
+        console.error('Packet "' + id + '" not defined');
+        return;
+      }
+
+      cfgPacket = packets[id];
     }
 
     function output(str) {
@@ -68,14 +132,15 @@
                        .replace(/</, "&lt;")
                        .replace(/>/, "&gt;")
                        .replace(/"/, "&quot;");
-      log.innerHTML = escaped + "<br>" + log.innerHTML.slice(0, 500);
+      log.innerHTML = escaped + "<br>" + log.innerHTML.slice(0, 8192);
     }
   </script>
 </head>
-<body onload="init();">
+<body>
   <form onsubmit="onSubmit(); return false;">
     <button onclick="openSocket(); return false;">open</button>
     <button onclick="closeSocket(); return false;">close</button>
+    <button onclick="sendPacket('CFG_REQUEST_TO_CONNECT'); return false;">CFG_REQUEST_TO_CONNECT</button>
     <input type="text" id="input">
     <input type="submit" value="Send">
   </form>

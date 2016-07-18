@@ -342,6 +342,9 @@ phrase matches, it changes its state to `CONNECTED`.
 Commands sent by the *Headless TX* always start with `TX_`. Command sent by the
 *configurator* always start with `CFG_`.
 
+All data is in little endian, i.e. the least significant byte is transmitted
+first.
+
 * `TX_FREE_TO_CONNECT`
 
     `0x30 tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx`
@@ -412,6 +415,9 @@ packet (sent during the next transmission burst; i.e. approx 5 ms later).
 
 Commands sent by the *Headless TX* always start with `TX_`. Command sent by the
 *configurator* always start with `CFG_`.
+
+All data is in little endian, i.e. the least significant byte is transmitted
+first.
 
 
 * `CFG_READ`
@@ -484,16 +490,16 @@ Commands sent by the *Headless TX* always start with `TX_`. Command sent by the
 
 * `TX_INFO`
 
-    `0x49 i0 i1 d0 d1 ...`
+    `0x49 i0 i1 d0 d1 d2 d3 ...`
 
     Sent when there is no pending request from the *configurator*. Contains
     the current value of selected mixer inputs. See below for more information.
 
     i0, i1: Identifier for the mixer inputs. Corresponds to the enumeration
             called `src_label_t` in the firmware
-    d0, d1: Current data of the input. Signed 16 bit integer.
+    d0..3: Current value of the input. Signed 32 bit integer.
 
-    In total a single packet can contain info of up to 7 mixer inputs.
+    In total a single packet can contain info of up to 4 mixer inputs.
 
 
 * `TX_REQUESTED_DATA`
@@ -508,7 +514,7 @@ Commands sent by the *Headless TX* always start with `TX_`. Command sent by the
 
 * `TX_WRITE_SUCCESSFUL`
 
-    `0x57 i0 i1 d0 d1 ...`
+    `0x57 i0 i1 d0 d1 d2 d3 ...`
 
     Sent in the next packet after receiving a `CFG_WRITE` request.
     The parameters are the same as described in `TX_INFO`.
@@ -516,7 +522,7 @@ Commands sent by the *Headless TX* always start with `TX_`. Command sent by the
 
 * `TX_COPY_SUCCESSFUL`
 
-    `0x43 i0 i1 d0 d1 ...`
+    `0x43 i0 i1 d0 d1 d2 d3 ...`
 
     Sent in the next packet after receiving a `CFG_WRITE` request.
     The parameters are the same as described in `TX_INFO`.
@@ -571,3 +577,14 @@ We have chosen for the SLIP protocol, defined in
 [RFC 1055](https://tools.ietf.org/html/rfc1055).
 
 The commands are exactly the same as for the *nRF protocol*.
+
+The *configurator* must emulate the nRF protocol with respect to master/slave:
+
+* The *Headless TX* sends a packet in regular intervals (every 5 ms). After
+  receciving a valid packet, the *configurator* can send a single packet to the
+  *Headless TX*.
+* If the *configurator* does not have any packet pending, it does not transmit
+  any data after receiving a packet from the *Headless TX*
+
+
+## Websocket protocol

@@ -347,10 +347,11 @@ first.
 
 * `TX_FREE_TO_CONNECT`
 
-    `0x30 tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx`
+    `0x30 tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx b0 b1`
 
-    tx: transmitter name 16 bytes (C-String [A-Z,a-z,0-9 ], 1..16 characters)
-
+    tx:     Transmitter name 16 bytes (\0-terminated C-String [A-Z,a-z,0-9 ],
+            padded with \0)
+    b0, b1: Battery voltage in millivolts. Unsigned 16 bit integer.
 
 * `CFG_REQUEST_TO_CONNECT`
 

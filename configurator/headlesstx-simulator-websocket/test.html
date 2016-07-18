@@ -9,12 +9,17 @@
     var cfgPacket;
 
     var packets = {
-      'CFG_REQUEST_TO_CONNECT': new Uint8Array([
+      CFG_REQUEST_TO_CONNECT: new Uint8Array([
         0x31,
         0x12, 0x13, 0x14, 0x15, 0x16,
         0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
-        0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53])
-    }
+        0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]),
+
+      // Model name: 1728 + 16 = 1744 = 0x06d0; size 16 bytes
+      CFG_READ: new Uint8Array([0x72, 0xd0, 0x06, 16]),
+
+      CFG_DISCONNECT: new Uint8Array([0x64]),
+    };
 
     function byte2string (byte) {
         var s = byte.toString(16);
@@ -141,6 +146,8 @@
     <button onclick="openSocket(); return false;">open</button>
     <button onclick="closeSocket(); return false;">close</button>
     <button onclick="sendPacket('CFG_REQUEST_TO_CONNECT'); return false;">CFG_REQUEST_TO_CONNECT</button>
+    <button onclick="sendPacket('CFG_READ'); return false;">CFG_READ (model name)</button>
+    <button onclick="sendPacket('CFG_DISCONNECT'); return false;">CFG_DISCONNECT</button>
     <input type="text" id="input">
     <input type="submit" value="Send">
   </form>

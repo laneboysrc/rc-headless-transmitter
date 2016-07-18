@@ -74,7 +74,7 @@ function buildFreeToConnectPacket(name, voltage) {
 var tx_name = new Uint8Array(TEST_CONFIG_DATA.buffer, 20, 16);
 var battery_mv = 3897;      // Simulated battery voltage of 3.897 V
 
-console.log(uint8array2string(tx_name));
+console.log('Name of the simulated transmitter: ' + uint8array2string(tx_name));
 
 var wsConnection;
 
@@ -132,10 +132,48 @@ ws.createServer(function (con) {
 }).listen(PORT);
 
 
+function handle_CFG_REQUEST_TO_CONNECT(packet) {
+    state = STATE.CONNECTED;
+}
+
+function handle_CFG_READ(packet) {
+    var dv = new DataView(packet.slice(1).buffer);
+    var offset = dv.getUint16(0, true);
+    var count = packet[3];
+
+    console.log('READ offset: ' + offset + ', count: ' + count);
+
+    if (count < 1  ||  count > 29) {
+        console.error('Count must be between 1 and 29');
+        return;
+    }
+
+    if ((offset + count) > TEST_CONFIG_DATA.length) {
+        console.error('Request out of config area');
+        return;
+    }
+
+
+
+}
+
+function handle_CFG_WRITE(packet) {
+
+}
+
+function handle_CFG_COPY(packet) {
+
+}
+
+function handle_CFG_DISCONNECT(packet) {
+    console.log('DISCONNECT');
+    state = STATE.NOT_CONNECTED;
+}
+
 function onPacketNotConnected(packet) {
     switch (packet[0]) {
-        case 0x31:      // CFG_REQUEST_TO_CONNECT
-            state = STATE.CONNECTED;
+        case 0x31:
+            handle_CFG_REQUEST_TO_CONNECT();
             break;
 
         default:
@@ -146,21 +184,25 @@ function onPacketNotConnected(packet) {
 
 function onPacketConnected(packet) {
     switch (packet[0]) {
-        case 0x72:      // CFG_READ
+        case 0x72:
+            handle_CFG_READ(packet);
             break;
 
-        case 0x77:      // CFG_WRITE
+        case 0x77:
+            handle_CFG_WRITE(packet);
             break;
 
-        case 0x63:      // CFG_COPY
+        case 0x63:
+            handle_CFG_COPY(packet);
             break;
 
-        case 0x64:      // CFG_DISCONNECT
+        case 0x64:
+            handle_CFG_DISCONNECT(packet);
             break;
 
         default:
             console.log('Command 0x' + byte2string(packet[0]) +
-                ' invalid for state NOT_CONNECTED');
+                ' invalid for state CONNECTED');
     }
 }
 

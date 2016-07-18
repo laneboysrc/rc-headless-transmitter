@@ -485,8 +485,7 @@ first.
     to wait for the next successful packet received from the *Headless TX*,
     which may take up to 600 ms (timeout) if the connection is poor. During this
     time the *configurator* is still assumed to be *CONNECTED* and must follow
-    the
-     hop sequence.
+    the hop sequence.
 
 
 * `TX_INFO`

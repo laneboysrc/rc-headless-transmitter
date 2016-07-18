@@ -589,3 +589,5 @@ The *configurator* must emulate the nRF protocol with respect to master/slave:
 
 
 ## Websocket protocol
+
+The *Websocket protocol* runs on port **9706**.

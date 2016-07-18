@@ -1,0 +1,85 @@
+<html>
+<head>
+  <title>Simple client to test the configurator Websocket protocol</title>
+  <script type="text/javascript">
+    // jshint browser:true
+    'use strict';
+
+    var ws;
+    var cfgPacket;
+
+    function openSocket() {
+      if (ws) {
+        return;
+      }
+
+      // Connect to Web Socket
+      ws = new WebSocket("ws://localhost:9706/");
+
+      // Set event handlers.
+      ws.onopen = function() {
+        output("onopen");
+      };
+
+      ws.onmessage = function(e) {
+        // e.data contains received string.
+        output("onmessage: " + e.data);
+        if (cfgPacket) {
+          ws.send(cfgPacket);
+          output("send: " + cfgPacket);
+          cfgPacket = undefined;
+        }
+      };
+
+      ws.onclose = function() {
+        output("onclose");
+        ws = undefined;
+      };
+
+      ws.onerror = function(e) {
+        output("onerror");
+        console.log(e);
+      };
+
+    }
+
+    function closeSocket() {
+      ws.close();
+    }
+
+    function onSubmit() {
+      if (ws) {
+        var input = document.getElementById("input");
+        if (cfgPacket) {
+          console.warn('Overriding previous packet');
+        }
+        cfgPacket = input.value;
+        input.value = "";
+        input.focus();
+      }
+      else {
+        console.warn('Websocket not connected, not queueing packet');
+      }
+    }
+
+    function output(str) {
+      var log = document.getElementById("log");
+      var escaped = str.replace(/&/, "&amp;")
+                       .replace(/</, "&lt;")
+                       .replace(/>/, "&gt;")
+                       .replace(/"/, "&quot;");
+      log.innerHTML = escaped + "<br>" + log.innerHTML.slice(0, 500);
+    }
+  </script>
+</head>
+<body onload="init();">
+  <form onsubmit="onSubmit(); return false;">
+    <button onclick="openSocket(); return false;">open</button>
+    <button onclick="closeSocket(); return false;">close</button>
+    <input type="text" id="input">
+    <input type="submit" value="Send">
+  </form>
+  <h3>Messages (newest on top): </h3>
+  <div id="log"></div>
+</body>
+</html>

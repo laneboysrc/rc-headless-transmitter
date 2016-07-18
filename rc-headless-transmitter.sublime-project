@@ -74,7 +74,7 @@
 		},
 		{
 			"path": "configurator",
-			"folder_exclude_patterns": ["_site"],
+			"folder_exclude_patterns": ["_site", "node_modules"],
 			"follow_symlinks": false
 		},
 		{

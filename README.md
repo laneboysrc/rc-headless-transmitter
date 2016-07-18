@@ -38,11 +38,13 @@ Open Source ARM cortex m microcontroller library.
 ### Jekyll
 ### JSHint
 ### Gnu GCC
-### https://github.com/Pithikos/python-websocket-server
 ### MDN
 ### StackOverflow
 ### DuckDuckGo
 ### Nordic
 ### STM
-<!-- https://github.com/mtrpcic/pathjs/blob/master/path.js -->
+### node-websocket https://www.npmjs.com/package/nodejs-websocket
+### https://github.com/mtrpcic/pathjs/blob/master/path.js
 
+Not used yet ...
+### https://github.com/Pithikos/python-websocket-server

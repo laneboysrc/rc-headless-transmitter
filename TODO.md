@@ -61,6 +61,9 @@
 - Build a separate executable that dumps the configuration, instead of having
   the main app do it
 
-- Consider a generic way to describe live inputs sent to the configurator. It is
-  mostly `src_label_t` inputs, but we must also be able to describe the switch
-  value, trim values, and others such as battery voltage.
+- Create live_t that describes live inputs sent to the configurator. It compises
+  all `src_label_t` inputs, but also switch values, trim values, and others
+  such as battery voltage.
+
+- Major refactoring using gulp, and make nodejs modules that we can reuse in
+  applications. Use Browserify to use nodejs module in the HTML.

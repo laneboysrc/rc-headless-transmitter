@@ -58,7 +58,7 @@
 			],
 			"name": "jekyll",
 			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
-			"working_dir": "${project_path}/configurator"
+			"working_dir": "${project_path}/configurator/web-app"
 		}
 	],
 	"folders":

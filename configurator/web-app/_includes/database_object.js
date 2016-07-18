@@ -244,14 +244,14 @@
     //      > s == "RUD"
     //
     DBObject.prototype.get = function (key, options={offset:0, index:null}) {
-        this.validateInputs(key, index);
-
         // Convert index to an Integer to handle the case where a string
         // representation or a float was given
         // If index is 'null' then it will become NaN, which is what we check
         // during the rest of the code
         var index = parseInt(options.index);
         var offset = parseInt(options.offset);
+
+        this.validateInputs(key, index);
 
         var self = this;
         var data = this.data;

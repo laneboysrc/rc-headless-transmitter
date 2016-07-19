@@ -5,7 +5,6 @@
   "repository": "https://github.com/laneboysrc/<FIXME>.git",
   "author": "LANE Boys RC",
   "devDependencies": {
-    "node-import": "~0.9.2",
     "serialport": "~4.0.1",
     "minimist": "~1.2.0",
     "slip": "~1.0.2"

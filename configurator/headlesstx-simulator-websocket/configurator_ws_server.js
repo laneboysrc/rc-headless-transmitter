@@ -19,10 +19,6 @@ function startServer(port) {
             return;
         }
 
-        con.sendPacket = function (packet) {
-            con.send(new Buffer(packet));
-        };
-
         con.on('text', function (str) {
             log('Websocket: received TEXT "' + str + '", ignored');
         });
@@ -74,7 +70,7 @@ function setEventListener(listener, callback) {
 
 function sendPacket(packet) {
     if (configuratorConnection) {
-        configuratorConnection.sendPacket(packet);
+        configuratorConnection.send(new Buffer(packet));
     }
 }
 

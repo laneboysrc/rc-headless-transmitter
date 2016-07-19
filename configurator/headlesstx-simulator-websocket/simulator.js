@@ -150,7 +150,7 @@ function onReceivedPacket(packet) {
 }
 
 function onConnected() {
-    console.log('Configurator connected');
+    console.log('\nConfigurator connected');
     communicate();
 }
 

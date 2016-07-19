@@ -3,8 +3,6 @@
 'use strict';
 
 var server = require('./configurator_ws_server');
-// var dbObject = require('./database_object');
-// console.log(dbObject);
 
 // Import the configuration binary data we exported from a Headless TX
 require('node-import');
@@ -81,11 +79,21 @@ function buildFreeToConnectPacket(name, voltage) {
 }
 
 function handle_CFG_REQUEST_TO_CONNECT(packet) {
+    if (packet.length !== 26) {
+        console.error('CFG_REQUEST_TO_CONNECT invalid packet length' + packet.length);
+        return;
+    }
+
     console.log('CFG_REQUEST_TO_CONNECT');
     state = STATE.CONNECTED;
 }
 
 function handle_CFG_READ(packet) {
+    if (packet.length !== 4) {
+        console.error('CFG_READ invalid packet length' + packet.length);
+        return;
+    }
+
     var dv = new DataView(packet.buffer, 1);
     var offset = dv.getUint16(0, true);
     var count = packet[3];
@@ -110,11 +118,16 @@ function handle_CFG_READ(packet) {
 }
 
 function handle_CFG_WRITE(packet) {
-    console.log('CFG_WRITE');
+    if (packet.length < 4) {
+        console.error('CFG_WRITE invalid packet length' + packet.length);
+        return;
+    }
 
     var dv = new DataView(packet.buffer, 1);
     var offset = dv.getUint16(0, true);
     var count = packet.length - 3;
+
+    console.log('CFG_WRITE offset: ' + offset + ', count: ' + count);
 
     if ((offset + count) > TEST_CONFIG_DATA.length) {
         console.error('Request out of config area');
@@ -128,10 +141,50 @@ function handle_CFG_WRITE(packet) {
 }
 
 function handle_CFG_COPY(packet) {
+    if (packet.length !== 7) {
+        console.error('CFG_COPY invalid packet length' + packet.length);
+        return;
+    }
 
+    var dv = new DataView(packet.buffer, 1);
+    var src = dv.getUint16(0, true);
+    var dst = dv.getUint16(2, true);
+    var count = dv.getUint16(4, true);
+
+    console.log('CFG_COPY src: ' + src + ', dst: ' + dst + ', count: ' + count);
+
+    if ((src + count) > TEST_CONFIG_DATA.length) {
+        console.error('Request source offset out of config area');
+        return;
+    }
+
+    if ((dst + count) > TEST_CONFIG_DATA.length) {
+        console.error('Request destination offset out of config area');
+        return;
+    }
+
+    var i;
+    if (src > dst) {
+        for (i = 0; i < count; i += 1) {
+            TEST_CONFIG_DATA[dst + i] = TEST_CONFIG_DATA[src + i];
+        }
+    }
+    else if (src < dst) {
+        for (i = count - 1; i >= 0; i -= 1) {
+            TEST_CONFIG_DATA[dst + i] = TEST_CONFIG_DATA[src + i];
+        }
+    }
+
+    var response = allocatePacket(0x43, 1);
+    nextPacket = response;
 }
 
 function handle_CFG_DISCONNECT(packet) {
+    if (packet.length !== 1) {
+        console.error('CFG_DISCONNECT invalid packet length' + packet.length);
+        return;
+    }
+
     console.log('CFG_DISCONNECT');
     state = STATE.NOT_CONNECTED;
 }
@@ -219,4 +272,4 @@ server.setEventListener('onconnect', onConnected);
 server.setEventListener('ondisconnect', onDisconnected);
 server.setEventListener('onpacket', onReceivedPacket);
 server.start(PORT);
-console.log('Websocket server started, please contact me at port ' + PORT + '\n');
+console.log('Websocket server started, please contact me at port ' + PORT);

@@ -19,6 +19,8 @@
       // Model name: 1728 + 16 = 1744 = 0x06d0; size 16 bytes
       CFG_READ: new Uint8Array([0x72, 0xd0, 0x06, 16]),
 
+      CFG_COPY: new Uint8Array([0x63, 0xd2, 0x06, 0xd0, 0x06, 0x05, 0x00]),
+
       CFG_DISCONNECT: new Uint8Array([0x64]),
     };
 
@@ -210,6 +212,7 @@
       <button onclick="sendPacket('CFG_READ'); return false;">CFG_READ (model name)</button>
       <input type="text" id="input">
       <input type="submit" value="CFG_WRITE (model name)">
+      <button onclick="sendPacket('CFG_COPY'); return false;">CFG_COPY</button>
       <button onclick="sendPacket('CFG_DISCONNECT'); return false;">CFG_DISCONNECT</button>
     </div>
   </form>

@@ -78,6 +78,13 @@ function buildFreeToConnectPacket(name, voltage) {
     return packet;
 }
 
+function setState(newState) {
+    if (state !== newState) {
+        state = newState;
+        console.log('State transition to ' + state);
+    }
+}
+
 function handle_CFG_REQUEST_TO_CONNECT(packet) {
     if (packet.length !== 26) {
         console.error('CFG_REQUEST_TO_CONNECT invalid packet length' + packet.length);
@@ -85,7 +92,7 @@ function handle_CFG_REQUEST_TO_CONNECT(packet) {
     }
 
     console.log('CFG_REQUEST_TO_CONNECT');
-    state = STATE.CONNECTED;
+    setState(STATE.CONNECTED);
 }
 
 function handle_CFG_READ(packet) {
@@ -186,7 +193,7 @@ function handle_CFG_DISCONNECT(packet) {
     }
 
     console.log('CFG_DISCONNECT');
-    state = STATE.NOT_CONNECTED;
+    setState(STATE.NOT_CONNECTED);
 }
 
 
@@ -222,7 +229,7 @@ function onConnected() {
 
 function onDisconnected() {
     console.log('Configurator disconnected');
-    state = STATE.NOT_CONNECTED;
+    setState(STATE.NOT_CONNECTED);
     if (timerId) {
         clearTimeout(timerId);
         timerId = undefined;

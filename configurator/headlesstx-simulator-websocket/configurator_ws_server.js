@@ -2,6 +2,7 @@
 var ws = require('nodejs-websocket');
 
 var configuratorConnection;
+var listeners = {};
 var showLog = false;
 
 function log(message) {
@@ -10,16 +11,13 @@ function log(message) {
     }
 }
 
-function startServer(port, onPacketCallback) {
+function startServer(port) {
     ws.createServer(function (con) {
         if (configuratorConnection) {
             log('Websocket: A client is already connected, not accepting another connection');
             con.close();
             return;
         }
-
-        log('Websocket: client connected');
-        configuratorConnection = con;
 
         con.sendPacket = function (packet) {
             con.send(new Buffer(packet));
@@ -43,9 +41,9 @@ function startServer(port, onPacketCallback) {
 
             inStream.on('end', function () {
                 log('Websocket: received ' + data.length + ' bytes of binary data');
-                if (onPacketCallback) {
-                    log('Websocket: calling ', onPacketCallback);
-                    onPacketCallback(new Uint8Array(data));
+                if (listeners.onpacket) {
+                    log('Websocket: calling ', listeners.onpacket);
+                    listeners.onpacket(new Uint8Array(data));
                 }
             });
         });
@@ -53,12 +51,25 @@ function startServer(port, onPacketCallback) {
         con.on('close', function (code, reason) {
             log('Websocket: connection closed');
             configuratorConnection = undefined;
+            if (listeners.ondisconnect) {
+                listeners.ondisconnect();
+            }
         });
+
+        log('Websocket: client connected');
+        configuratorConnection = con;
+        if (listeners.onconnect) {
+            listeners.onconnect();
+        }
     }).listen(port);
 }
 
 function isConnected() {
     return !!configuratorConnection;
+}
+
+function setEventListener(listener, callback) {
+    listeners[listener] = callback;
 }
 
 function sendPacket(packet) {
@@ -77,6 +88,7 @@ function debug(on) {
 
 module.exports = {
     start: startServer,
+    setEventListener: setEventListener,
     isConnected: isConnected,
     sendPacket: sendPacket,
     debug: debug,

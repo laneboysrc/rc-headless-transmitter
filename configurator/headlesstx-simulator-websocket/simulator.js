@@ -32,6 +32,7 @@ var packets = {
 };
 
 var nextPacket;
+var timerId;
 
 
 function allocatePacket(command, size) {
@@ -148,36 +149,44 @@ function onReceivedPacket(packet) {
     }
 }
 
+function onConnected() {
+    console.log('Configurator connected');
+    communicate();
+}
+
+function onDisconnected() {
+    console.log('Configurator disconnected');
+    state = STATE.NOT_CONNECTED;
+    if (timerId) {
+        clearTimeout(timerId);
+        timerId = undefined;
+    }
+}
+
 
 function communicate() {
-    if (server.isConnected()) {
-        if (nextPacket) {
-            server.sendPacket(nextPacket);
-            nextPacket = undefined;
-        }
-        else {
-            switch (state) {
-                case STATE.NOT_CONNECTED:
-                    server.sendPacket(packets.TX_FREE_TO_CONNECT);
-                    break;
-
-                case STATE.CONNECTED:
-                    server.sendPacket(packets.TX_INFO);
-                    break;
-            }
-        }
+    if (nextPacket) {
+        server.sendPacket(nextPacket);
+        nextPacket = undefined;
     }
     else {
-        state = STATE.NOT_CONNECTED;
+        switch (state) {
+            case STATE.NOT_CONNECTED:
+                server.sendPacket(packets.TX_FREE_TO_CONNECT);
+                break;
+
+            case STATE.CONNECTED:
+                server.sendPacket(packets.TX_INFO);
+                break;
+        }
     }
 
     // In connected state send a packet every 5 ms, otherwise every 100 ms
+    var timeoutValue = PACKET_REPEAT_TIME_MS_NOT_CONNECTED;
     if (state === STATE.CONNECTED) {
-        setTimeout(communicate, PACKET_REPEAT_TIME_MS);
+        timeoutValue = PACKET_REPEAT_TIME_MS;
     }
-    else {
-        setTimeout(communicate, PACKET_REPEAT_TIME_MS_NOT_CONNECTED);
-    }
+    timerId = setTimeout(communicate, timeoutValue);
 }
 
 
@@ -192,7 +201,9 @@ packets.TX_FREE_TO_CONNECT = buildFreeToConnectPacket(tx_name, battery_mv);
 
 console.log('Name of the simulated transmitter: ' + uint8array2string(tx_name));
 
-server.start(PORT, onReceivedPacket);
-console.log('Websocket server started, please contact me at port ' + PORT + '\n');
 
-communicate();
+server.setEventListener('onconnect', onConnected);
+server.setEventListener('ondisconnect', onDisconnected);
+server.setEventListener('onpacket', onReceivedPacket);
+server.start(PORT);
+console.log('Websocket server started, please contact me at port ' + PORT + '\n');

@@ -33,7 +33,23 @@
         result.push(byte2string(byte));
       });
 
-      return result.join(' ');
+      var response = result.join(' ');
+
+      while (response.length < ((32 * 3) + 2)) {
+        response += ' ';
+      }
+
+      data.forEach(function (byte) {
+        if (byte <= 32  ||  byte > 126) {
+          response += '.';
+        }
+        else {
+          response += String.fromCharCode(byte);
+        }
+      });
+
+
+      return response;
     }
 
     function openSocket() {
@@ -56,10 +72,10 @@
           ws.send(cfgPacket);
 
           if (cfgPacket instanceof Uint8Array) {
-            output("send: " + dumpUint8Array(cfgPacket));
+            output("send:      " + dumpUint8Array(cfgPacket));
           }
           else {
-            output("send: " + cfgPacket);
+            output("send:      " + cfgPacket);
           }
           cfgPacket = undefined;
         }
@@ -140,18 +156,36 @@
       log.innerHTML = escaped + "<br>" + log.innerHTML.slice(0, 8192);
     }
   </script>
+
+  <style type="text/css">
+    form div {
+      margin-top: 10px;
+    }
+
+    #log {
+      font-family: monospace;
+      font-size: 0.7em;
+    }
+  </style>
+
 </head>
 <body>
   <form onsubmit="onSubmit(); return false;">
-    <button onclick="openSocket(); return false;">open</button>
-    <button onclick="closeSocket(); return false;">close</button>
-    <button onclick="sendPacket('CFG_REQUEST_TO_CONNECT'); return false;">CFG_REQUEST_TO_CONNECT</button>
-    <button onclick="sendPacket('CFG_READ'); return false;">CFG_READ (model name)</button>
-    <button onclick="sendPacket('CFG_DISCONNECT'); return false;">CFG_DISCONNECT</button>
-    <input type="text" id="input">
-    <input type="submit" value="Send">
+    <div>
+      <button onclick="openSocket(); return false;">open</button>
+      <button onclick="closeSocket(); return false;">close</button>
+    </div>
+    <div>
+      <button onclick="sendPacket('CFG_REQUEST_TO_CONNECT'); return false;">CFG_REQUEST_TO_CONNECT</button>
+    </div>
+    <div>
+      <button onclick="sendPacket('CFG_READ'); return false;">CFG_READ (model name)</button>
+      <input type="text" id="input">
+      <input type="submit" value="CFG_WRITE (model name)">
+      <button onclick="sendPacket('CFG_DISCONNECT'); return false;">CFG_DISCONNECT</button>
+    </div>
   </form>
-  <h3>Messages (newest on top): </h3>
-  <div id="log"></div>
+  <div>Messages (newest on top):</div>
+  <pre id="log"></pre>
 </body>
 </html>

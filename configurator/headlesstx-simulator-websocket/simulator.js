@@ -112,6 +112,19 @@ function handle_CFG_READ(packet) {
 function handle_CFG_WRITE(packet) {
     console.log('CFG_WRITE');
 
+    var dv = new DataView(packet.buffer, 1);
+    var offset = dv.getUint16(0, true);
+    var count = packet.length - 3;
+
+    if ((offset + count) > TEST_CONFIG_DATA.length) {
+        console.error('Request out of config area');
+        return;
+    }
+
+    TEST_CONFIG_DATA.set(packet.slice(3), offset);
+
+    var response = allocatePacket(0x57, 1);
+    nextPacket = response;
 }
 
 function handle_CFG_COPY(packet) {

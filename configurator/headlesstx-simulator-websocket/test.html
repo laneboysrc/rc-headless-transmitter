@@ -1,5 +1,6 @@
 <html>
 <head>
+  <meta charset="utf-8">
   <title>Simple client to test the configurator Websocket protocol</title>
   <script type="text/javascript">
     // jshint browser:true
@@ -66,18 +67,20 @@
       };
 
       ws.onmessage = function(e) {
-        // e.data contains received string.
+        // e.data contains received string
 
-        if (cfgPacket) {
-          ws.send(cfgPacket);
+        function sendCfgPacket() {
+          if (cfgPacket) {
+            ws.send(cfgPacket);
 
-          if (cfgPacket instanceof Uint8Array) {
-            output("send:      " + dumpUint8Array(cfgPacket));
+            if (cfgPacket instanceof Uint8Array) {
+              output("sending:   " + dumpUint8Array(cfgPacket));
+            }
+            else {
+              output("sending:   " + cfgPacket);
+            }
+            cfgPacket = undefined;
           }
-          else {
-            output("send:      " + cfgPacket);
-          }
-          cfgPacket = undefined;
         }
 
         if (e.data instanceof Blob) {
@@ -86,6 +89,7 @@
           reader.addEventListener("loadend", function() {
             var data = new Uint8Array(reader.result);
             output("onmessage: " + dumpUint8Array(data));
+            sendCfgPacket();
           });
 
           reader.readAsArrayBuffer(e.data);
@@ -93,7 +97,9 @@
         else {
           // Process string here
           output("onmessage: " + e.data);
+          sendCfgPacket();
         }
+
       };
 
       ws.onclose = function() {
@@ -114,19 +120,41 @@
       }
     }
 
+    function string2uint8array(s, byte_count) {
+        var bytes = new Uint8ClampedArray(byte_count);
+        var count = s.length < byte_count ? s.length : byte_count;
+
+        for (var i = 0; i < count; i++) {
+            bytes[i] = s.charCodeAt(i);
+        }
+        return bytes;
+    }
+
     function onSubmit() {
       if (! ws) {
         console.warn('Websocket not connected, not queueing packet');
         return;
       }
 
-      var input = document.getElementById("input");
       if (cfgPacket) {
         console.warn('Overriding previous packet');
       }
-      cfgPacket = input.value;
+
+      var input = document.getElementById("input");
+
+      var newName = input.value;
       input.value = "";
       input.focus();
+
+      var bytes = string2uint8array(newName, 16);
+      var packet = new Uint8Array(1 + 2 + 16);
+
+      packet[0] = 0x77;
+      packet[1] = 0xd0;
+      packet[2] = 0x06;
+      packet.set(bytes, 3);
+
+      cfgPacket = packet;
     }
 
     function sendPacket(id) {

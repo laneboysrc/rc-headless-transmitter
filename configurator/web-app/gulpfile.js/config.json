@@ -66,13 +66,6 @@
       "extensions": ["woff2", "woff", "eot", "ttf", "svg", "css"]
     },
 
-    "iconFont": {
-      "src": "icons",
-      "dest": "fonts",
-      "sassDest": "generated",
-      "extensions": ["woff2", "woff", "eot", "ttf", "svg"]
-    },
-
     "production" : {
       "rev": true
     }

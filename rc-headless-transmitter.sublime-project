@@ -52,12 +52,11 @@
 				"xfce4-terminal",
 				"-H",
 				"-T",
-				"JEKYLL",
+				"WEB-APP-BUILD",
 				"-e",
-				"jekyll serve --host 0.0.0.0"
+				"npm run start"
 			],
-			"name": "jekyll",
-			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
+			"name": "web-app",
 			"working_dir": "${project_path}/configurator/web-app"
 		}
 	],

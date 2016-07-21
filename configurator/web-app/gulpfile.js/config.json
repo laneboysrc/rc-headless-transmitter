@@ -51,7 +51,7 @@
         "collapseWhitespace": true
       },
       "extensions": ["html", "json"],
-      "excludeFolders": ["layouts", "shared", "macros", "data", "pages"]
+      "excludeFolders": ["layouts", "shared", "data", "pages"]
     },
 
     "images": {

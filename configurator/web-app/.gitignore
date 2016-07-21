@@ -1,3 +1,6 @@
-_site
 .sass-cache
-.jekyll-metadata
+.publish
+public
+node_modules
+**/generated/_icons.sass
+npm-debug.log

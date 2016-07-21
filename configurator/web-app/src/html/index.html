@@ -1,0 +1,17 @@
+{#
+  Nunjucks Templating!
+  Homepage: https://mozilla.github.io/nunjucks/
+  Docs: https://mozilla.github.io/nunjucks/api.html
+#}
+
+{% extends 'layouts/application.html' %}
+
+{% block content %}
+
+  {% for p in ["main", "about", "edit_curve", "edit_switch", "limits", "mixer", "mixer_unit", "model_details", "model_list", "rf_protocol", "select_multiple", "select_single", "transmitter_details", "transmitter_list"] %}
+    <div id="page_{{ p }}" class="app-page hidden">
+    {% include "pages/" + p + ".html" %}
+    </div>
+  {% endfor %}
+
+{% endblock %}

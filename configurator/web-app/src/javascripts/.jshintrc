@@ -1,6 +1,7 @@
 {
   "devel": true,
   "browser": true,
+  "node": true,
   "esversion": 5,
   "bitwise": true,
   "curly": true,

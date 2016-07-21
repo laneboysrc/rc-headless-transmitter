@@ -1,5 +1,6 @@
 // LANE Boys RC FIX: match function must clear 'params' for every route check
 // Otherwise previously matched parameters appear in params
+// LANE Boys RC CHANGE: make an exportable module
 //
 // Example:
 // '#/select_single/m/:devName/:item/:offset/:model'
@@ -203,3 +204,5 @@ Path.core.route.prototype = {
         }
     }
 };
+
+module.export = Path;

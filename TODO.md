@@ -65,6 +65,3 @@
   all `src_label_t` inputs, but also switch values, trim values, and others
   such as battery voltage.
 
-- Major refactoring using gulp, and make nodejs modules that we can reuse in
-  applications. Use Browserify to use nodejs module in the HTML.
-

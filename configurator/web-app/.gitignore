@@ -1,6 +1,6 @@
 .sass-cache
 .publish
-public
+_build
 node_modules
 **/generated/_icons.sass
 npm-debug.log

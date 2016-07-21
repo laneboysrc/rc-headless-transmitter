@@ -1,13 +1,13 @@
 {
   "root": {
     "src": "./src",
-    "dest": "./public"
+    "dest": "./_build"
   },
 
   "tasks": {
     "browserSync": {
       "server": {
-        "baseDir": "public"
+        "baseDir": "_build"
       }
     },
 

@@ -42,7 +42,7 @@
         console.log('Loading devices specified in URL', params);
 
         var count = 0;
-        const topic = 'routes.entryRetrieved';
+        var topic = 'routes.entryRetrieved';
 
         if (params.model) {
             count += 1;

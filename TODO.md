@@ -68,4 +68,3 @@
 - Major refactoring using gulp, and make nodejs modules that we can reuse in
   applications. Use Browserify to use nodejs module in the HTML.
 
-- Make ES5 compatible, don't use ES6 (Ubuntu nodejs is still on ES5...)

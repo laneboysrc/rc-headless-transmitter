@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    const DATABASE_NAME = 'HeadlessTX';
-    const STORE_NAME = 'Models and Transmitters';
+    var DATABASE_NAME = 'HeadlessTX';
+    var STORE_NAME = 'Models and Transmitters';
 
     var Database = function Database(data) {
         this.db = undefined;
@@ -67,7 +67,7 @@
         };
     };
 
-    Database.prototype.setEntry = function (data, callback=undefined) {
+    Database.prototype.setEntry = function (data, callback) {
         // console.log("Database: setEntry()");
         var request = this.db.transaction(STORE_NAME, 'readwrite')
                              .objectStore(STORE_NAME)

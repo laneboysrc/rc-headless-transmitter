@@ -8,4 +8,3 @@ var dev = {
     TX: undefined
 };
 
-const NO_DEVICE = 'none';

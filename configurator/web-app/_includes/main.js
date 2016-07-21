@@ -9,7 +9,7 @@
         console.log('connect: loading dev.TX and dev.MODEL');
 
         var count = 2;
-        const topic = 'main.entryRetrieved';
+        var topic = 'main.entryRetrieved';
 
         dev.MODEL = undefined;
         dev.TX = undefined;

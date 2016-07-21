@@ -28,7 +28,7 @@
     //
     // In case an issue is found a console.error() message is written and a
     // DatabaseException() is thrown.
-    DBObject.prototype.validateInputs = function (key=null, index=null) {
+    DBObject.prototype.validateInputs = function (key, index) {
         var message;
         var schema = this.getSchema();
 
@@ -38,7 +38,7 @@
             throw new DatabaseException(message);
         }
 
-        if (index !== null) {
+        if (typeof index !== 'undefined') {
             if (! Utils.isNumber(index)) {
                 message = 'Index "' + index + '" is not an Integer';
                 console.error(message);
@@ -243,7 +243,9 @@
     //
     //      > s == "RUD"
     //
-    DBObject.prototype.get = function (key, options={offset:0, index:null}) {
+    DBObject.prototype.get = function (key, options) {
+        options = options || {offset: 0, index: null};
+
         // Convert index to an Integer to handle the case where a string
         // representation or a float was given
         // If index is 'null' then it will become NaN, which is what we check
@@ -273,7 +275,7 @@
         function getGetter(bytesPerElement, type) {
             var message;
 
-            const getters = {
+            var getters = {
                 'u': {
                     1: Uint8Array,
                     2: Uint16Array,
@@ -340,8 +342,8 @@
             var TypedArray = getGetter(item.s, 'i');
             var bytes = new TypedArray(data.buffer, item_offset, item.c);
             var result = [];
-            for (var n of bytes.entries()) {
-                var entry = n[1];
+            for (var i = 0; i < bytes.length; i += 1) {
+                var entry = bytes[i];
                 var element = self.typeLookupByNumber(types[item.t], entry);
 
                 result.push(element);
@@ -389,7 +391,9 @@
     // Note that writing an element of type s' (C structure) is not supported.
     //
     // Every time a value is set, the LAST_CHANGED element is updated as well.
-    DBObject.prototype.set = function (key, value, options={offset:0, index:null}) {
+    DBObject.prototype.set = function (key, value, options) {
+        options = options || {offset: 0, index: null};
+
         var message;
 
         this.validateInputs(key, options.index);
@@ -417,7 +421,7 @@
         }
 
         if (!Utils.isNumber(index)) {
-            const ignore = ['c', 'uuid'];
+            var ignore = ['c', 'uuid'];
 
             // indexOf is >=0 when item is found
             // http://stackoverflow.com/questions/7378228/check-if-an-element-is-present-in-an-array
@@ -432,7 +436,7 @@
         }
 
         function getSetter(bytesPerElement, type) {
-            const setters = {
+            var setters = {
                 'u': {
                     1: DataView.prototype.setUint8,
                     2: DataView.prototype.setUint16,
@@ -490,7 +494,9 @@
             });
         }
 
-        function storeArray(values, setter=DataView.prototype.setUint8) {
+        function storeArray(values, setter) {
+            setter = setter || DataView.prototype.setUint8;
+
             var count = item.c * item.s;
             var dv = new DataView(data.buffer, item_offset, count);
 
@@ -502,7 +508,9 @@
             storageLogger(item_offset, count);
         }
 
-        function storeScalar(value, index, setter=DataView.prototype.setUint8) {
+        function storeScalar(value, index, setter) {
+            setter = setter || DataView.prototype.setUint8;
+
             var dv = new DataView(data.buffer, item_offset, item.c * item.s);
             var byteOffset = index * item.s;
             setter.apply(dv, [byteOffset, value, true]);

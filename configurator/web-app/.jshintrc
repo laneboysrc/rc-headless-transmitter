@@ -1,7 +1,7 @@
 {
   "devel": true,
   "browser": true,
-  "esversion": 6,
+  "esversion": 5,
   "bitwise": true,
   "curly": true,
   "eqeqeq": true,

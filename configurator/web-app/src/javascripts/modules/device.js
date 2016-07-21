@@ -8,3 +8,4 @@ var dev = {
     TX: undefined
 };
 
+window['dev'] = dev;

@@ -1,10 +1,19 @@
-// FIXME: require all the modules of the app
 
-var app = {};
+// Singletons
+require('./device');
+require('./config');
+require('./database');
 
-app.Utils = require('./utils');
-app.Main = require('./main');
+// Singletons for pages
+require('./main');
+require('./mixer');
+require('./mixer_unit');
+require('./model_details');
+require('./rf_protocol');
+require('./select_single');
+require('./limits');
+require('./edit_curve');
+require('./edit_switch');
 
-window['app'] = app;
-
-app.Utils.showPage('main');
+// All loaded, start routing!
+require('./routes');

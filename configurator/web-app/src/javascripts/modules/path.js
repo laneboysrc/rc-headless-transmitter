@@ -205,4 +205,4 @@ Path.core.route.prototype = {
     }
 };
 
-module.export = Path;
+module.exports = Path;

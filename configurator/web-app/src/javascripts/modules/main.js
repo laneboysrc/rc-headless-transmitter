@@ -1,8 +1,12 @@
 'use strict';
 
-var Utils = require('./utils');
+var Utils       = require('./utils');
+var DBObject    = require('./database_object');
+
 
 var Main = function Main() {};
+window['Main'] = new Main();
+
 
 Main.prototype.connect = function () {
     console.log('connect: loading dev.TX and dev.MODEL');
@@ -40,6 +44,3 @@ Main.prototype.connect = function () {
 
     Utils.PubSub.subscribe(topic, entryRetrievedCallback);
 };
-
-
-module.exports = new Main();

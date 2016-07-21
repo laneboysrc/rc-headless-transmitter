@@ -146,14 +146,17 @@ PubSub.prototype.removeTopic =  function (topic) {
     delete this.topics[topic];
 };
 
+
+window['PubSub'] = window['PubSub'] || new PubSub();
+
 module.exports = {
-    byte2string: uuid2string,
-    uuid2string: string2uuid,
-    string2uuid: uint8array2string,
-    uint8array2string: byte2string,
+    byte2string: byte2string,
+    uuid2string: uuid2string,
+    string2uuid: string2uuid,
+    uint8array2string: uint8array2string,
     string2uint8array: string2uint8array,
     isNumber: isNumber,
     showPage: showPage,
     buildURL: buildURL,
-    PubSub: PubSub,
+    PubSub: window['PubSub'] ,
 };

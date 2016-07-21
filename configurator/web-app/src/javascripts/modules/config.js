@@ -1,4 +1,4 @@
-const CONFIG_VERSIONS = {   // jshint ignore:line
+var CONFIG_VERSIONS = {   // jshint ignore:line
     1: {
         // Legend:
         // o: offset with the parent structure
@@ -312,3 +312,6 @@ const CONFIG_VERSIONS = {   // jshint ignore:line
         }
     }
 };
+
+
+window['CONFIG_VERSIONS'] = CONFIG_VERSIONS;

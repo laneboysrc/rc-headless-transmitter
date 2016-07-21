@@ -5,7 +5,6 @@
   "repository": "https://github.com/laneboysrc/<FIXME>.git",
   "author": "LANE Boys RC",
   "devDependencies": {
-    "nodejs-websocket": "~1.6.0",
-    "node-import": "~0.9.2"
+    "nodejs-websocket": "~1.6.0"
   }
 }

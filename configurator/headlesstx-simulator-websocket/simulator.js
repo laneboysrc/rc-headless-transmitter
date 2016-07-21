@@ -1,13 +1,8 @@
 #!/usr/bin/env nodejs
-/* globals TEST_CONFIG_DATA: false */
 'use strict';
 
 var server = require('./configurator_ws_server');
-
-// Import the configuration binary data we exported from a Headless TX
-require('node-import');
-imports('../web-app/_includes/test_data.js');
-
+var TEST_CONFIG_DATA = require('../web-app/src/javascripts/modules/test_data.js');
 
 
 var PORT = 9706;

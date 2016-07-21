@@ -12,7 +12,8 @@
     "development": "gulp",
     "production": "gulp production",
     "deploy": "gulp deploy",
-    "demo": "gulp production && gulp server"
+    "demo": "gulp production && gulp server",
+    "simulator": "gulp simulator"
   },
   "devDependencies": {
     "babel-core": "6.7.2",
@@ -56,5 +57,9 @@
     "webpack": "1.12.14",
     "webpack-dev-middleware": "1.5.1",
     "webpack-hot-middleware": "2.10.0"
+  },
+  "dependencies": {
+    "test-data": "file:../common-modules/test-data",
+    "tx-simulator": "file:../common-modules/tx-simulator"
   }
 }

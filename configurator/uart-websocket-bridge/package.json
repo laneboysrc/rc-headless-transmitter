@@ -4,9 +4,10 @@
   "description": "Bridge a Headless TX connected via a UART to a configuratior using the Websocket protocol",
   "repository": "https://github.com/laneboysrc/<FIXME>.git",
   "author": "LANE Boys RC",
-  "devDependencies": {
-    "serialport": "~4.0.1",
+  "dependencies": {
+    "configurator-ws-server": "file:../common-modules/configurator-ws-server",
     "minimist": "~1.2.0",
+    "serialport": "~4.0.1",
     "slip": "~1.0.2"
   }
 }

@@ -1,7 +1,7 @@
 'use strict';
 
 var Utils               = require('./utils');
-var TEST_CONFIG_DATA    = require('./test_data');
+var TEST_CONFIG_DATA    = require('test-data');
 
 
 var DATABASE_NAME = 'HeadlessTX';

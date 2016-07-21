@@ -1,0 +1,11 @@
+{
+  "name": "tx-simulator",
+  "version": "1.0.0",
+  "description": "",
+  "repository": "https://github.com/laneboysrc/<FIXME>.git",
+  "author": "LANE Boys RC",
+  "dependencies": {
+    "configurator-ws-server": "file:../configurator-ws-server",
+    "test-data": "file:../test-data"
+  }
+}

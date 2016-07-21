@@ -1,10 +1,10 @@
 #!/usr/bin/env nodejs
 'use strict';
 
-var argv = require('minimist')(process.argv.slice(2));
-var SerialPort = require('serialport');
-var server = require('../headlesstx-simulator-websocket/configurator_ws_server');
-var slip = require('slip');
+var argv        = require('minimist')(process.argv.slice(2));
+var SerialPort  = require('serialport');
+var slip        = require('slip');
+var server      = require('configurator-ws-server');
 
 
 var websocketPort = 9706;

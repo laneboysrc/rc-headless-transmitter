@@ -26,24 +26,9 @@ const common = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      // template: '!html?' + JSON.stringify({attrs: ["img:src"], minimize: false}) +'!nunjucks-html!src/html/index.html'
       template: '!!html!nunjucks-html!src/html/index.html'
-      // template: '!!nunjucks-precompiled!src/html/index.html'
     })
   ],
-  // module: {
-  //     loaders: [
-  //       {
-  //         test: indexHtml,
-  //         loaders: [
-  //           "file?name=[name].[ext]",
-  //           "extract",
-  //           "html?" + JSON.stringify({attrs: ["img:src"], minimize: false}),
-  //           "nunjucks-html"
-  //         ]
-  //       }
-  //     ]
-  // },
 };
 
 
@@ -52,10 +37,11 @@ var config;
 // Detect how npm is run and branch based on that
 switch(process.env.npm_lifecycle_event) {
   case 'build':
+  case 'production':
     config = merge(
       common,
       {
-        devtool: 'source-map'
+        // devtool: 'source-map'
       },
       parts.clean(PATHS.build),
       parts.minify(),

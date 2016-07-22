@@ -55,7 +55,6 @@ exports.extractCSS = function (paths) {
         {
           test: /\.css$/,
           loader: ExtractTextPlugin.extract('style', 'css'),
-          // loaders: ['css-to-string', 'style', 'css'],
           include: paths
         }
       ]

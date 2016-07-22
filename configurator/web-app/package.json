@@ -26,6 +26,7 @@
     "nunjucks-precompiled-loader": "file:../common-modules/nunjucks-precompiled-loader",
     "style-loader": "^0.13.1",
     "test-data": "file:../common-modules/test-data",
+    "url-loader": "^0.5.7",
     "webpack": "~1.13.1",
     "webpack-dev-server": "^1.14.1",
     "webpack-merge": "^0.14.0",

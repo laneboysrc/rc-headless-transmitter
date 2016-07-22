@@ -1,0 +1,20 @@
+{
+  "name": "nunjucks-precompiled-loader",
+  "version": "1.0.0",
+  "description": "A webpack loader that takes nunjucks templates and returns a common-JS module that exports raw html.",
+  "keywords": [
+    "webpack",
+    "nunjucks",
+    "html"
+  ],
+  "author": "Ryan Hornberger <ryhornberger@gmail.com> (https://github.com/ryanhornberger)",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "fs": "0.0.2",
+    "loader-utils": "^0.2.11",
+    "nunjucks": "^1.3.4",
+    "path": "^0.11.14"
+  },
+  "devDependencies": {}
+}

@@ -7,6 +7,8 @@ const merge = require('webpack-merge');
 const validate = require('webpack-validator');
 const parts = require('./libs/parts');
 
+var indexHtml = path.join(__dirname, "src/html", "index.html");
+
 
 const PATHS = {
   app: path.join(__dirname, 'src'),
@@ -15,7 +17,8 @@ const PATHS = {
 
 const common = {
   entry: {
-    app: PATHS.app
+    app: PATHS.app,
+    // indexHtml
   },
   output: {
     path: PATHS.build,
@@ -23,9 +26,24 @@ const common = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: '!!nunjucks-precompiled!src/html/index.html'
+      // template: '!html?' + JSON.stringify({attrs: ["img:src"], minimize: false}) +'!nunjucks-html!src/html/index.html'
+      template: '!!html!nunjucks-html!src/html/index.html'
+      // template: '!!nunjucks-precompiled!src/html/index.html'
     })
-  ]
+  ],
+  // module: {
+  //     loaders: [
+  //       {
+  //         test: indexHtml,
+  //         loaders: [
+  //           "file?name=[name].[ext]",
+  //           "extract",
+  //           "html?" + JSON.stringify({attrs: ["img:src"], minimize: false}),
+  //           "nunjucks-html"
+  //         ]
+  //       }
+  //     ]
+  // },
 };
 
 
@@ -43,7 +61,7 @@ switch(process.env.npm_lifecycle_event) {
       parts.minify(),
       parts.extractCSS(PATHS.app),
       parts.embedImages(PATHS.app),
-      parts.setupFonts(PATHS.app)
+      parts.embedFonts(PATHS.app)
     );
     break;
 

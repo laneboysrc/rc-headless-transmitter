@@ -55,6 +55,7 @@ exports.extractCSS = function (paths) {
         {
           test: /\.css$/,
           loader: ExtractTextPlugin.extract('style', 'css'),
+          // loaders: ['css-to-string', 'style', 'css'],
           include: paths
         }
       ]
@@ -101,6 +102,20 @@ exports.setupFonts = function (paths) {
         {
             test: /\.(eot|svg|ttf|woff|woff2)$/,
             loader: 'file?name=[name].[ext]',
+            include: paths
+        }
+      ]
+    }
+  };
+};
+
+exports.embedFonts = function (paths) {
+  return {
+    module: {
+      loaders: [
+        {
+            test: /\.(eot|svg|ttf|woff|woff2)$/,
+            loader: 'url',
             include: paths
         }
       ]

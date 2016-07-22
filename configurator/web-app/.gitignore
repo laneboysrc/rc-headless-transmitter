@@ -1,6 +1,2 @@
-.sass-cache
-.publish
-_build
 node_modules
-**/generated/_icons.sass
-npm-debug.log
+_build

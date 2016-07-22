@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.json">
 
 
-    {% include "shared/app-icons.html" %}
+    {% include "src/html/shared/app-icons.html" %}
 
     <!-- Enable add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -26,14 +26,14 @@
 
 
     <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en"> -->
-    <link rel="stylesheet" href="../../fonts/roboto.css">
+    <!-- <link rel="stylesheet" href="../src/fonts/roboto.css"> -->
 
     <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> -->
-    <link rel="stylesheet" href="../../fonts/materialicons.css">
+    <!-- <link rel="stylesheet" href="../src/fonts/materialicons.css"> -->
 
     <!-- <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.deep_orange-blue.min.css"> -->
-    <link rel="stylesheet" href="../../stylesheets/material.deep_orange-blue.min.css">
-    <link rel="stylesheet" href="../../stylesheets/styles.css">
+    <!-- <link rel="stylesheet" href="../../stylesheets/material.deep_orange-blue.min.css"> -->
+    <!-- <link rel="stylesheet" href="../../stylesheets/styles.css"> -->
 
 
 
@@ -42,7 +42,6 @@
   <body>
     {% block content %}{% endblock %}
     {% block javascript %}
-      <script src="javascripts/app.js"></script>
     {% endblock %}
   </body>
 </html>

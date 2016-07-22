@@ -64,8 +64,8 @@ var string2uuid = function (s) {
 var uint8array2string = function (bytes) {
     var result = '';
 
-    for (var n of bytes.entries()) {
-        var code = n[1];
+    for (var i = 0; i < bytes.length; i += 1) {
+        var code = bytes[i];
         if (code === 0) {
             return result;
         }
@@ -92,7 +92,9 @@ var isNumber = function (obj) {
 
 var showPage = function (name) {
     // Hide all sections with class 'app-page'
-    for (var page of document.querySelectorAll('.app-page')) {
+    var pages = document.querySelectorAll('.app-page');
+    for (var i = 0; i < pages.length; i += 1) {
+        var page = pages[i];
         page.classList.add('hidden');
     }
 

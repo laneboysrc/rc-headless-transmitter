@@ -80,13 +80,27 @@ exports.embedImages = function (paths) {
   };
 };
 
+exports.setupImages = function (paths) {
+  return {
+    module: {
+      loaders: [
+        {
+          test: /\.(png|jpg)$/,
+          loaders: ['file'],
+          include: paths
+        }
+      ]
+    }
+  };
+};
+
 exports.setupFonts = function (paths) {
   return {
     module: {
       loaders: [
         {
             test: /\.(eot|svg|ttf|woff|woff2)$/,
-            loader: 'file?name=public/fonts/[name].[ext]',
+            loader: 'file?name=[name].[ext]',
             include: paths
         }
       ]

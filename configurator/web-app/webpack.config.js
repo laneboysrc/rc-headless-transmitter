@@ -40,7 +40,6 @@ switch(process.env.npm_lifecycle_event) {
         devtool: 'source-map'
       },
       parts.clean(PATHS.build),
-      // parts.nunjucks(),
       parts.setupCSS(PATHS.app),
       parts.setupFonts(PATHS.app),
       parts.minify()
@@ -53,7 +52,6 @@ switch(process.env.npm_lifecycle_event) {
       {
         devtool: 'eval-source-map'
       },
-      // parts.nunjucks(),
       parts.setupCSS(PATHS.app),
       parts.setupFonts(PATHS.app),
       parts.devServer({

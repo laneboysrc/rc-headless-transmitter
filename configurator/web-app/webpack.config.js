@@ -23,7 +23,6 @@ const common = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Configurator Webpack test',
       template: '!!nunjucks-precompiled!src/html/index.html'
     })
   ]

@@ -66,6 +66,20 @@ exports.extractCSS = function (paths) {
   };
 };
 
+exports.embedImages = function (paths) {
+  return {
+    module: {
+      loaders: [
+        {
+          test: /\.(png|jpg)$/,
+          loaders: ['url'],
+          include: paths
+        }
+      ]
+    }
+  };
+};
+
 exports.setupFonts = function (paths) {
   return {
     module: {

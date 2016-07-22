@@ -42,6 +42,7 @@ switch(process.env.npm_lifecycle_event) {
       parts.clean(PATHS.build),
       parts.minify(),
       parts.extractCSS(PATHS.app),
+      parts.embedImages(PATHS.app),
       parts.setupFonts(PATHS.app)
     );
     break;

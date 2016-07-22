@@ -2,12 +2,20 @@
   "name": "configurator-web-app",
   "version": "0.0.1",
   "description": "A browser based configuration tool for the Headless TX",
-  "author": "LANE Boys RC",
-  "license": "GPL v3",
+  "author": {
+    "name": "LANE Boys RC"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laneboysrc/FIXME.git"
+  },
   "scripts": {
     "build": "webpack",
+    "production": "webpack",
     "start": "webpack-dev-server"
   },
+  "readmeFilename": "README.md",
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.10",
     "css-loader": "^0.23.1",
@@ -22,8 +30,5 @@
     "webpack-dev-server": "^1.14.1",
     "webpack-merge": "^0.14.0",
     "webpack-validator": "^2.2.3"
-  },
-  "dependencies": {
-    "webpack": "^1.13.1"
   }
 }

@@ -1,8 +1,10 @@
 const webpack = require('webpack');
 
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-exports.devServer = function(options) {
+
+exports.devServer = function (options) {
   return {
     devServer: {
       // Enable history API fallback so HTML5 History API based routing works.
@@ -31,7 +33,7 @@ exports.devServer = function(options) {
   };
 };
 
-exports.setupCSS = function(paths) {
+exports.setupCSS = function (paths) {
   return {
     module: {
       loaders: [
@@ -45,7 +47,26 @@ exports.setupCSS = function(paths) {
   };
 };
 
-exports.setupFonts = function(paths) {
+exports.extractCSS = function (paths) {
+  return {
+    module: {
+      loaders: [
+        // Extract CSS during build
+        {
+          test: /\.css$/,
+          loader: ExtractTextPlugin.extract('style', 'css'),
+          include: paths
+        }
+      ]
+    },
+    plugins: [
+      // Output extracted CSS to a file
+      new ExtractTextPlugin('[name].css')
+    ]
+  };
+};
+
+exports.setupFonts = function (paths) {
   return {
     module: {
       loaders: [
@@ -59,7 +80,7 @@ exports.setupFonts = function(paths) {
   };
 };
 
-exports.minify = function() {
+exports.minify = function () {
   return {
     plugins: [
       new webpack.optimize.UglifyJsPlugin({
@@ -71,7 +92,7 @@ exports.minify = function() {
   };
 };
 
-exports.clean = function(path) {
+exports.clean = function (path) {
   return {
     plugins: [
       new CleanWebpackPlugin([path], {

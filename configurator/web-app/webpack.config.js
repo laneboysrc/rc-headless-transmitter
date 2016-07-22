@@ -40,9 +40,9 @@ switch(process.env.npm_lifecycle_event) {
         devtool: 'source-map'
       },
       parts.clean(PATHS.build),
-      parts.setupCSS(PATHS.app),
-      parts.setupFonts(PATHS.app),
-      parts.minify()
+      parts.minify(),
+      parts.extractCSS(PATHS.app),
+      parts.setupFonts(PATHS.app)
     );
     break;
 

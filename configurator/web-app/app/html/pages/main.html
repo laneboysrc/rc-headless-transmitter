@@ -18,7 +18,7 @@
 
   <main class="mdl-layout__content">
     <section class="section--center mdl-grid">
-      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="Main.connect()">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title">
           <h2 class="mdl-card__title-text">Configure a transmitter</h2>
         </div>
@@ -26,7 +26,12 @@
           Find available transmitters and select one to configure.
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick="Main.connect()">
+            Connect (dummy data)
+          </button>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick="location.hash='#/device_list'">
             Connect
           </button>
         </div>

@@ -39,8 +39,7 @@ Main.prototype.connect = function () {
         Utils.PubSub.removeTopic(topic);
 
         // Show the model details page
-        // location.hash = Utils.buildURL(['model_details']);
-        location.hash = '#/device_list';
+        location.hash = Utils.buildURL(['model_details']);
     }
 
     Utils.PubSub.subscribe(topic, entryRetrievedCallback);

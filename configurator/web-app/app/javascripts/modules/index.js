@@ -3,6 +3,7 @@
 require('./device');
 require('./config');
 require('./database');
+require('./ws_protocol');
 
 // Singletons for pages
 require('./main');

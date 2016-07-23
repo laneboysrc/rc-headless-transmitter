@@ -21,6 +21,7 @@
     "DBObject": true,
     "MDLHelper": true,
     "Utils": true,
+    "WebsocketProtocol": true,
 
     "DeviceList": true,
     "EditCurve": true,

@@ -15,4 +15,4 @@ To compile all source files into a single HTML file for distribution the followi
 
 After installing these tools, run `npm install` to fetch the required modules.
 
-You can then run `nodejs simulator.js`
+You can then run `npm start`

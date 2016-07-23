@@ -4,6 +4,10 @@
   "description": "Headless TX simulator using Websocket protocol",
   "repository": "https://github.com/laneboysrc/<FIXME>.git",
   "author": "LANE Boys RC",
+  "license": "MIT",
+  "scripts": {
+    "start": "./simulator.js"
+  },
   "dependencies": {
     "tx-simulator": "file:../common-modules/tx-simulator"
   }

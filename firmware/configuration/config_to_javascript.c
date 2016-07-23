@@ -43,7 +43,7 @@ static void dump_javascript_config(void)
     size_t remaining = sizeof(config);
     uint8_t *p = (uint8_t *)(&config);
 
-    sync_printf("var TEST_CONFIG_DATA = new Uint8Array([\n");
+    sync_printf("module.exports = new Uint8Array([\n");
 
     while (remaining) {
         if (remaining < elements_per_line) {

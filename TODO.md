@@ -21,6 +21,9 @@
     - While calibrating, still run the RF(?)
 
 
+- Build a separate executable that dumps the configuration, instead of having
+  the main app do it
+
 ## configurator
 - Offline mode
 - Database syncing
@@ -53,13 +56,8 @@
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
-- Hint numbers-only input fields for hop channels, to get the right keyboard on
-  mobile
-
 - How do we get a description of the elements in the configuration?
 
-- Build a separate executable that dumps the configuration, instead of having
-  the main app do it
 
 - Create live_t that describes live inputs sent to the configurator. It compises
   all `src_label_t` inputs, but also switch values, trim values, and others

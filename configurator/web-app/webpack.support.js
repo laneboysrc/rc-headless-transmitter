@@ -1,3 +1,7 @@
+/* jshint esversion: 6 */
+
+// Based on http://survivejs.com/webpack/developing-with-webpack
+
 const webpack = require('webpack');
 
 const CleanWebpackPlugin = require('clean-webpack-plugin');

@@ -1,25 +1,27 @@
+/* jshint esversion: 6 */
+
 // Based on http://survivejs.com/webpack/developing-with-webpack
 
-const path = require('path');
+const path              = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-const merge = require('webpack-merge');
-const validate = require('webpack-validator');
-const parts = require('./webpack.support');
+const merge             = require('webpack-merge');
+const validate          = require('webpack-validator');
+const parts             = require('./webpack.support');
 
 
 const PATHS = {
-  app: path.join(__dirname, 'app'),
-  build: path.join(__dirname, '_build'),
+  app:    path.join(__dirname, 'app'),
+  build:  path.join(__dirname, '_build'),
 };
 
 const indexHTML = path.join(PATHS.app, 'html', 'index.html');
 const specialImages = /\W(((apple-touch-icon|android-chrome-192x192|favicon-16x16|favicon-32x32|mstile-150x150)\.png)|((safari-pinned-tab)\.svg))$/;
 
+
+// Common configuration that applies to all modes (development, build ...)
 const common = {
   entry: {
     app: PATHS.app,
-    // indexHtml
   },
   output: {
     path: PATHS.build,
@@ -33,7 +35,8 @@ const common = {
         include: PATHS.app
       },
       // Alsays store some special images, like the ones referenced in the
-      // manifest.json, as separate files.
+      // manifest.json, as separate files; do not in-line (data-url encode)
+      // them.
       {
         test: specialImages,
         loaders: ['file?name=[name].[ext]'],
@@ -43,6 +46,9 @@ const common = {
   },
   plugins: [
     new HtmlWebpackPlugin({
+      // Process the index.html page, which is a nunjucks template. Then pass
+      // it through the HTML loader, which extracts all `img` and `link` tags
+      // for further processing
       template: 'html?attrs[]=img:src&attrs[]=link:href!nunjucks-html!' + indexHTML
     })
   ],
@@ -57,9 +63,6 @@ switch(process.env.npm_lifecycle_event) {
   case 'production':
     config = merge(
       common,
-      {
-        // devtool: 'source-map'
-      },
       parts.clean(PATHS.build),
       parts.minify(),
       parts.extractCSS(PATHS.app),

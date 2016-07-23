@@ -33,21 +33,22 @@ exports.devServer = function (options) {
   };
 };
 
-exports.setupCSS = function (paths) {
+exports.setupCSS = function (paths, exclude) {
   return {
     module: {
       loaders: [
         {
           test: /\.css$/,
           loaders: ['style', 'css'],
-          include: paths
+          include: paths,
+          exclude: exclude
         }
       ]
     }
   };
 };
 
-exports.extractCSS = function (paths) {
+exports.extractCSS = function (paths, exclude) {
   return {
     module: {
       loaders: [
@@ -55,7 +56,8 @@ exports.extractCSS = function (paths) {
         {
           test: /\.css$/,
           loader: ExtractTextPlugin.extract('style', 'css'),
-          include: paths
+          include: paths,
+          exclude: exclude
         }
       ]
     },
@@ -66,56 +68,60 @@ exports.extractCSS = function (paths) {
   };
 };
 
-exports.embedImages = function (paths) {
+exports.embedImages = function (paths, exclude) {
   return {
     module: {
       loaders: [
         {
           test: /\.(png|jpg)$/,
           loaders: ['url'],
-          include: paths
+          include: paths,
+          exclude: exclude
         }
       ]
     }
   };
 };
 
-exports.setupImages = function (paths) {
+exports.setupImages = function (paths, exclude) {
   return {
     module: {
       loaders: [
         {
           test: /\.(png|jpg)$/,
-          loaders: ['file'],
-          include: paths
+          loaders: ['file?name=[name].[ext]'],
+          include: paths,
+          exclude: exclude
         }
       ]
     }
   };
 };
 
-exports.setupFonts = function (paths) {
+exports.setupFonts = function (paths, exclude) {
   return {
     module: {
       loaders: [
         {
-            test: /\.(eot|svg|ttf|woff|woff2)$/,
-            loader: 'file?name=[name].[ext]',
-            include: paths
+          test: /\.(eot|svg|ttf|woff|woff2)$/,
+          loader: 'file?name=[name].[ext]',
+          include: paths,
+          exclude: exclude
         }
       ]
     }
   };
 };
 
-exports.embedFonts = function (paths) {
+exports.embedFonts = function (paths, exclude) {
   return {
     module: {
       loaders: [
         {
             test: /\.(eot|svg|ttf|woff|woff2)$/,
             loader: 'url',
-            include: paths
+            include: paths,
+          exclude: exclude
         }
       ]
     }

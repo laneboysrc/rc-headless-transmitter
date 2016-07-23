@@ -7,7 +7,7 @@
   "theme_color": "rgb(255,87,34)",
   "background_color": "rgb(255,87,34)",
   "icons": [{
-    "src": "images/android-desktop.png",
+    "src": "android-desktop.png",
     "sizes": "192x192",
     "type": "image/png"
   }]

@@ -7,13 +7,13 @@ const merge = require('webpack-merge');
 const validate = require('webpack-validator');
 const parts = require('./libs/parts');
 
-var indexHtml = path.join(__dirname, "src/html", "index.html");
-
 
 const PATHS = {
   app: path.join(__dirname, 'src'),
   build: path.join(__dirname, '_build')
 };
+
+const specialImages = /\W(android|ios)-desktop\.png$/;
 
 const common = {
   entry: {
@@ -24,9 +24,25 @@ const common = {
     path: PATHS.build,
     filename: '[name].js'
   },
+  module: {
+    loaders: [
+      {
+        test: /\.json$/,
+        loaders: ['file?name=[name].[ext]'],
+        include: PATHS.app
+      },
+      // Alsays store some special images, like the ones referenced in the
+      // manifest.json, as separate files.
+      {
+        test: specialImages,
+        loaders: ['file?name=[name].[ext]'],
+        include: PATHS.app
+      }
+    ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
-      template: '!!html!nunjucks-html!src/html/index.html'
+      template: 'html?attrs[]=img:src&attrs[]=link:href!nunjucks-html!src/html/index.html'
     })
   ],
 };
@@ -46,7 +62,7 @@ switch(process.env.npm_lifecycle_event) {
       parts.clean(PATHS.build),
       parts.minify(),
       parts.extractCSS(PATHS.app),
-      parts.embedImages(PATHS.app),
+      parts.embedImages(PATHS.app, specialImages),
       parts.embedFonts(PATHS.app)
     );
     break;

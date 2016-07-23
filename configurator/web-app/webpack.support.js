@@ -73,7 +73,7 @@ exports.embedImages = function (paths, exclude) {
     module: {
       loaders: [
         {
-          test: /\.(png|jpg)$/,
+          test: /\.(svg|png|jpg)$/,
           loaders: ['url'],
           include: paths,
           exclude: exclude
@@ -88,7 +88,7 @@ exports.setupImages = function (paths, exclude) {
     module: {
       loaders: [
         {
-          test: /\.(png|jpg)$/,
+          test: /\.(svg|png|jpg)$/,
           loaders: ['file?name=[name].[ext]'],
           include: paths,
           exclude: exclude
@@ -103,7 +103,7 @@ exports.setupFonts = function (paths, exclude) {
     module: {
       loaders: [
         {
-          test: /\.(eot|svg|ttf|woff|woff2)$/,
+          test: /\.(eot|ttf|woff|woff2)$/,
           loader: 'file?name=[name].[ext]',
           include: paths,
           exclude: exclude
@@ -118,7 +118,7 @@ exports.embedFonts = function (paths, exclude) {
     module: {
       loaders: [
         {
-            test: /\.(eot|svg|ttf|woff|woff2)$/,
+            test: /\.(eot|ttf|woff|woff2)$/,
             loader: 'url',
             include: paths,
           exclude: exclude

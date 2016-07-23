@@ -13,7 +13,7 @@ const PATHS = {
   build: path.join(__dirname, '_build')
 };
 
-const specialImages = /\W(android|ios)-desktop\.png$/;
+const specialImages = /\W(((apple-touch-icon|android-chrome-192x192|favicon-16x16|favicon-32x32|mstile-150x150)\.png)|((safari-pinned-tab)\.svg))$/;
 
 const common = {
   entry: {
@@ -27,7 +27,7 @@ const common = {
   module: {
     loaders: [
       {
-        test: /\.json$/,
+        test: /\.(json|xml|ico)$/,
         loaders: ['file?name=[name].[ext]'],
         include: PATHS.app
       },

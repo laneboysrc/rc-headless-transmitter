@@ -63,3 +63,5 @@
   all `src_label_t` inputs, but also switch values, trim values, and others
   such as battery voltage.
 
+- Splash screen
+

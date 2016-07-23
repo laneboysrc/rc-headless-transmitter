@@ -54,9 +54,19 @@
 				"-T",
 				"WEB-APP-BUILD",
 				"-e",
-				"npm run start"
+				"npm start"
 			],
-			"name": "web-app",
+			"name": "web-app dev",
+			"working_dir": "${project_path}/configurator/web-app"
+		},
+		{
+			"cmd":
+			[
+				"npm",
+				"run",
+				"build",
+			],
+			"name": "web-app build",
 			"working_dir": "${project_path}/configurator/web-app"
 		}
 	],

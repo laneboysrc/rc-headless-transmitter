@@ -118,6 +118,28 @@ var buildURL = function (list) {
     return url_fragments.join('/');
 };
 
+var getUint16 = function(packet, index) {
+    var dv = new DataView(packet.buffer, index);
+    return dv.getUint16(0, true);
+}
+
+var getUint32 = function(packet, index) {
+    var dv = new DataView(packet.buffer, index);
+    return dv.getUint32(0, true);
+}
+
+var getInt16 = function(packet, index) {
+    var dv = new DataView(packet.buffer, index);
+    return dv.getInt16(0, true);
+}
+
+var getInt32 = function(packet, index) {
+    var dv = new DataView(packet.buffer, index);
+    return dv.getInt32(0, true);
+}
+
+
+
 
 var PubSub = function PubSub() {
     this.topics = {};
@@ -158,6 +180,10 @@ module.exports = {
     uint8array2string: uint8array2string,
     string2uint8array: string2uint8array,
     isNumber: isNumber,
+    getUint16: getUint16,
+    getUint32: getUint32,
+    getInt16: getInt16,
+    getInt32: getInt32,
     showPage: showPage,
     buildURL: buildURL,
     PubSub: window['PubSub'] ,

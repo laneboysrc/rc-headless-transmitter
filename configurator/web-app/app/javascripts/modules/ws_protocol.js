@@ -70,6 +70,12 @@ WebsocketProtocol.prototype.sendCfgPacket_ = function () {
 };
 
 //*************************************************************************
+WebsocketProtocol.prototype.send = function (packet) {
+    this.cfgPacket = packet;
+}
+
+
+//*************************************************************************
 WebsocketProtocol.prototype.onopen = function() {
     // console.log('WS: onopen');
     this.notifyListeners('onopen');

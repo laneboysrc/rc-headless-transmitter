@@ -7,6 +7,7 @@ require('./database');
 // Singletons for pages
 require('./main');
 require('./mixer');
+require('./device_list');
 require('./mixer_unit');
 require('./model_details');
 require('./rf_protocol');

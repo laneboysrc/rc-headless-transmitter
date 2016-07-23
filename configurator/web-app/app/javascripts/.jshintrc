@@ -19,17 +19,20 @@
     "dev": true,
     "Database": true,
     "DBObject": true,
-    "Limits": true,
     "MDLHelper": true,
-    "Mixer": true,
-    "MixerUnit": true,
+    "Utils": true,
+
+    "DeviceList": true,
     "EditCurve": true,
     "EditSwitch": true,
+    "Limits": true,
+    "Mixer": true,
+    "MixerUnit": true,
     "ModelDetails": true,
     "Path": true,
     "RFProtocol": true,
     "SelectSingle": true,
-    "Utils": true,
+
     "TEST_CONFIG_DATA": true,
     "CONFIG_VERSIONS": true
   }

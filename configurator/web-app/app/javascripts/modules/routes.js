@@ -9,6 +9,7 @@ var routes = {
     // path: name
     '#/': function () { Utils.showPage('main'); },
     '#/about': function () { Utils.showPage('about'); },
+    '#/device_list': DeviceList,
     '#/model_details/m/:model(/t/:tx)': ModelDetails,
     '#/mixer/m/:model(/t/:tx)': Mixer,
     '#/mixer_unit/:index/m/:model(/t/:tx)': MixerUnit,

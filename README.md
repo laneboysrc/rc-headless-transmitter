@@ -35,6 +35,7 @@ Open Source ARM cortex m microcontroller library.
 
 
 ### Material Design Lite
+### Google fonts
 ### JSHint
 ### Gnu GCC
 ### MDN
@@ -44,8 +45,13 @@ Open Source ARM cortex m microcontroller library.
 ### STM
 ### node-websocket https://www.npmjs.com/package/nodejs-websocket
 ### https://github.com/mtrpcic/pathjs/blob/master/path.js
-### https://github.com/vigetlabs/gulp-starter
+### webpack
+### http://survivejs.com/webpack/developing-with-webpack
+### http://realfavicongenerator.net/
+
+
 
 Not used ...
 ### https://github.com/Pithikos/python-websocket-server
+### https://github.com/vigetlabs/gulp-starter
 ### Jekyll

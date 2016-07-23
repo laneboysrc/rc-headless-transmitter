@@ -24,7 +24,7 @@
     {% block content %}
       {% for p in ["main", "about", "edit_curve", "edit_switch", "limits", "mixer", "mixer_unit", "model_details", "model_list", "rf_protocol", "select_multiple", "select_single", "transmitter_details", "transmitter_list"] %}
         <div id="page_{{ p }}" class="app-page hidden">
-        {% set pg= "src/html/pages/" + p + ".html" %}
+        {% set pg= "app/html/pages/" + p + ".html" %}
         {% include pg %}
         </div>
       {% endfor %}

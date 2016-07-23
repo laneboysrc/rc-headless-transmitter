@@ -9,10 +9,11 @@ const parts = require('./webpack.support');
 
 
 const PATHS = {
-  app: path.join(__dirname, 'src'),
-  build: path.join(__dirname, '_build')
+  app: path.join(__dirname, 'app'),
+  build: path.join(__dirname, '_build'),
 };
 
+const indexHTML = path.join(PATHS.app, 'html', 'index.html');
 const specialImages = /\W(((apple-touch-icon|android-chrome-192x192|favicon-16x16|favicon-32x32|mstile-150x150)\.png)|((safari-pinned-tab)\.svg))$/;
 
 const common = {
@@ -42,7 +43,7 @@ const common = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'html?attrs[]=img:src&attrs[]=link:href!nunjucks-html!src/html/index.html'
+      template: 'html?attrs[]=img:src&attrs[]=link:href!nunjucks-html!' + indexHTML
     })
   ],
 };

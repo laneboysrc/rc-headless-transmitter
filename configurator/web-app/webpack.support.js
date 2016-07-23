@@ -93,7 +93,7 @@ exports.setupImages = function (paths, exclude) {
       loaders: [
         {
           test: /\.(svg|png|jpg)$/,
-          loaders: ['file?name=[name].[ext]'],
+          loaders: ['file'],
           include: paths,
           exclude: exclude
         }
@@ -108,6 +108,7 @@ exports.setupFonts = function (paths, exclude) {
       loaders: [
         {
           test: /\.(eot|ttf|woff|woff2)$/,
+          // We consider fonts read-only, so we use the original file name
           loader: 'file?name=[name].[ext]',
           include: paths,
           exclude: exclude

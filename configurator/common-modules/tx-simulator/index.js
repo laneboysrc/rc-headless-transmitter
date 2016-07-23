@@ -112,9 +112,9 @@ function handle_CFG_READ(packet) {
         return;
     }
 
-    var response = allocatePacket(0x52, 4 + count);
-    response.set(packet.slice(1, 4), 1);
-    response.set(testData.slice(offset, offset + count), 4);
+    var response = allocatePacket(0x52, 3 + count);
+    response.set(packet.slice(1, 3), 1);
+    response.set(testData.slice(offset, offset + count), 3);
 
     nextPacket = response;
 }

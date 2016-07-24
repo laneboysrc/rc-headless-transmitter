@@ -69,8 +69,6 @@
   such as battery voltage.
 
 
-- Check all packet/data sizes in configurator.md and fix simulator
-
 - Splash screen
 
 - Fix glitch in progress bar when switching from tx to model

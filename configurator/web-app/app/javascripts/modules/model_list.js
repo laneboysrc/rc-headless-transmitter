@@ -48,10 +48,6 @@ ModelList.prototype.databaseCallback = function (cursor) {
                 name: dev.get('NAME'),
                 uuid: data.uuid
             });
-            models.push({
-                name: dev.get('NAME'),
-                uuid: data.uuid
-            });
         }
         cursor.continue();
     }

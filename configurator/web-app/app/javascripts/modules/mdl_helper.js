@@ -3,7 +3,7 @@
 var Utils = require('./utils');
 
 
-var MDLHelper = function MDLHelper(devName, options) {
+var MDLHelper = function (devName, options) {
     options = options || {
         offset: 0,
         index: undefined,

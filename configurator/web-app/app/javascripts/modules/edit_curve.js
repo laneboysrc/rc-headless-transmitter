@@ -4,10 +4,9 @@ var Utils       = require('./utils');
 var MDLHelper   = require('./mdl_helper');
 
 
-var EditCurve = function EditCurve() {
+var EditCurve = function () {
     this.offset = 0;
 };
-window['EditCurve'] = new EditCurve();
 
 //*************************************************************************
 EditCurve.prototype.init = function (params) {
@@ -33,3 +32,5 @@ EditCurve.prototype.init = function (params) {
 
     Utils.showPage('edit_curve');
 };
+
+window['EditCurve'] = new EditCurve();

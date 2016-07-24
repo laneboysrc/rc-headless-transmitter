@@ -65,3 +65,7 @@
 
 - Splash screen
 
+- Change to 8 byte UUID
+
+- Rework configurator protocol to use UUID so that we know to which device
+  we want to connect

@@ -7,7 +7,7 @@ var TEST_CONFIG_DATA    = require('test-data');
 var DATABASE_NAME = 'HeadlessTX';
 var STORE_NAME = 'Models and Transmitters';
 
-var Database = function Database(data) {
+var Database = function (data) {
     this.db = undefined;
 
     var self = this;

@@ -4,9 +4,7 @@ var Utils       = require('./utils');
 var DBObject    = require('./database_object');
 
 
-var Main = function Main() {};
-window['Main'] = new Main();
-
+var Main = function () {};
 
 Main.prototype.connect = function () {
     console.log('connect: loading dev.TX and dev.MODEL');
@@ -44,3 +42,5 @@ Main.prototype.connect = function () {
 
     Utils.PubSub.subscribe(topic, entryRetrievedCallback);
 };
+
+window['Main'] = new Main();

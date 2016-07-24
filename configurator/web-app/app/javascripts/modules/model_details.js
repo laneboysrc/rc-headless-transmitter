@@ -4,8 +4,7 @@ var Utils       = require('./utils');
 var MDLHelper   = require('./mdl_helper');
 
 
-var ModelDetails = function ModelDetails() { };
-window['ModelDetails'] = new ModelDetails();
+var ModelDetails = function () { };
 
 //*************************************************************************
 ModelDetails.prototype.init = function (params) {
@@ -20,3 +19,4 @@ ModelDetails.prototype.init = function (params) {
     Utils.showPage('model_details');
 };
 
+window['ModelDetails'] = new ModelDetails();

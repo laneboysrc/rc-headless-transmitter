@@ -4,7 +4,7 @@ var Utils       = require('./utils');
 var MDLHelper   = require('./mdl_helper');
 
 
-var SelectSingle = function SelectSingle() {
+var SelectSingle = function () {
     this.devName = undefined;
     this.item = undefined;
     this.offset = 0;
@@ -13,7 +13,6 @@ var SelectSingle = function SelectSingle() {
     this.list = document.querySelector('#app-select_single-list');
 
 };
-window['SelectSingle'] = new SelectSingle();
 
 //*************************************************************************
 SelectSingle.prototype.accept_choice = function () {
@@ -66,3 +65,5 @@ SelectSingle.prototype.init = function (params) {
 
     Utils.showPage('select_single');
 };
+
+window['SelectSingle'] = new SelectSingle();

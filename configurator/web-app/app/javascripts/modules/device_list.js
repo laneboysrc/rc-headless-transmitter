@@ -34,7 +34,7 @@ var wsConnected = false;
 
 
 //*************************************************************************
-var DeviceList = function DeviceList() {
+var DeviceList = function () {
     this.loading = document.querySelector('#app-device_list-loading');
     this.message = document.querySelector('#app-device_list-loading__message');
 

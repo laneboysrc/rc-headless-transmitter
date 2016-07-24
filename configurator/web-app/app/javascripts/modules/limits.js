@@ -4,10 +4,9 @@ var Utils       = require('./utils');
 var MDLHelper   = require('./mdl_helper');
 
 
-var Limits = function Limits() {
+var Limits = function () {
     this.channel = undefined;
 };
-window['Limits'] = new Limits();
 
 //*************************************************************************
 Limits.prototype.init = function (params) {
@@ -35,3 +34,5 @@ Limits.prototype.init = function (params) {
 
     Utils.showPage('limits');
 };
+
+window['Limits'] = new Limits();

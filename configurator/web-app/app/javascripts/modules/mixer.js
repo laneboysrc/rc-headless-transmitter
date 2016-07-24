@@ -4,11 +4,10 @@ var Utils       = require('./utils');
 var MDLHelper   = require('./mdl_helper');
 
 
-var Mixer = function Mixer() {
+var Mixer = function () {
     this.template = document.querySelector('#app-mixer-template').content;
     this.mixer_list = document.querySelector('#app-mixer-list tbody');
 };
-window['Mixer'] = new Mixer();
 
 //*************************************************************************
 Mixer.prototype.init = function (params) {
@@ -48,3 +47,5 @@ Mixer.prototype.init = function (params) {
 
     Utils.showPage('mixer');
 };
+
+window['Mixer'] = new Mixer();

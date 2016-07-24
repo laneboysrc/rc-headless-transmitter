@@ -3,12 +3,11 @@
 var Utils = require('./utils');
 
 
-var WebsocketProtocol = function WebsocketProtocol() {
+var WebsocketProtocol = function () {
     this.ws = undefined;
     this.cfgPacket = undefined;
     this.eventListeners = [];
 };
-window['WebsocketProtocol'] = new WebsocketProtocol();
 
 //*************************************************************************
 WebsocketProtocol.prototype.open = function () {
@@ -151,3 +150,5 @@ function dumpUint8Array(data) {
 
     return response;
 }
+
+window['WebsocketProtocol'] = new WebsocketProtocol();

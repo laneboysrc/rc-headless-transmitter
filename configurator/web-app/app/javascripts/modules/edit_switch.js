@@ -4,10 +4,9 @@ var Utils       = require('./utils');
 var MDLHelper   = require('./mdl_helper');
 
 
-var EditSwitch = function EditSwitch() {
+var EditSwitch = function () {
     this.offset = 0;
 };
-window['EditSwitch'] = new EditSwitch();
 
 //*************************************************************************
 EditSwitch.prototype.init = function (params) {
@@ -27,3 +26,5 @@ EditSwitch.prototype.init = function (params) {
 
     Utils.showPage('edit_switch');
 };
+
+window['EditSwitch'] = new EditSwitch();

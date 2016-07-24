@@ -4,10 +4,9 @@ var Utils       = require('./utils');
 var MDLHelper   = require('./mdl_helper');
 
 
-var MixerUnit = function MixerUnit() {
+var MixerUnit = function () {
     this.offset = 0;
 };
-window['MixerUnit'] = new MixerUnit();
 
 //*************************************************************************
 MixerUnit.prototype.init = function (params) {
@@ -37,3 +36,5 @@ MixerUnit.prototype.init = function (params) {
 
     Utils.showPage('mixer_unit');
 };
+
+window['MixerUnit'] = new MixerUnit();

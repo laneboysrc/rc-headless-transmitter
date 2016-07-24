@@ -15,7 +15,7 @@ function DatabaseException(message) {
 // IndexedDB is a Object database: instead of rows/columns like traditional
 // relational databases it stores 'objects'. The DBObject represents one
 // of these objects in database that holds model or transmitter data.
-var DBObject = function DBObject(data) {
+var DBObject = function (data) {
     this.uuid = data.uuid;
     this.data = data.data;
     this.configVersion = data.configVersion;

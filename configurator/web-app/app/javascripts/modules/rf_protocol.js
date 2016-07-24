@@ -3,8 +3,7 @@
 var Utils       = require('./utils');
 
 
-var RFProtocol = function RFProtocol() {};
-window['RFProtocol'] = new RFProtocol();
+var RFProtocol = function () {};
 
 //*************************************************************************
 RFProtocol.prototype.init = function (params) {
@@ -23,3 +22,5 @@ RFProtocol.prototype.init = function (params) {
 
     Utils.showPage('rf_protocol');
 };
+
+window['RFProtocol'] = new RFProtocol();

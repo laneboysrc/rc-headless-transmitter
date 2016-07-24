@@ -71,7 +71,6 @@
 
 - Splash screen
 
-- use event.cancelBubble wherever we want to click on a card to trigger a button
 - Use input event on slider as it is active during sliding.
 
 - FIX: we can not have ids within templates as this will lead to duplicates

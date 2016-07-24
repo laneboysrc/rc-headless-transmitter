@@ -158,6 +158,13 @@ var setInt32 = function (packet, value, index) {
     return dv.setInt32(0, value, true);
 };
 
+var newUUID = function () {
+    var uuid_bytes = new Uint8Array(8);
+    window.crypto.getRandomValues(uuid_bytes);
+    return uuid_bytes;
+};
+
+
 
 var PubSub = function PubSub() {
     this.topics = {};
@@ -192,6 +199,7 @@ PubSub.prototype.removeTopic =  function (topic) {
 window['PubSub'] = window['PubSub'] || new PubSub();
 
 module.exports = {
+    newUUID: newUUID,
     byte2string: byte2string,
     uuid2string: uuid2string,
     string2uuid: string2uuid,

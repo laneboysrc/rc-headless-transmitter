@@ -1,9 +1,9 @@
 
 // Singletons
-require('./device');
+require('./ws_protocol');
 require('./config');
 require('./database');
-require('./ws_protocol');
+require('./device');
 
 // Singletons for pages
 require('./main');

@@ -72,6 +72,7 @@ DeviceList.prototype.resetPage = function () {
     this.mdl.clearDynamicElements(this.list);
     this.message.textContent = messages.default;
     state = STATES.IDLE;
+    dev.connected = false;
     wsConnected = false;
 };
 
@@ -187,10 +188,7 @@ DeviceList.prototype.stateMachine = function (packet) {
 
                 // console.log(offset, count)
 
-                for (var i = 0; i < count; i++) {
-                    newDev.data[offset + i] = packet[3 + i];
-                }
-
+                newDev.data.set(packet.slice(3), offset);
                 newDev.count += count;
 
                 this.progress.o += count;
@@ -235,6 +233,7 @@ DeviceList.prototype.stateMachine = function (packet) {
                         dev.MODEL = new DBObject(newDev);
                         state = STATES.IDLE;
 
+                        dev.connected = true;
                         location.hash = Utils.buildURL(['model_details']);
                     }
                 }

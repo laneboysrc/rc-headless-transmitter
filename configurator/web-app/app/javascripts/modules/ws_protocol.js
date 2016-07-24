@@ -85,6 +85,15 @@ WebsocketProtocol.prototype.makeReadPacket = function (offset, count) {
     return packet;
 };
 
+//*************************************************************************
+WebsocketProtocol.prototype.makeWritePacket = function (offset, data) {
+    var packet = new Uint8Array(3 + data.length);
+    packet[0] = 0x77;
+    Utils.setUint16(packet, offset, 1);
+    packet.set(data, 3);
+
+    return packet;
+};
 
 
 //*************************************************************************

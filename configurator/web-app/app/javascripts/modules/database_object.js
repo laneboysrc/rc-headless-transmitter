@@ -475,6 +475,8 @@ DBObject.prototype.set = function (key, value, options) {
         console.log(self.uuid + ' changed: offset=' + offset + ' count=' +
             count + ' config-offset=' + (offset + schema.o));
 
+        dev.queueWrite(offset + schema.o, data.slice(offset, offset + count));
+
         // Add last change time stamp
         if (key !== 'LAST_CHANGED'  &&  schema.hasOwnProperty('LAST_CHANGED')) {
             var now = parseInt(Date.now() / 1000);
@@ -485,6 +487,8 @@ DBObject.prototype.set = function (key, value, options) {
 
             console.log(self.uuid + ' changed: offset=' + lc.o + ' count=' +
                 lc.s + ' config-offset=' + (lc.o + schema.o));
+
+            dev.queueWrite(lc.o + schema.o, data.slice(lc.o, lc.o + lc.s));
 
             self.lastChanged = now;
         }

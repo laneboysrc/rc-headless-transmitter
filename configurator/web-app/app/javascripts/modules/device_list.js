@@ -92,6 +92,30 @@ DeviceList.prototype.edit = function (index) {
 };
 
 //*************************************************************************
+// connect to the transmitter
+// retrieve configVersion
+//
+// load TX UUID
+// if TX UUID is not set
+//     generate new UUID
+//     write UUID to TX
+//     write LAST_CHANGED to TX
+// if TX UUID is in our database
+//     load TX LAST_CHANGED
+//     if TX LAST_CHANGED == database LAST_CHANGED
+//         load dev.TX from database
+//     else if TX LAST_CHANGED > database LAST_CHANGED
+//         load TX into dev.TX
+//         update dev.TX in database
+//     else
+//         load dev.TX from database
+//         write dev.TX to TX
+// else
+//     load TX into dev.TX
+//     add dev.TX to our database
+//
+// repeat same flow with MODEL
+//
 DeviceList.prototype.stateMachine = function (packet) {
     var configVersion;
     var offset;

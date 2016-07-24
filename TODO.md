@@ -69,3 +69,10 @@
 
 - Rework configurator protocol to use UUID so that we know to which device
   we want to connect
+
+- Fix glitch in progress bar when switching from tx to model
+
+- Check all packet/data sizes in configurator.md and fix simulator
+
+- use event.cancelBubble wherever we want to click on a card to trigger a button
+

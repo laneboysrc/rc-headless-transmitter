@@ -444,7 +444,7 @@ first.
     Write data to the configuration.
 
     a0, a1: Offset within the configuration to write, unsigned 16 bit integer
-    dt:    1..28 bytes of data
+    dt:    1..29 bytes of data
 
     The *Headless TX* responds with `TX_WRITE_SUCCESSFUL` in the next packet.
 
@@ -509,7 +509,7 @@ first.
     Sent in the next packet after receiving a `CFG_READ` request.
 
     a0, a1: Offset within the configuration as requested, unsigned 16 bit integer
-    dt:    1..31 bytes of data starting at offset a0, a1
+    dt:    1..29 bytes of data starting at offset a0, a1
 
 
 * `TX_WRITE_SUCCESSFUL`

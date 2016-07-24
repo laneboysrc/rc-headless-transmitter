@@ -38,9 +38,11 @@
                 <i class="material-icons mdl-list__item-icon">directions_car</i>
                 <span class="app-model_list-list__template-name"></span>
               </span>
-              <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="ModelList.editModel(this);">
-                <i class="material-icons app-model_list--edit">mode_edit</i>
-                <i class="material-icons app-model_list--load">file_download</i>
+              <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-model_list--edit" onclick="ModelList.editModel(this);">
+                <i class="material-icons">mode_edit</i>
+              </button>
+              <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-model_list--load" onclick="ModelList.loadModel(this);">
+                <i class="material-icons">file_download</i>
               </button>
             </div>
             </template>

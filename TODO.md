@@ -74,3 +74,7 @@
 - Use input event on slider as it is active during sliding.
 
 - Add model icon data
+
+- Too many connection lost toast messages are shown
+
+- Websocket is not always closed when returning for some reason

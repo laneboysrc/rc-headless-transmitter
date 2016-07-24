@@ -14,7 +14,6 @@ var ModelList = function () {
     this.template = document.querySelector('#app-model_list-list__template').content;
 
     this.mode = 'edit';
-
 };
 
 //*************************************************************************
@@ -27,8 +26,6 @@ ModelList.prototype.init = function (params) {
     }
     this.updateItemVisibility();
 
-    dev.MODEL = undefined;
-    dev.TX = undefined;
     models = [];
     mdl.clearDynamicElements(this.list);
 
@@ -63,7 +60,8 @@ ModelList.prototype.updateModelList = function () {
     var t = this.template;
     for (var i = 0; i < models.length; i += 1) {
         t.querySelector('div').classList.add('can-delete');
-        t.querySelector('button').setAttribute('data-index', i);
+        t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
+        t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);
         mdl.setTextContentRaw('.app-model_list-list__template-name', models[i].name, t);
 
         var clone = document.importNode(t, true);
@@ -85,6 +83,18 @@ ModelList.prototype.editModel = function (element) {
         dev.MODEL = new DBObject(data);
         location.hash = Utils.buildURL(['model_details']);
     });
+};
+
+//*************************************************************************
+ModelList.prototype.loadModel = function (element) {
+    var index = element.getAttribute('data-index');
+    console.log('loadModel', index, dev.MODEL, models[index].uuid);
+
+    if (dev.MODEL  &&  dev.MODEL.uuid === models[index].uuid) {
+        // FIXME: this creates a lot of entries in the history!
+        location.hash = Utils.buildURL(['model_details']);
+        return;
+    }
 };
 
 //*************************************************************************

@@ -27,4 +27,10 @@ ModelDetails.prototype.init = function (params) {
     Utils.showPage('model_details');
 };
 
+//*************************************************************************
+ModelDetails.prototype.changeModel = function () {
+    location.hash = Utils.buildURL(['model_list']);
+};
+
+
 window['ModelDetails'] = new ModelDetails();

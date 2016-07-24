@@ -16,7 +16,8 @@ var routes = {
     '#/mixer/m/:model(/t/:tx)': Mixer,
     '#/mixer_unit/:index/m/:model(/t/:tx)': MixerUnit,
     '#/model_details/m/:model(/t/:tx)': ModelDetails,
-    '#/model_list(/t/:tx)': ModelList,
+    '#/model_list/m/:model(/t/:tx)': ModelList,
+    '#/model_list': ModelList,
     '#/rf_protocol/m/:model(/t/:tx)': RFProtocol,
     '#/transmitter_list': TransmitterList,
 

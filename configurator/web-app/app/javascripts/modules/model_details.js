@@ -15,12 +15,13 @@ ModelDetails.prototype.init = function (params) {
     mdl.setDataURL('#app-model_details-rf_protocol', ['rf_protocol']);
 
     // Show/hide the menu depending on whether tx_uuid is undefined
-    console.log(params)
     if (params.tx) {
         Utils.removeClassFromSelector('.app-model_details--transmitter', 'hidden');
+        Utils.addClassToSelector('.app-model_details--no-transmitter', 'hidden');
     }
     else {
         Utils.addClassToSelector('.app-model_details--transmitter', 'hidden');
+        Utils.removeClassFromSelector('.app-model_details--no-transmitter', 'hidden');
     }
 
     Utils.showPage('model_details');

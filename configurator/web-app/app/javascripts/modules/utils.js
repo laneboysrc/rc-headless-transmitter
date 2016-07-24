@@ -118,27 +118,45 @@ var buildURL = function (list) {
     return url_fragments.join('/');
 };
 
-var getUint16 = function(packet, index) {
+var getUint16 = function (packet, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.getUint16(0, true);
-}
+};
 
-var getUint32 = function(packet, index) {
+var getUint32 = function (packet, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.getUint32(0, true);
-}
+};
 
-var getInt16 = function(packet, index) {
+var getInt16 = function (packet, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.getInt16(0, true);
-}
+};
 
-var getInt32 = function(packet, index) {
+var getInt32 = function (packet, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.getInt32(0, true);
-}
+};
 
+var setUint16 = function (packet, value, index) {
+    var dv = new DataView(packet.buffer, index);
+    return dv.setUint16(0, value, true);
+};
 
+var setUint32 = function (packet, value, index) {
+    var dv = new DataView(packet.buffer, index);
+    return dv.setUint32(0, value, true);
+};
+
+var setInt16 = function (packet, value, index) {
+    var dv = new DataView(packet.buffer, index);
+    return dv.setInt16(0, value, true);
+};
+
+var setInt32 = function (packet, value, index) {
+    var dv = new DataView(packet.buffer, index);
+    return dv.setInt32(0, value, true);
+};
 
 
 var PubSub = function PubSub() {
@@ -184,6 +202,10 @@ module.exports = {
     getUint32: getUint32,
     getInt16: getInt16,
     getInt32: getInt32,
+    setUint16: setUint16,
+    setUint32: setUint32,
+    setInt16: setInt16,
+    setInt32: setInt32,
     showPage: showPage,
     buildURL: buildURL,
     PubSub: window['PubSub'] ,

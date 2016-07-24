@@ -8,6 +8,7 @@
       <span class="mdl-layout-title">Transmitters</span>
       <div class="mdl-layout-spacer"></div>
     </div>
+
   </header>
 
   <main class="mdl-layout__content" >
@@ -18,7 +19,7 @@
         <div class="mdl-card__title">
           <h2 class="mdl-card__title-text">Looking for transmitters …</h2>
         </div>
-        <div class="mdl-card__supporting-text" id="app-device_list-message">
+        <div class="mdl-card__supporting-text" id="app-device_list-loading__message">
         </div>
         <div class="mdl-card__actions mdl-card--expand">
           <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
@@ -36,13 +37,13 @@
           Select the transmitter you want to configure
         </div>
         <div class="mdl-card__actions mdl-card--border mdl-card--expand">
-          <div class="mdl-list" id="app-device_list-container">
+          <div class="mdl-list" id="app-device_list-list__container">
 
-            <template id="app-device_list-template">
+            <template id="app-device_list-list__template">
             <div class="mdl-list__item">
               <span class="mdl-list__item-primary-content">
                 <i class="material-icons mdl-list__item-icon">router</i>
-                <span id="app-device_list-template-name"></span>
+                <span id="app-device_list-list__template-name"></span>
               </span>
               <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect mdl-list__item-secondary-action" onclick="DeviceList.edit(this.getAttribute('data-index'))">
                 <i class="material-icons">mode_edit</i>
@@ -55,6 +56,25 @@
       </div>
     </section>
 
+    <!-- Loading transmitter... Card -->
+    <section class="section--center mdl-grid hidden" id="app-device_list-loading_transmitter">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text ">Loading&nbsp;<span id="app-device_list-loading_transmitter__name"></span>&nbsp;…</h2>
+        </div>
+        <div class="mdl-card__supporting-text" id="app-device_list-loading_transmitter__message">
+        </div>
+        <div class="mdl-card__actions mdl-card--expand">
+          <div class="mdl-progress mdl-js-progress no-animation" id="app-device_list-loading_transmitter__progress"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Temporary message shown when disconnected -->
+    <div id="app-device_list-toast" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button type="button" class="mdl-snackbar__action"></button>
+    </div>
 
   </main>
 </div>

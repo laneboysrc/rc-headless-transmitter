@@ -30,34 +30,49 @@ var packets = {
     CFG_READ: new Uint8Array([0x72, 0, 0, 0]),
 };
 
+var wsConnected = false;
 
 
 //*************************************************************************
 var DeviceList = function DeviceList() {
     this.loading = document.querySelector('#app-device_list-loading');
+    this.message = document.querySelector('#app-device_list-loading__message');
+
     this.list = document.querySelector('#app-device_list-list');
-    this.container = document.querySelector('#app-device_list-container');
-    this.template = document.querySelector('#app-device_list-template').content;
+    this.container = document.querySelector('#app-device_list-list__container');
+    this.template = document.querySelector('#app-device_list-list__template').content;
+
+    this.txLoading = document.querySelector('#app-device_list-loading_transmitter');
+    this.txMessage = document.querySelector('#app-device_list-loading_transmitter__message');
+    this.txProgress = document.querySelector('#app-device_list-loading_transmitter__progress');
+
+    this.mdl = new MDLHelper();
+    this.progress = {};
 
     WebsocketProtocol.addEventListener(this.on.bind(this));
 };
 
 //*************************************************************************
 DeviceList.prototype.init = function (params) {
-    var mdl = new MDLHelper();
+    this.resetPage();
 
+    Utils.showPage('device_list');
+    WebsocketProtocol.close();
+    WebsocketProtocol.open();
+};
+
+//*************************************************************************
+DeviceList.prototype.resetPage = function () {
     this.loading.classList.remove('hidden');
     this.list.classList.add('hidden');
+    this.txLoading.classList.add('hidden');
     availableTransmitters = [];
 
     // Empty the list of transmitters
-    mdl.clearDynamicElements(this.list);
-
-    mdl.setTextContentRaw('#app-device_list-message', messages.default);
-
-    Utils.showPage('device_list');
-
-    WebsocketProtocol.open();
+    this.mdl.clearDynamicElements(this.list);
+    this.message.textContent = messages.default;
+    state = STATES.IDLE;
+    wsConnected = false;
 };
 
 //*************************************************************************
@@ -71,7 +86,6 @@ DeviceList.prototype.transmitterReadyForConnect = function (data) {
     console.log('New transmitter: ' + transmitterName);
 
     var index = availableTransmitters.indexOf(transmitterName);
-    var mdl = new MDLHelper();
 
     this.list.classList.remove('hidden');
     this.loading.classList.add('hidden');
@@ -79,7 +93,7 @@ DeviceList.prototype.transmitterReadyForConnect = function (data) {
     var t = this.template;
     t.querySelector('div').classList.add('can-delete');
     t.querySelector('button').setAttribute('data-index', index);
-    mdl.setTextContentRaw('#app-device_list-template-name', transmitterName, t);
+    this.mdl.setTextContentRaw('#app-device_list-list__template-name', transmitterName, t);
 
     var clone = document.importNode(t, true);
     this.container.appendChild(clone);
@@ -87,6 +101,13 @@ DeviceList.prototype.transmitterReadyForConnect = function (data) {
 
 //*************************************************************************
 DeviceList.prototype.edit = function (index) {
+    this.mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', availableTransmitters[index]);
+
+    this.list.classList.add('hidden');
+    this.txLoading.classList.remove('hidden');
+    this.txProgress.classList.add('mdl-progress--indeterminate');
+    this.txMessage.textContent = "Connecting to the transmitter";
+
     state = STATES.CONNECTING;
     WebsocketProtocol.send(packets.CFG_REQUEST_TO_CONNECT);
 };
@@ -129,6 +150,7 @@ DeviceList.prototype.stateMachine = function (packet) {
             if (packet[0] === 0x49) {
                 state = STATES.GET_CONFIG;
 
+                // Read the configVersion
                 packet = WebsocketProtocol.makeReadPacket(0, 4);
                 WebsocketProtocol.send(packet);
             }
@@ -144,6 +166,15 @@ DeviceList.prototype.stateMachine = function (packet) {
                 packet = WebsocketProtocol.makeReadPacket(offset, 29);
                 WebsocketProtocol.send(packet);
 
+                this.progress = {};
+                this.progress.s = CONFIG_VERSIONS[configVersion]['TX'].s +
+                                  CONFIG_VERSIONS[configVersion]['MODEL'].s;
+                this.progress.o = 0;
+
+                this.txProgress.classList.remove('mdl-progress--indeterminate');
+                this.txProgress.MaterialProgress.setProgress(0);
+
+                this.txMessage.textContent = "Loading the transmitter configuration";
                 state = STATES.GET_TX;
             }
             break;
@@ -154,13 +185,17 @@ DeviceList.prototype.stateMachine = function (packet) {
                 offset = Utils.getUint16(packet, 1) - newDev.offset;
                 count = packet.length - 3;
 
-                console.log(offset, count)
+                // console.log(offset, count)
 
                 for (var i = 0; i < count; i++) {
                     newDev.data[offset + i] = packet[3 + i];
                 }
 
                 newDev.count += count;
+
+                this.progress.o += count;
+                this.txProgress.MaterialProgress.setProgress(100 * this.progress.o / this.progress.s);
+
                 if (newDev.count < newDev.size) {
                     // newDev lot fully loaded yet, so continue with the next
                     // packet
@@ -175,8 +210,6 @@ DeviceList.prototype.stateMachine = function (packet) {
                 }
                 else {
                     // newDev has been fully retrieved
-                    console.info("DEV LOADED")
-
                     configVersion = newDev.configVersion;
                     schemaName = newDev.schemaName;
                     schema = CONFIG_VERSIONS[configVersion][schemaName];
@@ -188,12 +221,14 @@ DeviceList.prototype.stateMachine = function (packet) {
                     if (state === STATES.GET_TX) {
                         dev.TX = new DBObject(newDev);
 
+                        this.txProgress.MaterialProgress.setProgress(0);
                         setupNewDevice(configVersion, 'MODEL');
 
                         offset = newDev.count + newDev.offset;
                         packet = WebsocketProtocol.makeReadPacket(offset, 29);
                         WebsocketProtocol.send(packet);
 
+                        this.txMessage.textContent = "Loading the model configuration";
                         state = STATES.GET_MODEL;
                     }
                     else {
@@ -228,16 +263,36 @@ DeviceList.prototype.on = function (event, data) {
             break;
 
         case 'onclose':
-            var mdl = new MDLHelper();
-            mdl.setTextContentRaw('#app-device_list-message', messages.noWebsocket);
-            setTimeout(WebsocketProtocol.open.bind(WebsocketProtocol), 2000);
+            if (wsConnected) {
+                showConnectionLostMessage();
+            }
+            this.resetPage();
+            this.message.textContent = messages.noWebsocket;
+
+            // Retry in 2 seconds
+            setTimeout(function () {
+                WebsocketProtocol.open();
+            }, 2000);
             break;
 
         case 'onopen':
+            wsConnected = true;
+            break;
+
         case 'onerror':
             break;
     }
 };
+
+//*************************************************************************
+function showConnectionLostMessage () {
+    var toast = document.querySelector('#app-device_list-toast');
+    var message = {
+        message: 'Connection lost',
+        timeout: 10000
+    };
+    toast.MaterialSnackbar.showSnackbar(message);
+}
 
 //*************************************************************************
 function setupNewDevice(configVersion, schemaName) {

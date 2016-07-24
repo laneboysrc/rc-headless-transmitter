@@ -7,7 +7,10 @@ var DBObject    = require('./database_object');
 
 var messages = {
     default: '',
-    noWebsocket: 'Turn on the transmitter or bridge and ensure no other configurator is accessing it'
+    noWebsocket: 'Turn on the transmitter or bridge and ensure no other configurator is accessing it',
+    loading: 'Loading the transmitter configuration',
+    model: 'Loading the model configuration',
+    connecting: 'Connecting to the transmitter',
 };
 
 var STATES = {
@@ -107,7 +110,7 @@ DeviceList.prototype.edit = function (index) {
     this.list.classList.add('hidden');
     this.txLoading.classList.remove('hidden');
     this.txProgress.classList.add('mdl-progress--indeterminate');
-    this.txMessage.textContent = "Connecting to the transmitter";
+    this.txMessage.textContent = messages.connecting;
 
     state = STATES.CONNECTING;
     WebsocketProtocol.send(packets.CFG_REQUEST_TO_CONNECT);
@@ -174,8 +177,7 @@ DeviceList.prototype.stateMachine = function (packet) {
 
                 this.txProgress.classList.remove('mdl-progress--indeterminate');
                 this.txProgress.MaterialProgress.setProgress(0);
-
-                this.txMessage.textContent = "Loading the transmitter configuration";
+                this.txMessage.textContent = messages.loading;
                 state = STATES.GET_TX;
             }
             break;
@@ -219,14 +221,13 @@ DeviceList.prototype.stateMachine = function (packet) {
                     if (state === STATES.GET_TX) {
                         dev.TX = new DBObject(newDev);
 
-                        this.txProgress.MaterialProgress.setProgress(0);
                         setupNewDevice(configVersion, 'MODEL');
 
                         offset = newDev.count + newDev.offset;
                         packet = WebsocketProtocol.makeReadPacket(offset, 29);
                         WebsocketProtocol.send(packet);
 
-                        this.txMessage.textContent = "Loading the model configuration";
+                        this.txMessage.textContent = messages.model;
                         state = STATES.GET_MODEL;
                     }
                     else {

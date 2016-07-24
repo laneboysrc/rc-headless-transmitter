@@ -71,8 +71,6 @@
 
 - Splash screen
 
-- Fix glitch in progress bar when switching from tx to model
-
 - use event.cancelBubble wherever we want to click on a card to trigger a button
 - Use input event on slider as it is active during sliding.
 

@@ -4,16 +4,25 @@ var Utils       = require('./utils');
 var DBObject    = require('./database_object');
 
 
-var Main = function () {};
+//*************************************************************************
+var Main = function () {
+};
 
+//*************************************************************************
+Main.prototype.init = function () {
+    dev.MODEL = undefined;
+    dev.TX = undefined;
+
+    Utils.showPage('main');
+}
+
+//*************************************************************************
 Main.prototype.connect = function () {
     console.log('connect: loading dev.TX and dev.MODEL');
 
     var count = 2;
     var topic = 'main.entryRetrieved';
 
-    dev.MODEL = undefined;
-    dev.TX = undefined;
 
     Database.getEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (data) {
         dev.MODEL = new DBObject(data);

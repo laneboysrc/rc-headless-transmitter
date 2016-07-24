@@ -7,7 +7,7 @@ var DBObject    = require('./database_object');
 
 var routes = {
     // path: name
-    '#/': function () { Utils.showPage('main'); },
+    '#/': Main,
     '#/about': function () { Utils.showPage('about'); },
     '#/device_list': DeviceList,
     '#/edit_curve/:offset/m/:model(/t/:tx)': EditCurve,

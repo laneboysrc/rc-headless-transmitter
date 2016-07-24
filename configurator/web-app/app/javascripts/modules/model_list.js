@@ -14,6 +14,7 @@ var ModelList = function () {
     this.template = document.querySelector('#app-model_list-list__template').content;
 
     this.mode = 'edit';
+
 };
 
 //*************************************************************************
@@ -26,6 +27,8 @@ ModelList.prototype.init = function (params) {
     }
     this.updateItemVisibility();
 
+    dev.MODEL = undefined;
+    dev.TX = undefined;
     models = [];
     mdl.clearDynamicElements(this.list);
 

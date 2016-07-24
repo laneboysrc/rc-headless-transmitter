@@ -27,6 +27,7 @@
     "EditCurve": true,
     "EditSwitch": true,
     "Limits": true,
+    "Main": true,
     "Mixer": true,
     "MixerUnit": true,
     "ModelDetails": true,

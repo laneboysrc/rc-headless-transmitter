@@ -286,6 +286,7 @@ DeviceList.prototype.on = function (event, data) {
 
 //*************************************************************************
 function showConnectionLostMessage () {
+    // FIXME: the 'toast; should be one element for the whole app!
     var toast = document.querySelector('#app-device_list-toast');
     var message = {
         message: 'Connection lost',

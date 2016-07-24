@@ -14,7 +14,7 @@ typedef enum {
 } rf_protocol_type_t;
 
 typedef struct {
-    uint8_t uuid[16];
+    uint8_t uuid[8];
     char name[16];
     uint32_t last_changed;
     uint32_t tag;               // For use by the configurator internally
@@ -29,7 +29,7 @@ typedef struct {
 } tx_t;
 
 typedef struct {
-    uint8_t uuid[16];
+    uint8_t uuid[8];
     char name[16];
     uint32_t last_changed;
     uint32_t tag;               // For use by the configurator internally

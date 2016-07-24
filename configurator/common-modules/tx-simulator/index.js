@@ -263,7 +263,10 @@ function start () {
     console.log('Simulator: Headless TX bridged over Websocket');
     console.log('=============================================');
 
-    var tx_name = new Uint8Array(testData.buffer, 20, 16);
+    var nameOffset = 4 + 8;     // Skip CONFIG_VERSION and UUID
+    var nameLength = 16;
+
+    var tx_name = new Uint8Array(testData.buffer, nameOffset, nameLength);
     var battery_mv = 3897;      // Simulated battery voltage of 3.897 V
     packets.TX_FREE_TO_CONNECT = buildFreeToConnectPacket(tx_name, battery_mv);
 

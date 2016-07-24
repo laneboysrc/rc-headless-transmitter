@@ -14,7 +14,7 @@ Main.prototype.init = function () {
     dev.TX = undefined;
 
     Utils.showPage('main');
-}
+};
 
 //*************************************************************************
 Main.prototype.connect = function () {
@@ -24,13 +24,13 @@ Main.prototype.connect = function () {
     var topic = 'main.entryRetrieved';
 
 
-    Database.getEntry('c91cabaa-44c9-11e6-9bc2-03ac25e30b5b', function (data) {
+    Database.getEntry('c91c-abaa-44c9-11e6', function (data) {
         dev.MODEL = new DBObject(data);
         console.log('main: dev.MODEL loaded');
         Utils.PubSub.publish(topic);
     });
 
-    Database.getEntry('43538fe8-44c9-11e6-9f17-af7be9c4479e', function (data) {
+    Database.getEntry('4353-8fe8-44c9-11e6', function (data) {
         dev.TX = new DBObject(data);
         console.log('main: dev.TX loaded');
         Utils.PubSub.publish(topic);

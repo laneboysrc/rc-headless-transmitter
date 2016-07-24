@@ -26,6 +26,7 @@
 
 ## configurator
 - Offline mode
+
 - Database syncing
   - Which protocol?
     - File storage using JSON?
@@ -38,41 +39,45 @@
 
 - Show which src labels are supported by the transmitter when selecting items
 
-- Use addEventListener instead onclick and such
-  - Add event listeners in MDLHelper, but watch out when revisiting the page
-- Use input even on slider as it is active during sliding.
 
 - Delete mixer units
   - Requires rearranging other mixers
 - Add mixer units
   - Requires rearranging of the mixer unit order
-- Add models
 - Load models into the transmitter
-- Add settings page to configure things like sync URL
-
-- Database: add list function that retrieves entries for a given schema, with
-  configurable values to retrieve (e.g. name, tag, ...)
-  - Works async as it directly accesses the storage
+- Add model
+- Delete model
+- Delete transmitter
+- Live stick/switch/output view
+- Show battery voltage on device_list
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
+
+
 - How do we get a description of the elements in the configuration?
+
+- Rework configurator protocol to use UUID so that we know to which device
+  we want to connect
+
+- Instead of sending all hop channels, send a seed and max-channel and use
+  a LFSR (0..125 range)
 
 
 - Create live_t that describes live inputs sent to the configurator. It compises
   all `src_label_t` inputs, but also switch values, trim values, and others
   such as battery voltage.
 
-- Splash screen
-
-- Change to 8 byte UUID
-
-- Rework configurator protocol to use UUID so that we know to which device
-  we want to connect
-
-- Fix glitch in progress bar when switching from tx to model
 
 - Check all packet/data sizes in configurator.md and fix simulator
 
-- use event.cancelBubble wherever we want to click on a card to trigger a button
+- Splash screen
 
+- Fix glitch in progress bar when switching from tx to model
+
+- use event.cancelBubble wherever we want to click on a card to trigger a button
+- Use input event on slider as it is active during sliding.
+
+- FIX: we can not have ids within templates as this will lead to duplicates
+
+- Add model icon data

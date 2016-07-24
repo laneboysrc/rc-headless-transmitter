@@ -6,9 +6,9 @@
 // '#/select_single/m/:devName/:item/:offset/:model'
 // '#/select_single/t/:devName/:item/:offset/:tx'
 //
-// With a URL of /#/select_single/t/MODEL/MIXER_UNITS_SRC/0/uuid4
+// With a URL of /#/select_single/t/MODEL/MIXER_UNITS_SRC/0/uuid
 // the params object has a 'model' and 'tx' parameter, both with the value of
-// 'uuid4'
+// 'uuid'
 
 var Path = {
     'version': "0.8.4-LANEBOYSRC",

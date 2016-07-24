@@ -11,6 +11,7 @@ var uuid2string = function (uuid_bytes) {
 
     result += this.byte2string(uuid_bytes[0]);
     result += this.byte2string(uuid_bytes[1]);
+    result += '-';
     result += this.byte2string(uuid_bytes[2]);
     result += this.byte2string(uuid_bytes[3]);
     result += '-';
@@ -19,44 +20,25 @@ var uuid2string = function (uuid_bytes) {
     result += '-';
     result += this.byte2string(uuid_bytes[6]);
     result += this.byte2string(uuid_bytes[7]);
-    result += '-';
-    result += this.byte2string(uuid_bytes[8]);
-    result += this.byte2string(uuid_bytes[9]);
-    result += '-';
-    result += this.byte2string(uuid_bytes[10]);
-    result += this.byte2string(uuid_bytes[11]);
-    result += this.byte2string(uuid_bytes[12]);
-    result += this.byte2string(uuid_bytes[13]);
-    result += this.byte2string(uuid_bytes[14]);
-    result += this.byte2string(uuid_bytes[15]);
 
     return result;
 };
 
 var string2uuid = function (s) {
-    // "c91cabaa-44c9-11e6-9bc2-03ac25e30b5b"
+    // "c91c-abaa-44c9-11e6"
     var result = new Uint8Array(16);
 
     result[0] = parseInt(s.slice(0, 2), 16);
     result[1] = parseInt(s.slice(2, 4), 16);
-    result[2] = parseInt(s.slice(4, 6), 16);
-    result[3] = parseInt(s.slice(6, 8), 16);
 
-    result[4] = parseInt(s.slice(9, 11), 16);
-    result[5] = parseInt(s.slice(11, 13), 16);
+    result[2] = parseInt(s.slice(5, 7), 16);
+    result[3] = parseInt(s.slice(7, 9), 16);
 
-    result[6] = parseInt(s.slice(14, 16), 16);
-    result[7] = parseInt(s.slice(16, 18), 16);
+    result[4] = parseInt(s.slice(10, 12), 16);
+    result[5] = parseInt(s.slice(12, 14), 16);
 
-    result[8] = parseInt(s.slice(19, 21), 16);
-    result[9] = parseInt(s.slice(21, 23), 16);
-
-    result[10] = parseInt(s.slice(24, 26), 16);
-    result[11] = parseInt(s.slice(26, 28), 16);
-    result[12] = parseInt(s.slice(28, 30), 16);
-    result[13] = parseInt(s.slice(30, 32), 16);
-    result[14] = parseInt(s.slice(32, 34), 16);
-    result[15] = parseInt(s.slice(34, 36), 16);
+    result[6] = parseInt(s.slice(15, 17), 16);
+    result[7] = parseInt(s.slice(17, 19), 16);
 
     return result;
 };

@@ -101,7 +101,7 @@ DBObject.prototype.getSchema = function () {
 //  u': unsigned integer
 //      'i': signed integer
 //      'c': string (Note: may not be 0 terminated if it fills the element)
-//      'uuid': 128-bit (16 bytes) universally unique identifier
+//      'uuid': 64-bit (7 bytes) universally unique identifier
 //      <any other value>: refers to named elements in this.config.TYPES[],
 //          which correspond to enums in the firmware.
 //

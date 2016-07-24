@@ -76,7 +76,7 @@ void CONFIG_dump_javascript_information(void)
 
     print_separator();
 
-    sync_printf("const CONFIG_VERSIONS = {   // jshint ignore:line\n"
+    sync_printf("var CONFIG_VERSIONS = {\n"
         "    1: {\n"
         "        // Legend:\n"
         "        // o: offset with the parent structure\n"
@@ -87,7 +87,7 @@ void CONFIG_dump_javascript_information(void)
         "        //   'u': unsigned integer\n"
         "        //   'i': signed integer\n"
         "        //   'c': string (Note: may not be 0 terminated if it fills the element)\n"
-        "        //   'uuid': 128-bit (16 bytes) universally unique identifier\n"
+        "        //   'uuid': 64-bit (8 bytes) universally unique identifier\n"
         "        //   'CONFIG': schema describes the overall config structure\n"
         "        //   'TX': schema describes a transmitter\n"
         "        //   'MODEL': schema describes a model\n"

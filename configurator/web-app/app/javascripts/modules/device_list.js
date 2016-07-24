@@ -97,7 +97,7 @@ DeviceList.prototype.transmitterReadyForConnect = function (data) {
     var t = this.template;
     t.querySelector('div').classList.add('can-delete');
     t.querySelector('button').setAttribute('data-index', index);
-    this.mdl.setTextContentRaw('#app-device_list-list__template-name', transmitterName, t);
+    this.mdl.setTextContentRaw('.app-device_list-list__template-name', transmitterName, t);
 
     var clone = document.importNode(t, true);
     this.container.appendChild(clone);

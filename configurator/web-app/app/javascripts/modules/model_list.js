@@ -64,7 +64,7 @@ ModelList.prototype.updateModelList = function () {
     for (var i = 0; i < models.length; i += 1) {
         t.querySelector('div').classList.add('can-delete');
         t.querySelector('button').setAttribute('data-index', i);
-        mdl.setTextContentRaw('#app-model_list-list__template-name', models[i].name, t);
+        mdl.setTextContentRaw('.app-model_list-list__template-name', models[i].name, t);
 
         var clone = document.importNode(t, true);
         this.container.appendChild(clone);

@@ -73,6 +73,4 @@
 
 - Use input event on slider as it is active during sliding.
 
-- FIX: we can not have ids within templates as this will lead to duplicates
-
 - Add model icon data

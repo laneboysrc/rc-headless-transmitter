@@ -35,11 +35,11 @@ Mixer.prototype.init = function (params) {
 
         var t = this.template;
         t.querySelector('tr').classList.add('can-delete');
-        mdl.setTextContent('#app-mixer-template-src', 'MIXER_UNITS_SRC', t);
-        mdl.setTextContent('#app-mixer-template-dst', 'MIXER_UNITS_DST', t);
-        mdl.setTextContentRaw('#app-mixer-template-mixer_unit', curve, t);
-        mdl.setDataURL('#app-mixer-template-mixer_unit', ['mixer_unit', i], t);
-        mdl.setDataURL('#app-mixer-template-dst', ['limits', dst], t);
+        mdl.setTextContent('.app-mixer-template-src', 'MIXER_UNITS_SRC', t);
+        mdl.setTextContent('.app-mixer-template-dst', 'MIXER_UNITS_DST', t);
+        mdl.setTextContentRaw('.app-mixer-template-mixer_unit', curve, t);
+        mdl.setDataURL('.app-mixer-template-mixer_unit', ['mixer_unit', i], t);
+        mdl.setDataURL('.app-mixer-template-dst', ['limits', dst], t);
 
         var clone = document.importNode(t, true);
         this.mixer_list.appendChild(clone);

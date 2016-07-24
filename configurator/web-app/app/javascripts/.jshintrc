@@ -30,9 +30,11 @@
     "Mixer": true,
     "MixerUnit": true,
     "ModelDetails": true,
+    "ModelList": true,
     "Path": true,
     "RFProtocol": true,
     "SelectSingle": true,
+    "TransmitterList": true,
 
     "TEST_CONFIG_DATA": true,
     "CONFIG_VERSIONS": true

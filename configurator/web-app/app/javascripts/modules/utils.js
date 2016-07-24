@@ -106,6 +106,7 @@ var buildURL = function (list) {
 
     url_fragments = url_fragments.concat(list);
 
+    // FIXME: document why we need this...
     if (dev.MODEL && dev.MODEL.uuid) {
         url_fragments.push('m');
         url_fragments.push(dev.MODEL.uuid);
@@ -164,6 +165,20 @@ var newUUID = function () {
     return uuid_bytes;
 };
 
+var addClassToSelector = function (selector, _class) {
+    var items = document.querySelectorAll(selector);
+    for (var i = 0; i < items.length; ++i) {
+        items[i].classList.add(_class);
+    }
+};
+
+var removeClassFromSelector = function (selector, _class) {
+    var items = document.querySelectorAll(selector);
+    for (var i = 0; i < items.length; ++i) {
+        items[i].classList.remove(_class);
+    }
+};
+
 
 
 var PubSub = function PubSub() {
@@ -199,22 +214,24 @@ PubSub.prototype.removeTopic =  function (topic) {
 window['PubSub'] = window['PubSub'] || new PubSub();
 
 module.exports = {
-    newUUID: newUUID,
+    addClassToSelector: addClassToSelector,
+    buildURL: buildURL,
     byte2string: byte2string,
-    uuid2string: uuid2string,
-    string2uuid: string2uuid,
-    uint8array2string: uint8array2string,
-    string2uint8array: string2uint8array,
-    isNumber: isNumber,
-    getUint16: getUint16,
-    getUint32: getUint32,
     getInt16: getInt16,
     getInt32: getInt32,
-    setUint16: setUint16,
-    setUint32: setUint32,
+    getUint16: getUint16,
+    getUint32: getUint32,
+    isNumber: isNumber,
+    newUUID: newUUID,
+    removeClassFromSelector: removeClassFromSelector,
     setInt16: setInt16,
     setInt32: setInt32,
+    setUint16: setUint16,
+    setUint32: setUint32,
     showPage: showPage,
-    buildURL: buildURL,
+    string2uint8array: string2uint8array,
+    string2uuid: string2uuid,
+    uint8array2string: uint8array2string,
+    uuid2string: uuid2string,
     PubSub: window['PubSub'] ,
 };

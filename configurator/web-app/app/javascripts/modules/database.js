@@ -7,6 +7,7 @@ var TEST_CONFIG_DATA    = require('test-data');
 var DATABASE_NAME = 'HeadlessTX';
 var STORE_NAME = 'Models and Transmitters';
 
+//*************************************************************************
 var Database = function (data) {
     this.db = undefined;
 
@@ -46,10 +47,12 @@ var Database = function (data) {
 };
 
 
+//*************************************************************************
 Database.prototype.isReady = function () {
     return (!!this.db);
 };
 
+//*************************************************************************
 Database.prototype.getEntry = function (uuid, callback) {
     // console.log("Database: getEntry()");
     var request = this.db.transaction(STORE_NAME)
@@ -67,6 +70,7 @@ Database.prototype.getEntry = function (uuid, callback) {
     };
 };
 
+//*************************************************************************
 Database.prototype.setEntry = function (data, callback) {
     // console.log("Database: setEntry()");
     var request = this.db.transaction(STORE_NAME, 'readwrite')
@@ -88,7 +92,20 @@ Database.prototype.setEntry = function (data, callback) {
     };
 };
 
+//*************************************************************************
+Database.prototype.listEntries = function (callback) {
+    var objectStore = this.db.transaction(STORE_NAME).objectStore(STORE_NAME);
 
+    objectStore.openCursor().onsuccess = function (event) {
+        var cursor = event.target.result;
+        if (callback) {
+            callback(cursor);
+        }
+    };
+};
+
+
+//*************************************************************************
 function addTestData(db) {
     console.log("addTestData()");
 

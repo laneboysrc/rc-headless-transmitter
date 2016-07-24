@@ -7,15 +7,17 @@ require('./device');
 
 // Singletons for pages
 require('./main');
-require('./mixer');
 require('./device_list');
-require('./mixer_unit');
-require('./model_details');
-require('./rf_protocol');
-require('./select_single');
-require('./limits');
 require('./edit_curve');
 require('./edit_switch');
+require('./limits');
+require('./mixer');
+require('./mixer_unit');
+require('./model_details');
+require('./model_list');
+require('./rf_protocol');
+require('./select_single');
+require('./transmitter_list');
 
 // All loaded, start routing!
 require('./routes');

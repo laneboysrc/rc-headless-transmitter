@@ -10,13 +10,15 @@ var routes = {
     '#/': function () { Utils.showPage('main'); },
     '#/about': function () { Utils.showPage('about'); },
     '#/device_list': DeviceList,
-    '#/model_details/m/:model(/t/:tx)': ModelDetails,
-    '#/mixer/m/:model(/t/:tx)': Mixer,
-    '#/mixer_unit/:index/m/:model(/t/:tx)': MixerUnit,
     '#/edit_curve/:offset/m/:model(/t/:tx)': EditCurve,
     '#/edit_switch/:offset/m/:model(/t/:tx)': EditSwitch,
     '#/limits/:channel/m/:model(/t/:tx)': Limits,
+    '#/mixer/m/:model(/t/:tx)': Mixer,
+    '#/mixer_unit/:index/m/:model(/t/:tx)': MixerUnit,
+    '#/model_details/m/:model(/t/:tx)': ModelDetails,
+    '#/model_list(/t/:tx)': ModelList,
     '#/rf_protocol/m/:model(/t/:tx)': RFProtocol,
+    '#/transmitter_list': TransmitterList,
 
     // We need two entries to be able to match the four combinations of
     // uuid availability (none, model, tx, model+tx)

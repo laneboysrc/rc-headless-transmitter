@@ -11,12 +11,26 @@ var messages = {
 };
 
 var STATES = {
-    idle: 'idle',
-    connecting: 'connecting',
-    getConfig: 'getConfig',
-    getModel: 'getModel',
-    getTx: 'getTx'
+    IDLE: 'IDLE',
+    CONNECTING: 'CONNECTING',
+    GET_CONFIG: 'GET_CONFIG',
+    GET_MODEL: 'GET_MODEL',
+    GET_TX: 'GET_TX'
 };
+
+var availableTransmitters = [];
+var state = STATES.idle;
+var newDev = {};
+var packets = {
+    CFG_REQUEST_TO_CONNECT: new Uint8Array([
+        0x31,
+        0x12, 0x13, 0x14, 0x15, 0x16,
+        0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+        0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]),
+    CFG_READ: new Uint8Array([0x72, 0, 0, 0]),
+};
+
+
 
 //*************************************************************************
 var DeviceList = function DeviceList() {
@@ -24,11 +38,6 @@ var DeviceList = function DeviceList() {
     this.list = document.querySelector('#app-device_list-list');
     this.container = document.querySelector('#app-device_list-container');
     this.template = document.querySelector('#app-device_list-template').content;
-    this.availableTransmitters = [];
-    this.state = STATES.idle;
-    this.count = 0;
-    this.tx = undefined;
-    this.model = undefined;
 
     WebsocketProtocol.addEventListener(this.on.bind(this));
 };
@@ -39,7 +48,7 @@ DeviceList.prototype.init = function (params) {
 
     this.loading.classList.remove('hidden');
     this.list.classList.add('hidden');
-    this.availableTransmitters = [];
+    availableTransmitters = [];
 
     // Empty the list of transmitters
     mdl.clearDynamicElements(this.list);
@@ -54,14 +63,14 @@ DeviceList.prototype.init = function (params) {
 //*************************************************************************
 DeviceList.prototype.transmitterReadyForConnect = function (data) {
     var transmitterName = Utils.uint8array2string(data.slice(1, 16 + 1));
-    if (this.availableTransmitters.indexOf(transmitterName) >= 0) {
+    if (availableTransmitters.indexOf(transmitterName) >= 0) {
         return;
     }
-    this.availableTransmitters.push(transmitterName);
+    availableTransmitters.push(transmitterName);
 
     console.log('New transmitter: ' + transmitterName);
 
-    var index = this.availableTransmitters.indexOf(transmitterName);
+    var index = availableTransmitters.indexOf(transmitterName);
     var mdl = new MDLHelper();
 
     this.list.classList.remove('hidden');
@@ -78,158 +87,97 @@ DeviceList.prototype.transmitterReadyForConnect = function (data) {
 
 //*************************************************************************
 DeviceList.prototype.edit = function (index) {
-    this.state = STATES.connecting;
-
-    var packet = new Uint8Array([
-        0x31,
-        0x12, 0x13, 0x14, 0x15, 0x16,
-        0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
-        0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]);
-
-    WebsocketProtocol.send(packet);
+    state = STATES.CONNECTING;
+    WebsocketProtocol.send(packets.CFG_REQUEST_TO_CONNECT);
 };
 
 //*************************************************************************
 DeviceList.prototype.stateMachine = function (packet) {
-    var bo;
+    var configVersion;
+    var offset;
+    var count;
+    var schemaName;
+    var schema;
+    var uuid_bytes;
 
-    switch (this.state) {
-        case STATES.connecting:
+    switch (state) {
+        case STATES.CONNECTING:
             if (packet[0] === 0x49) {
-                this.state = STATES.getConfig;
+                state = STATES.GET_CONFIG;
 
-                WebsocketProtocol.send(new Uint8Array([
-                    0x72, 0x00, 0x00, 4
-                ]));
+                packet = WebsocketProtocol.makeReadPacket(0, 4);
+                WebsocketProtocol.send(packet);
             }
             break;
 
-        case STATES.getConfig:
+        case STATES.GET_CONFIG:
             if (packet[0] === 0x52) {
-                var version = Utils.getUint32(packet, 3);
-                console.log('version=' + version);
+                configVersion = Utils.getUint32(packet, 3);
 
-                this.count = 0;
-                this.size = CONFIG_VERSIONS[1].TX.s;
-                this.offset = CONFIG_VERSIONS[1].TX.o;
-                this.tx = new Uint8Array(this.size);
+                setupNewDevice(configVersion, 'TX');
 
-                bo = this.count + this.offset;
-                WebsocketProtocol.send(new Uint8Array([
-                    0x72, bo % 256, parseInt(bo / 256), 29
-                ]));
+                offset = newDev.count + newDev.offset;
+                packet = WebsocketProtocol.makeReadPacket(offset, 29);
+                WebsocketProtocol.send(packet);
 
-                this.state = STATES.getTx;
+                state = STATES.GET_TX;
             }
             break;
 
-        case STATES.getTx:
+        case STATES.GET_TX:
+        case STATES.GET_MODEL:
             if (packet[0] === 0x52) {
-                var offset = Utils.getUint16(packet, 1) - this.offset;
-                var count = packet.length - 3;
+                offset = Utils.getUint16(packet, 1) - newDev.offset;
+                count = packet.length - 3;
 
-                console.log(offset, count);
+                console.log(offset, count)
 
                 for (var i = 0; i < count; i++) {
-                    this.tx[offset + i] = packet[3 + i];
+                    newDev.data[offset + i] = packet[3 + i];
                 }
 
-                this.count += count;
-                if (this.count < this.size) {
-                    bo = this.count + this.offset;
+                newDev.count += count;
+                if (newDev.count < newDev.size) {
+                    // newDev lot fully loaded yet, so continue with the next
+                    // packet
 
-                    var n = this.size - this.count;
-                    if (n > 29) {
-                        n = 29;
-                    }
+                    // makeReadPacket clamps count to 29, so we don't have to
+                    // worry about that here
+                    count = newDev.size - newDev.count;
+                    offset = newDev.count + newDev.offset;
 
-                    WebsocketProtocol.send(new Uint8Array([
-                        0x72, bo % 256, parseInt(bo / 256), n
-                    ]));
-                }
-                else {
-                    console.info("TX LOADED!")
-
-                    var schema = CONFIG_VERSIONS[1].TX;
-
-                    var uuid_bytes = new Uint8Array(this.tx, schema['UUID'].o, schema['UUID'].s);
-                    var uuid = Utils.uuid2string(uuid_bytes);
-
-                    var data_to_add = {
-                        data: this.tx,
-                        uuid: uuid,
-                        schemaName: 'TX',
-                        configVersion: 1,
-                        lastChanged: 0      // FIXME: read from data
-                    };
-
-                    dev.TX = new DBObject(data_to_add);
-
-
-                    this.count = 0;
-                    this.size = CONFIG_VERSIONS[1].MODEL.s;
-                    this.offset = CONFIG_VERSIONS[1].MODEL.o;
-                    this.model = new Uint8Array(this.size);
-
-                    bo = this.count + this.offset;
-                    WebsocketProtocol.send(new Uint8Array([
-                        0x72, bo % 256, parseInt(bo / 256), 29
-                    ]));
-
-                    this.state = STATES.getModel;
-
-                }
-            }
-            break;
-
-
-        case STATES.getModel:
-            if (packet[0] === 0x52) {
-                var offset = Utils.getUint16(packet, 1) - this.offset;
-                var count = packet.length - 3;
-
-                console.log(offset, count);
-
-                for (var i = 0; i < count; i++) {
-                    this.model[offset + i] = packet[3 + i];
-                }
-
-                this.count += count;
-                if (this.count < this.size) {
-                    bo = this.count + this.offset;
-
-                    var n = this.size - this.count;
-                    if (n > 29) {
-                        n = 29;
-                    }
-
-                    WebsocketProtocol.send(new Uint8Array([
-                        0x72, bo % 256, parseInt(bo / 256), n
-                    ]));
+                    packet = WebsocketProtocol.makeReadPacket(offset, count);
+                    WebsocketProtocol.send(packet);
                 }
                 else {
-                    console.info("MODEL LOADED!")
+                    // newDev has been fully retrieved
+                    console.info("DEV LOADED")
 
-                    var schema = CONFIG_VERSIONS[1].MODEL;
+                    configVersion = newDev.configVersion;
+                    schemaName = newDev.schemaName;
+                    schema = CONFIG_VERSIONS[configVersion][schemaName];
 
-                    var uuid_bytes = new Uint8Array(this.model, schema['UUID'].o, schema['UUID'].s);
-                    var uuid = Utils.uuid2string(uuid_bytes);
+                    uuid_bytes = new Uint8Array(newDev.data, schema['UUID'].o, schema['UUID'].s);
+                    newDev.uuid = Utils.uuid2string(uuid_bytes);
+                    newDev.lastChanged = Utils.getUint32(newDev.data, schema['LAST_CHANGED'].o);
 
-                    var data_to_add = {
-                        data: this.model,
-                        uuid: uuid,
-                        schemaName: 'MODEL',
-                        configVersion: 1,
-                        lastChanged: 0      // FIXME: read from data
-                    };
+                    if (state === STATES.GET_TX) {
+                        dev.TX = new DBObject(newDev);
 
-                    dev.MODEL = new DBObject(data_to_add);
+                        setupNewDevice(configVersion, 'MODEL');
 
-                    this.state = STATES.idle;
+                        offset = newDev.count + newDev.offset;
+                        packet = WebsocketProtocol.makeReadPacket(offset, 29);
+                        WebsocketProtocol.send(packet);
 
-                    location.hash = Utils.buildURL(['model_details']);
+                        state = STATES.GET_MODEL;
+                    }
+                    else {
+                        dev.MODEL = new DBObject(newDev);
+                        state = STATES.IDLE;
 
-
+                        location.hash = Utils.buildURL(['model_details']);
+                    }
                 }
             }
             break;
@@ -237,9 +185,7 @@ DeviceList.prototype.stateMachine = function (packet) {
         default:
             break;
     }
-
-}
-
+};
 
 //*************************************************************************
 // Receives Websocket messages
@@ -248,6 +194,8 @@ DeviceList.prototype.on = function (event, data) {
 
     switch(event) {
         case 'onmessage':
+            // FIXME: handle situation when we return to that page while already
+            // connected to a transmitter
             if (data[0] === 0x30) {
                 this.transmitterReadyForConnect(data);
             }
@@ -267,5 +215,17 @@ DeviceList.prototype.on = function (event, data) {
     }
 };
 
+//*************************************************************************
+function setupNewDevice(configVersion, schemaName) {
+    newDev = {};
+
+    newDev.count = 0;
+    newDev.size = CONFIG_VERSIONS[configVersion][schemaName].s;
+    newDev.offset = CONFIG_VERSIONS[configVersion][schemaName].o;
+
+    newDev.configVersion = configVersion;
+    newDev.schemaName = schemaName;
+    newDev.data = new Uint8Array(newDev.size);
+}
 
 window['DeviceList'] = new DeviceList();

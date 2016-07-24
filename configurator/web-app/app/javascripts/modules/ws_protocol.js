@@ -72,7 +72,20 @@ WebsocketProtocol.prototype.sendCfgPacket_ = function () {
 //*************************************************************************
 WebsocketProtocol.prototype.send = function (packet) {
     this.cfgPacket = packet;
-}
+};
+
+//*************************************************************************
+WebsocketProtocol.prototype.makeReadPacket = function (offset, count) {
+    if (count > 29) {
+        count = 29;
+    }
+
+    var packet = new Uint8Array([0x72, 0, 0, 0]);
+    Utils.setUint16(packet, offset, 1);
+    packet[3] = count;
+    return packet;
+};
+
 
 
 //*************************************************************************

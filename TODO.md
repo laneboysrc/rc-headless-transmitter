@@ -78,3 +78,5 @@
 - Too many connection lost toast messages are shown
 
 - Websocket is not always closed when returning for some reason
+
+- checkout beforeinstallprompt in manifest.json

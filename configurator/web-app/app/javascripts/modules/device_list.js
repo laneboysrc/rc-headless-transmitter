@@ -119,7 +119,9 @@ DeviceList.prototype.edit = function (index) {
 //*************************************************************************
 // connect to the transmitter
 // retrieve configVersion
-//
+// if we don't know this configVersion
+//    send disconnect command
+//    abort (reset the pagge)
 // load TX UUID
 // if TX UUID is not set
 //     generate new UUID

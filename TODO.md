@@ -80,3 +80,5 @@
 - Websocket is not always closed when returning for some reason
 
 - checkout beforeinstallprompt in manifest.json
+
+- Refactor using Babel, and Promises

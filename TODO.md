@@ -59,6 +59,7 @@
 
 - Rework configurator protocol to use UUID so that we know to which device
   we want to connect
+- Make configurator protocol write response return byte count
 
 - Instead of sending all hop channels, send a seed and max-channel and use
   a LFSR (0..125 range)

@@ -41,6 +41,14 @@ const common = {
         test: specialImages,
         loaders: ['file?name=[name].[ext]'],
         include: PATHS.app
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+        query: {
+          presets: ['es2015']
+        }
       }
     ]
   },
@@ -75,7 +83,7 @@ switch(process.env.npm_lifecycle_event) {
     config = merge(
       common,
       {
-        devtool: 'eval-source-map'
+        devtool: 'source-map'
       },
       parts.setupCSS(PATHS.app),
       parts.setupImages(PATHS.app),

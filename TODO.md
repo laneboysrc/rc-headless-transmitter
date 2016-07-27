@@ -82,4 +82,4 @@
 
 - checkout beforeinstallprompt in manifest.json
 
-- Refactor using Babel, and Promises
+- Refactor using Babel, and Promises, and Error object, TypeError when WS is not blob

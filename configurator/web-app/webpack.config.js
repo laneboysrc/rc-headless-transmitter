@@ -21,7 +21,7 @@ const specialImages = /\W(((apple-touch-icon|android-chrome-192x192|favicon-16x1
 // Common configuration that applies to all modes (development, build ...)
 const common = {
   entry: {
-    app: PATHS.app,
+    app: ['babel-polyfill', PATHS.app]
   },
   output: {
     path: PATHS.build,

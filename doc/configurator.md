@@ -590,3 +590,14 @@ The *configurator* must emulate the nRF protocol with respect to master/slave:
 ## Websocket protocol
 
 The *Websocket protocol* runs on port **9706**.
+
+Algorithm to deal with lost and delayed packets
+
+- Start out with an empty array of pending requests <pr>
+- On every received packet, do:
+    - if packet is in <pr>, remove from <pr>
+    - if <pr> has less than 2 entries:
+        send next request and add request to <pr>
+    - if <pr> has 2 entries:
+        - resend first entry
+

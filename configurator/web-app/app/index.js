@@ -17,4 +17,6 @@ require('./static/browserconfig.xml');
 
 
 // Pull in all application modules
+// Actually this pulls in modules/index.js, which in turn requires all app
+// modules
 require('./modules');

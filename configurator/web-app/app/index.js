@@ -17,4 +17,4 @@ require('./static/browserconfig.xml');
 
 
 // Pull in all application modules
-require('./javascripts/modules');
+require('./modules');

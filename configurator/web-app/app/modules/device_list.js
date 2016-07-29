@@ -114,6 +114,8 @@ DeviceList.prototype.edit = function (index) {
 
     state = STATES.CONNECTING;
     WebsocketProtocol.send(packets.CFG_REQUEST_TO_CONNECT);
+
+    // this.load(FIXME-get-uuid);
 };
 
 //*************************************************************************
@@ -122,27 +124,120 @@ DeviceList.prototype.edit = function (index) {
 // if we don't know this configVersion
 //    send disconnect command
 //    abort (reset the pagge)
-// load TX UUID
-// if TX UUID is not set
+// loadDevice('TX')
+// loadDevice('MODEL')
+DeviceList.prototype.load = function (uuid) {
+    var configVersion;
+
+    Device.connect().then(_ => {
+        return Device.read(0, 4);
+    }).then(data => {
+        configVersion = Utils.getUint32(data);
+        if (!CONFIG_VERSIONS.hasOwnProperty(configVersion)) {
+            return Promise.reject(
+                new Error(`Unknown configVersion "${configVersion}"`));
+        }
+        return this.loadDevice(configVersion, 'TX');
+    }).then(_ => {
+        return this.loadDevice(configVersion, 'MODEL');
+    }).then( _ => {
+        location.hash = Utils.buildURL(['model_details']);
+    }).error(err => {
+        console.log(err);
+        this.resetPage();
+    });
+};
+
+//*************************************************************************
+// load [schemaName] UUID
+// if [schemaName] UUID is not set
 //     generate new UUID
-//     write UUID to TX
-//     write LAST_CHANGED to TX
-// if TX UUID is in our database
-//     load TX LAST_CHANGED
-//     if TX LAST_CHANGED == database LAST_CHANGED
-//         load dev.TX from database
-//     else if TX LAST_CHANGED > database LAST_CHANGED
-//         load TX into dev.TX
-//         update dev.TX in database
+//     write UUID to [schemaName]
+//     write LAST_CHANGED to [schemaName]
+// if [schemaName] UUID is in our database
+//     load [schemaName] LAST_CHANGED
+//     if [schemaName] LAST_CHANGED == database LAST_CHANGED
+//         load dev.[schemaName] from database
+//     else if [schemaName] LAST_CHANGED > database LAST_CHANGED
+//         load [schemaName] into dev.[schemaName]
+//         update dev.[schemaName] in database
 //     else
-//         load dev.TX from database
-//         write dev.TX to TX
+//         load dev.[schemaName] from database
+//         write dev.[schemaName] to [schemaName]
 // else
-//     load TX into dev.TX
-//     add dev.TX to our database
-//
-// repeat same flow with MODEL
-//
+//     load [schemaName] into dev.[schemaName]
+//     add dev.[schemaName] to our database
+DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
+    const schema = CONFIG_VERSIONS[configVersion][schemaName];
+    var newDev = {};
+    var dbEntry;
+
+    newDev.configVersion = configVersion;
+    newDev.schemaName = schemaName;
+    newDev.data = new Uint8Array(newDev.size);
+
+    return Promise.resolve().then(_ => {
+        Device.read(schema['UUID'].o, schema['UUID'].s).then(data => {
+            newDev.uuid = Utils.uuid2string(data);
+            if (!Utils.isValidUUID(newDev.uuid)) {
+                newDev.uuid = Utils.newUUID();
+                return Device.write(schema['UUID'].o, schema['UUID'].s,
+                    Utils.string2uuid(newDev.uuid));
+            }
+            return Promise.resolve();
+        }).then(_ => {
+            return new Promise((resolve, reject) => {
+                Database.getEntry(newDev.uuid, data => {
+                    resolve(new DBObject(data));
+                });
+            });
+        }).then(data => {
+            dbEntry = data;
+            if (dbEntry.get('UUID') === newDev.uuid)  {
+                console.log('Device is in the database already');
+                Device.read(schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
+                    newDev.lastChanged = Utils.getUint32(data);
+                    if (newDev.lastChanged === dbEntry.lastChanged) {
+                        return Promise.resolve(dbEntry.data);
+                    }
+                    else if (newDev.lastChanged > dbEntry.lastChanged) {
+                        return this.loadDeviceData(newDev);
+                    }
+                    else {
+                        Device.write(schema.o, dbEntry.data).then(_ => {
+                            return Promise.resolve(dbEntry.data);
+                        });
+                    }
+                });
+            }
+            else {
+                return this.loadDeviceData(newDev);
+            }
+        }).then(data => {
+            newDev.data = data;
+            dev[newDev.schemaName] = newDev;
+        });
+    });
+};
+
+//*************************************************************************
+DeviceList.prototype.loadDeviceData = function (newDev) {
+    const schema = CONFIG_VERSIONS[newDev.configVersion][newDev.schemaName];
+    return new Promise((resolve, reject) => {
+        Device.read(schema.o, schema.s).then(data => {
+            newDev.data = data;
+            return new Promise((resolve, reject) => {
+                Database.getEntry(newDev.uuid, newDev, _ => {
+                    resolve(new DBObject(data));
+                });
+            });
+        });
+    });
+};
+
+
+
+//*************************************************************************
 DeviceList.prototype.stateMachine = function (packet) {
     var configVersion;
     var offset;

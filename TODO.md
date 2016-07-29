@@ -83,3 +83,8 @@
 - checkout beforeinstallprompt in manifest.json
 
 - Refactor using Babel, and Promises, and Error object, TypeError when WS is not blob
+
+- Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
+  - Database should not be a global object, but imported where needed
+    - Assuming that opening the DB repeatadly is fast
+

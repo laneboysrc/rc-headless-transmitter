@@ -15,6 +15,58 @@ var Device = function () {
     WebsocketProtocol.addEventListener(this.on.bind(this));
 };
 
+
+Device.prototype.enableCommunication = function () {
+    // start WS
+};
+
+Device.prototype.disableCommunication = function () {
+    // stop WS, kill restart timer
+};
+
+Device.prototype.addEventListener = function () {
+    // Events:
+    //    onopen
+    //    onclose
+    //    onnewdevice
+};
+
+Device.prototype.connect = function () {
+    return new Promise((resolve, reject) => {
+        reject('connect: FIXME');
+    });
+};
+
+Device.prototype.disconnect = function () {
+    return new Promise((resolve, reject) => {
+        reject('disconnect: FIXME');
+    });
+};
+
+Device.prototype.read = function (offset, count) {
+    console.log('DEVICE.read')
+    return new Promise((resolve, reject) => {
+        window.setTimeout(_ => {
+            console.log('read: FIXME');
+            resolve(new Uint8Array(8));
+        }, 5000);
+    });
+};
+
+Device.prototype.write = function (offset, data) {
+    return new Promise((resolve, reject) => {
+        console.log('write: FIXME');
+        resolve();
+    });
+};
+
+Device.prototype.copy = function (src, dst, count) {
+    return new Promise((resolve, reject) => {
+        console.log('copy: FIXME');
+        resolve();
+    });
+};
+
 //*************************************************************************
 Device.prototype.queueWrite = function (offset, data) {
     if (!this.connected) {

@@ -144,7 +144,26 @@ export function setInt32(packet, value, index) {
 export function newUUID() {
     var uuid_bytes = new Uint8Array(8);
     window.crypto.getRandomValues(uuid_bytes);
-    return uuid_bytes;
+    return uuid2string(uuid_bytes);
+}
+
+// A valid UUID is a 16 hex digits in groups of 4, separated by '-', and
+// it must not be 0000-0000-0000-0000 or ffff-ffff-ffff-ffff
+export function isValidUUID(uuid) {
+    const invalid_uuids = [
+        '0000-0000-0000-0000',
+        'ffff-ffff-ffff-ffff'
+    ];
+
+    const re = /^[\da-z]{4}\-[\da-z]{4}\-[\da-z]{4}\-[\da-z]{4}$/i;
+
+    if (re.test(uuid)) {
+        if (invalid_uuids.indexOf(uuid.toLowerCase()) < 0) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 export function addClassToSelector(selector, _class) {

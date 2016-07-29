@@ -23,6 +23,7 @@
     "Utils": true,
     "WebsocketProtocol": true,
 
+    "Device": true,
     "DeviceList": true,
     "EditCurve": true,
     "EditSwitch": true,

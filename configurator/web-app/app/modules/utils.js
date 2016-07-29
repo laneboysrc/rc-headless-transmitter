@@ -1,30 +1,30 @@
 'use strict';
 
-var byte2string = function (byte) {
+export function byte2string(byte) {
     var s = byte.toString(16);
 
     return (s.length < 2) ? ('0' + s)  : s;
-};
+}
 
-var uuid2string = function (uuid_bytes) {
+export function uuid2string(uuid_bytes) {
     var result = '';
 
-    result += this.byte2string(uuid_bytes[0]);
-    result += this.byte2string(uuid_bytes[1]);
+    result += byte2string(uuid_bytes[0]);
+    result += byte2string(uuid_bytes[1]);
     result += '-';
-    result += this.byte2string(uuid_bytes[2]);
-    result += this.byte2string(uuid_bytes[3]);
+    result += byte2string(uuid_bytes[2]);
+    result += byte2string(uuid_bytes[3]);
     result += '-';
-    result += this.byte2string(uuid_bytes[4]);
-    result += this.byte2string(uuid_bytes[5]);
+    result += byte2string(uuid_bytes[4]);
+    result += byte2string(uuid_bytes[5]);
     result += '-';
-    result += this.byte2string(uuid_bytes[6]);
-    result += this.byte2string(uuid_bytes[7]);
+    result += byte2string(uuid_bytes[6]);
+    result += byte2string(uuid_bytes[7]);
 
     return result;
-};
+}
 
-var string2uuid = function (s) {
+export function string2uuid(s) {
     // "c91c-abaa-44c9-11e6"
     var result = new Uint8Array(16);
 
@@ -41,9 +41,9 @@ var string2uuid = function (s) {
     result[7] = parseInt(s.slice(17, 19), 16);
 
     return result;
-};
+}
 
-var uint8array2string = function (bytes) {
+export function uint8array2string(bytes) {
     var result = '';
 
     for (var i = 0; i < bytes.length; i += 1) {
@@ -55,9 +55,9 @@ var uint8array2string = function (bytes) {
     }
 
     return result;
-};
+}
 
-var string2uint8array = function (s, byte_count) {
+export function string2uint8array(s, byte_count) {
     var bytes = new Uint8ClampedArray(byte_count);
     var count = s.length < byte_count ? s.length : byte_count;
 
@@ -65,14 +65,14 @@ var string2uint8array = function (s, byte_count) {
         bytes[i] = s.charCodeAt(i);
     }
     return bytes;
-};
+}
 
 // Source: http://stackoverflow.com/questions/1303646/check-whether-variable-is-number-or-string-in-javascript
-var isNumber = function (obj) {
+export function isNumber(obj) {
     return !isNaN(parseInt(obj));
-};
+}
 
-var showPage = function (name) {
+export function showPage(name) {
     // Hide all sections with class 'app-page'
     var pages = document.querySelectorAll('.app-page');
     for (var i = 0; i < pages.length; i += 1) {
@@ -81,9 +81,9 @@ var showPage = function (name) {
     }
 
     document.querySelector('#page_' + name).classList.remove('hidden');
-};
+}
 
-var buildURL = function (list) {
+export function buildURL(list) {
     var url_fragments = ['#'];
 
     url_fragments = url_fragments.concat(list);
@@ -99,67 +99,67 @@ var buildURL = function (list) {
     }
 
     return url_fragments.join('/');
-};
+}
 
-var getUint16 = function (packet, index) {
+export function getUint16(packet, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.getUint16(0, true);
-};
+}
 
-var getUint32 = function (packet, index) {
+export function getUint32(packet, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.getUint32(0, true);
-};
+}
 
-var getInt16 = function (packet, index) {
+export function getInt16(packet, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.getInt16(0, true);
-};
+}
 
-var getInt32 = function (packet, index) {
+export function getInt32(packet, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.getInt32(0, true);
-};
+}
 
-var setUint16 = function (packet, value, index) {
+export function setUint16(packet, value, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.setUint16(0, value, true);
-};
+}
 
-var setUint32 = function (packet, value, index) {
+export function setUint32(packet, value, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.setUint32(0, value, true);
-};
+}
 
-var setInt16 = function (packet, value, index) {
+export function setInt16(packet, value, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.setInt16(0, value, true);
-};
+}
 
-var setInt32 = function (packet, value, index) {
+export function setInt32(packet, value, index) {
     var dv = new DataView(packet.buffer, index);
     return dv.setInt32(0, value, true);
-};
+}
 
-var newUUID = function () {
+export function newUUID() {
     var uuid_bytes = new Uint8Array(8);
     window.crypto.getRandomValues(uuid_bytes);
     return uuid_bytes;
-};
+}
 
-var addClassToSelector = function (selector, _class) {
+export function addClassToSelector(selector, _class) {
     var items = document.querySelectorAll(selector);
     for (var i = 0; i < items.length; ++i) {
         items[i].classList.add(_class);
     }
-};
+}
 
-var removeClassFromSelector = function (selector, _class) {
+export function removeClassFromSelector(selector, _class) {
     var items = document.querySelectorAll(selector);
     for (var i = 0; i < items.length; ++i) {
         items[i].classList.remove(_class);
     }
-};
+}
 
 
 
@@ -192,28 +192,6 @@ PubSub.prototype.removeTopic =  function (topic) {
     delete this.topics[topic];
 };
 
-
+// PubSub Singleton
 window['PubSub'] = window['PubSub'] || new PubSub();
-
-module.exports = {
-    addClassToSelector: addClassToSelector,
-    buildURL: buildURL,
-    byte2string: byte2string,
-    getInt16: getInt16,
-    getInt32: getInt32,
-    getUint16: getUint16,
-    getUint32: getUint32,
-    isNumber: isNumber,
-    newUUID: newUUID,
-    removeClassFromSelector: removeClassFromSelector,
-    setInt16: setInt16,
-    setInt32: setInt32,
-    setUint16: setUint16,
-    setUint32: setUint32,
-    showPage: showPage,
-    string2uint8array: string2uint8array,
-    string2uuid: string2uuid,
-    uint8array2string: uint8array2string,
-    uuid2string: uuid2string,
-    PubSub: window['PubSub'] ,
-};
+export var PubSub = window['PubSub'];

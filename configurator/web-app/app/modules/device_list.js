@@ -129,10 +129,11 @@ DeviceList.prototype.edit = function (index) {
 DeviceList.prototype.load = function (uuid) {
     var configVersion;
 
-    Device.connect().then(_ => {
-        return Device.read(0, 4);
+    dev.connect().then(_ => {
+        return dev.read(0, 4);
     }).then(data => {
         configVersion = Utils.getUint32(data);
+        console.log(data);
         if (!CONFIG_VERSIONS.hasOwnProperty(configVersion)) {
             return Promise.reject(
                 new Error(`Unknown configVersion "${configVersion}"`));
@@ -142,8 +143,8 @@ DeviceList.prototype.load = function (uuid) {
         return this.loadDevice(configVersion, 'MODEL');
     }).then( _ => {
         location.hash = Utils.buildURL(['model_details']);
-    }).error(err => {
-        console.log(err);
+    }).catch(error => {
+        console.log(error);
         this.resetPage();
     });
 };
@@ -174,14 +175,18 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
 
     newDev.configVersion = configVersion;
     newDev.schemaName = schemaName;
-    newDev.data = new Uint8Array(newDev.size);
+    newDev.data = new Uint8Array(schema.s);
 
-    return Promise.resolve().then(_ => {
-        Device.read(schema['UUID'].o, schema['UUID'].s).then(data => {
+    var o = schema.o;
+
+    console.log("loadDevice", configVersion, schemaName)
+    return new Promise((resolve, reject) => {
+        dev.read(o + schema['UUID'].o, schema['UUID'].c).then(data => {
+            console.log('UUID bytes', data);
             newDev.uuid = Utils.uuid2string(data);
             if (!Utils.isValidUUID(newDev.uuid)) {
                 newDev.uuid = Utils.newUUID();
-                return Device.write(schema['UUID'].o, schema['UUID'].s,
+                return dev.write(o + schema['UUID'].o, schema['UUID'].s,
                     Utils.string2uuid(newDev.uuid));
             }
             return Promise.resolve();
@@ -195,27 +200,37 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
             dbEntry = data;
             if (dbEntry.get('UUID') === newDev.uuid)  {
                 console.log('Device is in the database already');
-                Device.read(schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
-                    newDev.lastChanged = Utils.getUint32(data);
-                    if (newDev.lastChanged === dbEntry.lastChanged) {
-                        return Promise.resolve(dbEntry.data);
-                    }
-                    else if (newDev.lastChanged > dbEntry.lastChanged) {
-                        return this.loadDeviceData(newDev);
-                    }
-                    else {
-                        Device.write(schema.o, dbEntry.data).then(_ => {
-                            return Promise.resolve(dbEntry.data);
-                        });
-                    }
+                return new Promise((resolve, reject) => {
+                    dev.read(o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
+                        newDev.lastChanged = Utils.getUint32(data);
+
+                        console.log('LAST_CHANGED', newDev.lastChanged)
+
+                        if (newDev.lastChanged === dbEntry.lastChanged) {
+                            console.log('device === db')
+                            console.log(dbEntry)
+                            resolve(dbEntry);
+                        }
+                        else if (newDev.lastChanged > dbEntry.lastChanged) {
+                            console.log('device > db')
+                            return this.loadDeviceData(newDev);
+                        }
+                        else {
+                            console.log('device < db')
+                            dev.write(schema.o, dbEntry.data).then(_ => {
+                                resolve(dbEntry);
+                            });
+                        }
+                    });
                 });
             }
             else {
                 return this.loadDeviceData(newDev);
             }
-        }).then(data => {
-            newDev.data = data;
-            dev[newDev.schemaName] = newDev;
+        }).then(dbobject => {
+            console.log("RESOLVING", schemaName)
+            dev[newDev.schemaName] = dbobject;
+            resolve();
         });
     });
 };
@@ -224,7 +239,7 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
 DeviceList.prototype.loadDeviceData = function (newDev) {
     const schema = CONFIG_VERSIONS[newDev.configVersion][newDev.schemaName];
     return new Promise((resolve, reject) => {
-        Device.read(schema.o, schema.s).then(data => {
+        dev.read(schema.o, schema.s).then(data => {
             newDev.data = data;
             return new Promise((resolve, reject) => {
                 Database.getEntry(newDev.uuid, newDev, _ => {
@@ -249,11 +264,17 @@ DeviceList.prototype.stateMachine = function (packet) {
     switch (state) {
         case STATES.CONNECTING:
             if (packet[0] === 0x49) {
-                state = STATES.GET_CONFIG;
+                // state = STATES.GET_CONFIG;
 
                 // Read the configVersion
-                packet = WebsocketProtocol.makeReadPacket(0, 4);
-                WebsocketProtocol.send(packet);
+                // packet = WebsocketProtocol.makeReadPacket(0, 4);
+                // WebsocketProtocol.send(packet);
+
+                // FIXME:
+                console.log('CONNECTED!');
+                this.resetPage();
+                this.loading.classList.add('hidden');
+
             }
             break;
 

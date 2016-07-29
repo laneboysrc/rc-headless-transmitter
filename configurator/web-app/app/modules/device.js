@@ -1,5 +1,7 @@
 'use strict';
 
+var Utils = require('./utils');
+
 var queue = [];
 
 // A global object that holds the currently loaded transmitter and model
@@ -31,25 +33,75 @@ Device.prototype.addEventListener = function () {
     //    onnewdevice
 };
 
-Device.prototype.connect = function () {
+Device.prototype.connect = function (uuid) {
     return new Promise((resolve, reject) => {
-        reject('connect: FIXME');
+        resolve('connect: FIXME');
     });
 };
 
 Device.prototype.disconnect = function () {
     return new Promise((resolve, reject) => {
-        reject('disconnect: FIXME');
+        resolve('disconnect: FIXME');
     });
 };
 
 Device.prototype.read = function (offset, count) {
-    console.log('DEVICE.read')
+    console.log('DEVICE.read', offset, count)
+
     return new Promise((resolve, reject) => {
-        window.setTimeout(_ => {
-            console.log('read: FIXME');
-            resolve(new Uint8Array(8));
-        }, 5000);
+        var data = new Uint8Array(count);
+        var packetCount;
+        var packetOffset = offset;
+        var eventListenerAdded = false;
+
+        function readChunk() {
+            if (count === 0) {
+                WebsocketProtocol.removeEventListener(onevent);
+                resolve(data);
+                return;
+            }
+
+            packetCount = count;
+
+            if (packetCount > 29) {
+                packetCount = 29;
+            }
+
+            let packet = WebsocketProtocol.makeReadPacket(packetOffset, packetCount);
+
+            if (!eventListenerAdded) {
+                WebsocketProtocol.addEventListener(onevent);
+                eventListenerAdded = true;
+            }
+
+            WebsocketProtocol.send(packet);
+
+        }
+
+
+        function onevent(event, packet) {
+            if (event !== 'onmessage') {
+                return;
+            }
+
+            if (packet[0] !== 0x52) {
+                return;
+            }
+
+            let read_offset = Utils.getUint16(packet, 1);
+            let read_count = packet.length - 3;
+
+            if (read_offset !== packetOffset  &&  read_count !== packetCount) {
+                return;
+            }
+
+            data.set(packet.slice(3), packetOffset - offset);
+            count -= packetCount;
+            packetOffset += packetCount;
+            readChunk();
+        }
+
+        readChunk();
     });
 };
 

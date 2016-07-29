@@ -110,7 +110,9 @@ WebsocketProtocol.prototype.onmessage = function(e) {
 
         reader.addEventListener("loadend", function () {
             var data = new Uint8Array(reader.result);
-            // console.log("WS: onmessage " + dumpUint8Array(data));
+            // if (data[0] !== 73) {
+            //     console.log("WS: onmessage " + dumpUint8Array(data));
+            // }
             this.notifyListeners('onmessage', data);
             this.sendCfgPacket_();
         }.bind(this));

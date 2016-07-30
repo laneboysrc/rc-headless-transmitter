@@ -34,19 +34,17 @@ WebsocketProtocol.prototype.close = function () {
 //*************************************************************************
 WebsocketProtocol.prototype.sendCfgPacket_ = function () {
     if (this.cfgPacket) {
-        if (this.cfgPacket instanceof Uint8Array) {
-            this.ws.send(this.cfgPacket);
-            // console.log('WS: sending ' + dumpUint8Array(this.cfgPacket));
-        }
-        else {
-            console.error('WS: cfgPacket is not of type Uint8Array');
-        }
+        this.ws.send(this.cfgPacket);
+        // console.log('WS: sending ' + dumpUint8Array(this.cfgPacket));
         this.cfgPacket = undefined;
     }
 };
 
 //*************************************************************************
 WebsocketProtocol.prototype.send = function (packet) {
+    if (!(this.cfgPacket instanceof Uint8Array)) {
+        throw Error('WS: packet is not of type Uint8Array');
+    }
     this.cfgPacket = packet;
 };
 
@@ -75,46 +73,37 @@ WebsocketProtocol.prototype.makeWritePacket = function (offset, data) {
 
 //*************************************************************************
 WebsocketProtocol.prototype.onopen = function() {
-    // console.log('WS: onopen');
     Utils.sendCustomEvent('ws-open');
-    // this.notifyListeners('onopen');
 };
 
+//*************************************************************************
 WebsocketProtocol.prototype.onmessage = function(e) {
     // e.data contains received string
 
-    if (e.data instanceof Blob) {
-        var reader = new FileReader();
-
-        reader.addEventListener("loadend", function () {
-            var data = new Uint8Array(reader.result);
-            // if (data[0] !== 73) {
-            //     console.log("WS: onmessage " + dumpUint8Array(data));
-            // }
-            Utils.sendCustomEvent('ws-message', data);
-            // this.notifyListeners('onmessage', data);
-            this.sendCfgPacket_();
-        }.bind(this));
-
-        reader.readAsArrayBuffer(e.data);
+    if (!(e.data instanceof Blob)) {
+        throw Error('WS: onmessage: String received; should have been Blob');
     }
-    else {
-        // Process string here
-        console.error("WS: onmessage: String received; should have been Blob!");
-    }
+
+    var reader = new FileReader();
+
+    reader.addEventListener("loadend", function () {
+        let data = new Uint8Array(reader.result);
+        this.sendCfgPacket_();
+        Utils.sendCustomEvent('ws-message', data);
+    }.bind(this));
+
+    reader.readAsArrayBuffer(e.data);
 };
 
+//*************************************************************************
 WebsocketProtocol.prototype.onerror = function (e) {
-    // console.log('WS: onerror', e);
     Utils.sendCustomEvent('ws-error', e);
-    // this.notifyListeners('onerror', e);
 };
 
+//*************************************************************************
 WebsocketProtocol.prototype.onclose = function () {
-    // console.log('WS: onclose');
     this.ws = undefined;
     Utils.sendCustomEvent('ws-close');
-    // this.notifyListeners('onclose');
 };
 
 

@@ -2,6 +2,31 @@
 
 var Utils = require('./utils');
 
+
+//*************************************************************************
+// Split up the requested read/write block into small chunks since a single
+// read/write request can only handle up to 29 bytes. We return those chunks in
+// a list that can be requested one-by-one.
+function buildChunks(offset, count, maxChunkSize) {
+    var chunks = [];
+
+    maxChunkSize = maxChunkSize || 29;
+
+    while (count) {
+        let len = count > maxChunkSize ? maxChunkSize : count;
+        chunks.push({
+            o: offset,
+            c: len
+        });
+
+        offset += len;
+        count -= len;
+    }
+
+    return chunks;
+}
+
+
 // A global object that holds the currently loaded transmitter and model
 // object.
 //
@@ -16,14 +41,17 @@ var Device = function () {
 };
 
 
+//*************************************************************************
 Device.prototype.enableCommunication = function () {
     // start WS
 };
 
+//*************************************************************************
 Device.prototype.disableCommunication = function () {
     // stop WS, kill restart timer
 };
 
+//*************************************************************************
 Device.prototype.addEventListener = function () {
     // Events:
     //    onopen
@@ -31,6 +59,7 @@ Device.prototype.addEventListener = function () {
     //    onnewdevice
 };
 
+//*************************************************************************
 Device.prototype.connect = function (uuid) {
     console.log(`Device.connect uuid=${uuid}`)
 
@@ -62,6 +91,7 @@ Device.prototype.connect = function (uuid) {
     });
 };
 
+//*************************************************************************
 Device.prototype.disconnect = function () {
     return new Promise((resolve, reject) => {
         dev.connected = false;
@@ -69,31 +99,21 @@ Device.prototype.disconnect = function () {
     });
 };
 
+//*************************************************************************
 Device.prototype.read = function (offset, count) {
     console.log(`Device.read o=${offset} c=${count}`)
 
+    if (!dev.connected) {
+        return Promise.reject(Error('Device.read: not connected'));
+    }
+
     // FIXME: needs a 600ms timeout (between individual reads)
+    // FIXME: progress callback using reacChunks initial length as reference
 
     return new Promise((resolve, reject) => {
         var data = new Uint8Array(count);
-        var readRequests = [];
+        var readChunks = buildChunks(offset, count);
         var nextChunk = 0;
-
-        // Build up the requested read block into chunks since a single read
-        // request can only read up to 29 bytes. We store those chunks in
-        // a list that we request one-by-one.
-        let readOffset = offset;
-        let readCount = count;
-        while (readCount) {
-            let len = readCount > 29 ? 29 : readCount;
-            readRequests.push({
-                o: readOffset,
-                c: len
-            });
-
-            readOffset += len;
-            readCount -= len;
-        }
 
         function onevent(event, packet) {
             if (event !== 'onmessage') {
@@ -107,12 +127,12 @@ Device.prototype.read = function (offset, count) {
                 // Check if the read data is one of the chunks we are looking
                 // for. If yes, store the data at the appropriate offset
                 // and remove the chunk from our request list.
-                let index = readRequests.findIndex((element, index, array) => {
+                let index = readChunks.findIndex((element, index, array) => {
                     return element.o === o  &&  element.c === c;
                 });
                 if (index >= 0) {
                     data.set(packet.slice(3), o - offset);
-                    readRequests.splice(index, 1);
+                    readChunks.splice(index, 1);
                 }
             }
 
@@ -124,17 +144,17 @@ Device.prototype.read = function (offset, count) {
         }
 
         function readChunk() {
-            if (readRequests.length === 0) {
+            if (readChunks.length === 0) {
                 WebsocketProtocol.removeEventListener(onevent);
                 resolve(data);
                 return;
             }
 
             // Important: we modulo readRequest.length here, because the
-            // readRequest may had elements removed. The modulo also causes
+            // readRequest may have had elements removed. The modulo also causes
             // us to automatically loop through all chunks until we don't have
             // any thing to request.
-            let request = readRequests[nextChunk % readRequests.length];
+            let request = readChunks[nextChunk % readChunks.length];
             let packet = WebsocketProtocol.makeReadPacket(request.o, request.c);
             WebsocketProtocol.send(packet);
 
@@ -146,63 +166,68 @@ Device.prototype.read = function (offset, count) {
     });
 };
 
+
+//*************************************************************************
 Device.prototype.write = function (offset, data) {
     console.log(`Device.write o=${offset} c=${data.length}`)
 
-    // FIXME: needs a 600ms timeout (between individual reads)
+    if (!dev.connected) {
+        return Promise.reject(Error('Device.write: not connected'));
+    }
 
-    var count = data.length;
+    // FIXME: needs a 600ms timeout (between individual reads)
+    // FIXME: progress callback using writeChunks initial length as reference
 
     return new Promise((resolve, reject) => {
-        var packetCount;
-        var packetOffset = offset;
-
-        if (!dev.connected) {
-            reject(new Error('Device.write: device not connected'));
-            return;
-        }
-
-        function writeChunk() {
-            console.log(`writeChunk count=${count} packetOffset=${packetOffset}`)
-            if (count === 0) {
-                WebsocketProtocol.removeEventListener(onevent);
-                resolve();
-                return;
-            }
-
-            packetCount = count;
-
-            if (packetCount > 29) {
-                packetCount = 29;
-            }
-
-            let dataOffset = packetOffset - offset;
-            let packet = WebsocketProtocol.makeWritePacket(
-                packetOffset, data.slice(dataOffset, dataOffset + packetCount));
-            WebsocketProtocol.send(packet);
-        }
-
+        var writeChunks = buildChunks(offset, data.length);
+        var nextChunk = 0;
 
         function onevent(event, packet) {
             if (event !== 'onmessage') {
                 return;
             }
 
-            if (packet[0] !== 0x57) {
+            if (packet[0] === 0x57) {
+                let o = Utils.getUint16(packet, 1);
+                let c = packet[3];
+
+                // Check if the read data is one of the chunks we are looking
+                // for. If yes, store the data at the appropriate offset
+                // and remove the chunk from our request list.
+                let index = writeChunks.findIndex((element, index, array) => {
+                    return element.o === o  &&  element.c === c;
+                });
+                if (index >= 0) {
+                    writeChunks.splice(index, 1);
+                }
+            }
+
+            // Read the next chunk regardless if we received the previous
+            // data or not. On slow computers this causes quite a bit of
+            // redundant read requests, but it also automatically retries until
+            // all data was received.
+            writeChunk();
+        }
+
+        function writeChunk() {
+            if (writeChunks.length === 0) {
+                WebsocketProtocol.removeEventListener(onevent);
+                resolve();
                 return;
             }
 
-            // FIXME: this will only work once we change the protocol
-            // let write_offset = Utils.getUint16(packet, 1);
-            // let write_count = packet.length - 3;
+            // Important: we modulo readRequest.length here, because the
+            // readRequest may have had elements removed. The modulo also causes
+            // us to automatically loop through all chunks until we don't have
+            // any thing to request.
+            let request = writeChunks[nextChunk % writeChunks.length];
 
-            // if (write_offset !== packetOffset  &&  write_count !== packetCount) {
-            //     return;
-            // }
+            let dataOffset = request.o - offset;
+            let packet = WebsocketProtocol.makeWritePacket(
+                request.o, data.slice(dataOffset, dataOffset + request.c));
+            WebsocketProtocol.send(packet);
 
-            count -= packetCount;
-            packetOffset += packetCount;
-            writeChunk();
+            nextChunk++;
         }
 
         WebsocketProtocol.addEventListener(onevent);
@@ -210,7 +235,13 @@ Device.prototype.write = function (offset, data) {
     });
 };
 
+
+//*************************************************************************
 Device.prototype.copy = function (src, dst, count) {
+    if (!dev.connected) {
+        return Promise.reject(Error('Device.copy: not connected'));
+    }
+
     return new Promise((resolve, reject) => {
         console.log('copy: FIXME');
         resolve();
@@ -219,24 +250,14 @@ Device.prototype.copy = function (src, dst, count) {
 
 
 //*************************************************************************
-// Receives Websocket messages
+// Receives Websocket events
 Device.prototype.on = function (event, data) {
     // console.log('Device ws: ', event, data);
-
-    switch(event) {
-        case 'onmessage':
-            break;
-
-        case 'onclose':
-            this.connected = false;
-            break;
-
-        case 'onopen':
-            break;
-
-        case 'onerror':
-            break;
+    if (event !== 'onclose') {
+        return;
     }
+
+    this.connected = false;
 };
 
 window['dev'] = new Device();

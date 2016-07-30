@@ -33,7 +33,7 @@ var Database = function (data) {
 
             // Populate the virgin database with a model and transmitter
             // for testing.
-            addTestData(db);
+            // addTestData(db);
         };
     };
 

@@ -475,7 +475,9 @@ DBObject.prototype.set = function (key, value, options) {
         console.log(self.uuid + ' changed: offset=' + offset + ' count=' +
             count + ' config-offset=' + (offset + schema.o));
 
-        dev.write(offset + schema.o, data.slice(offset, offset + count));
+        if (dev.connected) {
+            dev.write(offset + schema.o, data.slice(offset, offset + count));
+        }
 
         // Add last change time stamp
         if (key !== 'LAST_CHANGED'  &&  schema.hasOwnProperty('LAST_CHANGED')) {
@@ -488,7 +490,9 @@ DBObject.prototype.set = function (key, value, options) {
             console.log(self.uuid + ' changed: offset=' + lc.o + ' count=' +
                 lc.s + ' config-offset=' + (lc.o + schema.o));
 
-            dev.write(lc.o + schema.o, data.slice(lc.o, lc.o + lc.s));
+            if (dev.connected) {
+                dev.write(lc.o + schema.o, data.slice(lc.o, lc.o + lc.s));
+            }
 
             self.lastChanged = now;
         }

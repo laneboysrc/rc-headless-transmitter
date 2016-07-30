@@ -152,7 +152,6 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
 
     const schema = CONFIG_VERSIONS[configVersion][schemaName];
     var newDev = {};
-    var dbEntry;
 
     newDev.configVersion = configVersion;
     newDev.schemaName = schemaName;
@@ -173,19 +172,21 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
             return new Promise((resolve, reject) => {
                 Database.getEntry(newDev.uuid, data => {
                     // FIXME: handle if device not in database
-                    resolve(new DBObject(data));
+                    if (data) {
+                        data = new DBObject(data);
+                    }
+                    resolve(data);
                 });
             });
-        }).then(data => {
-            dbEntry = data;
+        }).then(dbEntry => {
             // console.log('dbEntry', dbEntry)
-            if (dbEntry.get('UUID') === newDev.uuid)  {
+            if (dbEntry  &&  dbEntry.get('UUID') === newDev.uuid)  {
                 // console.log('Device is in the database already');
                 return new Promise((resolve, reject) => {
                     dev.read(schema.o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
                         newDev.lastChanged = Utils.getUint32(data);
 
-                        // console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
+                        console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
 
                         if (newDev.lastChanged === dbEntry.lastChanged) {
                             // console.log('device === db')
@@ -227,11 +228,15 @@ DeviceList.prototype.loadDeviceData = function (newDev) {
         dev.read(schema.o, schema.s).then(data => {
             // console.log('loadDeviceData read from device')
             newDev.data = data;
+
+            var dbEntry = new DBObject(newDev);
+            newDev.lastChanged = dbEntry.get('LAST_CHANGED');
+
             return new Promise((resolve, reject) => {
                 // console.log('setEntry', newDev)
                 Database.setEntry(newDev,  _ => {
                     // console.log('setEntry done')
-                    resolve(new DBObject(newDev));
+                    resolve(dbEntry);
                 });
             });
         }).then(dbobject => {

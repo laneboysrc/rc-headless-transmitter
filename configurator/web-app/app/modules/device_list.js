@@ -13,26 +13,7 @@ var messages = {
     connecting: 'Connecting to the transmitter',
 };
 
-var STATES = {
-    IDLE: 'IDLE',
-    CONNECTING: 'CONNECTING',
-    GET_CONFIG: 'GET_CONFIG',
-    GET_MODEL: 'GET_MODEL',
-    GET_TX: 'GET_TX'
-};
-
 var availableTransmitters = [];
-var state = STATES.idle;
-var newDev = {};
-var packets = {
-    CFG_REQUEST_TO_CONNECT: new Uint8Array([
-        0x31,
-        0x12, 0x13, 0x14, 0x15, 0x16,
-        0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
-        0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]),
-    CFG_READ: new Uint8Array([0x72, 0, 0, 0]),
-};
-
 var wsConnected = false;
 
 
@@ -74,8 +55,6 @@ DeviceList.prototype.resetPage = function () {
     // Empty the list of transmitters
     this.mdl.clearDynamicElements(this.list);
     this.message.textContent = messages.default;
-    state = STATES.IDLE;
-    dev.connected = false;
     wsConnected = false;
 };
 
@@ -112,10 +91,7 @@ DeviceList.prototype.edit = function (index) {
     this.txProgress.classList.add('mdl-progress--indeterminate');
     this.txMessage.textContent = messages.connecting;
 
-    state = STATES.CONNECTING;
-    WebsocketProtocol.send(packets.CFG_REQUEST_TO_CONNECT);
-
-    // this.load(FIXME-get-uuid);
+    this.load('FIXME-save-uuid-in-availableTransmitters');
 };
 
 //*************************************************************************
@@ -129,13 +105,13 @@ DeviceList.prototype.edit = function (index) {
 DeviceList.prototype.load = function (uuid) {
     var configVersion;
 
-    // FIXME: implement loading indicator
+    // FIXME: implement progress bar
 
     dev.connect(uuid).then(_ => {
         return dev.read(0, 4);
     }).then(data => {
         configVersion = Utils.getUint32(data);
-        console.log(data)
+        // console.log(data)
         if (!CONFIG_VERSIONS.hasOwnProperty(configVersion)) {
             return Promise.reject(
                 new Error(`Unknown configVersion "${configVersion}"`));
@@ -172,6 +148,8 @@ DeviceList.prototype.load = function (uuid) {
 //     load hw.[schemaName] into dev.[schemaName]
 //     add dev.[schemaName] to our database
 DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
+    console.log(`DeviceList.loadDevice configVersion=${configVersion} schemaName=${schemaName}`)
+
     const schema = CONFIG_VERSIONS[configVersion][schemaName];
     var newDev = {};
     var dbEntry;
@@ -180,43 +158,42 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
     newDev.schemaName = schemaName;
     newDev.data = new Uint8Array(schema.s);
 
-    var o = schema.o;
-
-    console.log("loadDevice", configVersion, schemaName)
     return new Promise((resolve, reject) => {
-        dev.read(o + schema['UUID'].o, schema['UUID'].c).then(data => {
-            console.log('UUID bytes', data);
+        dev.read(schema.o + schema['UUID'].o, schema['UUID'].c).then(data => {
+            // console.log('UUID bytes', data);
             newDev.uuid = Utils.uuid2string(data);
+            // console.log('UUID', newDev.uuid);
             if (!Utils.isValidUUID(newDev.uuid)) {
                 newDev.uuid = Utils.newUUID();
-                return dev.write(o + schema['UUID'].o, schema['UUID'].s,
+                return dev.write(schema.o + schema['UUID'].o, schema['UUID'].s,
                     Utils.string2uuid(newDev.uuid));
             }
             return Promise.resolve();
         }).then(_ => {
             return new Promise((resolve, reject) => {
                 Database.getEntry(newDev.uuid, data => {
+                    // FIXME: handle if device not in database
                     resolve(new DBObject(data));
                 });
             });
         }).then(data => {
             dbEntry = data;
-            console.log('dbEntry', dbEntry)
+            // console.log('dbEntry', dbEntry)
             if (dbEntry.get('UUID') === newDev.uuid)  {
-                console.log('Device is in the database already');
+                // console.log('Device is in the database already');
                 return new Promise((resolve, reject) => {
-                    dev.read(o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
+                    dev.read(schema.o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
                         newDev.lastChanged = Utils.getUint32(data);
 
-                        console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
+                        // console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
 
                         if (newDev.lastChanged === dbEntry.lastChanged) {
-                            console.log('device === db')
-                            console.log(dbEntry)
+                            // console.log('device === db')
+                            // console.log(dbEntry)
                             resolve(dbEntry);
                         }
                         else if (newDev.lastChanged > dbEntry.lastChanged) {
-                            console.log('device > db')
+                            // console.log('device > db')
                             this.loadDeviceData(newDev).then(devdbentry => {
                                 resolve(devdbentry);
                             });
@@ -234,7 +211,7 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
                 return this.loadDeviceData(newDev);
             }
         }).then(dbobject => {
-            console.log("RESOLVING read", schemaName)
+            // console.log("RESOLVING read", schemaName)
             dev[newDev.schemaName] = dbobject;
             resolve();
         });
@@ -248,135 +225,22 @@ DeviceList.prototype.loadDeviceData = function (newDev) {
     const schema = CONFIG_VERSIONS[newDev.configVersion][newDev.schemaName];
     return new Promise((resolve, reject) => {
         dev.read(schema.o, schema.s).then(data => {
-            console.log('loadDeviceData read from device')
+            // console.log('loadDeviceData read from device')
             newDev.data = data;
             return new Promise((resolve, reject) => {
-                console.log('setEntry', newDev)
+                // console.log('setEntry', newDev)
                 Database.setEntry(newDev,  _ => {
-                    console.log('setEntry done')
+                    // console.log('setEntry done')
                     resolve(new DBObject(newDev));
                 });
             });
         }).then(dbobject => {
-            console.log('resolving outer promise', dbobject)
+            // console.log('resolving outer promise', dbobject)
             resolve(dbobject);
         });
     });
 };
 
-
-
-//*************************************************************************
-DeviceList.prototype.stateMachine = function (packet) {
-    var configVersion;
-    var offset;
-    var count;
-    var schemaName;
-    var schema;
-    var uuid_bytes;
-
-    switch (state) {
-        case STATES.CONNECTING:
-            if (packet[0] === 0x49) {
-                // state = STATES.GET_CONFIG;
-
-                // Read the configVersion
-                // packet = WebsocketProtocol.makeReadPacket(0, 4);
-                // WebsocketProtocol.send(packet);
-
-                // FIXME:
-                console.log('CONNECTED!');
-                this.resetPage();
-                this.loading.classList.add('hidden');
-
-            }
-            break;
-
-        case STATES.GET_CONFIG:
-            if (packet[0] === 0x52) {
-                configVersion = Utils.getUint32(packet, 3);
-
-                setupNewDevice(configVersion, 'TX');
-
-                offset = newDev.count + newDev.offset;
-                packet = WebsocketProtocol.makeReadPacket(offset, 29);
-                WebsocketProtocol.send(packet);
-
-                this.progress = {};
-                this.progress.s = CONFIG_VERSIONS[configVersion]['TX'].s +
-                                  CONFIG_VERSIONS[configVersion]['MODEL'].s;
-                this.progress.o = 0;
-
-                this.txProgress.classList.remove('mdl-progress--indeterminate');
-                this.txProgress.MaterialProgress.setProgress(0);
-                this.txMessage.textContent = messages.loading;
-                state = STATES.GET_TX;
-            }
-            break;
-
-        case STATES.GET_TX:
-        case STATES.GET_MODEL:
-            if (packet[0] === 0x52) {
-                offset = Utils.getUint16(packet, 1) - newDev.offset;
-                count = packet.length - 3;
-
-                // console.log(offset, count)
-
-                newDev.data.set(packet.slice(3), offset);
-                newDev.count += count;
-
-                this.progress.o += count;
-                this.txProgress.MaterialProgress.setProgress(100 * this.progress.o / this.progress.s);
-
-                if (newDev.count < newDev.size) {
-                    // newDev lot fully loaded yet, so continue with the next
-                    // packet
-
-                    // makeReadPacket clamps count to 29, so we don't have to
-                    // worry about that here
-                    count = newDev.size - newDev.count;
-                    offset = newDev.count + newDev.offset;
-
-                    packet = WebsocketProtocol.makeReadPacket(offset, count);
-                    WebsocketProtocol.send(packet);
-                }
-                else {
-                    // newDev has been fully retrieved
-                    configVersion = newDev.configVersion;
-                    schemaName = newDev.schemaName;
-                    schema = CONFIG_VERSIONS[configVersion][schemaName];
-
-                    uuid_bytes = new Uint8Array(newDev.data, schema['UUID'].o, schema['UUID'].s);
-                    newDev.uuid = Utils.uuid2string(uuid_bytes);
-                    newDev.lastChanged = Utils.getUint32(newDev.data, schema['LAST_CHANGED'].o);
-
-                    if (state === STATES.GET_TX) {
-                        dev.TX = new DBObject(newDev);
-
-                        setupNewDevice(configVersion, 'MODEL');
-
-                        offset = newDev.count + newDev.offset;
-                        packet = WebsocketProtocol.makeReadPacket(offset, 29);
-                        WebsocketProtocol.send(packet);
-
-                        this.txMessage.textContent = messages.model;
-                        state = STATES.GET_MODEL;
-                    }
-                    else {
-                        dev.MODEL = new DBObject(newDev);
-                        state = STATES.IDLE;
-
-                        dev.connected = true;
-                        location.hash = Utils.buildURL(['model_details']);
-                    }
-                }
-            }
-            break;
-
-        default:
-            break;
-    }
-};
 
 //*************************************************************************
 // Receives Websocket messages
@@ -391,7 +255,6 @@ DeviceList.prototype.on = function (event, data) {
                 this.transmitterReadyForConnect(data);
             }
 
-            this.stateMachine(data);
             break;
 
         case 'onclose':
@@ -427,17 +290,5 @@ function showConnectionLostMessage () {
     toast.MaterialSnackbar.showSnackbar(message);
 }
 
-//*************************************************************************
-function setupNewDevice(configVersion, schemaName) {
-    newDev = {};
-
-    newDev.count = 0;
-    newDev.size = CONFIG_VERSIONS[configVersion][schemaName].s;
-    newDev.offset = CONFIG_VERSIONS[configVersion][schemaName].o;
-
-    newDev.configVersion = configVersion;
-    newDev.schemaName = schemaName;
-    newDev.data = new Uint8Array(newDev.size);
-}
 
 window['DeviceList'] = new DeviceList();

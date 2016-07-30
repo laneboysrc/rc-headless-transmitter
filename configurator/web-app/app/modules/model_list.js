@@ -108,10 +108,10 @@ ModelList.prototype.loadModel = function (element) {
 
     // If the same model as the currently loaded one is selected then ignore
     // the request and return to model_details
-    // if (dev.MODEL  &&  dev.MODEL.uuid === models[index].uuid) {
-    //     history.back();
-    //     return;
-    // }
+    if (dev.MODEL  &&  dev.MODEL.uuid === models[index].uuid) {
+        history.back();
+        return;
+    }
 
     // Show loading indicator
     this.list.classList.add('hidden');

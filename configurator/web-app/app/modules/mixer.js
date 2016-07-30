@@ -48,4 +48,9 @@ Mixer.prototype.init = function (params) {
     Utils.showPage('mixer');
 };
 
+//*************************************************************************
+Mixer.prototype.back = function (params) {
+    history.back();
+};
+
 window['Mixer'] = new Mixer();

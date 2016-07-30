@@ -23,4 +23,9 @@ RFProtocol.prototype.init = function (params) {
     Utils.showPage('rf_protocol');
 };
 
+//*************************************************************************
+RFProtocol.prototype.back = function (params) {
+    history.back();
+};
+
 window['RFProtocol'] = new RFProtocol();

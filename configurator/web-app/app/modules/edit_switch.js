@@ -27,4 +27,9 @@ EditSwitch.prototype.init = function (params) {
     Utils.showPage('edit_switch');
 };
 
+//*************************************************************************
+EditSwitch.prototype.back = function (params) {
+    history.back();
+};
+
 window['EditSwitch'] = new EditSwitch();

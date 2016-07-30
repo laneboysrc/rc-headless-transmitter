@@ -37,4 +37,9 @@ MixerUnit.prototype.init = function (params) {
     Utils.showPage('mixer_unit');
 };
 
+//*************************************************************************
+MixerUnit.prototype.back = function (params) {
+    history.back();
+};
+
 window['MixerUnit'] = new MixerUnit();

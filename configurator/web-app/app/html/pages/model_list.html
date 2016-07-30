@@ -1,7 +1,7 @@
 <div class="mdl-layout mdl-js-layout mdl-layout--no-drawer-button mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="history.go(-1);">
+      <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="ModelList.back();">
         <i class="material-icons">arrow_back</i>
       </a>
       <div class="mdl-layout-spacer"></div>
@@ -18,8 +18,8 @@
 
   <main class="mdl-layout__content" >
 
-    <!-- Card -->
-    <section class="section--center mdl-grid" id="app-model_list-list">
+    <!-- List of available models Card -->
+    <section class="section--center mdl-grid hidden" id="app-model_list-list">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title">
           <h2 class="mdl-card__title-text">Models</h2>
@@ -73,7 +73,17 @@
       </div>
     </section>
 
-    <!-- FIXME: add card when no model is available, for both edit and load -->
+    <!-- Downloading model Card -->
+    <section class="section--center mdl-grid hidden" id="app-model_list-loading_model">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text ">Downloading&nbsp;<span id="app-model_list-loading_model__name"></span>&nbsp;…</h2>
+        </div>
+        <div class="mdl-card__actions mdl-card--expand">
+          <div class="mdl-progress mdl-js-progress" id="app-model_list-loading_model__progress"></div>
+        </div>
+      </div>
+    </section>
 
   </main>
 </div>

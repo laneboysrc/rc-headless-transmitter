@@ -66,4 +66,9 @@ SelectSingle.prototype.init = function (params) {
     Utils.showPage('select_single');
 };
 
+//*************************************************************************
+SelectSingle.prototype.back = function (params) {
+    history.back();
+};
+
 window['SelectSingle'] = new SelectSingle();

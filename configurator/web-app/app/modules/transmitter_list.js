@@ -13,4 +13,9 @@ TransmitterList.prototype.init = function (params) {
     Utils.showPage('transmitter_list');
 };
 
+//*************************************************************************
+TransmitterList.prototype.back = function (params) {
+    history.back();
+};
+
 window['TransmitterList'] = new TransmitterList();

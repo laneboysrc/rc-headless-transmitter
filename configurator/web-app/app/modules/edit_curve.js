@@ -33,4 +33,9 @@ EditCurve.prototype.init = function (params) {
     Utils.showPage('edit_curve');
 };
 
+//*************************************************************************
+EditCurve.prototype.back = function (params) {
+    history.back();
+};
+
 window['EditCurve'] = new EditCurve();

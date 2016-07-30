@@ -35,4 +35,9 @@ Limits.prototype.init = function (params) {
     Utils.showPage('limits');
 };
 
+//*************************************************************************
+Limits.prototype.back = function (params) {
+    history.back();
+};
+
 window['Limits'] = new Limits();

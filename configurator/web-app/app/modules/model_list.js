@@ -13,6 +13,10 @@ var ModelList = function () {
     this.container = document.querySelector('#app-model_list-list__container');
     this.template = document.querySelector('#app-model_list-list__template').content;
 
+    this.loading = document.querySelector('#app-model_list-loading_model');
+    this.name = document.querySelector('#app-model_list-loading_model__name');
+    this.progress = document.querySelector('#app-model_list-loading_model__progress');
+
     this.mode = 'edit';
 };
 
@@ -25,6 +29,8 @@ ModelList.prototype.init = function (params) {
         this.mode = 'load';
     }
     this.updateItemVisibility();
+    this.list.classList.add('hidden');
+    this.loading.classList.add('hidden');
 
     models = [];
     mdl.clearDynamicElements(this.list);
@@ -32,6 +38,11 @@ ModelList.prototype.init = function (params) {
     Database.listEntries(this.databaseCallback.bind(this));
 
     Utils.showPage('model_list');
+};
+
+//*************************************************************************
+ModelList.prototype.back = function (params) {
+    history.back();
 };
 
 //*************************************************************************
@@ -67,6 +78,11 @@ ModelList.prototype.updateModelList = function () {
         var clone = document.importNode(t, true);
         this.container.appendChild(clone);
     }
+
+    if (models.length !==  0) {
+        this.list.classList.remove('hidden');
+    }
+
     this.updateItemVisibility();
 };
 
@@ -90,11 +106,46 @@ ModelList.prototype.loadModel = function (element) {
     var index = element.getAttribute('data-index');
     console.log('loadModel', index, dev.MODEL, models[index].uuid);
 
-    if (dev.MODEL  &&  dev.MODEL.uuid === models[index].uuid) {
-        // FIXME: this creates a lot of entries in the history!
-        location.hash = Utils.buildURL(['model_details']);
-        return;
-    }
+    // If the same model as the currently loaded one is selected then ignore
+    // the request and return to model_details
+    // if (dev.MODEL  &&  dev.MODEL.uuid === models[index].uuid) {
+    //     history.back();
+    //     return;
+    // }
+
+    // Show loading indicator
+    this.list.classList.add('hidden');
+    this.loading.classList.remove('hidden');
+    this.progress.classList.add('mdl-progress--indeterminate');
+    this.name.textContent = models[index].name;
+
+    let uuid = models[index].uuid;
+    let newModel;
+
+    new Promise((resolve, reject) => {
+        Database.getEntry(uuid, data => {
+            if (!data) {
+                reject(Error('loadModel: Model not in database?!'));
+                return;
+            }
+            resolve(new DBObject(data));
+        });
+    }).then(dbentry => {
+        newModel = dbentry;
+        let offset = newModel.getSchema().o;
+        return dev.write(offset, newModel.data);
+    }).then(_ => {
+        dev.MODEL = newModel;
+
+        // Note: we have changed the model, so the URL UUID will be wrong.
+        // We fix that when we return to model_details by using
+        // history.replaceState.
+        // If we would use location.hash=buildURL() then we would break the
+        // back button!
+        history.back();
+    }).catch(error => {
+        console.log(error);
+    });
 };
 
 //*************************************************************************

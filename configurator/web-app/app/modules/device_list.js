@@ -48,7 +48,11 @@ DeviceList.prototype.init = function (params) {
 
     document.addEventListener('dev-connectionlost', this.connectionlost.bind(this));
     Utils.showPage('device_list');
-    showToast = true;
+};
+
+//*************************************************************************
+DeviceList.prototype.back = function (params) {
+    history.back();
 };
 
 //*************************************************************************
@@ -67,6 +71,8 @@ DeviceList.prototype.resetPage = function () {
 
 //*************************************************************************
 DeviceList.prototype.transmitterReadyForConnect = function (data) {
+    showToast = true;
+
     var transmitterName = Utils.uint8array2string(data.slice(1, 16 + 1));
     if (availableTransmitters.indexOf(transmitterName) >= 0) {
         return;
@@ -182,7 +188,6 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
         }).then(_ => {
             return new Promise((resolve, reject) => {
                 Database.getEntry(newDev.uuid, data => {
-                    // FIXME: handle if device not in database
                     if (data) {
                         data = new DBObject(data);
                     }
@@ -197,7 +202,7 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
                     dev.read(schema.o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
                         newDev.lastChanged = Utils.getUint32(data);
 
-                        console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
+                        // console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
 
                         if (newDev.lastChanged === dbEntry.lastChanged) {
                             // console.log('device === db')

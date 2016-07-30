@@ -35,7 +35,29 @@ Device.prototype.addEventListener = function () {
 
 Device.prototype.connect = function (uuid) {
     return new Promise((resolve, reject) => {
-        resolve('connect: FIXME');
+        let connectPacket = new Uint8Array([
+            0x31,
+            0x12, 0x13, 0x14, 0x15, 0x16,
+            0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+            0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]);
+
+        function onevent(event, packet) {
+            if (event !== 'onmessage') {
+                return;
+            }
+
+            if (packet[0] === 0x49) {
+                WebsocketProtocol.removeEventListener(onevent);
+                resolve();
+                return;
+            }
+
+            WebsocketProtocol.send(connectPacket);
+        }
+
+
+        WebsocketProtocol.addEventListener(onevent);
+        WebsocketProtocol.send(connectPacket);
     });
 };
 
@@ -46,13 +68,14 @@ Device.prototype.disconnect = function () {
 };
 
 Device.prototype.read = function (offset, count) {
-    console.log('DEVICE.read', offset, count)
+    console.log(`Device.prototype.read o=${offset} c=${count}`)
+
+    // FIXME: needs a 600ms timeout (between individual reads)
 
     return new Promise((resolve, reject) => {
         var data = new Uint8Array(count);
         var packetCount;
         var packetOffset = offset;
-        var eventListenerAdded = false;
 
         function readChunk() {
             if (count === 0) {
@@ -68,14 +91,7 @@ Device.prototype.read = function (offset, count) {
             }
 
             let packet = WebsocketProtocol.makeReadPacket(packetOffset, packetCount);
-
-            if (!eventListenerAdded) {
-                WebsocketProtocol.addEventListener(onevent);
-                eventListenerAdded = true;
-            }
-
             WebsocketProtocol.send(packet);
-
         }
 
 
@@ -101,6 +117,7 @@ Device.prototype.read = function (offset, count) {
             readChunk();
         }
 
+        WebsocketProtocol.addEventListener(onevent);
         readChunk();
     });
 };

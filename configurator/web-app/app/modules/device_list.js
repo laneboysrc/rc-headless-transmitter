@@ -129,11 +129,13 @@ DeviceList.prototype.edit = function (index) {
 DeviceList.prototype.load = function (uuid) {
     var configVersion;
 
-    dev.connect().then(_ => {
+    // FIXME: implement loading indicator
+
+    dev.connect(uuid).then(_ => {
         return dev.read(0, 4);
     }).then(data => {
         configVersion = Utils.getUint32(data);
-        console.log(data);
+        console.log(data)
         if (!CONFIG_VERSIONS.hasOwnProperty(configVersion)) {
             return Promise.reject(
                 new Error(`Unknown configVersion "${configVersion}"`));
@@ -145,28 +147,29 @@ DeviceList.prototype.load = function (uuid) {
         location.hash = Utils.buildURL(['model_details']);
     }).catch(error => {
         console.log(error);
+        // FIXME: we should let the user know that something went wrong
         this.resetPage();
     });
 };
 
 //*************************************************************************
-// load [schemaName] UUID
-// if [schemaName] UUID is not set
+// load hw.[schemaName].UUID
+// if hw.[schemaName].UUID is not set
 //     generate new UUID
-//     write UUID to [schemaName]
-//     write LAST_CHANGED to [schemaName]
-// if [schemaName] UUID is in our database
-//     load [schemaName] LAST_CHANGED
-//     if [schemaName] LAST_CHANGED == database LAST_CHANGED
+//     write UUID to hw.[schemaName]
+//     write LAST_CHANGED to hw.[schemaName]
+// if hw.[schemaName].UUID is in our database
+//     load hw.[schemaName].LAST_CHANGED
+//     if hw.[schemaName].LAST_CHANGED == database[UUID].LAST_CHANGED
 //         load dev.[schemaName] from database
-//     else if [schemaName] LAST_CHANGED > database LAST_CHANGED
-//         load [schemaName] into dev.[schemaName]
+//     else if hw.[schemaName].LAST_CHANGED > database[UUID].LAST_CHANGED
+//         load hw.[schemaName] into dev.[schemaName]
 //         update dev.[schemaName] in database
 //     else
 //         load dev.[schemaName] from database
-//         write dev.[schemaName] to [schemaName]
+//         write dev.[schemaName] to hw.[schemaName]
 // else
-//     load [schemaName] into dev.[schemaName]
+//     load hw.[schemaName] into dev.[schemaName]
 //     add dev.[schemaName] to our database
 DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
     const schema = CONFIG_VERSIONS[configVersion][schemaName];
@@ -198,13 +201,14 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
             });
         }).then(data => {
             dbEntry = data;
+            console.log('dbEntry', dbEntry)
             if (dbEntry.get('UUID') === newDev.uuid)  {
                 console.log('Device is in the database already');
                 return new Promise((resolve, reject) => {
                     dev.read(o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
                         newDev.lastChanged = Utils.getUint32(data);
 
-                        console.log('LAST_CHANGED', newDev.lastChanged)
+                        console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
 
                         if (newDev.lastChanged === dbEntry.lastChanged) {
                             console.log('device === db')
@@ -213,7 +217,9 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
                         }
                         else if (newDev.lastChanged > dbEntry.lastChanged) {
                             console.log('device > db')
-                            return this.loadDeviceData(newDev);
+                            this.loadDeviceData(newDev).then(devdbentry => {
+                                resolve(devdbentry);
+                            });
                         }
                         else {
                             console.log('device < db')
@@ -228,7 +234,7 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
                 return this.loadDeviceData(newDev);
             }
         }).then(dbobject => {
-            console.log("RESOLVING", schemaName)
+            console.log("RESOLVING read", schemaName)
             dev[newDev.schemaName] = dbobject;
             resolve();
         });
@@ -236,16 +242,24 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
 };
 
 //*************************************************************************
+// load hw.[newDev.schemaName] into newDev
+// add newDev to our database
 DeviceList.prototype.loadDeviceData = function (newDev) {
     const schema = CONFIG_VERSIONS[newDev.configVersion][newDev.schemaName];
     return new Promise((resolve, reject) => {
         dev.read(schema.o, schema.s).then(data => {
+            console.log('loadDeviceData read from device')
             newDev.data = data;
             return new Promise((resolve, reject) => {
-                Database.getEntry(newDev.uuid, newDev, _ => {
-                    resolve(new DBObject(data));
+                console.log('setEntry', newDev)
+                Database.setEntry(newDev,  _ => {
+                    console.log('setEntry done')
+                    resolve(new DBObject(newDev));
                 });
             });
+        }).then(dbobject => {
+            console.log('resolving outer promise', dbobject)
+            resolve(dbobject);
         });
     });
 };

@@ -138,7 +138,9 @@ function handle_CFG_WRITE(packet) {
 
     testData.set(packet.slice(3), offset);
 
-    var response = allocatePacket(0x57, 1);
+    var response = allocatePacket(0x57, 4);
+    response.set(packet.slice(1, 3), 1);
+    response[3] = count;
     nextPacket = response;
 }
 

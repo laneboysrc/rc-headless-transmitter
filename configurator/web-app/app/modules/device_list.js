@@ -266,6 +266,7 @@ DeviceList.prototype.connectionlost= function (event) {
     this.message.textContent = messages.noWebsocket;
 };
 
+//*************************************************************************
 DeviceList.prototype.onmessage = function (event) {
     // console.log('DeviceList ws: ', event, data);
     let data = event.detail;
@@ -288,7 +289,7 @@ function showConnectionLostMessage () {
     var toast = document.querySelector('#app-device_list-toast');
     var message = {
         message: 'Connection lost',
-        timeout: 10000
+        timeout: 5000
     };
     toast.MaterialSnackbar.showSnackbar(message);
 }

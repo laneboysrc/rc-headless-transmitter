@@ -57,7 +57,7 @@ Device.prototype.disableCommunication = function () {
 
 
 //*************************************************************************
-Device.prototype.connect = function (uuid) {
+Device.prototype.connect = function (uuid, address, hop_channels) {
     console.log(`Device.connect uuid=${uuid}`)
 
     return new Promise((resolve, reject) => {
@@ -67,12 +67,13 @@ Device.prototype.connect = function (uuid) {
             0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
             0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]);
 
-        function onevent(event) {
+        function onmessage(event) {
             let packet = event.detail;
 
             if (packet[0] === 0x49) {
-                document.removeEventListener('ws-message', onevent);
                 dev.connected = true;
+                document.removeEventListener('ws-message', onmessage);
+                document.removeEventListener('ws-close', onclose);
                 resolve();
                 return;
             }
@@ -80,11 +81,18 @@ Device.prototype.connect = function (uuid) {
             WebsocketProtocol.send(connectPacket);
         }
 
-        document.addEventListener('ws-message', onevent);
-        // FIXME: handle ws-close
+        function onclose(event) {
+            document.removeEventListener('ws-message', onmessage);
+            document.removeEventListener('ws-close', onclose);
+            reject(Error('Connection closed'));
+        }
+
+        document.addEventListener('ws-message', onmessage);
+        document.addEventListener('ws-close', onclose);
         WebsocketProtocol.send(connectPacket);
     });
 };
+
 
 //*************************************************************************
 Device.prototype.disconnect = function () {
@@ -93,20 +101,28 @@ Device.prototype.disconnect = function () {
     }
 
     return new Promise((resolve, reject) => {
-        function onevent(event) {
+        function onmessage(event) {
             let disconnectPacket = new Uint8Array([0x64]);
 
             WebsocketProtocol.send(disconnectPacket);
 
             dev.connected = false;
-            document.removeEventListener('ws-message', onevent);
+            document.removeEventListener('ws-message', onmessage);
+            document.removeEventListener('ws-close', onclose);
             resolve();
         }
 
-        document.addEventListener('ws-message', onevent);
-        // FIXME: handle ws-close
+        function onclose(event) {
+            document.removeEventListener('ws-message', onmessage);
+            document.removeEventListener('ws-close', onclose);
+            reject(Error('Connection closed'));
+        }
+
+        document.addEventListener('ws-message', onmessage);
+        document.addEventListener('ws-close', onclose);
     });
 };
+
 
 //*************************************************************************
 Device.prototype.read = function (offset, count) {
@@ -124,9 +140,10 @@ Device.prototype.read = function (offset, count) {
         var readChunks = buildChunks(offset, count);
         var nextChunk = 0;
 
-        function onevent(event) {
+        function onmessage(event) {
             let packet = event.detail;
 
+            // FIXME: check packet validity (size)
             if (packet[0] === 0x52) {
                 let o = Utils.getUint16(packet, 1);
                 let c = packet.length - 3;
@@ -150,9 +167,16 @@ Device.prototype.read = function (offset, count) {
             readChunk();
         }
 
+        function onclose(event) {
+            document.removeEventListener('ws-message', onmessage);
+            document.removeEventListener('ws-close', onclose);
+            reject(Error('Connection closed'));
+        }
+
         function readChunk() {
             if (readChunks.length === 0) {
-                document.removeEventListener('ws-message', onevent);
+                document.removeEventListener('ws-message', onmessage);
+                document.removeEventListener('ws-close', onclose);
                 resolve(data);
                 return;
             }
@@ -168,8 +192,8 @@ Device.prototype.read = function (offset, count) {
             nextChunk++;
         }
 
-        document.addEventListener('ws-message', onevent);
-        // FIXME: handle ws-close
+        document.addEventListener('ws-message', onmessage);
+        document.addEventListener('ws-close', onclose);
         readChunk();
     });
 };
@@ -190,7 +214,7 @@ Device.prototype.write = function (offset, data) {
         var writeChunks = buildChunks(offset, data.length);
         var nextChunk = 0;
 
-        function onevent(event) {
+        function onmessage(event) {
             let packet = event.detail;
 
             if (packet[0] === 0x57) {
@@ -215,9 +239,16 @@ Device.prototype.write = function (offset, data) {
             writeChunk();
         }
 
+        function onclose(event) {
+            document.removeEventListener('ws-message', onmessage);
+            document.removeEventListener('ws-close', onclose);
+            reject(Error('Connection closed'));
+        }
+
         function writeChunk() {
             if (writeChunks.length === 0) {
-                document.removeEventListener('ws-message', onevent);
+                document.removeEventListener('ws-message', onmessage);
+                document.removeEventListener('ws-close', onclose);
                 resolve();
                 return;
             }
@@ -236,8 +267,8 @@ Device.prototype.write = function (offset, data) {
             nextChunk++;
         }
 
-        document.addEventListener('ws-message', onevent);
-        // FIXME: handle ws-close
+        document.addEventListener('ws-message', onmessage);
+        document.addEventListener('ws-close', onclose);
         writeChunk();
     });
 };

@@ -76,52 +76,69 @@ Device.prototype.read = function (offset, count) {
 
     return new Promise((resolve, reject) => {
         var data = new Uint8Array(count);
-        var packetCount;
-        var packetOffset = offset;
+        var readRequests = [];
+        var nextChunk = 0;
 
-        if (!dev.connected) {
-            reject(new Error('Device.read: device not connected'));
-            return;
+        // Build up the requested read block into chunks since a single read
+        // request can only read up to 29 bytes. We store those chunks in
+        // a list that we request one-by-one.
+        let readOffset = offset;
+        let readCount = count;
+        while (readCount) {
+            let len = readCount > 29 ? 29 : readCount;
+            readRequests.push({
+                o: readOffset,
+                c: len
+            });
+
+            readOffset += len;
+            readCount -= len;
         }
-
-        function readChunk() {
-            if (count === 0) {
-                WebsocketProtocol.removeEventListener(onevent);
-                resolve(data);
-                return;
-            }
-
-            packetCount = count;
-
-            if (packetCount > 29) {
-                packetCount = 29;
-            }
-
-            let packet = WebsocketProtocol.makeReadPacket(packetOffset, packetCount);
-            WebsocketProtocol.send(packet);
-        }
-
 
         function onevent(event, packet) {
             if (event !== 'onmessage') {
                 return;
             }
 
-            if (packet[0] !== 0x52) {
-                return;
+            if (packet[0] === 0x52) {
+                let o = Utils.getUint16(packet, 1);
+                let c = packet.length - 3;
+
+                // Check if the read data is one of the chunks we are looking
+                // for. If yes, store the data at the appropriate offset
+                // and remove the chunk from our request list.
+                let index = readRequests.findIndex((element, index, array) => {
+                    return element.o === o  &&  element.c === c;
+                });
+                if (index >= 0) {
+                    data.set(packet.slice(3), o - offset);
+                    readRequests.splice(index, 1);
+                }
             }
 
-            let read_offset = Utils.getUint16(packet, 1);
-            let read_count = packet.length - 3;
-
-            if (read_offset !== packetOffset  &&  read_count !== packetCount) {
-                return;
-            }
-
-            data.set(packet.slice(3), packetOffset - offset);
-            count -= packetCount;
-            packetOffset += packetCount;
+            // Read the next chunk regardless if we received the previous
+            // data or not. On slow computers this causes quite a bit of
+            // redundant read requests, but it also automatically retries until
+            // all data was received.
             readChunk();
+        }
+
+        function readChunk() {
+            if (readRequests.length === 0) {
+                WebsocketProtocol.removeEventListener(onevent);
+                resolve(data);
+                return;
+            }
+
+            // Important: we modulo readRequest.length here, because the
+            // readRequest may had elements removed. The modulo also causes
+            // us to automatically loop through all chunks until we don't have
+            // any thing to request.
+            let request = readRequests[nextChunk % readRequests.length];
+            let packet = WebsocketProtocol.makeReadPacket(request.o, request.c);
+            WebsocketProtocol.send(packet);
+
+            nextChunk++;
         }
 
         WebsocketProtocol.addEventListener(onevent);

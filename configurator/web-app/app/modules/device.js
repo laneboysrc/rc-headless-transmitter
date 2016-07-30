@@ -37,7 +37,7 @@ var Device = function () {
     this.TX = undefined;
     this.connected = false;
 
-    WebsocketProtocol.addEventListener(this.on.bind(this));
+    document.addEventListener('ws-close', this.onclose.bind(this));
 };
 
 
@@ -51,13 +51,6 @@ Device.prototype.disableCommunication = function () {
     // stop WS, kill restart timer
 };
 
-//*************************************************************************
-Device.prototype.addEventListener = function () {
-    // Events:
-    //    onopen
-    //    onclose
-    //    onnewdevice
-};
 
 //*************************************************************************
 Device.prototype.connect = function (uuid) {
@@ -70,13 +63,11 @@ Device.prototype.connect = function (uuid) {
             0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
             0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]);
 
-        function onevent(event, packet) {
-            if (event !== 'onmessage') {
-                return;
-            }
+        function onevent(event) {
+            let packet = event.detail;
 
             if (packet[0] === 0x49) {
-                WebsocketProtocol.removeEventListener(onevent);
+                document.removeEventListener('ws-message', onevent);
                 dev.connected = true;
                 resolve();
                 return;
@@ -85,8 +76,8 @@ Device.prototype.connect = function (uuid) {
             WebsocketProtocol.send(connectPacket);
         }
 
-
-        WebsocketProtocol.addEventListener(onevent);
+        document.addEventListener('ws-message', onevent);
+        // FIXME: handle ws-close
         WebsocketProtocol.send(connectPacket);
     });
 };
@@ -115,10 +106,8 @@ Device.prototype.read = function (offset, count) {
         var readChunks = buildChunks(offset, count);
         var nextChunk = 0;
 
-        function onevent(event, packet) {
-            if (event !== 'onmessage') {
-                return;
-            }
+        function onevent(event) {
+            let packet = event.detail;
 
             if (packet[0] === 0x52) {
                 let o = Utils.getUint16(packet, 1);
@@ -145,7 +134,7 @@ Device.prototype.read = function (offset, count) {
 
         function readChunk() {
             if (readChunks.length === 0) {
-                WebsocketProtocol.removeEventListener(onevent);
+                document.removeEventListener('ws-message', onevent);
                 resolve(data);
                 return;
             }
@@ -161,7 +150,8 @@ Device.prototype.read = function (offset, count) {
             nextChunk++;
         }
 
-        WebsocketProtocol.addEventListener(onevent);
+        document.addEventListener('ws-message', onevent);
+        // FIXME: handle ws-close
         readChunk();
     });
 };
@@ -182,10 +172,8 @@ Device.prototype.write = function (offset, data) {
         var writeChunks = buildChunks(offset, data.length);
         var nextChunk = 0;
 
-        function onevent(event, packet) {
-            if (event !== 'onmessage') {
-                return;
-            }
+        function onevent(event) {
+            let packet = event.detail;
 
             if (packet[0] === 0x57) {
                 let o = Utils.getUint16(packet, 1);
@@ -211,7 +199,7 @@ Device.prototype.write = function (offset, data) {
 
         function writeChunk() {
             if (writeChunks.length === 0) {
-                WebsocketProtocol.removeEventListener(onevent);
+                document.removeEventListener('ws-message', onevent);
                 resolve();
                 return;
             }
@@ -230,7 +218,8 @@ Device.prototype.write = function (offset, data) {
             nextChunk++;
         }
 
-        WebsocketProtocol.addEventListener(onevent);
+        document.addEventListener('ws-message', onevent);
+        // FIXME: handle ws-close
         writeChunk();
     });
 };
@@ -251,12 +240,8 @@ Device.prototype.copy = function (src, dst, count) {
 
 //*************************************************************************
 // Receives Websocket events
-Device.prototype.on = function (event, data) {
-    // console.log('Device ws: ', event, data);
-    if (event !== 'onclose') {
-        return;
-    }
-
+Device.prototype.onclose = function (event, data) {
+    // console.log('Device ws: ', event, event.detail);
     this.connected = false;
 };
 

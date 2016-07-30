@@ -33,7 +33,12 @@ var DeviceList = function () {
     this.mdl = new MDLHelper();
     this.progress = {};
 
-    WebsocketProtocol.addEventListener(this.on.bind(this));
+    this._onmessage = this.onmessage.bind(this);
+
+    // FIXME: this should be handled through the Device
+    document.addEventListener('ws-open', this.onopen.bind(this));
+    document.addEventListener('ws-close', this.onclose.bind(this));
+    // document.addEventListener('ws-message', this._onmessage);
 };
 
 //*************************************************************************
@@ -41,12 +46,17 @@ DeviceList.prototype.init = function (params) {
     this.resetPage();
 
     Utils.showPage('device_list');
+
     WebsocketProtocol.close();
+
     WebsocketProtocol.open();
+    document.addEventListener('ws-message', this._onmessage);
 };
 
 //*************************************************************************
 DeviceList.prototype.resetPage = function () {
+    document.removeEventListener('ws-message', this._onmessage);
+
     this.loading.classList.remove('hidden');
     this.list.classList.add('hidden');
     this.txLoading.classList.add('hidden');
@@ -84,6 +94,8 @@ DeviceList.prototype.transmitterReadyForConnect = function (data) {
 
 //*************************************************************************
 DeviceList.prototype.edit = function (index) {
+    document.removeEventListener('ws-message', this._onmessage);
+
     this.mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', availableTransmitters[index]);
 
     this.list.classList.add('hidden');
@@ -249,38 +261,31 @@ DeviceList.prototype.loadDeviceData = function (newDev) {
 
 //*************************************************************************
 // Receives Websocket messages
-DeviceList.prototype.on = function (event, data) {
+DeviceList.prototype.onopen = function (event) {
+    wsConnected = true;
+};
+
+DeviceList.prototype.onclose = function (event) {
+    if (wsConnected) {
+        showConnectionLostMessage();
+    }
+    this.resetPage();
+    this.message.textContent = messages.noWebsocket;
+
+    // Retry in 2 seconds
+    setTimeout(function () {
+        WebsocketProtocol.open();
+    }, 2000);
+};
+
+DeviceList.prototype.onmessage = function (event) {
     // console.log('DeviceList ws: ', event, data);
+    let data = event.detail;
 
-    switch(event) {
-        case 'onmessage':
-            // FIXME: handle situation when we return to that page while already
-            // connected to a transmitter
-            if (data[0] === 0x30) {
-                this.transmitterReadyForConnect(data);
-            }
-
-            break;
-
-        case 'onclose':
-            if (wsConnected) {
-                showConnectionLostMessage();
-            }
-            this.resetPage();
-            this.message.textContent = messages.noWebsocket;
-
-            // Retry in 2 seconds
-            setTimeout(function () {
-                WebsocketProtocol.open();
-            }, 2000);
-            break;
-
-        case 'onopen':
-            wsConnected = true;
-            break;
-
-        case 'onerror':
-            break;
+    // FIXME: handle situation when we return to that page while already
+    // connected to a transmitter
+    if (data[0] === 0x30) {
+        this.transmitterReadyForConnect(data);
     }
 };
 

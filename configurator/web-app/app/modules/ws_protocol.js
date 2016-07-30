@@ -32,27 +32,27 @@ WebsocketProtocol.prototype.close = function () {
     }
 };
 
-//*************************************************************************
-WebsocketProtocol.prototype.addEventListener = function (listener) {
-    if (this.eventListeners.indexOf(listener) < 0) {
-        this.eventListeners.push(listener);
-    }
-};
+// //*************************************************************************
+// WebsocketProtocol.prototype.addEventListener = function (listener) {
+//     if (this.eventListeners.indexOf(listener) < 0) {
+//         this.eventListeners.push(listener);
+//     }
+// };
 
-//*************************************************************************
-WebsocketProtocol.prototype.removeEventListener = function (listener) {
-    while (this.eventListeners.indexOf(listener) >= 0 ) {
-        var index = this.eventListeners.indexOf(listener);
-        this.eventListeners.splice(index, 1);
-    }
-};
+// //*************************************************************************
+// WebsocketProtocol.prototype.removeEventListener = function (listener) {
+//     while (this.eventListeners.indexOf(listener) >= 0 ) {
+//         var index = this.eventListeners.indexOf(listener);
+//         this.eventListeners.splice(index, 1);
+//     }
+// };
 
-//*************************************************************************
-WebsocketProtocol.prototype.notifyListeners = function (event, data) {
-    this.eventListeners.forEach(function (listener) {
-        listener(event, data);
-    });
-};
+// //*************************************************************************
+// WebsocketProtocol.prototype.notifyListeners = function (event, data) {
+//     this.eventListeners.forEach(function (listener) {
+//         listener(event, data);
+//     });
+// };
 
 //*************************************************************************
 WebsocketProtocol.prototype.sendCfgPacket_ = function () {
@@ -99,7 +99,8 @@ WebsocketProtocol.prototype.makeWritePacket = function (offset, data) {
 //*************************************************************************
 WebsocketProtocol.prototype.onopen = function() {
     // console.log('WS: onopen');
-    this.notifyListeners('onopen');
+    Utils.sendCustomEvent('ws-open');
+    // this.notifyListeners('onopen');
 };
 
 WebsocketProtocol.prototype.onmessage = function(e) {
@@ -113,7 +114,8 @@ WebsocketProtocol.prototype.onmessage = function(e) {
             // if (data[0] !== 73) {
             //     console.log("WS: onmessage " + dumpUint8Array(data));
             // }
-            this.notifyListeners('onmessage', data);
+            Utils.sendCustomEvent('ws-message', data);
+            // this.notifyListeners('onmessage', data);
             this.sendCfgPacket_();
         }.bind(this));
 
@@ -127,13 +129,15 @@ WebsocketProtocol.prototype.onmessage = function(e) {
 
 WebsocketProtocol.prototype.onerror = function (e) {
     // console.log('WS: onerror', e);
-    this.notifyListeners('onerror', e);
+    Utils.sendCustomEvent('ws-error', e);
+    // this.notifyListeners('onerror', e);
 };
 
 WebsocketProtocol.prototype.onclose = function () {
     // console.log('WS: onclose');
     this.ws = undefined;
-    this.notifyListeners('onclose');
+    Utils.sendCustomEvent('ws-close');
+    // this.notifyListeners('onclose');
 };
 
 

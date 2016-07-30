@@ -1,5 +1,13 @@
 'use strict';
 
+export function sendCustomEvent(eventName, data) {
+    let event = new CustomEvent(eventName, {
+        detail: data,
+        cancelable: false
+    });
+    document.dispatchEvent(event);
+}
+
 export function byte2string(byte) {
     var s = byte.toString(16);
 

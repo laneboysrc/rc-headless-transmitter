@@ -53,7 +53,7 @@ function loadDevicesFromURL(params) {
             }
             else {
                 console.error('Failed to load MODEL from URL ' + params.model);
-                location.hash = '#/';
+                rollbackHistoryToRoot();
             }
             Utils.PubSub.publish(topic);
         });
@@ -67,7 +67,7 @@ function loadDevicesFromURL(params) {
             }
             else {
                 console.error('Failed to load TX from URL ' + params.model);
-                location.hash = '#/';
+                rollbackHistoryToRoot();
             }
             Utils.PubSub.publish(topic);
         });
@@ -97,6 +97,7 @@ function databaseReady() {
         // when the page was reloaded. Since we can not automatically reconnect
         // we throw the user back to the device list.
         if (matching_path.params.model  &&  matching_path.params.tx) {
+            rollbackHistoryToRoot();
             location.hash = '#/device_list';
             Path.listen();
         }
@@ -110,7 +111,16 @@ function databaseReady() {
     Path.listen();
 }
 
-
+function rollbackHistoryToRoot() {
+    for (let i = 0; i < history.length; i++) {
+        if (location.hash === '#/') {
+            return;
+        }
+        history.back();
+    }
+    history.replaceState(null, '', '#/');
+    location.hash = '#/';
+}
 
 
 for (var path in routes) {

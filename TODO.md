@@ -59,7 +59,6 @@
 
 - Rework configurator protocol to use UUID so that we know to which device
   we want to connect
-- Make configurator protocol write response return byte count
 
 - Instead of sending all hop channels, send a seed and max-channel and use
   a LFSR (0..125 range)
@@ -75,8 +74,6 @@
 - Use input event on slider as it is active during sliding.
 
 - Add model icon data
-
-- Too many connection lost toast messages are shown
 
 - Websocket is not always closed when returning for some reason
 

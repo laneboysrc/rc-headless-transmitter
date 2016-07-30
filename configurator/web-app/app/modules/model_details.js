@@ -10,10 +10,6 @@ var ModelDetails = function () { };
 ModelDetails.prototype.init = function (params) {
     var mdl = new MDLHelper('MODEL');
 
-    // Note: we could have reached here after loading a new model, so we fix
-    // the URL.
-    history.replaceState(null, '', Utils.buildURL(['model_details']));
-
     mdl.setTextfield('#app-model_details-name', 'NAME');
     mdl.setDataURL('#app-model_details-mixer', ['mixer']);
     mdl.setDataURL('#app-model_details-rf_protocol', ['rf_protocol']);

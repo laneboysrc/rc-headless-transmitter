@@ -138,11 +138,11 @@ ModelList.prototype.loadModel = function (element) {
         dev.MODEL = newModel;
 
         // Note: we have changed the model, so the URL UUID will be wrong.
-        // We fix that when we return to model_details by using
-        // history.replaceState.
-        // If we would use location.hash=buildURL() then we would break the
-        // back button!
+        // We pop one item from the history, but immediately replace the
+        // location hash with the new URL. This way the back button works
+        // despite that we create a loop
         history.back();
+        location.hash = Utils.buildURL(['model_details']);
     }).catch(error => {
         console.log(error);
     });

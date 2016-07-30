@@ -83,7 +83,7 @@
 		},
 		{
 			"path": "configurator",
-			"folder_exclude_patterns": ["_site", "node_modules"],
+			"folder_exclude_patterns": ["_build", "node_modules"],
 			"follow_symlinks": false
 		},
 		{

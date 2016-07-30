@@ -93,7 +93,16 @@ function databaseReady() {
 
     var matching_path = Path.match(location.hash, true);
     if (matching_path  &&  (matching_path.params.model  ||  matching_path.params.tx)) {
-        loadDevicesFromURL(matching_path.params);
+        // If both model and tx are present then we must have been connected
+        // when the page was reloaded. Since we can not automatically reconnect
+        // we throw the user back to the device list.
+        if (matching_path.params.model  &&  matching_path.params.tx) {
+            location.hash = '#/device_list';
+            Path.listen();
+        }
+        else {
+            loadDevicesFromURL(matching_path.params);
+        }
         return;
     }
 

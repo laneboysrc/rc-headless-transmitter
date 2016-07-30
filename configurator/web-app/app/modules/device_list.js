@@ -14,8 +14,7 @@ var messages = {
 };
 
 var availableTransmitters = [];
-var wsConnected = false;
-
+var showToast = false;
 
 //*************************************************************************
 var DeviceList = function () {
@@ -34,28 +33,27 @@ var DeviceList = function () {
     this.progress = {};
 
     this._onmessage = this.onmessage.bind(this);
-
-    // FIXME: this should be handled through the Device
-    document.addEventListener('ws-open', this.onopen.bind(this));
-    document.addEventListener('ws-close', this.onclose.bind(this));
-    // document.addEventListener('ws-message', this._onmessage);
 };
 
 //*************************************************************************
 DeviceList.prototype.init = function (params) {
     this.resetPage();
 
+    if (dev.connected) {
+        dev.disconnect();
+    }
+    else {
+        dev.enableCommunication();
+    }
+
+    document.addEventListener('dev-connectionlost', this.connectionlost.bind(this));
     Utils.showPage('device_list');
-
-    WebsocketProtocol.close();
-
-    WebsocketProtocol.open();
-    document.addEventListener('ws-message', this._onmessage);
+    showToast = true;
 };
 
 //*************************************************************************
 DeviceList.prototype.resetPage = function () {
-    document.removeEventListener('ws-message', this._onmessage);
+    document.addEventListener('ws-message', this._onmessage);
 
     this.loading.classList.remove('hidden');
     this.list.classList.add('hidden');
@@ -65,7 +63,6 @@ DeviceList.prototype.resetPage = function () {
     // Empty the list of transmitters
     this.mdl.clearDynamicElements(this.list);
     this.message.textContent = messages.default;
-    wsConnected = false;
 };
 
 //*************************************************************************
@@ -90,6 +87,8 @@ DeviceList.prototype.transmitterReadyForConnect = function (data) {
 
     var clone = document.importNode(t, true);
     this.container.appendChild(clone);
+
+    showToast = true;
 };
 
 //*************************************************************************
@@ -212,7 +211,7 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
                             });
                         }
                         else {
-                            console.log('device < db')
+                            // console.log('device < db')
                             dev.write(schema.o, dbEntry.data).then(_ => {
                                 resolve(dbEntry);
                             });
@@ -261,21 +260,10 @@ DeviceList.prototype.loadDeviceData = function (newDev) {
 
 //*************************************************************************
 // Receives Websocket messages
-DeviceList.prototype.onopen = function (event) {
-    wsConnected = true;
-};
-
-DeviceList.prototype.onclose = function (event) {
-    if (wsConnected) {
-        showConnectionLostMessage();
-    }
+DeviceList.prototype.connectionlost= function (event) {
+    showConnectionLostMessage();
     this.resetPage();
     this.message.textContent = messages.noWebsocket;
-
-    // Retry in 2 seconds
-    setTimeout(function () {
-        WebsocketProtocol.open();
-    }, 2000);
 };
 
 DeviceList.prototype.onmessage = function (event) {
@@ -291,6 +279,11 @@ DeviceList.prototype.onmessage = function (event) {
 
 //*************************************************************************
 function showConnectionLostMessage () {
+    if (!showToast) {
+        return;
+    }
+    showToast = false;
+
     // FIXME: the 'toast; should be one element for the whole app!
     var toast = document.querySelector('#app-device_list-toast');
     var message = {

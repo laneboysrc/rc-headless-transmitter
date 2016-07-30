@@ -6,7 +6,6 @@ var Utils = require('./utils');
 var WebsocketProtocol = function () {
     this.ws = undefined;
     this.cfgPacket = undefined;
-    this.eventListeners = [];
 };
 
 //*************************************************************************
@@ -31,28 +30,6 @@ WebsocketProtocol.prototype.close = function () {
         this.ws.close();
     }
 };
-
-// //*************************************************************************
-// WebsocketProtocol.prototype.addEventListener = function (listener) {
-//     if (this.eventListeners.indexOf(listener) < 0) {
-//         this.eventListeners.push(listener);
-//     }
-// };
-
-// //*************************************************************************
-// WebsocketProtocol.prototype.removeEventListener = function (listener) {
-//     while (this.eventListeners.indexOf(listener) >= 0 ) {
-//         var index = this.eventListeners.indexOf(listener);
-//         this.eventListeners.splice(index, 1);
-//     }
-// };
-
-// //*************************************************************************
-// WebsocketProtocol.prototype.notifyListeners = function (event, data) {
-//     this.eventListeners.forEach(function (listener) {
-//         listener(event, data);
-//     });
-// };
 
 //*************************************************************************
 WebsocketProtocol.prototype.sendCfgPacket_ = function () {

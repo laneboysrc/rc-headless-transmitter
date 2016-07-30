@@ -36,6 +36,7 @@ var Device = function () {
     this.MODEL = undefined;
     this.TX = undefined;
     this.connected = false;
+    this.wsOpen = false;
 
     document.addEventListener('ws-close', this.onclose.bind(this));
 };
@@ -43,12 +44,15 @@ var Device = function () {
 
 //*************************************************************************
 Device.prototype.enableCommunication = function () {
-    // start WS
+    this.wsOpen = true;
+    WebsocketProtocol.open();
 };
 
 //*************************************************************************
 Device.prototype.disableCommunication = function () {
     // stop WS, kill restart timer
+    this.wsOpen = false;
+    WebsocketProtocol.close();
 };
 
 
@@ -84,9 +88,23 @@ Device.prototype.connect = function (uuid) {
 
 //*************************************************************************
 Device.prototype.disconnect = function () {
+    if (!dev.connected) {
+        return Promise.reject(Error('Device.disconnect: not connected'));
+    }
+
     return new Promise((resolve, reject) => {
-        dev.connected = false;
-        resolve('disconnect: FIXME');
+        function onevent(event) {
+            let disconnectPacket = new Uint8Array([0x64]);
+
+            WebsocketProtocol.send(disconnectPacket);
+
+            dev.connected = false;
+            document.removeEventListener('ws-message', onevent);
+            resolve();
+        }
+
+        document.addEventListener('ws-message', onevent);
+        // FIXME: handle ws-close
     });
 };
 
@@ -243,6 +261,13 @@ Device.prototype.copy = function (src, dst, count) {
 Device.prototype.onclose = function (event, data) {
     // console.log('Device ws: ', event, event.detail);
     this.connected = false;
+    if (this.wsOpen) {
+        Utils.sendCustomEvent('dev-connectionlost');
+        // Retry in 2 seconds
+        setTimeout(function () {
+            WebsocketProtocol.open();
+        }, 2000);
+    }
 };
 
 window['dev'] = new Device();

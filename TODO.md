@@ -44,7 +44,6 @@
   - Requires rearranging other mixers
 - Add mixer units
   - Requires rearranging of the mixer unit order
-- Load models into the transmitter
 - Add model
 - Delete model
 - Delete transmitter
@@ -74,8 +73,6 @@
 - Use input event on slider as it is active during sliding.
 
 - Add model icon data
-
-- Websocket is not always closed when returning for some reason
 
 - checkout beforeinstallprompt in manifest.json
 

@@ -3,29 +3,48 @@
 var Utils       = require('./utils');
 
 
-var RFProtocol = function () {};
+class RFProtocol{
 
-//*************************************************************************
-RFProtocol.prototype.init = function (params) {
-    var model = dev.MODEL;
+  init (params) {
+    let model = dev.MODEL;
 
-    var address = model.get('RF_PROTOCOL_HK310_ADDRESS');
-    var hop_channels = model.get('RF_PROTOCOL_HK310_HOP_CHANNELS');
+    let address = model.get('RF_PROTOCOL_HK310_ADDRESS');
+    let hop_channels = model.get('RF_PROTOCOL_HK310_HOP_CHANNELS');
 
     // FIXME: parse address and hop channels and put them back into the db
+    let adressString = this.address2string(address);
+    document.querySelector('#app-rf_protocol-address').value = adressString;
 
-    var adress_string = address.map(Utils.byte2string).join(':');
-    document.querySelector('#app-rf_protocol-address').value = adress_string;
-
-    var hop_string = hop_channels.join(' ');
-    document.querySelector('#app-rf_protocol-hop_channels').value = hop_string;
+    let hopString = hop_channels.join(' ');
+    document.querySelector('#app-rf_protocol-hop_channels').value = hopString;
 
     Utils.showPage('rf_protocol');
-};
+  }
 
-//*************************************************************************
-RFProtocol.prototype.back = function (params) {
+  back (params) {
     history.back();
-};
+  }
+
+  address2string (address) {
+    return address.map(Utils.byte2string).join(':');
+  }
+
+  generateRandomAddress (event) {
+    Utils.cancelBubble(event);
+
+    let address = this.getRandomAddress();
+    let adressString = this.address2string(address);
+    document.querySelector('#app-rf_protocol-address').value = adressString;
+
+    dev.MODEL.set('RF_PROTOCOL_HK310_ADDRESS', address);
+  }
+
+  getRandomAddress () {
+    let address = new Uint8Array(5);
+    window.crypto.getRandomValues(address);
+    return Array.from(address);
+  }
+}
+
 
 window['RFProtocol'] = new RFProtocol();

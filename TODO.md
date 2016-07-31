@@ -87,4 +87,7 @@
   In the function call Utils.cancelBubble(event);
   We need this to make div onclick handlers that trigger the button work
 
-- ModelList may need a loading indicator while populating the available models
+- ModelList needs a loading indicator while populating the available models
+
+- Use class everywhere
+

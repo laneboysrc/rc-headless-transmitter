@@ -1,0 +1,27 @@
+<!-- Dialogs must be child of the body element, so we treat them specially -->
+
+<dialog id="app-rf_protocol-hop_channel_dialog" class="mdl-dialog">
+  <h3 class="mdl-dialog__title">Hop channels</h3>
+  <div class="mdl-dialog__content">
+    <p>
+      If you are using an
+      original HobbyKing receiver, choose <em>HobbyKing compatible</em> only.
+    </p>
+    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect">
+      <input type="radio" class="mdl-radio__button" name="hop-selection" value="hobbyking">
+      <span class="mdl-radio__label">HobbyKing compatible</span>
+    </label>
+    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect">
+      <input type="radio" class="mdl-radio__button" name="hop-selection" value="ism">
+      <span class="mdl-radio__label">Random ISM band channels</span>
+    </label>
+    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect">
+      <input type="radio" class="mdl-radio__button" name="hop-selection" value="nrf">
+      <span class="mdl-radio__label">Random channels up to 2.525 GHz</span>
+    </label>
+  </div>
+  <div class="mdl-dialog__actions">
+    <button type="button" class="mdl-button" onclick="RFProtocol.hopDialogOk(event);">Generate</button>
+    <button type="button" onclick="RFProtocol.hopDialogCancel(event);" class="mdl-button">Cancel</button>
+  </div>
+</dialog>

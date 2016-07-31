@@ -107,7 +107,9 @@ ModelList.prototype.createModel = function (event) {
     // NOTE: setting the name has automatically added the device to the
     // database!
 
-    // FIXME: create NRF address and hop channels
+    newModel.set('RF_PROTOCOL_HK310_ADDRESS', RFProtocol.newRandomAddress());
+    newModel.set('RF_PROTOCOL_HK310_HOP_CHANNELS', RFProtocol.newHopChannels());
+
     // FIXME: load a template with a basic mixer (car steering and throttle?)
 
     dev.MODEL = newModel;

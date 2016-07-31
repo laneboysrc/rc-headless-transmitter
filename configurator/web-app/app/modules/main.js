@@ -1,21 +1,24 @@
 'use strict';
 
-var Utils       = require('./utils');
-var DBObject    = require('./database_object');
+var Utils = require('./utils');
 
-
-//*************************************************************************
-var Main = function () {
-};
-
-//*************************************************************************
-Main.prototype.init = function () {
+class Main {
+  init  () {
     dev.MODEL = undefined;
     dev.TX = undefined;
+    dev.UNDO = undefined;
     dev.disableCommunication();
 
     Utils.showPage('main');
-};
+  }
+
+  connect (event) {
+    Utils.cancelBubble(event);
+    location.hash = Utils.buildURL(['device_list']);
+  }
+}
+
+//*************************************************************************
 
 // //*************************************************************************
 // Main.prototype.connect = function () {

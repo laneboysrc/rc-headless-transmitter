@@ -93,6 +93,28 @@ Database.prototype.setEntry = function (data, callback) {
 };
 
 //*************************************************************************
+Database.prototype.deleteEntry = function (data, callback) {
+    // console.log("Database: deleteEntry()");
+    var request = this.db.transaction(STORE_NAME, 'readwrite')
+                         .objectStore(STORE_NAME)
+                         .delete(data.uuid);
+
+    request.onsuccess = function(event) {
+        var result = event.target.result;
+        if (callback) {
+            callback(result);
+        }
+    };
+
+    request.onerror = function(event) {
+        console.error('Database: deleteEntry() failed', event);
+        if (callback) {
+            callback(undefined);
+        }
+    };
+};
+
+//*************************************************************************
 Database.prototype.listEntries = function (callback) {
     var objectStore = this.db.transaction(STORE_NAME).objectStore(STORE_NAME);
 

@@ -8,10 +8,6 @@ class Main {
   }
 
   init () {
-    // We can only do this after MDL has initialized, otherwise the drawer_button
-    // does not exist
-    this.drawerButton = document.querySelector('#page_main .mdl-layout__drawer-button');
-
     dev.MODEL = undefined;
     dev.TX = undefined;
     dev.UNDO = undefined;
@@ -28,25 +24,31 @@ class Main {
   about (event) {
     Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['about']);
-
-    // Close the drawer
-    this.drawerButton.click();
+    this.closeDrawer();
   }
 
   models (event) {
     Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['model_list']);
-
-    // Close the drawer
-    this.drawerButton.click();
+    this.closeDrawer();
   }
 
   transmitters (event) {
     Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['transmitter_list']);
+    this.closeDrawer();
+  }
 
-    // Close the drawer
-    this.drawerButton.click();
+  closeDrawer () {
+    // We can only do this after MDL has initialized, otherwise the drawer_button
+    // does not exist
+    let drawerButton = document.querySelector('#page_main .mdl-layout__drawer-button');
+
+    // Close the drawer only after a short delay as to not interfere with
+    // loading of the new page
+    window.setTimeout(_ => {
+      drawerButton.click();
+    }, 50);
   }
 }
 

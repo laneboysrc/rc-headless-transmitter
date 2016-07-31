@@ -1,25 +1,25 @@
 'use strict';
 
-var Utils       = require('./utils');
-var MDLHelper   = require('./mdl_helper');
+var Utils = require('./utils');
+var MDLHelper = require('./mdl_helper');
 
-
-var Limits = function () {
+class Limits {
+  constructor () {
     this.channel = undefined;
-};
+  }
 
-//*************************************************************************
-Limits.prototype.init = function (params) {
+  //*************************************************************************
+  init (params) {
     this.channel = params.channel;
 
-    var model = dev.MODEL;
+    let model = dev.MODEL;
 
-    var limits = model.getSchema()['LIMITS'];
-    var channel_index = model.getNumberOfTypeMember('MIXER_UNITS_DST', this.channel);
+    let limits = model.getSchema()['LIMITS'];
+    let channel_index = model.getNumberOfTypeMember('MIXER_UNITS_DST', this.channel);
 
-    var offset = limits.s * channel_index;
+    let offset = limits.s * channel_index;
 
-    var mdl = new MDLHelper('MODEL', {offset: offset});
+    let mdl = new MDLHelper('MODEL', {offset: offset});
 
     mdl.setTextContentRaw('#app-limits-channel', this.channel);
     mdl.setSlider('#app-limits-subtrim', 'LIMITS_SUBTRIM');
@@ -33,11 +33,12 @@ Limits.prototype.init = function (params) {
     mdl.setSwitch('#app-limits-invert', 'LIMITS_INVERT');
 
     Utils.showPage('limits');
-};
+  }
 
-//*************************************************************************
-Limits.prototype.back = function (params) {
+  //*************************************************************************
+  back (params) {
     history.back();
-};
+  }
+}
 
 window['Limits'] = new Limits();

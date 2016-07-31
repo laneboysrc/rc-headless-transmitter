@@ -1,15 +1,15 @@
 'use strict';
 
-var Utils       = require('./utils');
-var MDLHelper   = require('./mdl_helper');
+var Utils = require('./utils');
+var MDLHelper = require('./mdl_helper');
 
-
-var MixerUnit = function () {
+class MixerUnit {
+  constructor () {
     this.offset = 0;
-};
+  }
 
-//*************************************************************************
-MixerUnit.prototype.init = function (params) {
+  //*************************************************************************
+  init (params) {
     this.index = params.index;
 
     var mixer_units = dev.MODEL.getSchema()['MIXER_UNITS'];
@@ -28,18 +28,19 @@ MixerUnit.prototype.init = function (params) {
     mdl.setDataURL('#app-mixer_unit-curve__edit', ['edit_curve', this.offset]);
     mdl.setDataURL('#app-mixer_unit-sw__edit', ['edit_switch', this.offset]);
     mdl.setDataURL('#app-mixer_unit-src__edit',
-        ['select_single', 'MODEL', 'MIXER_UNITS_SRC', this.offset]);
+      ['select_single', 'MODEL', 'MIXER_UNITS_SRC', this.offset]);
     mdl.setDataURL('#app-mixer_unit-dst__edit',
-        ['select_single', 'MODEL', 'MIXER_UNITS_DST', this.offset]);
+      ['select_single', 'MODEL', 'MIXER_UNITS_DST', this.offset]);
     mdl.setDataURL('#app-mixer_unit-op__edit',
-        ['select_single', 'MODEL', 'MIXER_UNITS_OP', this.offset]);
+      ['select_single', 'MODEL', 'MIXER_UNITS_OP', this.offset]);
 
     Utils.showPage('mixer_unit');
-};
+  }
 
-//*************************************************************************
-MixerUnit.prototype.back = function (params) {
+  //*************************************************************************
+  back (params) {
     history.back();
-};
+  }
+}
 
 window['MixerUnit'] = new MixerUnit();

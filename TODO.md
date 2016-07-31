@@ -37,6 +37,8 @@
 
 - Delete transmitter
 
+- Prepare for translation
+
 - Show battery voltage on device_list
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
@@ -77,7 +79,6 @@
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
-- Use class everywhere
 
 - ModelList needs a loading indicator while populating the available models
 
@@ -94,3 +95,8 @@
 - i++ instead i+=1
 - use const
 - use let instead of var
+- Rename dev to Device, rename database_object to devObject?
+
+- Fix drawer being open when returning
+
+- ModelList: sort models by name

@@ -1,30 +1,29 @@
 'use strict';
 
-var Utils       = require('./utils');
-var MDLHelper   = require('./mdl_helper');
+var Utils = require('./utils');
+var MDLHelper = require('./mdl_helper');
 
-
-var SelectSingle = function () {
+class SelectSingle {
+  constructor () {
     this.devName = undefined;
     this.item = undefined;
     this.offset = 0;
 
     this.template = document.querySelector('#app-select_single-template').content;
     this.list = document.querySelector('#app-select_single-list');
+  }
 
-};
-
-//*************************************************************************
-SelectSingle.prototype.accept_choice = function () {
+  //*************************************************************************
+  accept_choice () {
     var list = document.querySelector('#app-select_single-list');
     var value = list.querySelector('input[type="radio"]:checked').value;
 
     dev[this.devName].setItem(this.item, value, {offset: this.offset});
     history.go(-1);
-};
+  }
 
-//*************************************************************************
-SelectSingle.prototype.init = function (params) {
+  //*************************************************************************
+  init (params) {
     this.devName = params.devName;
     this.item = params.item;
     this.offset = parseInt(params.offset);
@@ -49,26 +48,27 @@ SelectSingle.prototype.init = function (params) {
     var t = this.template;
 
     for (var i = 0; i < choices.length; i++) {
-        var entry = choices[i];
+      var entry = choices[i];
 
-        t.querySelector('span').textContent = entry;
-        t.querySelector('input').id = 'app-select_single__item' + i;
-        t.querySelector('input').value = entry;
-        t.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
+      t.querySelector('span').textContent = entry;
+      t.querySelector('input').id = 'app-select_single__item' + i;
+      t.querySelector('input').value = entry;
+      t.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
 
-        var clone = document.importNode(t, true);
-        if (entry === current_choice) {
-            clone.querySelector('input').checked = true;
-        }
-        this.list.appendChild(clone);
+      var clone = document.importNode(t, true);
+      if (entry === current_choice) {
+        clone.querySelector('input').checked = true;
+      }
+      this.list.appendChild(clone);
     }
 
     Utils.showPage('select_single');
-};
+  }
 
-//*************************************************************************
-SelectSingle.prototype.back = function (params) {
+  //*************************************************************************
+  back (params) {
     history.back();
-};
+  }
+}
 
 window['SelectSingle'] = new SelectSingle();

@@ -1,7 +1,7 @@
 'use strict';
 
-var Utils           = require('./utils');
-var dialogPolyfill  = require('dialog-polyfill');
+var Utils = require('./utils');
+var dialogPolyfill = require('dialog-polyfill');
 
 class RFProtocol{
   constructor () {
@@ -11,6 +11,7 @@ class RFProtocol{
     }
   }
 
+  //*************************************************************************
   init (params) {
     let model = dev.MODEL;
 
@@ -27,14 +28,17 @@ class RFProtocol{
     Utils.showPage('rf_protocol');
   }
 
+  //*************************************************************************
   back (params) {
     history.back();
   }
 
+  //*************************************************************************
   address2string (address) {
     return address.map(Utils.byte2string).join(':');
   }
 
+  //*************************************************************************
   generateRandomAddress (event) {
     Utils.cancelBubble(event);
 
@@ -45,6 +49,7 @@ class RFProtocol{
     dev.MODEL.setItem('RF_PROTOCOL_HK310_ADDRESS', address);
   }
 
+  //*************************************************************************
   showHopChannelDialog (event) {
     Utils.cancelBubble(event);
 
@@ -54,6 +59,7 @@ class RFProtocol{
     this.hopChannelDialog.showModal();
   }
 
+  //*************************************************************************
   hopDialogOk (event) {
     Utils.cancelBubble(event);
     this.hopChannelDialog.close();
@@ -66,17 +72,20 @@ class RFProtocol{
     dev.MODEL.setItem('RF_PROTOCOL_HK310_HOP_CHANNELS', hopChannels);
   }
 
+  //*************************************************************************
   hopDialogCancel (event) {
     Utils.cancelBubble(event);
     this.hopChannelDialog.close();
   }
 
+  //*************************************************************************
   newRandomAddress () {
     let address = new Uint8Array(5);
     window.crypto.getRandomValues(address);
     return Array.from(address);
   }
 
+  //*************************************************************************
   newHopChannels (type) {
     var hopChannels = [];
     var isNearBindChannel;
@@ -132,9 +141,6 @@ class RFProtocol{
 
     return hopChannels;
   }
-
-
 }
-
 
 window['RFProtocol'] = new RFProtocol();

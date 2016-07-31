@@ -1,21 +1,21 @@
 'use strict';
 
-var Utils       = require('./utils');
-var MDLHelper   = require('./mdl_helper');
+var Utils = require('./utils');
 
-var mdl = new MDLHelper('TX');
+class TransmitterList {
+  constructor () {
+    // Nothing to do
+  }
 
-
-var TransmitterList = function () { };
-
-//*************************************************************************
-TransmitterList.prototype.init = function (params) {
+  //*************************************************************************
+  init (params) {
     Utils.showPage('transmitter_list');
-};
+  }
 
-//*************************************************************************
-TransmitterList.prototype.back = function (params) {
+  //*************************************************************************
+  back (params) {
     history.back();
-};
+  }
+}
 
 window['TransmitterList'] = new TransmitterList();

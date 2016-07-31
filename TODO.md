@@ -96,6 +96,7 @@
 - use let instead of var
 - Rename dev to Device, rename database_object to devObject?
 
-- Fix drawer being open when returning
-
 - ModelList: sort models by name
+
+- Fix history on Chromium: closes window when in model_details
+

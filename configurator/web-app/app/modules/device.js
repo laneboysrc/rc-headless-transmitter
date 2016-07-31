@@ -1,6 +1,7 @@
 'use strict';
 
 var Utils = require('./utils');
+var DBObject = require('./database_object');
 
 
 //*************************************************************************
@@ -35,6 +36,7 @@ function buildChunks(offset, count, maxChunkSize) {
 var Device = function () {
     this.MODEL = undefined;
     this.TX = undefined;
+    this.UNDO = undefined;
     this.connected = false;
     this.wsOpen = false;
 
@@ -301,5 +303,21 @@ Device.prototype.onclose = function (event, data) {
         }, 2000);
     }
 };
+
+//*************************************************************************
+Device.prototype.makeNewDevice = function (configVersion, schemaName) {
+    var newDevice = {};
+
+    const schema = CONFIG_VERSIONS[configVersion][schemaName];
+
+    newDevice.configVersion = configVersion;
+    newDevice.schemaName = schemaName;
+    newDevice.data = new Uint8Array(schema.s);
+    newDevice.lastChanged = 0;
+    newDevice.uuid = Utils.newUUID();
+
+    return new DBObject(newDevice);
+};
+
 
 window['dev'] = new Device();

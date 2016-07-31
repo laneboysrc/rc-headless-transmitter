@@ -1,5 +1,11 @@
 'use strict';
 
+export function cancelBubble(event) {
+  if (event  &&  event.cancelBubble) {
+    event.cancelBubble = true;
+  }
+}
+
 export function sendCustomEvent(eventName, data) {
   let event = new CustomEvent(eventName, {
     detail: data,

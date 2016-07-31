@@ -33,8 +33,17 @@ ModelDetails.prototype.back = function (params) {
 };
 
 //*************************************************************************
-ModelDetails.prototype.changeModel = function () {
+ModelDetails.prototype.changeModel = function (event) {
     location.hash = Utils.buildURL(['model_list']);
+};
+
+//*************************************************************************
+ModelDetails.prototype.deleteModel = function (event) {
+    Utils.cancelBubble(event);
+
+    ModelList.deleteModel(dev.MODEL);
+    dev.MODEL = undefined;
+    history.back();
 };
 
 window['ModelDetails'] = new ModelDetails();

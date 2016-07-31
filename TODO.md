@@ -44,8 +44,6 @@
   - Requires rearranging other mixers
 - Add mixer units
   - Requires rearranging of the mixer unit order
-- Add model
-- Delete model
 - Delete transmitter
 - Live stick/switch/output view
 - Show battery voltage on device_list
@@ -82,3 +80,11 @@
   - Database should not be a global object, but imported where needed
     - Assuming that opening the DB repeatadly is fast
 
+- History mangling does not seem to work well on Chrome (Android)
+  - Maybe needs setTimeout hack
+
+- In all button onclick handlers pass the event along (ModelList.addModel(event);)
+  In the function call Utils.cancelBubble(event);
+  We need this to make div onclick handlers that trigger the button work
+
+- ModelList may need a loading indicator while populating the available models

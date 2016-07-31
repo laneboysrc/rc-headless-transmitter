@@ -17,6 +17,8 @@ var ModelList = function () {
     this.name = document.querySelector('#app-model_list-loading_model__name');
     this.progress = document.querySelector('#app-model_list-loading_model__progress');
 
+    this.snackbar = document.querySelector('#app-model_list-snackbar');
+
     this.mode = 'edit';
 };
 
@@ -37,7 +39,10 @@ ModelList.prototype.init = function (params) {
 
     Database.listEntries(this.databaseCallback.bind(this));
 
+
     Utils.showPage('model_list');
+
+
 };
 
 //*************************************************************************
@@ -68,6 +73,8 @@ ModelList.prototype.databaseCallback = function (cursor) {
 ModelList.prototype.updateModelList = function () {
     mdl.clearDynamicElements(this.list);
 
+    // FIXME: sort models[] by name
+
     var t = this.template;
     for (var i = 0; i < models.length; i += 1) {
         t.querySelector('div').classList.add('can-delete');
@@ -87,8 +94,23 @@ ModelList.prototype.updateModelList = function () {
 };
 
 //*************************************************************************
-ModelList.prototype.addModel = function (ev) {
-    console.log('addModel', ev)
+ModelList.prototype.createModel = function (event) {
+    Utils.cancelBubble(event);
+
+    // FIXME: get this somehow persistently incrementing
+    let newNumber = 42;
+
+    let newModel = dev.makeNewDevice('1', 'MODEL');
+    newModel.set('NAME', `Model${newNumber}`);
+
+    // NOTE: setting the name has automatically added the device to the
+    // database!
+
+    // FIXME: create NRF address and hop channels
+    // FIXME: load a template with a basic mixer (car steering and throttle?)
+
+    dev.MODEL = newModel;
+    location.hash = Utils.buildURL(['model_details']);
 };
 
 //*************************************************************************
@@ -158,6 +180,37 @@ ModelList.prototype.updateItemVisibility = function () {
         Utils.addClassToSelector('.app-model_list--load', 'hidden');
         Utils.removeClassFromSelector('.app-model_list--edit', 'hidden');
     }
+};
+
+//*************************************************************************
+ModelList.prototype.deleteModel = function (model) {
+    dev.UNDO = model;
+    Database.deleteEntry(model);
+
+    // FIXME: add snackbar with undo message
+    console.log('UNDO SNACKBAR');
+
+    this.snackbar.classList.remove('hidden');
+    var data = {
+        message: 'Model deleted.',
+        timeout: 5000,
+        actionHandler: this.undoDeleteModel.bind(this),
+        actionText: 'Undo'
+    };
+    this.snackbar.MaterialSnackbar.showSnackbar(data);
+};
+
+//*************************************************************************
+ModelList.prototype.undoDeleteModel = function () {
+    console.log('undoDeleteModel');
+    if (!dev.UNDO) {
+        return;
+    }
+
+    dev.MODEL = dev.UNDO;
+    Database.setEntry(dev.MODEL);
+    location.hash = Utils.buildURL(['model_details']);
+    this.snackbar.classList.add('hidden');
 };
 
 

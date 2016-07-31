@@ -3,11 +3,6 @@
 var Utils = require('./utils');
 
 
-// Custom database exception
-function DatabaseException(message) {
-    this.name = "DatabaseException";
-    this.message = message;
-}
 
 
 // DBObject: Database Object
@@ -28,7 +23,7 @@ var DBObject = function (data) {
 // many of the database function.
 //
 // In case an issue is found a console.error() message is written and a
-// DatabaseException() is thrown.
+// Error() is thrown.
 DBObject.prototype.validateInputs = function (key, index) {
     var message;
     var schema = this.getSchema();
@@ -36,14 +31,14 @@ DBObject.prototype.validateInputs = function (key, index) {
     if (key  &&  !schema.hasOwnProperty(key)) {
         message = 'Key "' + key + '" not in schema.';
         console.error(message);
-        throw new DatabaseException(message);
+        throw new Error(message);
     }
 
     if (typeof index !== 'undefined') {
         if (! Utils.isNumber(index)) {
             message = 'Index "' + index + '" is not an Integer';
             console.error(message);
-            throw new DatabaseException(message);
+            throw new Error(message);
         }
 
         var  item = schema[key];
@@ -56,7 +51,7 @@ DBObject.prototype.validateInputs = function (key, index) {
             message = 'Requested index "' + index + '" for key "' + key +
                 '" but item contains only ' + item.c + ' elements';
             console.error(message);
-            throw new DatabaseException(message);
+            throw new Error(message);
         }
     }
 };
@@ -292,14 +287,14 @@ DBObject.prototype.get = function (key, options) {
         if (! getters.hasOwnProperty(type)) {
             message = 'Invalid type ' + type;
             console.error(message);
-            throw new DatabaseException(message);
+            throw new Error(message);
         }
 
         if (! getters[type].hasOwnProperty(bytesPerElement)) {
             message = 'bytesPerElement is '+ bytesPerElement +
                 ' but must be 1, 2 or 4';
             console.error(message);
-            throw new DatabaseException(message);
+            throw new Error(message);
         }
 
         return getters[type][bytesPerElement];
@@ -337,7 +332,7 @@ DBObject.prototype.get = function (key, options) {
             var message = 'Schema type "' + item.t + '" for key "' +
                 key + '" not defined';
             console.error(message);
-            throw new DatabaseException(message);
+            throw new Error(message);
         }
 
         var TypedArray = getGetter(item.s, 'i');
@@ -430,7 +425,7 @@ DBObject.prototype.set = function (key, value, options) {
                 message = '' + key + ' requires ' + item.c +
                     ' elements but ' + value.length + ' provided';
                 console.error(message);
-                throw new DatabaseException(message);
+                throw new Error(message);
             }
         }
     }
@@ -452,14 +447,14 @@ DBObject.prototype.set = function (key, value, options) {
         if (! setters.hasOwnProperty(type)) {
             message = 'Invalid type ' + type;
             console.error(message);
-            throw new DatabaseException(message);
+            throw new Error(message);
         }
 
         if (! setters[type].hasOwnProperty(bytesPerElement)) {
             message = 'bytesPerElement is '+ bytesPerElement +
                 ' but must be 1, 2 or 4';
             console.error(message);
-            throw new DatabaseException(message);
+            throw new Error(message);
         }
 
         return setters[type][bytesPerElement];
@@ -557,7 +552,7 @@ DBObject.prototype.set = function (key, value, options) {
 
                 var message = 'Key ' + value + ' is not in type ' + item.t;
                 console.error(message);
-                throw new DatabaseException(message);
+                throw new Error(message);
             }
             return type[value];
         }
@@ -605,7 +600,7 @@ DBObject.prototype.set = function (key, value, options) {
         case 's':
             message = 'Key ' + key + ': Writing a structure is not supported';
             console.error(message);
-            throw new DatabaseException(message);
+            throw new Error(message);
 
         case 'uuid':
             setUUID();
@@ -619,7 +614,7 @@ DBObject.prototype.set = function (key, value, options) {
                 message = 'Schema type "' + item.t + '" for key "' +
                     key + '" not defined';
                 console.error(message);
-                throw new DatabaseException(message);
+                throw new Error(message);
             }
             break;
     }

@@ -150,7 +150,7 @@ ModelList.prototype.loadModel = function (element) {
     new Promise((resolve, reject) => {
         Database.getEntry(uuid, data => {
             if (!data) {
-                reject(Error('loadModel: Model not in database?!'));
+                reject(new Error('loadModel: Model not in database?!'));
                 return;
             }
             resolve(new DBObject(data));

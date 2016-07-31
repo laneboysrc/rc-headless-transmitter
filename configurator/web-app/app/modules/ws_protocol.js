@@ -43,7 +43,7 @@ WebsocketProtocol.prototype._sendCfgPacket = function () {
 //*************************************************************************
 WebsocketProtocol.prototype.send = function (packet) {
     if (!(packet instanceof Uint8Array)) {
-        throw Error('WS: packet is not of type Uint8Array');
+        throw new Error('WS: packet is not of type Uint8Array');
     }
     this.cfgPacket = packet;
 };
@@ -81,7 +81,7 @@ WebsocketProtocol.prototype.onmessage = function(e) {
     // e.data contains received string
 
     if (!(e.data instanceof Blob)) {
-        throw Error('WS: onmessage: String received; should have been Blob');
+        throw new Error('WS: onmessage: String received; should have been Blob');
     }
 
     var reader = new FileReader();

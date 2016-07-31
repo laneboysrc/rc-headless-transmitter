@@ -87,7 +87,7 @@ Device.prototype.connect = function (uuid, address, hop_channels) {
         function onclose(event) {
             document.removeEventListener('ws-message', onmessage);
             document.removeEventListener('ws-close', onclose);
-            reject(Error('Connection closed'));
+            reject(new Error('Connection closed'));
         }
 
         document.addEventListener('ws-message', onmessage);
@@ -100,7 +100,7 @@ Device.prototype.connect = function (uuid, address, hop_channels) {
 //*************************************************************************
 Device.prototype.disconnect = function () {
     if (!dev.connected) {
-        return Promise.reject(Error('Device.disconnect: not connected'));
+        return Promise.reject(new Error('Device.disconnect: not connected'));
     }
 
     return new Promise((resolve, reject) => {
@@ -118,7 +118,7 @@ Device.prototype.disconnect = function () {
         function onclose(event) {
             document.removeEventListener('ws-message', onmessage);
             document.removeEventListener('ws-close', onclose);
-            reject(Error('Connection closed'));
+            reject(new Error('Connection closed'));
         }
 
         document.addEventListener('ws-message', onmessage);
@@ -132,7 +132,7 @@ Device.prototype.read = function (offset, count) {
     console.log(`Device.read o=${offset} c=${count}`)
 
     if (!dev.connected) {
-        return Promise.reject(Error('Device.read: not connected'));
+        return Promise.reject(new Error('Device.read: not connected'));
     }
 
     // FIXME: needs a 600ms timeout (between individual reads)
@@ -173,7 +173,7 @@ Device.prototype.read = function (offset, count) {
         function onclose(event) {
             document.removeEventListener('ws-message', onmessage);
             document.removeEventListener('ws-close', onclose);
-            reject(Error('Connection closed'));
+            reject(new Error('Connection closed'));
         }
 
         function readChunk() {
@@ -207,7 +207,7 @@ Device.prototype.write = function (offset, data) {
     console.log(`Device.write o=${offset} c=${data.length}`)
 
     if (!dev.connected) {
-        return Promise.reject(Error('Device.write: not connected'));
+        return Promise.reject(new Error('Device.write: not connected'));
     }
 
     // FIXME: needs a 600ms timeout (between individual reads)
@@ -245,7 +245,7 @@ Device.prototype.write = function (offset, data) {
         function onclose(event) {
             document.removeEventListener('ws-message', onmessage);
             document.removeEventListener('ws-close', onclose);
-            reject(Error('Connection closed'));
+            reject(new Error('Connection closed'));
         }
 
         function writeChunk() {
@@ -280,7 +280,7 @@ Device.prototype.write = function (offset, data) {
 //*************************************************************************
 Device.prototype.copy = function (src, dst, count) {
     if (!dev.connected) {
-        return Promise.reject(Error('Device.copy: not connected'));
+        return Promise.reject(new Error('Device.copy: not connected'));
     }
 
     return new Promise((resolve, reject) => {

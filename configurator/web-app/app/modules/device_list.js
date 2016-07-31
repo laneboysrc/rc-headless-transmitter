@@ -266,6 +266,13 @@ DeviceList.prototype.loadDeviceData = function (newDev) {
 //*************************************************************************
 // Receives Websocket messages
 DeviceList.prototype.connectionlost= function (event) {
+    if (dev.MODEL || dev.TX) {
+        dev.MODEL = undefined;
+        dev.TX = undefined;
+        Utils.rollbackHistoryToRoot();
+        location.hash = '#/device_list';
+    }
+
     showConnectionLostMessage();
     this.resetPage();
     this.message.textContent = messages.noWebsocket;

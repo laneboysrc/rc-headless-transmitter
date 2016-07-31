@@ -8,6 +8,16 @@ export function sendCustomEvent(eventName, data) {
   document.dispatchEvent(event);
 }
 
+export function rollbackHistoryToRoot() {
+  for (let i = 0; i < history.length; i++) {
+    if (location.hash === '#/') {
+      return;
+    }
+    history.back();
+  }
+  history.replaceState(null, '', '#/');
+}
+
 export function byte2string(byte) {
   var s = byte.toString(16);
 

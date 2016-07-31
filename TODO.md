@@ -33,38 +33,20 @@
     - Custom REST protocol?
   - Look into Redis
 
-- Add page for hop channel generation (radio buttons + generate button)
-
-- Curve editing: show appropriate points and adjust their name
-
 - Show which src labels are supported by the transmitter when selecting items
 
-
-- Delete mixer units
-  - Requires rearranging other mixers
-- Add mixer units
-  - Requires rearranging of the mixer unit order
 - Delete transmitter
-- Live stick/switch/output view
+
 - Show battery voltage on device_list
 
 - Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
-
-
 - How do we get a description of the elements in the configuration?
 
-- Rework configurator protocol to use UUID so that we know to which device
-  we want to connect
-
-- Instead of sending all hop channels, send a seed and max-channel and use
-  a LFSR (0..125 range)
-
-
-- Create live_t that describes live inputs sent to the configurator. It compises
-  all `src_label_t` inputs, but also switch values, trim values, and others
-  such as battery voltage.
-
+- Live stick/switch/output view
+  - Create live_t that describes live inputs sent to the configurator. It compises
+    all `src_label_t` inputs, but also switch values, trim values, and others
+    such as battery voltage.
 
 - Splash screen
 
@@ -76,10 +58,6 @@
 
 - Refactor using Babel, and Promises, and Error object, TypeError when WS is not blob
 
-- Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
-  - Database should not be a global object, but imported where needed
-    - Assuming that opening the DB repeatadly is fast
-
 - History mangling does not seem to work well on Chrome (Android)
   - Maybe needs setTimeout hack
 
@@ -87,7 +65,29 @@
   In the function call Utils.cancelBubble(event);
   We need this to make div onclick handlers that trigger the button work
 
-- ModelList needs a loading indicator while populating the available models
+
+
+- Rework configurator protocol to use UUID so that we know to which device
+  we want to connect
+  - Instead of sending all hop channels, send a seed and max-channel and use
+    a LFSR (0..125 range)
+- Remove copy command, it won't work over the slow websocket
+  - Instead we must be able to get and set the whole mixerunit structure
+
+- Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
+  - Prepare the database for multiple object stores
 
 - Use class everywhere
+
+- ModelList needs a loading indicator while populating the available models
+
+- Curve editing: show appropriate points and adjust their name
+
+- Delete mixer units
+  - Requires rearranging other mixers
+  - Include undo
+- Add mixer units
+- Re-arrange mixer units
+  - Use individual cards for each mixer, and have a up and down arrow to
+    move it around
 

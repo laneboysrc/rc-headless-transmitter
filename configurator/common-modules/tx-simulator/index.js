@@ -169,12 +169,12 @@ function handle_CFG_COPY(packet) {
 
     var i;
     if (src > dst) {
-        for (i = 0; i < count; i += 1) {
+        for (i = 0; i < count; i++) {
             testData[dst + i] = testData[src + i];
         }
     }
     else if (src < dst) {
-        for (i = count - 1; i >= 0; i -= 1) {
+        for (i = count - 1; i >= 0; i--) {
             testData[dst + i] = testData[src + i];
         }
     }

@@ -24,7 +24,7 @@ class EditCurve {
 
     var points = dev.MODEL.getItem('MIXER_UNITS_CURVE_POINTS', {offset: this.offset});
 
-    for (var i = 0; i < points.length; i += 1) {
+    for (var i = 0; i < points.length; i++) {
       var options = {offset: this.offset, index: i};
       var mdlSlider = new MDLHelper('MODEL', options);
       mdlSlider.setSlider('#app-edit_curve-point' + (i + 1), 'MIXER_UNITS_CURVE_POINTS');

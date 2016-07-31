@@ -327,7 +327,7 @@ class DBObject {
       let TypedArray = getGetter(item.s, 'i');
       let bytes = new TypedArray(data.buffer, item_offset, item.c);
       let result = [];
-      for (let i = 0; i < bytes.length; i += 1) {
+      for (let i = 0; i < bytes.length; i++) {
         let entry = bytes[i];
         let element = self.typeLookupByNumber(types[item.t], entry);
 

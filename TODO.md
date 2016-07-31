@@ -92,7 +92,6 @@
   - Use individual cards for each mixer, and have a up and down arrow to
     move it around
 
-- i++ instead i+=1
 - use const
 - use let instead of var
 - Rename dev to Device, rename database_object to devObject?

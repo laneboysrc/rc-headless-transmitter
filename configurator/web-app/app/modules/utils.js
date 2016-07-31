@@ -70,7 +70,7 @@ export function string2uuid(s) {
 export function uint8array2string(bytes) {
   var result = '';
 
-  for (var i = 0; i < bytes.length; i += 1) {
+  for (var i = 0; i < bytes.length; i++) {
     var code = bytes[i];
     if (code === 0) {
       return result;
@@ -99,7 +99,7 @@ export function isNumber(obj) {
 export function showPage(name) {
   // Hide all sections with class 'app-page'
   var pages = document.querySelectorAll('.app-page');
-  for (var i = 0; i < pages.length; i += 1) {
+  for (var i = 0; i < pages.length; i++) {
     var page = pages[i];
     page.classList.add('hidden');
   }

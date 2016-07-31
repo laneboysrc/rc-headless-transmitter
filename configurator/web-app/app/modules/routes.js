@@ -46,7 +46,7 @@ function loadDevicesFromURL(params) {
     var topic = 'routes.entryRetrieved';
 
     if (params.model) {
-        count += 1;
+        ++count;
         Database.getEntry(params.model, function (data) {
             if (data) {
                 dev.MODEL = new DBObject(data);
@@ -61,7 +61,7 @@ function loadDevicesFromURL(params) {
     }
 
     if (params.tx) {
-        count += 1;
+        ++count;
         Database.getEntry(params.tx, function (data) {
             if (data) {
                 dev.TX = new DBObject(data);
@@ -76,7 +76,7 @@ function loadDevicesFromURL(params) {
     }
 
     function entryRetrievedCallback() {
-        count = count - 1;
+        --count;
         if (count) {
             return;
         }

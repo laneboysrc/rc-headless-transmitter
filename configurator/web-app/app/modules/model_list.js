@@ -74,7 +74,7 @@ class ModelList {
     // FIXME: sort models[] by name
 
     var t = this.template;
-    for (var i = 0; i < models.length; i += 1) {
+    for (var i = 0; i < models.length; i++) {
       t.querySelector('div').classList.add('can-delete');
       t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
       t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);

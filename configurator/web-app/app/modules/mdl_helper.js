@@ -24,7 +24,7 @@ var MDLHelper = function (devName, options) {
 MDLHelper.prototype.setTextContent = function (selector, item, root) {
     root = root || document;
 
-    var value = dev[this.devName].get(item, {offset: this.offset});
+    var value = dev[this.devName].getItem(item, {offset: this.offset});
     if (this.formatter) {
         value = this.formatter(value);
     }
@@ -45,7 +45,7 @@ MDLHelper.prototype.setSwitch = function (selector, item, root) {
         offset: this.offset,
         index: this.index
     };
-    var value = dev[this.devName].get(item, options);
+    var value = dev[this.devName].getItem(item, options);
     var element = root.querySelector(selector);
     element.checked = value;
     element.parentNode.MaterialSwitch.checkToggleState();
@@ -59,7 +59,7 @@ MDLHelper.prototype.setSlider = function (selector, item, root) {
         offset: this.offset,
         index: this.index
     };
-    var value = dev[this.devName].get(item, options);
+    var value = dev[this.devName].getItem(item, options);
     if (this.formatter) {
         value = this.formatter(value);
     }
@@ -72,7 +72,7 @@ MDLHelper.prototype.setSlider = function (selector, item, root) {
 MDLHelper.prototype.setTextfield = function (selector, item, root) {
     root = root || document;
 
-    var value = dev[this.devName].get(item, {offset: this.offset});
+    var value = dev[this.devName].getItem(item, {offset: this.offset});
     if (this.formatter) {
         value = this.formatter(value);
     }
@@ -153,7 +153,7 @@ MDLHelper.prototype.onChangeHandler = function (event) {
     var options = {offset: this.offset, index: this.index};
 
     // Update the DBObject
-    dev[this.devName].set(item, value, options);
+    dev[this.devName].setItem(item, value, options);
 };
 
 

@@ -14,7 +14,7 @@
         var value;
 
         try {
-            value = dbObject.get(item, options);
+            value = dbObject.getItem(item, options);
         }
         catch (e) {
             if (e.hasOwnProperty('name') && e.name === 'DatabaseException') {
@@ -37,8 +37,8 @@
         var changed;
 
         try {
-            dbObject.set(item, new_value, options);
-            changed = dbObject.get(item, options);
+            dbObject.setItem(item, new_value, options);
+            changed = dbObject.getItem(item, options);
         }
         catch (e) {
             if (e.hasOwnProperty('name') && e.name === 'DatabaseException') {
@@ -70,7 +70,7 @@
 
     console.log('\n#################################');
 
-    console.log('\nTests for Database.get()');
+    console.log('\nTests for Database.getItem()');
     console.log('------------------------');
     testGet(dev.MODEL, 'NAME');
     testGet(dev.TX, 'NAME');
@@ -85,7 +85,7 @@
     testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', {offset: 2*config.TX.LOGICAL_INPUTS.s, index: 1});
     testGet(dev.MODEL, 'MIXER_UNITS_SRC', {offset: 0});
 
-    console.log('\nTests for Database.set()');
+    console.log('\nTests for Database.setItem()');
     console.log('------------------------');
     testSet(dev.MODEL, 'NAME', 'ChangedName');
     testSet(dev.TX, 'UUID', 'cafebabe-dead-beef-1234-010203040506');

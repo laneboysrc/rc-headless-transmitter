@@ -20,7 +20,7 @@ Mixer.prototype.init = function (params) {
 
     for (var i = 0; i < mixer_units.c; i++) {
         var offset = i * mixer_units.s;
-        var src = model.get('MIXER_UNITS_SRC', {offset: offset});
+        var src = model.getItem('MIXER_UNITS_SRC', {offset: offset});
 
         // End-of-list is indicated by the mixer unit source being 0
         if (src === 0) {
@@ -28,10 +28,10 @@ Mixer.prototype.init = function (params) {
         }
 
         mdl.offset = offset;
-        var curve_type = model.get('MIXER_UNITS_CURVE_TYPE', {offset: offset});
-        var op = model.get('MIXER_UNITS_OP', {offset: offset});
+        var curve_type = model.getItem('MIXER_UNITS_CURVE_TYPE', {offset: offset});
+        var op = model.getItem('MIXER_UNITS_OP', {offset: offset});
         var curve = curve_type + ' ' + op;
-        var dst = model.get('MIXER_UNITS_DST', {offset: offset});
+        var dst = model.getItem('MIXER_UNITS_DST', {offset: offset});
 
         var t = this.template;
         t.querySelector('tr').classList.add('can-delete');

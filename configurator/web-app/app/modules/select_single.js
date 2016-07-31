@@ -19,7 +19,7 @@ SelectSingle.prototype.accept_choice = function () {
     var list = document.querySelector('#app-select_single-list');
     var value = list.querySelector('input[type="radio"]:checked').value;
 
-    dev[this.devName].set(this.item, value, {offset: this.offset});
+    dev[this.devName].setItem(this.item, value, {offset: this.offset});
     history.go(-1);
 };
 
@@ -41,7 +41,7 @@ SelectSingle.prototype.init = function (params) {
     // FIXME: need to get item description
     mdl.setTextContentRaw('#app-select_single-description', 'FIXME');
 
-    var current_choice = device.get(this.item, {offset: this.offset});
+    var current_choice = device.getItem(this.item, {offset: this.offset});
 
     var type = device.getType(this.item);
     var choices = device.getTypeMembers(type);

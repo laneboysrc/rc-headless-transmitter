@@ -58,7 +58,7 @@ ModelList.prototype.databaseCallback = function (cursor) {
         if (data.schemaName === 'MODEL') {
             var dev = new DBObject(data);
             models.push({
-                name: dev.get('NAME'),
+                name: dev.getItem('NAME'),
                 uuid: data.uuid
             });
         }
@@ -101,14 +101,14 @@ ModelList.prototype.createModel = function (event) {
 
     // The new model name is "ModelX" where is is the current number
     // of models + 1. This way we should get unique initial names.
-    newModel.set('NAME', `Model${models.length + 1}`);
-    newModel.set('UUID', newModel.uuid);
+    newModel.setItem('NAME', `Model${models.length + 1}`);
+    newModel.setItem('UUID', newModel.uuid);
 
     // NOTE: setting the name has automatically added the device to the
     // database!
 
-    newModel.set('RF_PROTOCOL_HK310_ADDRESS', RFProtocol.newRandomAddress());
-    newModel.set('RF_PROTOCOL_HK310_HOP_CHANNELS', RFProtocol.newHopChannels());
+    newModel.setItem('RF_PROTOCOL_HK310_ADDRESS', RFProtocol.newRandomAddress());
+    newModel.setItem('RF_PROTOCOL_HK310_HOP_CHANNELS', RFProtocol.newHopChannels());
 
     // FIXME: load a template with a basic mixer (car steering and throttle?)
 

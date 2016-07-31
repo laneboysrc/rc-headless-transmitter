@@ -196,7 +196,7 @@ DeviceList.prototype.loadDevice = function (configVersion, schemaName) {
             });
         }).then(dbEntry => {
             // console.log('dbEntry', dbEntry)
-            if (dbEntry  &&  dbEntry.get('UUID') === newDev.uuid)  {
+            if (dbEntry  &&  dbEntry.getItem('UUID') === newDev.uuid)  {
                 // console.log('Device is in the database already');
                 return new Promise((resolve, reject) => {
                     dev.read(schema.o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
@@ -246,7 +246,7 @@ DeviceList.prototype.loadDeviceData = function (newDev) {
             newDev.data = data;
 
             var dbEntry = new DBObject(newDev);
-            newDev.lastChanged = dbEntry.get('LAST_CHANGED');
+            newDev.lastChanged = dbEntry.getItem('LAST_CHANGED');
 
             return new Promise((resolve, reject) => {
                 // console.log('setEntry', newDev)

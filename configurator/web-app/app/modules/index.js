@@ -48,7 +48,7 @@ require('./routes');
 //         console.log('Promise.resolve')
 //         return Promise.resolve();
 //     }).then(_ => {
-//         // return Database.get(newDev.uuid);
+//         // return Database.getItem(newDev.uuid);
 //         console.log('BEFORE DATABASE.get')
 //         return new Promise((resolve, reject) => {
 //             resolve(new Uint8Array(8));
@@ -56,7 +56,7 @@ require('./routes');
 //     }).then(data => {
 //         console.log('DATABASE.get.then')
 //         dbEntry = data;
-//         // if (dbEntry.get('UUID') === newDev.uuid)  {
+//         // if (dbEntry.getItem('UUID') === newDev.uuid)  {
 //         //     console.log('Device is in the database already');
 //         // }
 //         console.log('ALL DONE')

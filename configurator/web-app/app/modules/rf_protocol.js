@@ -14,8 +14,8 @@ class RFProtocol{
   init (params) {
     let model = dev.MODEL;
 
-    let address = model.get('RF_PROTOCOL_HK310_ADDRESS');
-    let hopChannels = model.get('RF_PROTOCOL_HK310_HOP_CHANNELS');
+    let address = model.getItem('RF_PROTOCOL_HK310_ADDRESS');
+    let hopChannels = model.getItem('RF_PROTOCOL_HK310_HOP_CHANNELS');
 
     // FIXME: parse address and hop channels and put them back into the db
     let adressString = this.address2string(address);
@@ -42,7 +42,7 @@ class RFProtocol{
     let adressString = this.address2string(address);
     document.querySelector('#app-rf_protocol-address').value = adressString;
 
-    dev.MODEL.set('RF_PROTOCOL_HK310_ADDRESS', address);
+    dev.MODEL.setItem('RF_PROTOCOL_HK310_ADDRESS', address);
   }
 
   showHopChannelDialog (event) {
@@ -63,7 +63,7 @@ class RFProtocol{
     let hopString = hopChannels.join(' ');
     document.querySelector('#app-rf_protocol-hop_channels').value = hopString;
 
-    dev.MODEL.set('RF_PROTOCOL_HK310_HOP_CHANNELS', hopChannels);
+    dev.MODEL.setItem('RF_PROTOCOL_HK310_HOP_CHANNELS', hopChannels);
   }
 
   hopDialogCancel (event) {

@@ -97,11 +97,12 @@ ModelList.prototype.updateModelList = function () {
 ModelList.prototype.createModel = function (event) {
     Utils.cancelBubble(event);
 
-    // FIXME: get this somehow persistently incrementing
-    let newNumber = 42;
-
     let newModel = dev.makeNewDevice('1', 'MODEL');
-    newModel.set('NAME', `Model${newNumber}`);
+
+    // The new model name is "ModelX" where is is the current number
+    // of models + 1. This way we should get unique initial names.
+    newModel.set('NAME', `Model${models.length + 1}`);
+    newModel.set('UUID', newModel.uuid);
 
     // NOTE: setting the name has automatically added the device to the
     // database!
@@ -164,7 +165,7 @@ ModelList.prototype.loadModel = function (element) {
         // location hash with the new URL. This way the back button works
         // despite that we create a loop
         history.back();
-        location.hash = Utils.buildURL(['model_details']);
+        history.replaceState(null, '', Utils.buildURL(['model_details']));
     }).catch(error => {
         console.log(error);
     });
@@ -186,9 +187,6 @@ ModelList.prototype.updateItemVisibility = function () {
 ModelList.prototype.deleteModel = function (model) {
     dev.UNDO = model;
     Database.deleteEntry(model);
-
-    // FIXME: add snackbar with undo message
-    console.log('UNDO SNACKBAR');
 
     this.snackbar.classList.remove('hidden');
     var data = {

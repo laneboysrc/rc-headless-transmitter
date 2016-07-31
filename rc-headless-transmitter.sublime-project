@@ -64,10 +64,23 @@
 			[
 				"npm",
 				"run",
-				"build",
+				"build"
 			],
 			"name": "web-app build",
 			"working_dir": "${project_path}/configurator/web-app"
+		},
+		{
+			"cmd":
+			[
+				"xfce4-terminal",
+				"-H",
+				"-T",
+				"SIMULATOR",
+				"-e",
+				"./simulator.js"
+			],
+			"name": "web-app tx simulator",
+			"working_dir": "${project_path}/configurator/headlesstx-simulator-websocket"
 		}
 	],
 	"folders":

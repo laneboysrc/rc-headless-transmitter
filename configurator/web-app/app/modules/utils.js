@@ -25,7 +25,7 @@ export function rollbackHistoryToRoot() {
 }
 
 export function byte2string(byte) {
-  var s = byte.toString(16);
+  let s = byte.toString(16);
 
   return (s.length < 2) ? ('0' + s)  : s;
 }

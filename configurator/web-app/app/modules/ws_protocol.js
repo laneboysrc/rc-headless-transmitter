@@ -32,7 +32,7 @@ WebsocketProtocol.prototype.close = function () {
 };
 
 //*************************************************************************
-WebsocketProtocol.prototype.sendCfgPacket_ = function () {
+WebsocketProtocol.prototype._sendCfgPacket = function () {
     if (this.cfgPacket) {
         this.ws.send(this.cfgPacket);
         // console.log('WS: sending ' + dumpUint8Array(this.cfgPacket));
@@ -42,7 +42,7 @@ WebsocketProtocol.prototype.sendCfgPacket_ = function () {
 
 //*************************************************************************
 WebsocketProtocol.prototype.send = function (packet) {
-    if (!(this.cfgPacket instanceof Uint8Array)) {
+    if (!(packet instanceof Uint8Array)) {
         throw Error('WS: packet is not of type Uint8Array');
     }
     this.cfgPacket = packet;
@@ -88,7 +88,7 @@ WebsocketProtocol.prototype.onmessage = function(e) {
 
     reader.addEventListener("loadend", function () {
         let data = new Uint8Array(reader.result);
-        this.sendCfgPacket_();
+        this._sendCfgPacket();
         Utils.sendCustomEvent('ws-message', data);
     }.bind(this));
 

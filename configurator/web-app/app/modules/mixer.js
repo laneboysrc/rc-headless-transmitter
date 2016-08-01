@@ -12,7 +12,7 @@ class Mixer {
   //*************************************************************************
   init (params) {
     let mdl = new MDLHelper('MODEL');
-    let model = dev.MODEL;
+    let model = Device.MODEL;
     let mixer_units = model.getSchema()['MIXER_UNITS'];
 
     // Empty the list of mixers

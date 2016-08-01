@@ -67,12 +67,14 @@ class Device {
       0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
       0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]);
 
+    let self = this;
+
     return new Promise((resolve, reject) => {
       function onmessage(event) {
         let packet = event.detail;
 
         if (packet[0] === 0x49) {
-          dev.connected = true;
+          self.connected = true;
           document.removeEventListener('ws-message', onmessage);
           document.removeEventListener('ws-close', onclose);
           resolve();
@@ -96,9 +98,11 @@ class Device {
 
   //*************************************************************************
   disconnect () {
-    if (!dev.connected) {
+    if (!this.connected) {
       return Promise.reject(new Error('Device.disconnect: not connected'));
     }
+
+    let self = this;
 
     return new Promise((resolve, reject) => {
       function onmessage(event) {
@@ -106,7 +110,7 @@ class Device {
 
         WebsocketProtocol.send(disconnectPacket);
 
-        dev.connected = false;
+        self.connected = false;
         document.removeEventListener('ws-message', onmessage);
         document.removeEventListener('ws-close', onclose);
         resolve();
@@ -127,7 +131,7 @@ class Device {
   read (offset, count) {
     console.log(`Device.read o=${offset} c=${count}`)
 
-    if (!dev.connected) {
+    if (!this.connected) {
       return Promise.reject(new Error('Device.read: not connected'));
     }
 
@@ -201,7 +205,7 @@ class Device {
   write (offset, data) {
     console.log(`Device.write o=${offset} c=${data.length}`)
 
-    if (!dev.connected) {
+    if (!this.connected) {
       return Promise.reject(new Error('Device.write: not connected'));
     }
 
@@ -302,4 +306,4 @@ class Device {
   }
 }
 
-window['dev'] = new Device();
+window['Device'] = new Device();

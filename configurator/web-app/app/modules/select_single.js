@@ -18,7 +18,7 @@ class SelectSingle {
     let list = document.querySelector('#app-select_single-list');
     let value = list.querySelector('input[type="radio"]:checked').value;
 
-    dev[this.devName].setItem(this.item, value, {offset: this.offset});
+    Device[this.devName].setItem(this.item, value, {offset: this.offset});
     history.go(-1);
   }
 
@@ -33,7 +33,7 @@ class SelectSingle {
     // Ged rid of existing elements
     mdl.clearDynamicElements(this.list);
 
-    let device = dev[this.devName];
+    let device = Device[this.devName];
 
     let name = device.getHumanFriendlyText(this.item);
     mdl.setTextContentRaw('#app-select_single-name', name);

@@ -95,7 +95,7 @@ class DatabaseObject {
   //          which correspond to enums in the firmware.
   //
   // Example:
-  //      var type = dev.TX.getType('HARDWARE_INPUTS_CALIBRATION');
+  //      var type = Device.TX.getType('HARDWARE_INPUTS_CALIBRATION');
   //
   //      > type == 'u' because the HARDWARE_INPUTS_CALIBRATION is an array
   //                    of three uint16_t values in the firmware.
@@ -109,7 +109,7 @@ class DatabaseObject {
   // for named element 'value' in that type.
   //
   // Example:
-  //      var n = dev.MODEL.getNumberOfTypeMember('MIXER_UNITS_DST', 'CH7');
+  //      var n = Device.MODEL.getNumberOfTypeMember('MIXER_UNITS_DST', 'CH7');
   //
   //      > n == 6 as the enum in the firmware is CH1=0, CH2, CH3 ...
   //
@@ -125,7 +125,7 @@ class DatabaseObject {
   // Returns a list of all members of a given type (C enum)
   //
   // Example:
-  //      var m = dev.MODEL.getTypeMembers('interpolation_type_t');
+  //      var m = Device.MODEL.getTypeMembers('interpolation_type_t');
   //
   //      > Array [ "Linear", "Smoothing" ]
   //
@@ -139,7 +139,7 @@ class DatabaseObject {
   // If we can't access the [key].h field we return the key name.
   //
   // Example:
-  //      var n = dev.MODEL.getHumanFriendlyText('MIXER_UNITS_SW_CMP');
+  //      var n = Device.MODEL.getHumanFriendlyText('MIXER_UNITS_SW_CMP');
   //
   //      > n == "Comparison"
   //
@@ -159,7 +159,7 @@ class DatabaseObject {
   // The element to retrieve is passed in 'key'.
   //
   // Example:
-  //      var ms = dev.TX.getItem('BIND_TIMEOUT_MS');
+  //      var ms = Device.TX.getItem('BIND_TIMEOUT_MS');
   //
   //      > ms == 10000 (10 seconds)
   //
@@ -177,7 +177,7 @@ class DatabaseObject {
   //   then the number is returned.
   //
   // Example:
-  //      var rf = dev.MODEL.getItem('RF_PROTOCOL_TYPE');
+  //      var rf = Device.MODEL.getItem('RF_PROTOCOL_TYPE');
   //
   //      > rf == "HobbyKing HKR3000", which is the string representation
   //              of the value 0 for the 'rf_protocol_t' enum in the firmware.
@@ -186,7 +186,7 @@ class DatabaseObject {
   // are returned.
   //
   // Example:
-  //      var l = dev.TX.getItem('LOGICAL_INPUTS_LABELS');
+  //      var l = Device.TX.getItem('LOGICAL_INPUTS_LABELS');
   //
   //      > l == Array [ "AIL", 0, 0, 0, 0 ]; Notice all but the first
   //             value are returned as number as input_labels_t does not
@@ -199,7 +199,7 @@ class DatabaseObject {
   //
   // Example:
   //      var index = 0;    // 1st element
-  //      var e = dev.TX.getItem('LOGICAL_INPUTS_LABELS', {index: index});
+  //      var e = Device.TX.getItem('LOGICAL_INPUTS_LABELS', {index: index});
   //
   //      > e == "AIL"
   //
@@ -218,7 +218,7 @@ class DatabaseObject {
   // to 'offset' if it is an array itself.]
   //
   // Example:
-  //      var mu = dev.MODEL.getSchema()['MIXER_UNITS'];
+  //      var mu = Device.MODEL.getSchema()['MIXER_UNITS'];
   //      var offset = 3 * mu.s;     // Offset of the 4th mixer unit
   //
   //      // Pass 'offset' to another module
@@ -226,7 +226,7 @@ class DatabaseObject {
   //      // Access the MIXER_UNIT_SRC element of the 4th mixer_unit. The
   //      // function blindly applies the offset it received; it doesn't have
   //      // to know the hierarchy below it.
-  //      var s = dev.MODEL.getItem('MIXER_UNITS_SRC', {offset: offset});
+  //      var s = Device.MODEL.getItem('MIXER_UNITS_SRC', {offset: offset});
   //
   //      > s == "RUD"
   //
@@ -453,8 +453,8 @@ class DatabaseObject {
       // schema.o describes the offset within the overall configuration
       console.log(`${self.uuid} changed: offset=${offset} count=${count} config-offset=${offset + schema.o}`);
 
-      if (dev.connected) {
-        dev.write(offset + schema.o, data.slice(offset, offset + count));
+      if (Device.connected) {
+        Device.write(offset + schema.o, data.slice(offset, offset + count));
       }
 
       // Add last change time stamp
@@ -467,8 +467,8 @@ class DatabaseObject {
 
         console.log(`${self.uuid} changed: offset=${lc.o} count=${lc.s} config-offset=${lc.o + schema.o}`);
 
-        if (dev.connected) {
-          dev.write(lc.o + schema.o, data.slice(lc.o, lc.o + lc.s));
+        if (Device.connected) {
+          Device.write(lc.o + schema.o, data.slice(lc.o, lc.o + lc.s));
         }
 
         self.lastChanged = now;

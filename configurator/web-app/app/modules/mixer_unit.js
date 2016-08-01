@@ -12,7 +12,7 @@ class MixerUnit {
   init (params) {
     this.index = params.index;
 
-    let mixer_units = dev.MODEL.getSchema()['MIXER_UNITS'];
+    let mixer_units = Device.MODEL.getSchema()['MIXER_UNITS'];
     this.offset = mixer_units.s * this.index;
 
     let mdl = new MDLHelper('MODEL', {offset: this.offset});

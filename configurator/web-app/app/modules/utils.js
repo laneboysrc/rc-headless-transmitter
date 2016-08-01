@@ -113,13 +113,13 @@ export function buildURL(list) {
   url_fragments = url_fragments.concat(list);
 
   // FIXME: document why we need this...
-  if (dev.MODEL && dev.MODEL.uuid) {
+  if (Device.MODEL && Device.MODEL.uuid) {
     url_fragments.push('m');
-    url_fragments.push(dev.MODEL.uuid);
+    url_fragments.push(Device.MODEL.uuid);
   }
-  if (dev.TX && dev.TX.uuid) {
+  if (Device.TX && Device.TX.uuid) {
     url_fragments.push('t');
-    url_fragments.push(dev.TX.uuid);
+    url_fragments.push(Device.TX.uuid);
   }
 
   return url_fragments.join('/');
@@ -236,7 +236,6 @@ class PubSub_ {
     delete this.topics[topic];
   }
 }
-
 
 // PubSub Singleton
 window['PubSub'] = window['PubSub'] || new PubSub_();

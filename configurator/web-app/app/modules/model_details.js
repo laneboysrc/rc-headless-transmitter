@@ -43,8 +43,8 @@ class ModelDetails {
   deleteModel (event) {
     Utils.cancelBubble(event);
 
-    ModelList.deleteModel(dev.MODEL);
-    dev.MODEL = undefined;
+    ModelList.deleteModel(Device.MODEL);
+    Device.MODEL = undefined;
     history.back();
   }
 }

@@ -39,11 +39,11 @@ class DeviceList {
   init (params) {
     this.resetPage();
 
-    if (dev.connected) {
-      dev.disconnect();
+    if (Device.connected) {
+      Device.disconnect();
     }
     else {
-      dev.enableCommunication();
+      Device.enableCommunication();
     }
 
     document.addEventListener('dev-connectionlost', this.connectionlost.bind(this));
@@ -124,8 +124,8 @@ class DeviceList {
 
     // FIXME: implement progress bar
 
-    dev.connect(uuid).then(() => {
-      return dev.read(0, 4);
+    Device.connect(uuid).then(() => {
+      return Device.read(0, 4);
     }).then(data => {
       configVersion = Utils.getUint32(data);
       // console.log(data)
@@ -154,18 +154,18 @@ class DeviceList {
   // if hw.[schemaName].UUID is in our database
   //     load hw.[schemaName].LAST_CHANGED
   //     if hw.[schemaName].LAST_CHANGED == database[UUID].LAST_CHANGED
-  //         load dev.[schemaName] from database
+  //         load Device.[schemaName] from database
   //     else if hw.[schemaName].LAST_CHANGED > database[UUID].LAST_CHANGED
-  //         load hw.[schemaName] into dev.[schemaName]
-  //         update dev.[schemaName] in database
+  //         load hw.[schemaName] into Device.[schemaName]
+  //         update Device.[schemaName] in database
   //     else
-  //         load dev.[schemaName] from database
-  //         write dev.[schemaName] to hw.[schemaName]
+  //         load Device.[schemaName] from database
+  //         write Device.[schemaName] to hw.[schemaName]
   // else
-  //     load hw.[schemaName] into dev.[schemaName]
-  //     add dev.[schemaName] to our database
+  //     load hw.[schemaName] into Device.[schemaName]
+  //     add Device.[schemaName] to our database
   loadDevice (configVersion, schemaName) {
-    console.log(`DeviceList.loadDevice configVersion=${configVersion} schemaName=${schemaName}`)
+    // console.log(`DeviceList.loadDevice configVersion=${configVersion} schemaName=${schemaName}`)
 
     const schema = CONFIG_VERSIONS[configVersion][schemaName];
     var newDev = {};
@@ -175,13 +175,13 @@ class DeviceList {
     newDev.data = new Uint8Array(schema.s);
 
     return new Promise((resolve, reject) => {
-      dev.read(schema.o + schema['UUID'].o, schema['UUID'].c).then(data => {
+      Device.read(schema.o + schema['UUID'].o, schema['UUID'].c).then(data => {
         // console.log('UUID bytes', data);
         newDev.uuid = Utils.uuid2string(data);
         // console.log('UUID', newDev.uuid);
         if (!Utils.isValidUUID(newDev.uuid)) {
           newDev.uuid = Utils.newUUID();
-          return dev.write(schema.o + schema['UUID'].o, schema['UUID'].s,
+          return Device.write(schema.o + schema['UUID'].o, schema['UUID'].s,
             Utils.string2uuid(newDev.uuid));
         }
         return Promise.resolve();
@@ -199,7 +199,7 @@ class DeviceList {
         if (dbEntry  &&  dbEntry.getItem('UUID') === newDev.uuid)  {
           // console.log('Device is in the database already');
           return new Promise((resolve, reject) => {
-            dev.read(schema.o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
+            Device.read(schema.o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
               newDev.lastChanged = Utils.getUint32(data);
 
               // console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
@@ -217,7 +217,7 @@ class DeviceList {
               }
               else {
                 // console.log('device < db')
-                dev.write(schema.o, dbEntry.data).then(() => {
+                Device.write(schema.o, dbEntry.data).then(() => {
                   resolve(dbEntry);
                 });
               }
@@ -229,7 +229,7 @@ class DeviceList {
         }
       }).then(dbobject => {
         // console.log("RESOLVING read", schemaName)
-        dev[newDev.schemaName] = dbobject;
+        Device[newDev.schemaName] = dbobject;
         resolve();
       });
     });
@@ -241,7 +241,7 @@ class DeviceList {
   loadDeviceData (newDev) {
     const schema = CONFIG_VERSIONS[newDev.configVersion][newDev.schemaName];
     return new Promise((resolve, reject) => {
-      dev.read(schema.o, schema.s).then(data => {
+      Device.read(schema.o, schema.s).then(data => {
         // console.log('loadDeviceData read from device')
         newDev.data = data;
 
@@ -264,9 +264,9 @@ class DeviceList {
 
   //*************************************************************************
   connectionlost(event) {
-    if (dev.MODEL || dev.TX) {
-      dev.MODEL = undefined;
-      dev.TX = undefined;
+    if (Device.MODEL || Device.TX) {
+      Device.MODEL = undefined;
+      Device.TX = undefined;
       Utils.rollbackHistoryToRoot();
       location.hash = '#/device_list';
     }

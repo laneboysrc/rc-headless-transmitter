@@ -54,9 +54,9 @@ class ModelList {
     if (cursor) {
       let data = cursor.value;
       if (data.schemaName === 'MODEL') {
-        let dev = new DatabaseObject(data);
+        let model = new DatabaseObject(data);
         models.push({
-          name: dev.getItem('NAME'),
+          name: model.getItem('NAME'),
           uuid: data.uuid
         });
       }
@@ -98,7 +98,7 @@ class ModelList {
   createModel (event) {
     Utils.cancelBubble(event);
 
-    let newModel = dev.makeNewDevice('1', 'MODEL');
+    let newModel = Device.makeNewDevice('1', 'MODEL');
 
     // The new model name is "ModelX" where is is the current number
     // of models + 1. This way we should get unique initial names.
@@ -113,7 +113,7 @@ class ModelList {
 
     // FIXME: load a template with a basic mixer (car steering and throttle?)
 
-    dev.MODEL = newModel;
+    Device.MODEL = newModel;
     location.hash = Utils.buildURL(['model_details']);
   }
 
@@ -122,7 +122,7 @@ class ModelList {
     let index = element.getAttribute('data-index');
 
     Database.getEntry(models[index].uuid, function (data) {
-      dev.MODEL = new DatabaseObject(data);
+      Device.MODEL = new DatabaseObject(data);
       location.hash = Utils.buildURL(['model_details']);
     });
   }
@@ -130,11 +130,11 @@ class ModelList {
   //*************************************************************************
   loadModel (element) {
     let index = element.getAttribute('data-index');
-    console.log('loadModel', index, dev.MODEL, models[index].uuid);
+    console.log('loadModel', index, Device.MODEL, models[index].uuid);
 
     // If the same model as the currently loaded one is selected then ignore
     // the request and return to model_details
-    if (dev.MODEL  &&  dev.MODEL.uuid === models[index].uuid) {
+    if (Device.MODEL  &&  Device.MODEL.uuid === models[index].uuid) {
       history.back();
       return;
     }
@@ -159,9 +159,9 @@ class ModelList {
     }).then(dbentry => {
       newModel = dbentry;
       let offset = newModel.getSchema().o;
-      return dev.write(offset, newModel.data);
+      return Device.write(offset, newModel.data);
     }).then(() => {
-      dev.MODEL = newModel;
+      Device.MODEL = newModel;
 
       // Note: we have changed the model, so the URL UUID will be wrong.
       // We pop one item from the history, but immediately replace the
@@ -188,7 +188,7 @@ class ModelList {
 
   //*************************************************************************
   deleteModel (model) {
-    dev.UNDO = model;
+    Device.UNDO = model;
     Database.deleteEntry(model);
 
     this.snackbar.classList.remove('hidden');
@@ -204,12 +204,12 @@ class ModelList {
   //*************************************************************************
   undoDeleteModel () {
     console.log('undoDeleteModel');
-    if (!dev.UNDO) {
+    if (!Device.UNDO) {
       return;
     }
 
-    dev.MODEL = dev.UNDO;
-    Database.setEntry(dev.MODEL);
+    Device.MODEL = Device.UNDO;
+    Database.setEntry(Device.MODEL);
     location.hash = Utils.buildURL(['model_details']);
     this.snackbar.classList.add('hidden');
   }

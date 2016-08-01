@@ -49,7 +49,7 @@ function loadDevicesFromURL(params) {
         ++count;
         Database.getEntry(params.model, function (data) {
             if (data) {
-                dev.MODEL = new DatabaseObject(data);
+                Device.MODEL = new DatabaseObject(data);
             }
             else {
                 console.error('Failed to load MODEL from URL ' + params.model);
@@ -64,7 +64,7 @@ function loadDevicesFromURL(params) {
         ++count;
         Database.getEntry(params.tx, function (data) {
             if (data) {
-                dev.TX = new DatabaseObject(data);
+                Device.TX = new DatabaseObject(data);
             }
             else {
                 console.error('Failed to load TX from URL ' + params.model);

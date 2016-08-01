@@ -25,7 +25,7 @@ class MDLHelper {
   setTextContent (selector, item, root) {
     root = root || document;
 
-    let value = dev[this.devName].getItem(item, {offset: this.offset});
+    let value = Device[this.devName].getItem(item, {offset: this.offset});
     if (this.formatter) {
       value = this.formatter(value);
     }
@@ -46,7 +46,7 @@ class MDLHelper {
       offset: this.offset,
       index: this.index
     };
-    let value = dev[this.devName].getItem(item, options);
+    let value = Device[this.devName].getItem(item, options);
     let element = root.querySelector(selector);
     element.checked = value;
     element.parentNode.MaterialSwitch.checkToggleState();
@@ -60,7 +60,7 @@ class MDLHelper {
       offset: this.offset,
       index: this.index
     };
-    let value = dev[this.devName].getItem(item, options);
+    let value = Device[this.devName].getItem(item, options);
     if (this.formatter) {
       value = this.formatter(value);
     }
@@ -73,7 +73,7 @@ class MDLHelper {
   setTextfield (selector, item, root) {
     root = root || document;
 
-    let value = dev[this.devName].getItem(item, {offset: this.offset});
+    let value = Device[this.devName].getItem(item, {offset: this.offset});
     if (this.formatter) {
       value = this.formatter(value);
     }
@@ -154,7 +154,7 @@ class MDLHelper {
     let options = {offset: this.offset, index: this.index};
 
     // Update the DatabaseObject
-    dev[this.devName].setItem(item, value, options);
+    Device[this.devName].setItem(item, value, options);
   }
 }
 

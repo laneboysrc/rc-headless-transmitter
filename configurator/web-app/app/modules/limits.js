@@ -12,7 +12,7 @@ class Limits {
   init (params) {
     this.channel = params.channel;
 
-    let model = dev.MODEL;
+    let model = Device.MODEL;
 
     let limits = model.getSchema()['LIMITS'];
     let channel_index = model.getNumberOfTypeMember('MIXER_UNITS_DST', this.channel);

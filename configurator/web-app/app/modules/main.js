@@ -8,10 +8,10 @@ class Main {
   }
 
   init () {
-    dev.MODEL = undefined;
-    dev.TX = undefined;
-    dev.UNDO = undefined;
-    dev.disableCommunication();
+    Device.MODEL = undefined;
+    Device.TX = undefined;
+    Device.UNDO = undefined;
+    Device.disableCommunication();
 
     Utils.showPage('main');
   }

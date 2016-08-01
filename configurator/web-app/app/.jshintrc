@@ -16,7 +16,7 @@
   "undef": true,
   "unused": "vars",
   "globals": {
-    "dev": true,
+    "Device": true,
     "Database": true,
     "DatabaseObject": true,
     "MDLHelper": true,

@@ -25,8 +25,8 @@
         }
 
         var device = dbObject;
-        if (dbObject === dev.MODEL) { device = 'MODEL'; }
-        if (dbObject === dev.TX)    { device = 'TX'; }
+        if (dbObject === Device.MODEL) { device = 'MODEL'; }
+        if (dbObject === Device.TX)    { device = 'TX'; }
 
         console.log(device + '.' + item + ': ', value);
     };
@@ -72,37 +72,37 @@
 
     console.log('\nTests for Database.getItem()');
     console.log('------------------------');
-    testGet(dev.MODEL, 'NAME');
-    testGet(dev.TX, 'NAME');
-    testGet(dev.TX, 'UUID');
-    testGet(dev.TX, 'BIND_TIMEOUT_MS');
-    testGet(dev.MODEL, 'RF_PROTOCOL_HK310_ADDRESS');
-    testGet(dev.MODEL, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3);
-    testGet(dev.TX, 'HARDWARE_INPUTS_CALIBRATION', {offset: 2*config.TX.HARDWARE_INPUTS.s});
-    testGet(dev.TX, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: config.TX.HARDWARE_INPUTS.s});
-    testGet(dev.MODEL, 'MIXER_UNITS_CURVE_TYPE');
-    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', {offset: 3*config.TX.LOGICAL_INPUTS.s});
-    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', {offset: 2*config.TX.LOGICAL_INPUTS.s, index: 1});
-    testGet(dev.MODEL, 'MIXER_UNITS_SRC', {offset: 0});
+    testGet(Device.MODEL, 'NAME');
+    testGet(Device.TX, 'NAME');
+    testGet(Device.TX, 'UUID');
+    testGet(Device.TX, 'BIND_TIMEOUT_MS');
+    testGet(Device.MODEL, 'RF_PROTOCOL_HK310_ADDRESS');
+    testGet(Device.MODEL, 'RF_PROTOCOL_HK310_ADDRESS', 0, 3);
+    testGet(Device.TX, 'HARDWARE_INPUTS_CALIBRATION', {offset: 2*config.TX.HARDWARE_INPUTS.s});
+    testGet(Device.TX, 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: config.TX.HARDWARE_INPUTS.s});
+    testGet(Device.MODEL, 'MIXER_UNITS_CURVE_TYPE');
+    testGet(Device.TX, 'LOGICAL_INPUTS_LABELS', {offset: 3*config.TX.LOGICAL_INPUTS.s});
+    testGet(Device.TX, 'LOGICAL_INPUTS_LABELS', {offset: 2*config.TX.LOGICAL_INPUTS.s, index: 1});
+    testGet(Device.MODEL, 'MIXER_UNITS_SRC', {offset: 0});
 
     console.log('\nTests for Database.setItem()');
     console.log('------------------------');
-    testSet(dev.MODEL, 'NAME', 'ChangedName');
-    testSet(dev.TX, 'UUID', 'cafebabe-dead-beef-1234-010203040506');
-    testSet(dev.TX, 'LED_PWM_PERCENT', '42');
-    testSet(dev.TX, 'BIND_TIMEOUT_MS', 1234);
-    testSet(dev.MODEL, 'LIMITS_LIMIT_L', -42);
-    testSet(dev.TX, 'HARDWARE_INPUTS_CALIBRATION', [1234, 2345, 3456]);
-    testSet(dev.MODEL, 'MIXER_UNITS_SRC', 'FLAPS');
-    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', 'GEAR', {offset: 0, index: 2});
-    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', ['ST-DR', 'RUD-DR', 'AIL-DR', 'ELE-DR', 0], {offset: 2*config.TX.LOGICAL_INPUTS.s});
+    testSet(Device.MODEL, 'NAME', 'ChangedName');
+    testSet(Device.TX, 'UUID', 'cafebabe-dead-beef-1234-010203040506');
+    testSet(Device.TX, 'LED_PWM_PERCENT', '42');
+    testSet(Device.TX, 'BIND_TIMEOUT_MS', 1234);
+    testSet(Device.MODEL, 'LIMITS_LIMIT_L', -42);
+    testSet(Device.TX, 'HARDWARE_INPUTS_CALIBRATION', [1234, 2345, 3456]);
+    testSet(Device.MODEL, 'MIXER_UNITS_SRC', 'FLAPS');
+    testSet(Device.TX, 'LOGICAL_INPUTS_LABELS', 'GEAR', {offset: 0, index: 2});
+    testSet(Device.TX, 'LOGICAL_INPUTS_LABELS', ['ST-DR', 'RUD-DR', 'AIL-DR', 'ELE-DR', 0], {offset: 2*config.TX.LOGICAL_INPUTS.s});
 
     console.log('\nTests that should fail:');
     console.log('-----------------------');
-    testGet(dev.TX, 'MIXER_UNITS_CURVE_TYPE');
-    testGet(dev.TX, 'LOGICAL_INPUTS_LABELS', {offset: 3*config.TX.LOGICAL_INPUTS.s, index: 5});
-    testGet(dev.MODEL, 'MIXER_UNITS', {offset: 0, index: 'three'});
-    testSet(dev.TX, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'NONE'], {offset: 2*config.TX.LOGICAL_INPUTS.s});
+    testGet(Device.TX, 'MIXER_UNITS_CURVE_TYPE');
+    testGet(Device.TX, 'LOGICAL_INPUTS_LABELS', {offset: 3*config.TX.LOGICAL_INPUTS.s, index: 5});
+    testGet(Device.MODEL, 'MIXER_UNITS', {offset: 0, index: 'three'});
+    testSet(Device.TX, 'LOGICAL_INPUTS_LABELS', ['ST_DR', 'RUD_DR', 'AIL_DR', 'NONE'], {offset: 2*config.TX.LOGICAL_INPUTS.s});
 
     console.log('#################################\n');
 })();

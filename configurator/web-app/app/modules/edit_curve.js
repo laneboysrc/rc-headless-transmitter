@@ -22,7 +22,7 @@ class EditCurve {
     mdl.setDataURL('#app-edit_curve-curve_smoothing__edit',
       ['select_single', 'MODEL', 'MIXER_UNITS_CURVE_SMOOTHING', this.offset]);
 
-    let points = dev.MODEL.getItem('MIXER_UNITS_CURVE_POINTS', {offset: this.offset});
+    let points = Device.MODEL.getItem('MIXER_UNITS_CURVE_POINTS', {offset: this.offset});
 
     for (let i = 0; i < points.length; i++) {
       let options = {offset: this.offset, index: i};

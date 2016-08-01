@@ -153,7 +153,7 @@ class MDLHelper {
     let item = element.getAttribute('data-mdlhelper');
     let options = {offset: this.offset, index: this.index};
 
-    // Update the DBObject
+    // Update the DatabaseObject
     dev[this.devName].setItem(item, value, options);
   }
 }

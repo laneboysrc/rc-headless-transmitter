@@ -94,7 +94,7 @@
   - Use individual cards for each mixer, and have a up and down arrow to
     move it around
 
-- Rename dev to Device, rename database_object to devObject?
+- Rename dev to Device,
 
 - Fix history on Chromium: closes window when in model_details
 

@@ -2,7 +2,7 @@
 
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
-var DBObject = require('./database_object');
+var DatabaseObject = require('./database_object');
 
 var mdl = new MDLHelper('MODEL');
 var models = [];
@@ -54,7 +54,7 @@ class ModelList {
     if (cursor) {
       let data = cursor.value;
       if (data.schemaName === 'MODEL') {
-        let dev = new DBObject(data);
+        let dev = new DatabaseObject(data);
         models.push({
           name: dev.getItem('NAME'),
           uuid: data.uuid
@@ -122,7 +122,7 @@ class ModelList {
     let index = element.getAttribute('data-index');
 
     Database.getEntry(models[index].uuid, function (data) {
-      dev.MODEL = new DBObject(data);
+      dev.MODEL = new DatabaseObject(data);
       location.hash = Utils.buildURL(['model_details']);
     });
   }
@@ -154,7 +154,7 @@ class ModelList {
           reject(new Error('loadModel: Model not in database?!'));
           return;
         }
-        resolve(new DBObject(data));
+        resolve(new DatabaseObject(data));
       });
     }).then(dbentry => {
       newModel = dbentry;

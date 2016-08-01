@@ -3,12 +3,12 @@
 var Utils = require('./utils');
 
 
-// DBObject: Database Object
+// DatabaseObject: Object representation of transmitter and model configuration
 //
 // IndexedDB is a Object database: instead of rows/columns like traditional
-// relational databases it stores 'objects'. The DBObject represents one
+// relational databases it stores 'objects'. The DatabaseObject represents one
 // of these objects in database that holds model or transmitter data.
-class DBObject {
+class DatabaseObject {
   constructor (data) {
     this.uuid = data.uuid;
     this.data = data.data;
@@ -365,7 +365,7 @@ class DBObject {
 
   // Set a new value for an element in the database entry.
   //
-  // For a detailed parameter description please refer to the DBObject.getItem()
+  // For a detailed parameter description please refer to the DatabaseObject.getItem()
   // function.
   //
   // The set() function expects value to be in the same format as it is
@@ -603,4 +603,4 @@ class DBObject {
   }
 }
 
-module.exports = DBObject;
+module.exports = DatabaseObject;

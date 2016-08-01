@@ -1,8 +1,8 @@
 'use strict';
 
-var Utils       = require('./utils');
-var Path        = require('./path');
-var DBObject    = require('./database_object');
+var Utils = require('./utils');
+var Path = require('./path');
+var DatabaseObject = require('./database_object');
 
 
 var routes = {
@@ -49,7 +49,7 @@ function loadDevicesFromURL(params) {
         ++count;
         Database.getEntry(params.model, function (data) {
             if (data) {
-                dev.MODEL = new DBObject(data);
+                dev.MODEL = new DatabaseObject(data);
             }
             else {
                 console.error('Failed to load MODEL from URL ' + params.model);
@@ -64,7 +64,7 @@ function loadDevicesFromURL(params) {
         ++count;
         Database.getEntry(params.tx, function (data) {
             if (data) {
-                dev.TX = new DBObject(data);
+                dev.TX = new DatabaseObject(data);
             }
             else {
                 console.error('Failed to load TX from URL ' + params.model);

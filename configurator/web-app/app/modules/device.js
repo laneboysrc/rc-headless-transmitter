@@ -1,7 +1,7 @@
 'use strict';
 
 var Utils = require('./utils');
-var DBObject = require('./database_object');
+var DatabaseObject = require('./database_object');
 
 
 //*************************************************************************
@@ -298,7 +298,7 @@ class Device {
     newDevice.lastChanged = 0;
     newDevice.uuid = Utils.newUUID();
 
-    return new DBObject(newDevice);
+    return new DatabaseObject(newDevice);
   }
 }
 

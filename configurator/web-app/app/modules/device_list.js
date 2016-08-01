@@ -2,7 +2,7 @@
 
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
-var DBObject = require('./database_object');
+var DatabaseObject = require('./database_object');
 
 // FIXME: put those in the HTML directly and show/hide
 const messages = {
@@ -189,7 +189,7 @@ class DeviceList {
         return new Promise((resolve, reject) => {
           Database.getEntry(newDev.uuid, data => {
             if (data) {
-              data = new DBObject(data);
+              data = new DatabaseObject(data);
             }
             resolve(data);
           });
@@ -245,7 +245,7 @@ class DeviceList {
         // console.log('loadDeviceData read from device')
         newDev.data = data;
 
-        var dbEntry = new DBObject(newDev);
+        var dbEntry = new DatabaseObject(newDev);
         newDev.lastChanged = dbEntry.getItem('LAST_CHANGED');
 
         return new Promise((resolve, reject) => {

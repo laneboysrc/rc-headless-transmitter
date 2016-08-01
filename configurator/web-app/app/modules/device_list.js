@@ -5,7 +5,7 @@ var MDLHelper = require('./mdl_helper');
 var DBObject = require('./database_object');
 
 // FIXME: put those in the HTML directly and show/hide
-var messages = {
+const messages = {
   default: '',
   noWebsocket: 'Turn on the transmitter or bridge and ensure no other configurator is accessing it',
   loading: 'Loading the transmitter configuration',
@@ -73,7 +73,7 @@ class DeviceList {
   transmitterReadyForConnect (data) {
     showToast = true;
 
-    var transmitterName = Utils.uint8array2string(data.slice(1, 16 + 1));
+    let transmitterName = Utils.uint8array2string(data.slice(1, 16 + 1));
     if (availableTransmitters.indexOf(transmitterName) >= 0) {
       return;
     }
@@ -81,17 +81,17 @@ class DeviceList {
 
     console.log('New transmitter: ' + transmitterName);
 
-    var index = availableTransmitters.indexOf(transmitterName);
+    let index = availableTransmitters.indexOf(transmitterName);
 
     this.list.classList.remove('hidden');
     this.loading.classList.add('hidden');
 
-    var t = this.template;
+    let t = this.template;
     t.querySelector('div').classList.add('can-delete');
     t.querySelector('button').setAttribute('data-index', index);
     this.mdl.setTextContentRaw('.app-device_list-list__template-name', transmitterName, t);
 
-    var clone = document.importNode(t, true);
+    let clone = document.importNode(t, true);
     this.container.appendChild(clone);
 
     showToast = true;
@@ -298,13 +298,12 @@ function showConnectionLostMessage () {
   showToast = false;
 
   // FIXME: the 'toast; should be one element for the whole app!
-  var toast = document.querySelector('#app-device_list-toast');
-  var message = {
+  let toast = document.querySelector('#app-device_list-toast');
+  const message = {
     message: 'Connection lost',
     timeout: 5000
   };
   toast.MaterialSnackbar.showSnackbar(message);
 }
-
 
 window['DeviceList'] = new DeviceList();

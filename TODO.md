@@ -59,6 +59,7 @@
 - checkout beforeinstallprompt in manifest.json
 
 - Refactor using Babel, and Promises, and Error object, TypeError when WS is not blob
+  - See if we can do without Babel. Need to use import everywhere
 
 - History mangling does not seem to work well on Chrome (Android)
   - Maybe needs setTimeout hack
@@ -69,6 +70,7 @@
 
 
 
+- Add password to config
 - Rework configurator protocol to use UUID so that we know to which device
   we want to connect
   - Instead of sending all hop channels, send a seed and max-channel and use
@@ -92,8 +94,6 @@
   - Use individual cards for each mixer, and have a up and down arrow to
     move it around
 
-- use const
-- use let instead of var
 - Rename dev to Device, rename database_object to devObject?
 
 - ModelList: sort models by name

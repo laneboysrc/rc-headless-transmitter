@@ -12,7 +12,7 @@ class EditSwitch {
   init (params) {
     this.offset = params.offset;
 
-    var mdl = new MDLHelper('MODEL', {offset: this.offset});
+    let mdl = new MDLHelper('MODEL', {offset: this.offset});
 
     mdl.setTextContent('#app-edit_switch-switch', 'MIXER_UNITS_SW_SW');
     mdl.setDataURL('#app-edit_switch-switch__edit',

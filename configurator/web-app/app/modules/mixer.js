@@ -11,16 +11,16 @@ class Mixer {
 
   //*************************************************************************
   init (params) {
-    var mdl = new MDLHelper('MODEL');
-    var model = dev.MODEL;
-    var mixer_units = model.getSchema()['MIXER_UNITS'];
+    let mdl = new MDLHelper('MODEL');
+    let model = dev.MODEL;
+    let mixer_units = model.getSchema()['MIXER_UNITS'];
 
     // Empty the list of mixers
     mdl.clearDynamicElements(this.mixer_list);
 
-    for (var i = 0; i < mixer_units.c; i++) {
-      var offset = i * mixer_units.s;
-      var src = model.getItem('MIXER_UNITS_SRC', {offset: offset});
+    for (let i = 0; i < mixer_units.c; i++) {
+      let offset = i * mixer_units.s;
+      let src = model.getItem('MIXER_UNITS_SRC', {offset: offset});
 
       // End-of-list is indicated by the mixer unit source being 0
       if (src === 0) {
@@ -28,12 +28,12 @@ class Mixer {
       }
 
       mdl.offset = offset;
-      var curve_type = model.getItem('MIXER_UNITS_CURVE_TYPE', {offset: offset});
-      var op = model.getItem('MIXER_UNITS_OP', {offset: offset});
-      var curve = curve_type + ' ' + op;
-      var dst = model.getItem('MIXER_UNITS_DST', {offset: offset});
+      let curve_type = model.getItem('MIXER_UNITS_CURVE_TYPE', {offset: offset});
+      let op = model.getItem('MIXER_UNITS_OP', {offset: offset});
+      let curve = curve_type + ' ' + op;
+      let dst = model.getItem('MIXER_UNITS_DST', {offset: offset});
 
-      var t = this.template;
+      let t = this.template;
       t.querySelector('tr').classList.add('can-delete');
       mdl.setTextContent('.app-mixer-template-src', 'MIXER_UNITS_SRC', t);
       mdl.setTextContent('.app-mixer-template-dst', 'MIXER_UNITS_DST', t);
@@ -41,7 +41,7 @@ class Mixer {
       mdl.setDataURL('.app-mixer-template-mixer_unit', ['mixer_unit', i], t);
       mdl.setDataURL('.app-mixer-template-dst', ['limits', dst], t);
 
-      var clone = document.importNode(t, true);
+      let clone = document.importNode(t, true);
       this.mixer_list.appendChild(clone);
     }
 

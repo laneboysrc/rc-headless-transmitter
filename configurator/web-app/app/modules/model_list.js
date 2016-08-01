@@ -52,9 +52,9 @@ class ModelList {
   databaseCallback (cursor) {
     // console.log(cursor)
     if (cursor) {
-      var data = cursor.value;
+      let data = cursor.value;
       if (data.schemaName === 'MODEL') {
-        var dev = new DBObject(data);
+        let dev = new DBObject(data);
         models.push({
           name: dev.getItem('NAME'),
           uuid: data.uuid
@@ -73,14 +73,14 @@ class ModelList {
 
     // FIXME: sort models[] by name
 
-    var t = this.template;
-    for (var i = 0; i < models.length; i++) {
+    let t = this.template;
+    for (let i = 0; i < models.length; i++) {
       t.querySelector('div').classList.add('can-delete');
       t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
       t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);
       mdl.setTextContentRaw('.app-model_list-list__template-name', models[i].name, t);
 
-      var clone = document.importNode(t, true);
+      let clone = document.importNode(t, true);
       this.container.appendChild(clone);
     }
 
@@ -116,7 +116,7 @@ class ModelList {
 
   //*************************************************************************
   editModel (element) {
-    var index = element.getAttribute('data-index');
+    let index = element.getAttribute('data-index');
 
     Database.getEntry(models[index].uuid, function (data) {
       dev.MODEL = new DBObject(data);
@@ -126,7 +126,7 @@ class ModelList {
 
   //*************************************************************************
   loadModel (element) {
-    var index = element.getAttribute('data-index');
+    let index = element.getAttribute('data-index');
     console.log('loadModel', index, dev.MODEL, models[index].uuid);
 
     // If the same model as the currently loaded one is selected then ignore
@@ -189,7 +189,7 @@ class ModelList {
     Database.deleteEntry(model);
 
     this.snackbar.classList.remove('hidden');
-    var data = {
+    let data = {
       message: 'Model deleted.',
       timeout: 5000,
       actionHandler: this.undoDeleteModel.bind(this),

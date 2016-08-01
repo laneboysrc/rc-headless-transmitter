@@ -9,22 +9,22 @@ var DBObject = require('./database_object');
 // read/write request can only handle up to 29 bytes. We return those chunks in
 // a list that can be requested one-by-one.
 function buildChunks(offset, count, maxChunkSize) {
-    var chunks = [];
+  let chunks = [];
 
-    maxChunkSize = maxChunkSize || 29;
+  maxChunkSize = maxChunkSize || 29;
 
-    while (count) {
-        let len = count > maxChunkSize ? maxChunkSize : count;
-        chunks.push({
-            o: offset,
-            c: len
-        });
+  while (count) {
+    let len = count > maxChunkSize ? maxChunkSize : count;
+    chunks.push({
+      o: offset,
+      c: len
+    });
 
-        offset += len;
-        count -= len;
-    }
+    offset += len;
+    count -= len;
+  }
 
-    return chunks;
+  return chunks;
 }
 
 
@@ -61,7 +61,7 @@ class Device {
   connect (uuid, address, hop_channels) {
     console.log(`Device.connect uuid=${uuid}`)
 
-    var connectPacket = new Uint8Array([
+    let connectPacket = new Uint8Array([
       0x31,
       0x12, 0x13, 0x14, 0x15, 0x16,
       0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,

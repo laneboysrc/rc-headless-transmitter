@@ -10,7 +10,7 @@ class ModelDetails {
 
   //*************************************************************************
   init (params) {
-    var mdl = new MDLHelper('MODEL');
+    let mdl = new MDLHelper('MODEL');
 
     mdl.setTextfield('#app-model_details-name', 'NAME');
     mdl.setDataURL('#app-model_details-mixer', ['mixer']);

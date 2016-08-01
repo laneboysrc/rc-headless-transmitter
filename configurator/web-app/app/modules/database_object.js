@@ -24,30 +24,30 @@ class DBObject {
   // Error() is thrown.
   validateInputs (key, index) {
     let message;
-    let schema = this.getSchema();
+    const schema = this.getSchema();
 
     if (key  &&  !schema.hasOwnProperty(key)) {
-      message = 'Key "' + key + '" not in schema.';
+      message = `Key "${key}" not in schema.`;
       console.error(message);
       throw new Error(message);
     }
 
     if (typeof index !== 'undefined') {
       if (! Utils.isNumber(index)) {
-        message = 'Index "' + index + '" is not an Integer';
+        message = `Index "${index}" is not an Integer`;
         console.error(message);
         throw new Error(message);
       }
 
-      let item = schema[key];
+      const item = schema[key];
 
       // Convert index to an Integer to handle the case where a string
       // representation or a float was given
       index = parseInt(index);
 
       if (index < 0  ||  index >= item.c) {
-        message = 'Requested index "' + index + '" for key "' + key +
-        '" but item contains only ' + item.c + ' elements';
+        message = `Requested index "${index}" for key "${key}" but item ` +
+          `contains only ${item.c} elements`;
         console.error(message);
         throw new Error(message);
       }
@@ -59,7 +59,7 @@ class DBObject {
   // type then the value is returned verbatim.
   typeLookupByNumber (type, value) {
     if (type) {
-      for (var n in type) {
+      for (let n in type) {
         if (type.hasOwnProperty(n)) {
           if (value === type[n]) {
             return n;
@@ -116,8 +116,8 @@ class DBObject {
   getNumberOfTypeMember (key, value) {
     this.validateInputs(key);
 
-    var config = this.getConfig();
-    var type = this.getSchema()[key].t;
+    const config = this.getConfig();
+    const type = this.getSchema()[key].t;
     return config.TYPES[type][value];
   }
 
@@ -130,7 +130,7 @@ class DBObject {
   //      > Array [ "Linear", "Smoothing" ]
   //
   getTypeMembers (type) {
-    var config = this.getConfig();
+    const config = this.getConfig();
     return Object.keys(config.TYPES[type]);
   }
 
@@ -146,7 +146,7 @@ class DBObject {
   getHumanFriendlyText (key) {
     this.validateInputs(key);
 
-    var schema = this.getSchema();
+    const schema = this.getSchema();
 
     if (schema[key].hasOwnProperty('h')) {
       return schema[key].h;
@@ -274,14 +274,13 @@ class DBObject {
       };
 
       if (! getters.hasOwnProperty(type)) {
-        let message = 'Invalid type ' + type;
+        let message = `Invalid type ${type}`;
         console.error(message);
         throw new Error(message);
       }
 
       if (! getters[type].hasOwnProperty(bytesPerElement)) {
-        let message = 'bytesPerElement is '+ bytesPerElement +
-        ' but must be 1, 2 or 4';
+        let message = `bytesPerElement is ${bytesPerElement} but must be 1, 2 or 4`;
         console.error(message);
         throw new Error(message);
       }
@@ -318,8 +317,7 @@ class DBObject {
 
     function getTypedItem() {
       if (! types.hasOwnProperty(item.t)) {
-        let message = 'Schema type "' + item.t + '" for key "' +
-        key + '" not defined';
+        let message = `Schema type "${item.t}" for key "${key}" not defined`;
         console.error(message);
         throw new Error(message);
       }
@@ -404,14 +402,13 @@ class DBObject {
     }
 
     if (!Utils.isNumber(index)) {
-      let ignore = ['c', 'uuid'];
+      const ignore = ['c', 'uuid'];
 
       // indexOf is >=0 when item is found
       // http://stackoverflow.com/questions/7378228/check-if-an-element-is-present-in-an-array
       if (ignore.indexOf(item.t) < 0) {
         if (value.length !== item.c) {
-          let message = '' + key + ' requires ' + item.c +
-          ' elements but ' + value.length + ' provided';
+          let message = `${key} requires ${item.c} elements but ${value.length} provided`;
           console.error(message);
           throw new Error(message);
         }
@@ -419,7 +416,7 @@ class DBObject {
     }
 
     function getSetter(bytesPerElement, type) {
-      var setters = {
+      const setters = {
         'u': {
           1: DataView.prototype.setUint8,
           2: DataView.prototype.setUint16,
@@ -433,14 +430,13 @@ class DBObject {
       };
 
       if (! setters.hasOwnProperty(type)) {
-        let message = 'Invalid type ' + type;
+        let message = `Invalid type ${type}`;
         console.error(message);
         throw new Error(message);
       }
 
       if (! setters[type].hasOwnProperty(bytesPerElement)) {
-        let message = 'bytesPerElement is '+ bytesPerElement +
-        ' but must be 1, 2 or 4';
+        let message = `bytesPerElement is ${bytesPerElement} but must be 1, 2 or 4`;
         console.error(message);
         throw new Error(message);
       }
@@ -455,8 +451,7 @@ class DBObject {
     // transmitter.
     function storageLogger(offset, count) {
       // schema.o describes the offset within the overall configuration
-      console.log(self.uuid + ' changed: offset=' + offset + ' count=' +
-        count + ' config-offset=' + (offset + schema.o));
+      console.log(`${self.uuid} changed: offset=${offset} count=${count} config-offset=${offset + schema.o}`);
 
       if (dev.connected) {
         dev.write(offset + schema.o, data.slice(offset, offset + count));
@@ -470,8 +465,7 @@ class DBObject {
         let dv = new DataView(data.buffer, lc.o , lc.s);
         setter.apply(dv, [0, now, true]);
 
-        console.log(self.uuid + ' changed: offset=' + lc.o + ' count=' +
-          lc.s + ' config-offset=' + (lc.o + schema.o));
+        console.log(`${self.uuid} changed: offset=${lc.o} count=${lc.s} config-offset=${lc.o + schema.o}`);
 
         if (dev.connected) {
           dev.write(lc.o + schema.o, data.slice(lc.o, lc.o + lc.s));
@@ -520,7 +514,7 @@ class DBObject {
     }
 
     function setInteger() {
-      let setter = getSetter(item.s, item.t);
+      const setter = getSetter(item.s, item.t);
       if (Utils.isNumber(index)) {
         storeScalar(value, index, setter);
       }
@@ -531,14 +525,14 @@ class DBObject {
 
     function setTypedItem() {
       function type2number(value) {
-        var type = types[item.t];
+        const type = types[item.t];
 
         if (! type.hasOwnProperty(value)) {
           if (Utils.isNumber(value)) {
             return value;
           }
 
-          let message = 'Key ' + value + ' is not in type ' + item.t;
+          let message = `Key ${value} is not in type ${item.t}`;
           console.error(message);
           throw new Error(message);
         }
@@ -560,7 +554,7 @@ class DBObject {
       // int8_t for small enums. So small enum can go from -128 to
       // 127; once the value is 128 or greater GCC uses an int16_t.
       let numeric_value;
-      let setter = getSetter(item.s, 'i');
+      const setter = getSetter(item.s, 'i');
       if (Utils.isNumber(index)) {
         numeric_value = type2number(value);
         storeScalar(numeric_value, index, setter);
@@ -586,7 +580,8 @@ class DBObject {
         break;
 
       case 's':
-        let message = 'Key ' + key + ': Writing a structure is not supported';
+        // FIXME: we need this for moving mixers
+        let message = `Key ${key}: Writing a structure is not supported`;
         console.error(message);
         throw new Error(message);
 
@@ -599,8 +594,7 @@ class DBObject {
           setTypedItem();
         }
         else {
-          message = 'Schema type "' + item.t + '" for key "' +
-          key + '" not defined';
+          message = `Schema type "${item.t}" for key "${key}" not defined`;
           console.error(message);
           throw new Error(message);
         }

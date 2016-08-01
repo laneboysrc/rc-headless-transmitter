@@ -54,7 +54,7 @@ class WebsocketProtocol {
       count = 29;
     }
 
-    var packet = new Uint8Array([0x72, 0, 0, 0]);
+    let packet = new Uint8Array([0x72, 0, 0, 0]);
     Utils.setUint16(packet, offset, 1);
     packet[3] = count;
     return packet;
@@ -62,7 +62,7 @@ class WebsocketProtocol {
 
   //*************************************************************************
   makeWritePacket (offset, data) {
-    var packet = new Uint8Array(3 + data.length);
+    let packet = new Uint8Array(3 + data.length);
     packet[0] = 0x77;
     Utils.setUint16(packet, offset, 1);
     packet.set(data, 3);
@@ -83,7 +83,7 @@ class WebsocketProtocol {
       throw new Error('WS: onmessage: String received; should have been Blob');
     }
 
-    var reader = new FileReader();
+    let reader = new FileReader();
 
     reader.addEventListener("loadend", function () {
       let data = new Uint8Array(reader.result);

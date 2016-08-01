@@ -106,7 +106,7 @@ class MDLHelper {
   }
 
   onChangeHandler (event) {
-    const element = event.target;
+    let element = event.target;
 
     let value = element.value;
     if (element.type === 'checkbox') {
@@ -122,7 +122,7 @@ class MDLHelper {
         return;
       }
 
-      const pattern = element.getAttribute('pattern');
+      let pattern = element.getAttribute('pattern');
       if (pattern) {
         let re = new RegExp(pattern);
 
@@ -150,8 +150,8 @@ class MDLHelper {
       }
     }
 
-    const item = element.getAttribute('data-mdlhelper');
-    const options = {offset: this.offset, index: this.index};
+    let item = element.getAttribute('data-mdlhelper');
+    let options = {offset: this.offset, index: this.index};
 
     // Update the DBObject
     dev[this.devName].setItem(item, value, options);

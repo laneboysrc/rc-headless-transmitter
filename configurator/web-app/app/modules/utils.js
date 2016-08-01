@@ -31,7 +31,7 @@ export function byte2string(byte) {
 }
 
 export function uuid2string(uuid_bytes) {
-  var result = '';
+  let result = '';
 
   result += byte2string(uuid_bytes[0]);
   result += byte2string(uuid_bytes[1]);
@@ -50,7 +50,7 @@ export function uuid2string(uuid_bytes) {
 
 export function string2uuid(s) {
     // "c91c-abaa-44c9-11e6"
-    var result = new Uint8Array(16);
+    let result = new Uint8Array(16);
 
     result[0] = parseInt(s.slice(0, 2), 16);
     result[1] = parseInt(s.slice(2, 4), 16);
@@ -68,10 +68,10 @@ export function string2uuid(s) {
   }
 
 export function uint8array2string(bytes) {
-  var result = '';
+  let result = '';
 
-  for (var i = 0; i < bytes.length; i++) {
-    var code = bytes[i];
+  for (let i = 0; i < bytes.length; i++) {
+    let code = bytes[i];
     if (code === 0) {
       return result;
     }
@@ -82,10 +82,10 @@ export function uint8array2string(bytes) {
 }
 
 export function string2uint8array(s, byte_count) {
-  var bytes = new Uint8ClampedArray(byte_count);
-  var count = s.length < byte_count ? s.length : byte_count;
+  let bytes = new Uint8ClampedArray(byte_count);
+  let count = s.length < byte_count ? s.length : byte_count;
 
-  for (var i = 0; i < count; i++) {
+  for (let i = 0; i < count; i++) {
     bytes[i] = s.charCodeAt(i);
   }
   return bytes;
@@ -98,9 +98,9 @@ export function isNumber(obj) {
 
 export function showPage(name) {
   // Hide all sections with class 'app-page'
-  var pages = document.querySelectorAll('.app-page');
-  for (var i = 0; i < pages.length; i++) {
-    var page = pages[i];
+  let pages = document.querySelectorAll('.app-page');
+  for (let i = 0; i < pages.length; i++) {
+    let page = pages[i];
     page.classList.add('hidden');
   }
 
@@ -108,7 +108,7 @@ export function showPage(name) {
 }
 
 export function buildURL(list) {
-  var url_fragments = ['#'];
+  let url_fragments = ['#'];
 
   url_fragments = url_fragments.concat(list);
 
@@ -126,47 +126,47 @@ export function buildURL(list) {
 }
 
 export function getUint16(packet, index) {
-  var dv = new DataView(packet.buffer, index);
+  let dv = new DataView(packet.buffer, index);
   return dv.getUint16(0, true);
 }
 
 export function getUint32(packet, index) {
-  var dv = new DataView(packet.buffer, index);
+  let dv = new DataView(packet.buffer, index);
   return dv.getUint32(0, true);
 }
 
 export function getInt16(packet, index) {
-  var dv = new DataView(packet.buffer, index);
+  let dv = new DataView(packet.buffer, index);
   return dv.getInt16(0, true);
 }
 
 export function getInt32(packet, index) {
-  var dv = new DataView(packet.buffer, index);
+  let dv = new DataView(packet.buffer, index);
   return dv.getInt32(0, true);
 }
 
 export function setUint16(packet, value, index) {
-  var dv = new DataView(packet.buffer, index);
+  let dv = new DataView(packet.buffer, index);
   return dv.setUint16(0, value, true);
 }
 
 export function setUint32(packet, value, index) {
-  var dv = new DataView(packet.buffer, index);
+  let dv = new DataView(packet.buffer, index);
   return dv.setUint32(0, value, true);
 }
 
 export function setInt16(packet, value, index) {
-  var dv = new DataView(packet.buffer, index);
+  let dv = new DataView(packet.buffer, index);
   return dv.setInt16(0, value, true);
 }
 
 export function setInt32(packet, value, index) {
-  var dv = new DataView(packet.buffer, index);
+  let dv = new DataView(packet.buffer, index);
   return dv.setInt32(0, value, true);
 }
 
 export function newUUID() {
-  var uuid_bytes = new Uint8Array(8);
+  let uuid_bytes = new Uint8Array(8);
   window.crypto.getRandomValues(uuid_bytes);
   return uuid2string(uuid_bytes);
 }
@@ -191,15 +191,15 @@ export function isValidUUID(uuid) {
 }
 
 export function addClassToSelector(selector, _class) {
-  var items = document.querySelectorAll(selector);
-  for (var i = 0; i < items.length; ++i) {
+  let items = document.querySelectorAll(selector);
+  for (let i = 0; i < items.length; ++i) {
     items[i].classList.add(_class);
   }
 }
 
 export function removeClassFromSelector(selector, _class) {
-  var items = document.querySelectorAll(selector);
-  for (var i = 0; i < items.length; ++i) {
+  let items = document.querySelectorAll(selector);
+  for (let i = 0; i < items.length; ++i) {
     items[i].classList.remove(_class);
   }
 }

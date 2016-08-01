@@ -15,8 +15,8 @@ class SelectSingle {
 
   //*************************************************************************
   accept_choice () {
-    var list = document.querySelector('#app-select_single-list');
-    var value = list.querySelector('input[type="radio"]:checked').value;
+    let list = document.querySelector('#app-select_single-list');
+    let value = list.querySelector('input[type="radio"]:checked').value;
 
     dev[this.devName].setItem(this.item, value, {offset: this.offset});
     history.go(-1);
@@ -28,34 +28,34 @@ class SelectSingle {
     this.item = params.item;
     this.offset = parseInt(params.offset);
 
-    var mdl = new MDLHelper(this.devName);
+    let mdl = new MDLHelper(this.devName);
 
     // Ged rid of existing elements
     mdl.clearDynamicElements(this.list);
 
-    var device = dev[this.devName];
+    let device = dev[this.devName];
 
-    var name = device.getHumanFriendlyText(this.item);
+    let name = device.getHumanFriendlyText(this.item);
     mdl.setTextContentRaw('#app-select_single-name', name);
     // FIXME: need to get item description
     mdl.setTextContentRaw('#app-select_single-description', 'FIXME');
 
-    var current_choice = device.getItem(this.item, {offset: this.offset});
+    let current_choice = device.getItem(this.item, {offset: this.offset});
 
-    var type = device.getType(this.item);
-    var choices = device.getTypeMembers(type);
+    let type = device.getType(this.item);
+    let choices = device.getTypeMembers(type);
 
-    var t = this.template;
+    let t = this.template;
 
-    for (var i = 0; i < choices.length; i++) {
-      var entry = choices[i];
+    for (let i = 0; i < choices.length; i++) {
+      let entry = choices[i];
 
       t.querySelector('span').textContent = entry;
       t.querySelector('input').id = 'app-select_single__item' + i;
       t.querySelector('input').value = entry;
       t.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
 
-      var clone = document.importNode(t, true);
+      let clone = document.importNode(t, true);
       if (entry === current_choice) {
         clone.querySelector('input').checked = true;
       }

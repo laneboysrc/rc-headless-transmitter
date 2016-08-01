@@ -42,8 +42,8 @@ function redirect(destination) {
 function loadDevicesFromURL(params) {
     console.log('Loading devices specified in URL', params);
 
-    var count = 0;
-    var topic = 'routes.entryRetrieved';
+    let count = 0;
+    let topic = 'routes.entryRetrieved';
 
     if (params.model) {
         ++count;
@@ -93,7 +93,7 @@ function loadDevicesFromURL(params) {
 function databaseReady() {
     console.log('routes: Database ready');
 
-    var matching_path = Path.match(location.hash, true);
+    let matching_path = Path.match(location.hash, true);
     if (matching_path  &&  (matching_path.params.model  ||  matching_path.params.tx)) {
         // If both model and tx are present then we must have been connected
         // when the page was reloaded. Since we can not automatically reconnect
@@ -114,7 +114,7 @@ function databaseReady() {
 }
 
 
-for (var path in routes) {
+for (let path in routes) {
     if (routes.hasOwnProperty(path)) {
         Path.map(path).to(redirect(routes[path]));
     }

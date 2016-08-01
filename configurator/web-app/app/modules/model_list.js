@@ -71,7 +71,10 @@ class ModelList {
   updateModelList () {
     mdl.clearDynamicElements(this.list);
 
-    // FIXME: sort models[] by name
+    // Sort models[] by name
+    models.sort((a, b) => {
+      return (a.name < b.name) ? -1 : 1;
+    });
 
     let t = this.template;
     for (let i = 0; i < models.length; i++) {

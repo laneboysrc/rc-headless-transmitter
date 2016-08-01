@@ -124,7 +124,7 @@ class DeviceList {
 
     // FIXME: implement progress bar
 
-    dev.connect(uuid).then(_ => {
+    dev.connect(uuid).then(() => {
       return dev.read(0, 4);
     }).then(data => {
       configVersion = Utils.getUint32(data);
@@ -134,9 +134,9 @@ class DeviceList {
           new Error(`Unknown configVersion "${configVersion}"`));
       }
       return this.loadDevice(configVersion, 'TX');
-    }).then(_ => {
+    }).then(() => {
       return this.loadDevice(configVersion, 'MODEL');
-    }).then( _ => {
+    }).then(() => {
       location.hash = Utils.buildURL(['model_details']);
     }).catch(error => {
       console.log(error);
@@ -185,7 +185,7 @@ class DeviceList {
             Utils.string2uuid(newDev.uuid));
         }
         return Promise.resolve();
-      }).then(_ => {
+      }).then(() => {
         return new Promise((resolve, reject) => {
           Database.getEntry(newDev.uuid, data => {
             if (data) {
@@ -217,7 +217,7 @@ class DeviceList {
               }
               else {
                 // console.log('device < db')
-                dev.write(schema.o, dbEntry.data).then(_ => {
+                dev.write(schema.o, dbEntry.data).then(() => {
                   resolve(dbEntry);
                 });
               }
@@ -250,7 +250,7 @@ class DeviceList {
 
         return new Promise((resolve, reject) => {
           // console.log('setEntry', newDev)
-          Database.setEntry(newDev,  _ => {
+          Database.setEntry(newDev, () => {
             // console.log('setEntry done')
             resolve(dbEntry);
           });

@@ -46,7 +46,7 @@ class Main {
 
     // Close the drawer only after a short delay as to not interfere with
     // loading of the new page
-    window.setTimeout(_ => {
+    window.setTimeout(() => {
       drawerButton.click();
     }, 50);
   }

@@ -160,7 +160,7 @@ class ModelList {
       newModel = dbentry;
       let offset = newModel.getSchema().o;
       return dev.write(offset, newModel.data);
-    }).then(_ => {
+    }).then(() => {
       dev.MODEL = newModel;
 
       // Note: we have changed the model, so the URL UUID will be wrong.

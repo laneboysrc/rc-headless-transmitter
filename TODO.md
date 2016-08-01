@@ -81,10 +81,6 @@
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
-- DeviceList messages need to be in HTML and just shown/hidden
-
-- ModelList needs a loading indicator while populating the available models
-
 - Curve editing: show appropriate points and adjust their name
 
 - Delete mixer units
@@ -97,3 +93,6 @@
 
 - Fix history on Chromium: closes window when in model_details
 
+- DeviceList messages need to be in HTML and just shown/hidden
+
+- ModelList needs a loading indicator while populating the available models

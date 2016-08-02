@@ -15,13 +15,43 @@ export function sendCustomEvent(eventName, data) {
 }
 
 export function rollbackHistoryToRoot() {
-  for (let i = 0; i < history.length; i++) {
-    if (location.hash === '#/') {
-      return;
+  let lastHistoryLength = 0;
+  let elementsAdded = 0;
+
+  // Unfortunately repetitive calls to history.back() don't work on Chrome
+  // while the page is reloading. So we fill up the history stack with
+  // elements of our apps root, which has the same effect except that
+  // the user no longer can go back to where he launched the app from.
+  // Not a big deal since we believe this will be launched from a bookmark
+  // or device root.
+  //
+  // Both Firefox and Chrome have 50 history elements. However, this may be
+  // coincidence and other browersers have different values. So we fill
+  // up the history until history.length no longer changes, and we have
+  // added the maximum history.length number of '#/' entries.
+  do {
+    lastHistoryLength = history.length;
+
+    history.pushState(null, '', '#/');
+    elementsAdded++;
+
+    if (elementsAdded > 100) {
+      break;
     }
-    history.back();
-  }
-  history.replaceState(null, '', '#/');
+  } while (lastHistoryLength !== history.length  ||  elementsAdded < history.length);
+
+  // This works on Firefox, but fails on Chrome.
+  //
+  // history.go(-(history.length - 1));
+  //
+  // On Chrome it does not execute and destroys any subsequence history
+  // manipulation through history.pushState. location.hash after history.go is
+  // fine on Chrome (except that the history.go is not executed) but fails
+  // on Firefox.
+  // So we don't execute history.go here and use pushState for both browsers.
+  // While this keeps the history full with '#/' entries, the functional impact
+  // for the user is imperceptible. At least we don't have reminescence of
+  // URLs that may no longer be available in the history stack!
 }
 
 export function byte2string(byte) {

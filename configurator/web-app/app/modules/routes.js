@@ -28,17 +28,6 @@ var routes = {
 };
 
 
-function redirect(destination) {
-    return function () {
-        if (typeof destination === "function") {
-            destination();
-        }
-        else {
-            destination.init(this.params);
-        }
-    };
-}
-
 function loadDevicesFromURL(params) {
     console.log('Loading devices specified in URL', params);
 
@@ -100,7 +89,9 @@ function databaseReady() {
         // we throw the user back to the device list.
         if (matching_path.params.model  &&  matching_path.params.tx) {
             Utils.rollbackHistoryToRoot();
-            location.hash = '#/device_list';
+            // We need to do history.pushState here, as otherwise things
+            // misbehave on Chrome.
+            history.pushState(null, '', '#/device_list');
             Path.listen();
         }
         else {
@@ -114,12 +105,32 @@ function databaseReady() {
 }
 
 
+function redirect(destination) {
+    return function () {
+        if (typeof destination === "function") {
+            destination();
+        }
+        else {
+            destination.init(this.params);
+        }
+    };
+}
+
+
 for (let path in routes) {
     if (routes.hasOwnProperty(path)) {
         Path.map(path).to(redirect(routes[path]));
     }
 }
-Path.root('#/');
+
+// Instead of Path.root we use history.replaceState, as otherwise we get an
+// additional history entry.
+// Path.root('/');
+console.log(`ROUTE START: history.length=${history.length}, location.hash=${location.hash}`)
+if (location.hash === ""  ||  location.hash === "#") {
+    history.replaceState(null, '', '#/');
+}
+
 
 if (Database.isReady()) {
     databaseReady();
@@ -127,4 +138,5 @@ if (Database.isReady()) {
 else {
     Utils.PubSub.subscribe('databaseReady', databaseReady);
 }
+
 

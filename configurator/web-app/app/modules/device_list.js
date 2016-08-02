@@ -268,7 +268,7 @@ class DeviceList {
       Device.MODEL = undefined;
       Device.TX = undefined;
       Utils.rollbackHistoryToRoot();
-      location.hash = '#/device_list';
+      location.hash = Utils.buildURL(['device_list']);
     }
 
     showConnectionLostMessage();

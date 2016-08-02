@@ -84,8 +84,6 @@
 - Curve editing: show appropriate points and adjust their name
 
 - Handle emtpy mixer list
-- Finalize delete mixer units
-  - Requires DBObject able to write structure
 - Useful defaults for limits for mixer new mixer units
 - Re-arrange mixer units
   - Use individual cards for each mixer, and have a up and down arrow to

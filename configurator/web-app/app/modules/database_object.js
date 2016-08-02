@@ -242,6 +242,10 @@ class DatabaseObject {
     var index = parseInt(options.index);
     var offset = parseInt(options.offset);
 
+    if (!Utils.isNumber(offset)) {
+      offset = 0;
+    }
+
     var self = this;
     var data = this.data;
     var config = this.getConfig();
@@ -305,12 +309,12 @@ class DatabaseObject {
 
     function getStructure() {
       if (Utils.isNumber(index)) {
-        return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s);
+        return new Uint8Array(data.buffer, item_offset + (item.s * index), item.s).slice();
       }
 
       let result = [];
       for (let i = 0; i < item.c; i++) {
-        result.push(new Uint8Array(data.buffer, item_offset + (i * item.s), item.s));
+        result.push(new Uint8Array(data.buffer, item_offset + (i * item.s), item.s).slice());
       }
       return result;
     }
@@ -385,6 +389,10 @@ class DatabaseObject {
     // during the rest of the code
     var index = parseInt(options.index);
     var offset = parseInt(options.offset);
+
+    if (!Utils.isNumber(offset)) {
+      offset = 0;
+    }
 
     var self = this;
     var data = this.data;
@@ -503,6 +511,17 @@ class DatabaseObject {
       storageLogger(item_offset + byteOffset, item.s);
     }
 
+    function storeStructureItem(value, index) {
+        let count = item.s;
+        let elementOffset = item_offset + (index * count);
+        let dv = new DataView(data.buffer, elementOffset, count);
+
+        for (let i = 0; i < count; i++) {
+          dv.setUint8(i, value[i], true);
+        }
+        storageLogger(elementOffset, count);
+    }
+
     function setString() {
       let bytes = Utils.string2uint8array(value, item.c);
       storeArray(bytes);
@@ -569,6 +588,17 @@ class DatabaseObject {
       }
     }
 
+    function setStructure() {
+      if (Utils.isNumber(index)) {
+        storeStructureItem(value, index);
+        return;
+      }
+
+      for (let i = 0; i < item.c; i++) {
+        storeStructureItem(value[i], i);
+      }
+    }
+
     switch (item.t) {
       case 'u':
       case 'i':
@@ -580,10 +610,8 @@ class DatabaseObject {
         break;
 
       case 's':
-        // FIXME: we need this for moving mixers
-        let message = `Key ${key}: Writing a structure is not supported`;
-        console.error(message);
-        throw new Error(message);
+        setStructure();
+        break;
 
       case 'uuid':
         setUUID();

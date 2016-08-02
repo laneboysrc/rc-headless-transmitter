@@ -85,16 +85,28 @@ class Mixer {
 
   //*************************************************************************
   deleteMixerUnit(index) {
-    let offset = index * this.mixerUnitSize;
+    index = parseInt(index);
 
     this.UNDO = {
       index: index,
       data: Device.MODEL.getItem('MIXER_UNITS', {index: index})
     };
 
-    Device.MODEL.setItem('MIXER_UNITS_SRC', 0, {offset: offset});
+    // Bring all mixer units behind 'index' forward
+    for (let i = index; i < this.mixerUnitMaxCount; i++) {
+      // The last element gets set to all zeros (= deleted)
+      let data = new Uint8Array(this.mixerUnitSize);
+      if (i !== (this.mixerUnitMaxCount - 1)) {
+        data = Device.MODEL.getItem('MIXER_UNITS', {index: i + 1});
+      }
+      Device.MODEL.setItem('MIXER_UNITS', data, {index: i});
 
-    // FIXME: need to bring all mixer units behind 'index' forward!
+      let offset = i * this.mixerUnitSize;
+      let src = Device.MODEL.getItem('MIXER_UNITS_SRC', {offset: offset});
+      if (src === 0) {
+        break;
+      }
+    }
 
     this.snackbar.classList.remove('hidden');
     let data = {
@@ -113,14 +125,21 @@ class Mixer {
       return;
     }
 
-    // FIXME: restore mixer unit:
-    //    move units from this.UNDO.index on backwards
-    //    set this.UNDO.index to this.UNDO.data
+    let index = this.UNDO.index;
 
-    Device.MODEL.setItem('MIXER_UNITS', this.UNDO.data, {index: this.UNDO.index});
+    // Move units from this.UNDO.index on backwards
+    let moveIndex = this.mixerUnitCount - 1;
+    while (moveIndex >= index) {
+      let data = Device.MODEL.getItem('MIXER_UNITS', {index: moveIndex});
+      Device.MODEL.setItem('MIXER_UNITS', data, {index: moveIndex + 1});
+      --moveIndex;
+    }
+
+    // Put the deleted item back in place
+    Device.MODEL.setItem('MIXER_UNITS', this.UNDO.data, {index: index});
 
     this.snackbar.classList.add('hidden');
-    location.hash = Utils.buildURL(['mixer_unit', this.UNDI.init]);
+    location.hash = Utils.buildURL(['mixer_unit', this.UNDO.index]);
     this.UNDO = undefined;
   }
 

@@ -203,7 +203,6 @@ class ModelList {
 
   //*************************************************************************
   undoDeleteModel () {
-    console.log('undoDeleteModel');
     if (!Device.UNDO) {
       return;
     }

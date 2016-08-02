@@ -4,12 +4,12 @@ var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
 class MixerUnit {
-  constructor () {
+  constructor() {
     this.offset = 0;
   }
 
   //*************************************************************************
-  init (params) {
+  init(params) {
     this.index = params.index;
 
     let mixer_units = Device.MODEL.getSchema()['MIXER_UNITS'];
@@ -38,7 +38,15 @@ class MixerUnit {
   }
 
   //*************************************************************************
-  back (params) {
+  delete(event) {
+    Utils.cancelBubble(event);
+
+    Mixer.deleteMixerUnit(this.index);
+    history.back();
+  }
+
+  //*************************************************************************
+  back(params) {
     history.back();
   }
 }

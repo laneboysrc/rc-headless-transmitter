@@ -84,7 +84,8 @@
 - Curve editing: show appropriate points and adjust their name
 
 - Handle emtpy mixer list
-- Useful defaults for limits for mixer new mixer units
+- Useful defaults for limits on new models
+- Useful defaults for mixer on new mixer units
 - Re-arrange mixer units
   - Use individual cards for each mixer, and have a up and down arrow to
     move it around

@@ -182,3 +182,26 @@ table.rf_protocol-hop_channels td:nth-child(2) {
   transition: width .05s;
 }
 
+
+/* Mixer unit styling using thin cards */
+.app-mixer-mixer_unit {
+  min-height: 0;
+}
+
+.app-mixer-mixer_unit .mdl-card__supporting-text {
+  padding: 0;
+  width: 100%;
+}
+
+.app-mixer-mixer_unit .mdl-data-table tbody tr,
+.app-mixer-mixer_unit .mdl-data-table tbody td {
+  padding-top: 0;
+  padding-bottom: 0;
+  /*height: auto;*/
+}
+
+.app-mixer-mixer_unit_updown button {
+  min-width: 30px;
+  padding: 0 10px;
+  display: block;
+}

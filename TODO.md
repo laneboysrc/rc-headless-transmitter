@@ -91,6 +91,4 @@
   - Use individual cards for each mixer, and have a up and down arrow to
     move it around
 
-- DeviceList messages need to be in HTML and just shown/hidden
-
 - ModelList needs a loading indicator while populating the available models

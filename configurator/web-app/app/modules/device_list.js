@@ -4,14 +4,6 @@ var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 var DatabaseObject = require('./database_object');
 
-// FIXME: put those in the HTML directly and show/hide
-const messages = {
-  default: '',
-  noWebsocket: 'Turn on the transmitter or bridge and ensure no other configurator is accessing it',
-  loading: 'Loading the transmitter configuration',
-  model: 'Loading the model configuration',
-  connecting: 'Connecting to the transmitter',
-};
 
 var availableTransmitters = [];
 var showToast = false;
@@ -19,15 +11,19 @@ var showToast = false;
 class DeviceList {
   constructor () {
     this.loading = document.querySelector('#app-device_list-loading');
-    this.message = document.querySelector('#app-device_list-loading__message');
+
+    this.noWebsocket = document.querySelector('#app-device_list-loading__no-websocket');
+
 
     this.list = document.querySelector('#app-device_list-list');
     this.container = document.querySelector('#app-device_list-list__container');
     this.template = document.querySelector('#app-device_list-list__template').content;
 
     this.txLoading = document.querySelector('#app-device_list-loading_transmitter');
-    this.txMessage = document.querySelector('#app-device_list-loading_transmitter__message');
     this.txProgress = document.querySelector('#app-device_list-loading_transmitter__progress');
+    this.txConnecting = document.querySelector('#app-device_list-loading_transmitter__connecting');
+    this.txModel = document.querySelector('#app-device_list-loading_transmitter__model');
+    this.txTransmitter = document.querySelector('#app-device_list-loading_transmitter__transmitter');
 
     this.mdl = new MDLHelper();
     this.progress = {};
@@ -66,7 +62,7 @@ class DeviceList {
 
     // Empty the list of transmitters
     this.mdl.clearDynamicElements(this.list);
-    this.message.textContent = messages.default;
+    this.noWebsocket.classList.add('hidden');
   }
 
   //*************************************************************************
@@ -106,7 +102,10 @@ class DeviceList {
     this.list.classList.add('hidden');
     this.txLoading.classList.remove('hidden');
     this.txProgress.classList.add('mdl-progress--indeterminate');
-    this.txMessage.textContent = messages.connecting;
+
+    this.txConnecting.classList.remove('hidden');
+    this.txModel.classList.add('hidden');
+    this.txTransmitter.classList.add('hidden');
 
     this.load('FIXME-save-uuid-in-availableTransmitters');
   }
@@ -133,8 +132,12 @@ class DeviceList {
         return Promise.reject(
           new Error(`Unknown configVersion "${configVersion}"`));
       }
+      this.txConnecting.classList.add('hidden');
+      this.txTransmitter.classList.remove('hidden');
       return this.loadDevice(configVersion, 'TX');
     }).then(() => {
+      this.txTransmitter.classList.add('hidden');
+      this.txModel.classList.remove('hidden');
       return this.loadDevice(configVersion, 'MODEL');
     }).then(() => {
       location.hash = Utils.buildURL(['model_details']);
@@ -273,7 +276,7 @@ class DeviceList {
 
     showConnectionLostMessage();
     this.resetPage();
-    this.message.textContent = messages.noWebsocket;
+    this.noWebsocket.classList.remove('hidden');
   }
 
   //*************************************************************************

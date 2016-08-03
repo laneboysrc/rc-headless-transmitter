@@ -56,6 +56,23 @@ i.icon--largeicon--large {
   font-size: 16px;
 }
 
+.is-small-screen .mdl-card .mdl-data-table td {
+  font-size: 14px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+/* Adjust the left and right padding of tables on small screens */
+.is-small-screen .mdl-card .mdl-data-table td:first-of-type {
+  padding-left: 10px;
+}
+.is-small-screen .mdl-card .mdl-data-table td:last-of-type {
+  padding-right: 0;
+}
+
+
+
+
 
 /* Mixer-unit: Right-most column (switches and buttons) has the elements
    aligned to the right */
@@ -84,20 +101,7 @@ table.mixer-unit td:nth-child(2) {
 }
 
 
-/* Mixer: Make the middle colum the widest so that it becomes most prominent
-   and visually centered. */
-table.mixer td:nth-child(2) {
-  width: 80%;
-  text-align: center;
-}
 
-table.mixer .app-mixer-template-src {
-  min-width: 120px;
-}
-
-.is-small-screen table.mixer .app-mixer-template-src {
-  min-width: 100px;
-}
 
 
 
@@ -112,6 +116,8 @@ table.limits td:nth-child(2) {
 table.limits .mdl-switch {
   margin-left: 20px;
 }
+
+
 
 /* Fab button on cards like select_single and select_multiple. The button
    stays always visible on the right-bottom of the card */
@@ -141,11 +147,12 @@ table.limits .mdl-switch {
   border: none;
 }*/
 
+
 #app-rf_protocol-hop_channels__container {
   width: 100%;
 }
 
-/* Adjust the left and right padding from the hop channel table */
+/* Adjust the left and right padding of the hop channel table */
 .mdl-card .mdl-data-table.rf_protocol-hop_channels td:first-of-type {
   padding-left: 0;
 }
@@ -154,7 +161,7 @@ table.limits .mdl-switch {
 }
 
 /* No darkening when hovering over the table */
-.mdl-data-table.rf_protocol-hop_channels tbody tr:hover {
+.mdl-data-table.app-rf_protocol-hop_channels__containerrotocol-hop_channels tbody tr:hover {
   background-color: transparent;
 }
 
@@ -165,17 +172,7 @@ table.rf_protocol-hop_channels td:nth-child(2) {
 
 
 
-/* Adjust the left and right padding from the hop channel table */
-.is-small-screen .mdl-data-table td:first-of-type {
-  padding-left: 10px;
-}
-.is-small-screen .mdl-data-table td:last-of-type {
-  padding-right: 0;
-}
-.is-small-screen .mdl-data-table td {
-  padding-left: 5px;
-  padding-right: 5px;
-}
+
 
 
 /* Center the progress bar within the card */
@@ -192,6 +189,21 @@ table.rf_protocol-hop_channels td:nth-child(2) {
 }
 
 
+/* Mixer: Make the middle colum the widest so that it becomes most prominent
+   and visually centered. */
+.app-mixer-mixer_unit td:nth-child(2) {
+  width: 80%;
+  text-align: center;
+}
+
+.app-mixer-mixer_unit td.app-mixer-template-src {
+  min-width: 120px;
+}
+
+.is-small-screen .app-mixer-mixer_unit td.app-mixer-template-src {
+  min-width: 86px;
+}
+
 /* Mixer unit styling using thin cards */
 .app-mixer-mixer_unit {
   min-height: 0;
@@ -206,11 +218,14 @@ table.rf_protocol-hop_channels td:nth-child(2) {
 .app-mixer-mixer_unit .mdl-data-table tbody td {
   padding-top: 0;
   padding-bottom: 0;
-  /*height: auto;*/
 }
 
 .app-mixer-mixer_unit_updown button {
-  min-width: 30px;
-  padding: 0 10px;
   display: block;
 }
+
+.is-small-screen .app-mixer-mixer_unit button {
+  padding: 0 0px;
+  min-width: 40px;
+}
+

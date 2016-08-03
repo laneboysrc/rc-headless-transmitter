@@ -88,6 +88,5 @@
 - Re-arrange mixer units
   - Use individual cards for each mixer, and have a up and down arrow to
     move it around
-- Fix mixer layout on smallest phone screen (make font smaller? buttons less margin?)
 
 - ModelList needs a loading indicator while populating the available models

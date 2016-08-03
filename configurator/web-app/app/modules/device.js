@@ -302,7 +302,16 @@ class Device {
     newDevice.lastChanged = 0;
     newDevice.uuid = Utils.newUUID();
 
-    return new DatabaseObject(newDevice);
+    let newDBObject = new DatabaseObject(newDevice);
+
+    // NOTE: setting the uuid will automatically added the device to the
+    // database!
+    newDBObject.setItem('UUID', newDevice.uuid);
+
+    let name = schemaName + ' ' + newDevice.uuid.toUpperCase().slice(0, 4);
+    newDBObject.setItem('NAME', name);
+
+    return newDBObject;
   }
 }
 

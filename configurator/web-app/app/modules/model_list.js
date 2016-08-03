@@ -98,20 +98,32 @@ class ModelList {
   createModel (event) {
     Utils.cancelBubble(event);
 
-    let newModel = Device.makeNewDevice('1', 'MODEL');
-
-    // The new model name is "ModelX" where is is the current number
-    // of models + 1. This way we should get unique initial names.
-    newModel.setItem('NAME', `Model${models.length + 1}`);
-    newModel.setItem('UUID', newModel.uuid);
-
-    // NOTE: setting the name has automatically added the device to the
-    // database!
+    let configVersion = 1;
+    let newModel = Device.makeNewDevice(configVersion, 'MODEL');
 
     newModel.setItem('RF_PROTOCOL_HK310_ADDRESS', RFProtocol.newRandomAddress());
     newModel.setItem('RF_PROTOCOL_HK310_HOP_CHANNELS', RFProtocol.newHopChannels());
 
-    // FIXME: load a template with a basic mixer (car steering and throttle?)
+    // Load useful values for limits
+    let limitCount = newModel.getSchema().LIMITS.c;
+    let limitSize = newModel.getSchema().LIMITS.s;
+    for (let i = 0; i < limitCount; i++) {
+      newModel.setItem('LIMITS_EP_L', -100000, {offset: i * limitSize});
+      newModel.setItem('LIMITS_EP_H', 100000, {offset: i * limitSize});
+      newModel.setItem('LIMITS_LIMIT_L', -150000, {offset: i * limitSize});
+      newModel.setItem('LIMITS_LIMIT_H', 150000, {offset: i * limitSize});
+    }
+
+    // Load a basic mixer (car with steering and throttle)
+    let mixerUnitSize = newModel.getSchema().MIXER_UNITS.s;
+    newModel.setItem('MIXER_UNITS_SRC', 'ST', {offset: 0 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_DST', 'CH1', {offset: 0 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_APPLY_TRIM', '1', {offset: 0 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_SRC', 'TH', {offset: 1 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_DST', 'CH2', {offset: 1 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_APPLY_TRIM', '1', {offset: 1 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_SRC', 'AUX', {offset: 2 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_DST', 'CH3', {offset: 2 * mixerUnitSize});
 
     Device.MODEL = newModel;
     location.hash = Utils.buildURL(['model_details']);

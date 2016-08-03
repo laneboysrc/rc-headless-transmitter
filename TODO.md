@@ -55,14 +55,16 @@
 - Use input event on slider as it is active during sliding.
 
 - Add model icon data
+  - Car: directions_car
+  - Bike: motorcycle
+  - Truck: local_shipping
+  - Boat: directions_boat
+  - Airplane: flight
+  - Quad: `zoom_out_map`
+  - Helicopter
 
 - checkout beforeinstallprompt in manifest.json
 
-- Refactor using Babel, and Promises, and Error object, TypeError when WS is not blob
-  - See if we can do without Babel. Need to use import everywhere
-
-- History mangling does not seem to work well on Chrome (Android)
-  - Maybe needs setTimeout hack
 
 - In all button onclick handlers pass the event along (ModelList.addModel(event);)
   In the function call Utils.cancelBubble(event);

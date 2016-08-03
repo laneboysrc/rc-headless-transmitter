@@ -6,8 +6,9 @@ var MDLHelper   = require('./mdl_helper');
 class Mixer {
   constructor() {
     this.template = document.querySelector('#app-mixer-template').content;
-    this.mixerList = document.querySelector('#app-mixer-list tbody');
+    this.mixerList = document.querySelector('#app-mixer-list');
     this.cardAddMixerUnit = document.querySelector('#app-mixer-add');
+    this.menuAddMixerUnit = document.querySelector('#app-mixer-menu');
 
     // Number of used mixer units
     this.mixerUnitCount = 0;
@@ -47,7 +48,7 @@ class Mixer {
       let dst = model.getItem('MIXER_UNITS_DST', {offset: offset});
 
       let t = this.template;
-      t.querySelector('tr').classList.add('can-delete');
+      t.querySelector('section').classList.add('can-delete');
       mdl.setTextContent('.app-mixer-template-src', 'MIXER_UNITS_SRC', t);
       mdl.setTextContent('.app-mixer-template-dst', 'MIXER_UNITS_DST', t);
       mdl.setTextContentRaw('.app-mixer-template-mixer_unit', curve, t);
@@ -55,15 +56,17 @@ class Mixer {
       mdl.setDataURL('.app-mixer-template-dst', ['limits', dst], t);
 
       let clone = document.importNode(t, true);
-      this.mixerList.appendChild(clone);
+      this.mixerList.insertBefore(clone, this.cardAddMixerUnit);
     }
 
     // Show/hide addMixderUnit card depending on available space
     if (this.mixerUnitCount < this.mixerUnitMaxCount) {
       this.cardAddMixerUnit.classList.remove('hidden');
+      this.menuAddMixerUnit.classList.remove('hidden');
     }
     else {
       this.cardAddMixerUnit.classList.add('hidden');
+      this.menuAddMixerUnit.classList.add('hidden');
     }
 
     Utils.showPage('mixer');

@@ -91,6 +91,15 @@ table.mixer td:nth-child(2) {
   text-align: center;
 }
 
+table.mixer .app-mixer-template-src {
+  min-width: 120px;
+}
+
+.is-small-screen table.mixer .app-mixer-template-src {
+  min-width: 100px;
+}
+
+
 
 /* Limits: Make the 2nd colum the widest to give the sliders maximum space */
 table.limits td:nth-child(2) {

@@ -58,10 +58,8 @@ class Device {
   }
 
   //*************************************************************************
-  connect(uuid, address, hop_channels) {
+  connect(uuid, passphrase) {
     console.log(`Device.connect uuid=${uuid}`)
-
-    // FIXME: random address and hop channel parameters
 
     let connectPacket = new Uint8Array([
       0x31,
@@ -71,9 +69,11 @@ class Device {
       0x00, 0x01]);
 
     connectPacket.set(Utils.string2uuid(uuid), 1);
+    connectPacket.set(Utils.newRandomAddress(), 1 + 8);
+    Utils.setUint16(connectPacket, passphrase, 1 + 8 + 5);
+    connectPacket.set(Utils.newHopChannelLFSR(), 1 + 8 + 5 + 2);
 
     let self = this;
-
 
     return new Promise((resolve, reject) => {
       function onmessage(event) {

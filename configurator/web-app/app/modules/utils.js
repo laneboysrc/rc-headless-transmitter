@@ -201,6 +201,23 @@ export function newUUID() {
   return uuid2string(uuid_bytes);
 }
 
+export function newRandomAddress () {
+  let address = new Uint8Array(5);
+  window.crypto.getRandomValues(address);
+  return Array.from(address);
+}
+
+export function newHopChannelLFSR() {
+  let lfsrParameters = new Uint8Array(2);
+
+  do {
+    window.crypto.getRandomValues(lfsrParameters);
+    // Ensure the LFSR start value is valid
+  } while (lfsrParameters[1] === 0  ||  lfsrParameters[1] > 127);
+
+  return lfsrParameters;
+}
+
 // A valid UUID is a 16 hex digits in groups of 4, separated by '-', and
 // it must not be 0000-0000-0000-0000 or ffff-ffff-ffff-ffff
 export function isValidUUID(uuid) {

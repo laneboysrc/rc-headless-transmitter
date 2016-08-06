@@ -42,7 +42,7 @@ class RFProtocol{
   generateRandomAddress (event) {
     Utils.cancelBubble(event);
 
-    let address = this.newRandomAddress();
+    let address = Utils.newRandomAddress();
     let adressString = this.address2string(address);
     document.querySelector('#app-rf_protocol-address').value = adressString;
 
@@ -76,13 +76,6 @@ class RFProtocol{
   hopDialogCancel (event) {
     Utils.cancelBubble(event);
     this.hopChannelDialog.close();
-  }
-
-  //*************************************************************************
-  newRandomAddress () {
-    let address = new Uint8Array(5);
-    window.crypto.getRandomValues(address);
-    return Array.from(address);
   }
 
   //*************************************************************************

@@ -131,9 +131,11 @@ class DeviceList {
   load(uuid) {
     var configVersion;
 
+    // FIXME: Retrieve passphrase from database based on UUID, or 1234 if not found, or provided one
+    let passphrase = 1234;
     // FIXME: implement progress bar
 
-    Device.connect(uuid).then(() => {
+    Device.connect(uuid, passphrase).then(() => {
       return Device.read(0, 4);
     }).then(data => {
       configVersion = Utils.getUint32(data);

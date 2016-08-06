@@ -85,7 +85,7 @@
 
 - Connect in simulator needs to check UUID and passphrase
 
-- Connect needs to set random address and hop channel parameters
+- Passphrase UI
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores

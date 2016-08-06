@@ -76,11 +76,17 @@
 
 - checkout beforeinstallprompt in manifest.json
 
+- WS protocol: test error handling
+
+- WS protocol: improve comparison between request and response
 
 - Rework deleting of mixer units to use COPY
 - Remove HEX commands, cluster in device
 
+- Connect in simulator needs to check UUID and passphrase
+- DeviceList: save uuid in availableTransmitters[]
 
+- Connect needs to set random address and hop channel parameters
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
@@ -88,3 +94,4 @@
 - Curve editing: show appropriate points and adjust their name
 
 - ModelList needs a loading indicator while populating the available models
+

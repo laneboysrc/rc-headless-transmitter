@@ -145,33 +145,38 @@ class Device {
       let data = new Uint8Array(count);
       let readChunks = buildChunks(offset, count);
 
+      function response(packet) {
+        if (packet[0] !== 0x52) {
+          console.log('read(): not a READ response');
+          return;
+        }
+
+        const o = Utils.getUint16(packet, 1);
+        const c = packet.length - 3;
+
+        // Check if the read data is one of the chunks we are looking
+        // for. If yes, store the data at the appropriate offset
+        // and remove the chunk from our request list.
+        const index = readChunks.findIndex((element, index, array) => {
+          return element.o === o  &&  element.c === c;
+        });
+        if (index >= 0) {
+          data.set(packet.slice(3), o - offset);
+          readChunks.splice(index, 1);
+        }
+
+        // If there are no more readChunks left then resolve the read request
+        if (readChunks.length === 0) {
+          resolve(data);
+        }
+      }
+
       readChunks.forEach(chunk => {
         let readPacket = WebsocketProtocol.makeReadPacket(chunk.o, chunk.c);
-        WebsocketProtocol.send(readPacket).then(packet => {
-          if (packet[0] !== 0x52) {
-            console.log('read(): not a READ response');
-            return;
-          }
 
-          const o = Utils.getUint16(packet, 1);
-          const c = packet.length - 3;
-
-          // Check if the read data is one of the chunks we are looking
-          // for. If yes, store the data at the appropriate offset
-          // and remove the chunk from our request list.
-          const index = readChunks.findIndex((element, index, array) => {
-            return element.o === o  &&  element.c === c;
-          });
-          if (index >= 0) {
-            data.set(packet.slice(3), o - offset);
-            readChunks.splice(index, 1);
-          }
-
-          // If there are no more readChunks left then resolve the read request
-          if (readChunks.length === 0) {
-            resolve(data);
-          }
-        }).catch(error => {
+        WebsocketProtocol.send(readPacket)
+        .then(response)
+        .catch(error => {
           reject(error);
         });
       });
@@ -189,106 +194,42 @@ class Device {
     return new Promise((resolve, reject) => {
       let writeChunks = buildChunks(offset, data.length);
 
+      function response(packet) {
+        if (packet[0] !== 0x57) {
+          return;
+        }
+
+        const o = Utils.getUint16(packet, 1);
+        const c = packet[3];
+
+        // Check if the written data is one of the chunks we are looking
+        // for. If yes, store the data at the appropriate offset
+        // and remove the chunk from our request list.
+        const index = writeChunks.findIndex((element, index, array) => {
+          return element.o === o  &&  element.c === c;
+        });
+        if (index >= 0) {
+          writeChunks.splice(index, 1);
+        }
+
+        // If there are no more writeChunks left then resolve the write request
+        if (writeChunks.length === 0) {
+          resolve(data);
+        }
+      }
+
       writeChunks.forEach(chunk => {
         const dataOffset = chunk.o - offset;
         let writePacket = WebsocketProtocol.makeWritePacket(
           chunk.o, data.slice(dataOffset, dataOffset + chunk.c));
-        WebsocketProtocol.send(writePacket).then(packet => {
-          if (packet[0] !== 0x57) {
-            return;
-          }
 
-          const o = Utils.getUint16(packet, 1);
-          const c = packet[3];
-
-          // Check if the written data is one of the chunks we are looking
-          // for. If yes, store the data at the appropriate offset
-          // and remove the chunk from our request list.
-          const index = writeChunks.findIndex((element, index, array) => {
-            return element.o === o  &&  element.c === c;
-          });
-          if (index >= 0) {
-            writeChunks.splice(index, 1);
-          }
-
-          // If there are no more writeChunks left then resolve the read request
-          if (writeChunks.length === 0) {
-            resolve(data);
-          }
-        }).catch(error => {
+        WebsocketProtocol.send(writePacket)
+        .then(response)
+        .catch(error => {
           reject(error);
         });
       });
     });
-
-
-
-
-
-    // // FIXME: needs a 600ms timeout (between individual reads)
-    // // FIXME: progress callback using writeChunks initial length as reference
-
-    // return new Promise((resolve, reject) => {
-    //   let writeChunks = buildChunks(offset, data.length);
-    //   let nextChunk = 0;
-
-    //   function onmessage(event) {
-    //     const packet = event.detail;
-
-    //     if (packet[0] === 0x57) {
-    //       const o = Utils.getUint16(packet, 1);
-    //       const c = packet[3];
-
-    //       // Check if the read data is one of the chunks we are looking
-    //       // for. If yes, store the data at the appropriate offset
-    //       // and remove the chunk from our request list.
-    //       const index = writeChunks.findIndex((element, index, array) => {
-    //         return element.o === o  &&  element.c === c;
-    //       });
-    //       if (index >= 0) {
-    //         writeChunks.splice(index, 1);
-    //       }
-    //     }
-
-    //     // Read the next chunk regardless if we received the previous
-    //     // data or not. On slow computers this causes quite a bit of
-    //     // redundant read requests, but it also automatically retries until
-    //     // all data was received.
-    //     writeChunk();
-    //   }
-
-    //   function onclose(event) {
-    //     document.removeEventListener('ws-message', onmessage);
-    //     document.removeEventListener('ws-close', onclose);
-    //     reject(new Error('Connection closed'));
-    //   }
-
-    //   function writeChunk() {
-    //     if (writeChunks.length === 0) {
-    //       document.removeEventListener('ws-message', onmessage);
-    //       document.removeEventListener('ws-close', onclose);
-    //       resolve();
-    //       return;
-    //     }
-
-    //     // Important: we modulo readRequest.length here, because the
-    //     // readRequest may have had elements removed. The modulo also causes
-    //     // us to automatically loop through all chunks until we don't have
-    //     // any thing to request.
-    //     const request = writeChunks[nextChunk % writeChunks.length];
-
-    //     const dataOffset = request.o - offset;
-    //     const packet = WebsocketProtocol.makeWritePacket(
-    //       request.o, data.slice(dataOffset, dataOffset + request.c));
-    //     WebsocketProtocol.send(packet);
-
-    //     nextChunk++;
-    //   }
-
-    //   document.addEventListener('ws-message', onmessage);
-    //   document.addEventListener('ws-close', onclose);
-    //   writeChunk();
-    // });
   }
 
   //*************************************************************************

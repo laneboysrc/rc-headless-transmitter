@@ -94,7 +94,7 @@ class DeviceList {
   }
 
   //*************************************************************************
-  edit (index) {
+  edit(index) {
     document.removeEventListener('ws-message', this._onmessage);
 
     this.mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', availableTransmitters[index]);
@@ -119,7 +119,7 @@ class DeviceList {
   //    abort (reset the pagge)
   // loadDevice('TX')
   // loadDevice('MODEL')
-  load (uuid) {
+  load(uuid) {
     var configVersion;
 
     // FIXME: implement progress bar
@@ -168,7 +168,7 @@ class DeviceList {
   // else
   //     load hw.[schemaName] into Device.[schemaName]
   //     add Device.[schemaName] to our database
-  loadDevice (configVersion, schemaName) {
+  loadDevice(configVersion, schemaName) {
     // console.log(`DeviceList.loadDevice configVersion=${configVersion} schemaName=${schemaName}`)
 
     const schema = CONFIG_VERSIONS[configVersion][schemaName];

@@ -21,6 +21,23 @@ class Mixer {
 
   //*************************************************************************
   init(params) {
+    this.populateMixerUnitList();
+
+    // Show/hide addMixderUnit card depending on available space
+    if (this.mixerUnitCount < this.mixerUnitMaxCount) {
+      this.cardAddMixerUnit.classList.remove('hidden');
+      this.menuAddMixerUnit.classList.remove('hidden');
+    }
+    else {
+      this.cardAddMixerUnit.classList.add('hidden');
+      this.menuAddMixerUnit.classList.add('hidden');
+    }
+
+    Utils.showPage('mixer');
+  }
+
+  //*************************************************************************
+  populateMixerUnitList() {
     let mdl = new MDLHelper('MODEL');
     let model = Device.MODEL;
     let mixer_units = model.getSchema()['MIXER_UNITS'];
@@ -63,18 +80,6 @@ class Mixer {
     }
 
     this.updateUpDownButtonVisibility();
-
-    // Show/hide addMixderUnit card depending on available space
-    if (this.mixerUnitCount < this.mixerUnitMaxCount) {
-      this.cardAddMixerUnit.classList.remove('hidden');
-      this.menuAddMixerUnit.classList.remove('hidden');
-    }
-    else {
-      this.cardAddMixerUnit.classList.add('hidden');
-      this.menuAddMixerUnit.classList.add('hidden');
-    }
-
-    Utils.showPage('mixer');
   }
 
   //*************************************************************************
@@ -179,34 +184,30 @@ class Mixer {
   }
 
   //*************************************************************************
-  up(event) {
+  up(event, button) {
     Utils.cancelBubble(event);
 
-    let element = event.target;
-    let mixerUnitIndex = parseInt(element.getAttribute('data-index'));
+    let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
 
     // Safety bail-out
     if (mixerUnitIndex < 1) {
       return;
     }
 
-    console.log(`up: mixerUnitIndex=${mixerUnitIndex}`);
     this.swap(mixerUnitIndex, mixerUnitIndex - 1);
   }
 
   //*************************************************************************
-  down(event) {
+  down(event, button) {
     Utils.cancelBubble(event);
 
-    let element = event.target;
-    let mixerUnitIndex = parseInt(element.getAttribute('data-index'));
+    let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
 
     // Safety bail-out
     if (mixerUnitIndex >= (this.mixerUnitCount - 1)) {
       return;
     }
 
-    console.log(`down: mixerUnitIndex=${mixerUnitIndex}`);
     this.swap(mixerUnitIndex, mixerUnitIndex + 1);
   }
 
@@ -220,9 +221,8 @@ class Mixer {
     model.setItem('MIXER_UNITS', unit2, {index: index1});
     model.setItem('MIXER_UNITS', unit1, {index: index2});
 
-    // FIXME: this could be done smarter than brute-force rebuilding all page
-    // elements
-    this.init();
+    // Rebuild the list of mixer units
+    this.populateMixerUnitList();
   }
 
   //*************************************************************************

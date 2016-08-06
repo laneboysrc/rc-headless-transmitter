@@ -66,16 +66,12 @@
 - checkout beforeinstallprompt in manifest.json
 
 
-- In all button onclick handlers pass the event along (ModelList.addModel(event);)
-  In the function call Utils.cancelBubble(event);
-  We need this to make div onclick handlers that trigger the button work
 
 - Center detent: beep when center (configurable?)
 
 - Beep when throttle not 0 at start of transmitter, and refuse operation
 
 - Beep SOS when config broken
-
 
 - Add password to config
 - Rework configurator protocol to use UUID so that we know to which device

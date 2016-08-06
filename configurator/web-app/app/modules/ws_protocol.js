@@ -41,7 +41,7 @@ class WebsocketProtocol {
     }
 
     if (this.pending.length) {
-      let request = this.pending.pop();
+      let request = this.pending.shift();
       this.inTransit.push(request);
 
       // console.log('WS: sendCustomEventing ' + dumpUint8Array(request.packet));
@@ -124,11 +124,9 @@ class WebsocketProtocol {
     // Handle special Websocket only command that indicates the maximum number
     // of bytes that can be in transit (= packet buffer size in the bridge)
     if (data[0] === 0x42) {
-      this.maxPacketsInTransit = data[1];
-      if (this.maxPacketsInTransit < 1) {
-        this.maxPacketsInTransit = 1;
+      if (data[1] > 1) {
+        this.maxPacketsInTransit = data[1];
       }
-      console.log(`maxPacketsInTransit: ${this.maxPacketsInTransit}`)
       return;
     }
 
@@ -205,7 +203,7 @@ class WebsocketProtocol {
   onclose() {
     this.ws = undefined;
 
-    // FIXME: got through this.pending[] and reject all promises
+    // FIXME: got through this.pending[] and this.inTransit[] and reject all promises
     this.pending = [];
 
     Utils.sendCustomEvent('ws-close');
@@ -213,28 +211,28 @@ class WebsocketProtocol {
 }
 
 // *************************************************************************
-function dumpUint8Array(data) {
-  var result = [];
-  data.forEach(function (byte) {
-    result.push(Utils.byte2string(byte));
-  });
+// function dumpUint8Array(data) {
+//   var result = [];
+//   data.forEach(function (byte) {
+//     result.push(Utils.byte2string(byte));
+//   });
 
-  var response = result.join(' ');
+//   var response = result.join(' ');
 
-  while (response.length < ((32 * 3) + 2)) {
-    response += ' ';
-  }
+//   while (response.length < ((32 * 3) + 2)) {
+//     response += ' ';
+//   }
 
-  data.forEach(function (byte) {
-    if (byte <= 32  ||  byte > 126) {
-      response += '.';
-    }
-    else {
-      response += String.fromCharCode(byte);
-    }
-  });
+//   data.forEach(function (byte) {
+//     if (byte <= 32  ||  byte > 126) {
+//       response += '.';
+//     }
+//     else {
+//       response += String.fromCharCode(byte);
+//     }
+//   });
 
-  return response;
-}
+//   return response;
+// }
 
 window['WebsocketProtocol'] = new WebsocketProtocol();

@@ -25,13 +25,11 @@
   the main app do it
 
 
-- Center detent: beep when center (configurable?)
+- Center detent: beep when center (`ANALOG_WITH_CENTER`)
 
 - Beep when throttle not 0 at start of transmitter, and refuse operation
 
 - Beep SOS when config broken
-
-- Add password to config
 
 
 
@@ -79,7 +77,8 @@
 - checkout beforeinstallprompt in manifest.json
 
 
-- Rework websocket protocol with less real-time dependence
+- Rework deleting of mixer units to use COPY
+- Remove HEX commands, cluster in device
 
 
 

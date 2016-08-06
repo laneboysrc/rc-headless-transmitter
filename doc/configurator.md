@@ -610,3 +610,9 @@ Algorithm to deal with lost and delayed packets
     - if <pr> has 2 entries:
         - resend first entry
 
+
+* `WS_MAX_PACKETS_IN_TRANSIT`
+
+    `0x42 nn`
+
+    nn: maximum number of buffered requests

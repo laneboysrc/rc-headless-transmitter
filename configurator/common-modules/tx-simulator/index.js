@@ -19,14 +19,16 @@ var PACKET_REPEAT_TIME_MS_NOT_CONNECTED = 100;
 var STATE = {NOT_CONNECTED: 'NOT_CONNECTED', CONNECTED: 'CONNECTED'};
 var state = STATE.NOT_CONNECTED;
 
+var MAX_PACKETS_IN_TRANSIT = 5;
+var nextPacket = [];
+
 var packets = {
     TX_FREE_TO_CONNECT: allocatePacket(0x30, 1 + 8 + 16 + 2),
     TX_INFO: allocatePacket(0x49, 1),
+    WS_MAX_PACKETS_IN_TRANSIT: allocatePacket(0x42, 2),
 };
 
-var nextPacket;
 var timerId;
-
 
 function allocatePacket(command, size) {
     var packet = new Uint8Array(size);
@@ -136,7 +138,7 @@ function handle_CFG_READ(packet) {
     response.set(packet.slice(1, 3), 1);
     response.set(testData.slice(offset, offset + count), 3);
 
-    nextPacket = response;
+    nextPacket.push(response);
 }
 
 function handle_CFG_WRITE(packet) {
@@ -161,7 +163,8 @@ function handle_CFG_WRITE(packet) {
     var response = allocatePacket(0x57, 4);
     response.set(packet.slice(1, 3), 1);
     response[3] = count;
-    nextPacket = response;
+
+    nextPacket.push(response);
 }
 
 function handle_CFG_COPY(packet) {
@@ -200,7 +203,7 @@ function handle_CFG_COPY(packet) {
     }
 
     var response = allocatePacket(0x43, 1);
-    nextPacket = response;
+    nextPacket.push(response);
 }
 
 function handle_CFG_DISCONNECT(packet) {
@@ -241,7 +244,8 @@ function onReceivedPacket(packet) {
 
 function onConnected() {
     console.log('\nConfigurator connected');
-    communicate();
+    server.sendPacket(packets.WS_MAX_PACKETS_IN_TRANSIT);
+    timerId = setTimeout(communicate, PACKET_REPEAT_TIME_MS_NOT_CONNECTED);
 }
 
 function onDisconnected() {
@@ -255,9 +259,9 @@ function onDisconnected() {
 
 
 function communicate() {
-    if (nextPacket) {
-        server.sendPacket(nextPacket);
-        nextPacket = undefined;
+    if (nextPacket.length) {
+        var packet = nextPacket.pop();
+        server.sendPacket(packet);
     }
     else {
         switch (state) {
@@ -295,7 +299,10 @@ function start () {
     var battery_mv = 3897;      // Simulated battery voltage of 3.897 V
     packets.TX_FREE_TO_CONNECT = buildFreeToConnectPacket(tx_uuid, tx_name, battery_mv);
 
-    console.log('UUID of the simulated transmitter: ' + uint8array2string(tx_name));
+    packets.WS_MAX_PACKETS_IN_TRANSIT[1] = MAX_PACKETS_IN_TRANSIT;
+
+
+    console.log('UUID of the simulated transmitter: ' + uuid2string(tx_uuid));
     console.log('Name of the simulated transmitter: ' + uint8array2string(tx_name));
 
 

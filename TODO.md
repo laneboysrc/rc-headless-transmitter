@@ -83,3 +83,4 @@
 
 - ModelList needs a loading indicator while populating the available models
 
+- Fix model details icon position on Android

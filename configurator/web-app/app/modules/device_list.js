@@ -9,7 +9,7 @@ var availableTransmitters = [];
 var showToast = false;
 
 class DeviceList {
-  constructor () {
+  constructor() {
     this.loading = document.querySelector('#app-device_list-loading');
 
     this.noWebsocket = document.querySelector('#app-device_list-loading__no-websocket');
@@ -32,7 +32,7 @@ class DeviceList {
   }
 
   //*************************************************************************
-  init (params) {
+  init(params) {
     this.resetPage();
 
     if (Device.connected) {
@@ -47,12 +47,12 @@ class DeviceList {
   }
 
   //*************************************************************************
-  back (params) {
+  back(params) {
     history.back();
   }
 
   //*************************************************************************
-  resetPage () {
+  resetPage() {
     document.addEventListener('ws-message', this._onmessage);
 
     this.loading.classList.remove('hidden');
@@ -66,18 +66,26 @@ class DeviceList {
   }
 
   //*************************************************************************
-  transmitterReadyForConnect (data) {
+  transmitterReadyForConnect(data) {
     showToast = true;
 
-    let transmitterName = Utils.uint8array2string(data.slice(9, 16 + 9));
-    if (availableTransmitters.indexOf(transmitterName) >= 0) {
+    let newTx = {
+      name: Utils.uint8array2string(data.slice(9, 16 + 9)),
+      uuid: Utils.uuid2string(data.slice(1, 8 + 1))
+    };
+
+    let index = availableTransmitters.findIndex((element, index, array) => {
+      return element.name === newTx.name;
+    });
+
+    if (index >= 0) {
       return;
     }
-    availableTransmitters.push(transmitterName);
 
-    console.log('New transmitter: ' + transmitterName);
+    availableTransmitters.push(newTx);
+    index = availableTransmitters.length - 1;
 
-    let index = availableTransmitters.indexOf(transmitterName);
+    console.log('New transmitter: ' + newTx.name);
 
     this.list.classList.remove('hidden');
     this.loading.classList.add('hidden');
@@ -85,7 +93,7 @@ class DeviceList {
     let t = this.template;
     t.querySelector('div').classList.add('can-delete');
     t.querySelector('button').setAttribute('data-index', index);
-    this.mdl.setTextContentRaw('.app-device_list-list__template-name', transmitterName, t);
+    this.mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
 
     let clone = document.importNode(t, true);
     this.container.appendChild(clone);
@@ -97,7 +105,9 @@ class DeviceList {
   edit(index) {
     document.removeEventListener('ws-message', this._onmessage);
 
-    this.mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', availableTransmitters[index]);
+    let tx = availableTransmitters[index];
+
+    this.mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', tx.name);
 
     this.list.classList.add('hidden');
     this.txLoading.classList.remove('hidden');
@@ -107,8 +117,7 @@ class DeviceList {
     this.txModel.classList.add('hidden');
     this.txTransmitter.classList.add('hidden');
 
-    // FIXME Save uuid in availableTransmitters[]
-    this.load('0000-0000-0000-0000');
+    this.load(tx.uuid);
   }
 
   //*************************************************************************

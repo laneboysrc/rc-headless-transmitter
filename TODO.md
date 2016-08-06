@@ -84,7 +84,6 @@
 - Remove HEX commands, cluster in device
 
 - Connect in simulator needs to check UUID and passphrase
-- DeviceList: save uuid in availableTransmitters[]
 
 - Connect needs to set random address and hop channel parameters
 

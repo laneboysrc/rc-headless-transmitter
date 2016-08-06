@@ -80,7 +80,7 @@ export function uuid2string(uuid_bytes) {
 
 export function string2uuid(s) {
     // "c91c-abaa-44c9-11e6"
-    let result = new Uint8Array(16);
+    let result = new Uint8Array(8);
 
     result[0] = parseInt(s.slice(0, 2), 16);
     result[1] = parseInt(s.slice(2, 4), 16);

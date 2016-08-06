@@ -24,6 +24,22 @@
 - Build a separate executable that dumps the configuration, instead of having
   the main app do it
 
+
+- Center detent: beep when center (configurable?)
+
+- Beep when throttle not 0 at start of transmitter, and refuse operation
+
+- Beep SOS when config broken
+
+- Add password to config
+
+
+
+- Create live_t that describes live inputs sent to the configurator. It compises
+  all `src_label_t` inputs, but also switch values, trim values, and others
+  such as battery voltage.
+
+
 ## configurator
 - Offline mode
 
@@ -46,9 +62,7 @@
 - How do we get a description of the elements in the configuration?
 
 - Live stick/switch/output view
-  - Create live_t that describes live inputs sent to the configurator. It compises
-    all `src_label_t` inputs, but also switch values, trim values, and others
-    such as battery voltage.
+
 
 - Splash screen
 
@@ -66,22 +80,7 @@
 - checkout beforeinstallprompt in manifest.json
 
 
-
-- Center detent: beep when center (configurable?)
-
-- Beep when throttle not 0 at start of transmitter, and refuse operation
-
-- Beep SOS when config broken
-
-- Add password to config
-- Rework configurator protocol to use UUID so that we know to which device
-  we want to connect
-  - Instead of sending all hop channels, send a seed and max-channel and use
-    a LFSR (0..125 range)
-- Remove copy command, it won't work over the slow websocket
-  - Instead we must be able to get and set the whole mixerunit structure
 - Rework websocket protocol with less real-time dependence
-
 
 
 

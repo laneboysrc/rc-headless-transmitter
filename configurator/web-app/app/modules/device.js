@@ -34,7 +34,7 @@ function buildChunks(offset, count, maxChunkSize) {
 // These objects determine the values shown and manipulated on almost all
 // pages of the configurator app.
 class Device {
-  constructor () {
+  constructor() {
     this.MODEL = undefined;
     this.TX = undefined;
     this.UNDO = undefined;
@@ -45,29 +45,35 @@ class Device {
   }
 
   //*************************************************************************
-  enableCommunication () {
+  enableCommunication() {
     this.wsOpen = true;
     WebsocketProtocol.open();
   }
 
   //*************************************************************************
-  disableCommunication () {
+  disableCommunication() {
     // stop WS, kill restart timer
     this.wsOpen = false;
     WebsocketProtocol.close();
   }
 
   //*************************************************************************
-  connect (uuid, address, hop_channels) {
+  connect(uuid, address, hop_channels) {
     console.log(`Device.connect uuid=${uuid}`)
+
+    // FIXME: random address and hop channel parameters
 
     let connectPacket = new Uint8Array([
       0x31,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x12, 0x13, 0x14, 0x15, 0x16,
-      0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
-      0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53]);
+      0x34, 0x12,
+      0x00, 0x01]);
+
+    connectPacket.set(Utils.string2uuid(uuid), 1);
 
     let self = this;
+
 
     return new Promise((resolve, reject) => {
       function onmessage(event) {
@@ -97,7 +103,7 @@ class Device {
   }
 
   //*************************************************************************
-  disconnect () {
+  disconnect() {
     if (!this.connected) {
       return Promise.reject(new Error('Device.disconnect: not connected'));
     }
@@ -128,7 +134,7 @@ class Device {
   }
 
   //*************************************************************************
-  read (offset, count) {
+  read(offset, count) {
     console.log(`Device.read o=${offset} c=${count}`)
 
     if (!this.connected) {
@@ -202,7 +208,7 @@ class Device {
   }
 
   //*************************************************************************
-  write (offset, data) {
+  write(offset, data) {
     console.log(`Device.write o=${offset} c=${data.length}`)
 
     if (!this.connected) {
@@ -277,7 +283,7 @@ class Device {
 
   //*************************************************************************
   // Receives Websocket events
-  onclose (event, data) {
+  onclose(event, data) {
     // console.log('Device ws: ', event, event.detail);
     this.connected = false;
     if (this.wsOpen) {
@@ -291,7 +297,7 @@ class Device {
   }
 
   //*************************************************************************
-  makeNewDevice (configVersion, schemaName) {
+  makeNewDevice(configVersion, schemaName) {
     let newDevice = {};
 
     const schema = CONFIG_VERSIONS[configVersion][schemaName];

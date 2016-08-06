@@ -82,6 +82,9 @@
   - Instead we must be able to get and set the whole mixerunit structure
 - Rework websocket protocol with less real-time dependence
 
+
+
+
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 

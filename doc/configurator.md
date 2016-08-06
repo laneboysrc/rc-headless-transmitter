@@ -52,8 +52,7 @@ stored in its persistent memory. The configuration determines which inputs provi
 The firmware is designed such that the configuration can be changed at run-time; the *Headless TX*  adapts to configurations dynamically.
 
 The configuration comprises of settings that are transmitter hardware specific,
-and setting that are model specific. The whole configuration is stored in one
-place as one area of consecutive memory.
+and setting that are model specific. The whole configuration is stored as one area of consecutive memory.
 
 The *Headless TX* provides an API that allows an external device -- the
 *configurator* -- to change the configuration.
@@ -184,7 +183,7 @@ Some options were not considered:
     also be packaged as *Chrome app*.
 
 From the table above, we conclude that a *Websocket to nRF bridge* is the
-implementation that should receive highest priority. The
+implementation that should receive highest priority.
 
 
 ### Websocket to nRF/UART bridge
@@ -202,20 +201,17 @@ The *Websocket to nRF bridge* can be powered from a single, small Li-Ion cell.
 A few LEDs should be provided for indicating status.
 
 There will certainly be interference between Wi-Fi and the nRF protocol, but
-given that during configuration all devices will be in close proximit that
+given that during configuration all devices will be in close proximity that
 should not be to much of a problem. Still, this requires testing!
 
-The *Websocket to nRF bridge* can also easily be simulated, e.g. using Python.
+The *Websocket to nRF bridge* can also easily be simulated, e.g. using Python or NodeJS.
 This allows development of the *Web app* or *Smartphone app* without using
 actual hardware.
-
-Ideally the Websocket protocol corresponds 1:1 to the *nRF protocol*.
 
 
 ## Security considerations
 
-While this implementation is used in toys, we may still think about issues that
-can arise.
+While this implementation is used in toys, we still must consider potential security issues.
 
 When the *configurator* connects via the UART directly, the *Headless TX* can
 trust the *configurator* -- after all, physical access to the *Headless TX* was
@@ -269,7 +265,7 @@ The *HK310 protocol* has the following properties:
 One transmission burst (3 packets) take about 1.2 ms.
 
 One challenge in the *Headless TX* was that due the use of inexpensive nRF24+PA
-(power amplifier) module we were unable to output a really low RF power. Even at
+(power amplifier) module we were unable to output at a really low RF power. Even at
 the lowest power setting the bind packets could be received from quite far away.
 In order to avoid interference with other RC transmitters, the Headless TX only
 outputs bind packets for the first 10 seconds after power on.
@@ -320,22 +316,26 @@ This is the default state for both the *Headless TX* and the *configurator*.
 All communication in this state happens on the fixed nRF channel 111 with
 address 4C:42:72:63:78 (`LBrcx` in hex).
 
-NOTE: Channel 111 is 2.511 GHz, which is out of the 2.4 GHz band. Maybe we
-should rather use another channel, e.g. 79?
+**NOTE: Channel 111 is 2.511 GHz, which is out of the 2.4 GHz band. Maybe we should rather use another channel, e.g. 79?**
 
 The *Headless TX* sends a `TX_FREE_TO_CONNECT` packet whenever the transmission
 burst for the vehicle is sending on the first hop channel. This means that
 `TX_FREE_TO_CONNECT` packets are sent every 100 ms (20 hop channels times 5 ms
 each).
 
+Since there may be multiple *Headless TX* on the air, the `TX_FREE_TO_CONNECT` packet contains the 8-byte UUID of the transmitter.
+
 The *configurator* listens for `TX_FREE_TO_CONNECT` and shows the user a list of
 all transmitters in the neighborhood. When the user chooses a transmitter, the
 *configurator* replies to the next `TX_FREE_TO_CONNECT` call with
-`CFG_REQUEST_TO_CONNECT` and changes its state to `CONNECTED`.
+`CFG_REQUEST_TO_CONNECT` with the UUID of the required transmitter and changes its state to `CONNECTED`.
 
-When the *Headless TX* receives a `CFG_REQUEST_TO_CONNECT` request and the pass-
-phrase matches, it changes its state to `CONNECTED`.
+When the *Headless TX* receives a `CFG_REQUEST_TO_CONNECT` request with a matching UUID and pass-
+phrase, it changes its state to `CONNECTED`.
 
+Note that the low-level nRF module must detect that it is sending `CFG_REQUEST_TO_CONNECT` packets, and monitor the incoming `TX_FREE_TO_CONNECT` packets. In case the UUIDs don't match, it must put the `CFG_REQUEST_TO_CONNECT` back into the nRF transmit buffer so that it can be reset with the next incoming `TX_FREE_TO_CONNECT` packet, which is hopefully for the transmitter we intend to request to.
+
+This elaborate mechanism is necessary as the `CFG_REQUEST_TO_CONNECT` is sent automatically by the hardware, the software does not have a chance to first check the incoming `TX_FREE_TO_CONNECT` packet for UUID match. We therefore have to send `CFG_REQUEST_TO_CONNECT` packets until the transmitter we want to connect to has retrieved it.
 
 ### nRF protocol *NOT CONNECTED* commands
 
@@ -347,20 +347,29 @@ first.
 
 * `TX_FREE_TO_CONNECT`
 
-    `0x30 tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx b0 b1`
+    `0x30 uu uu uu uu uu uu uu uu uu tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx tx b0 b1`
 
+    uu:     Transmitter UUID 8 bytes
     tx:     Transmitter name 16 bytes (\0-terminated C-String [A-Z,a-z,0-9 ],
             padded with \0)
     b0, b1: Battery voltage in millivolts. Unsigned 16 bit integer.
 
 * `CFG_REQUEST_TO_CONNECT`
 
-    `0x31 a0 a1 a2 a3 a4 h0 h1 h2 h3 h4 h5 h6 h7 h8 h9 ha hb hc hd he hf hg hh hi hj p0 p1`
+    `0x31 uu uu uu uu uu uu uu uu uu a0 a1 a2 a3 a4 p0 p1 oo sd`
 
+    uu:     Transmitter UUID 8 bytes
     a0..4:  5 byte random nRF address to use during the connection
-    h0..hj: 20 bytes hop channel number to use during the connection
     p0..1:  unsigned 16-bit representation of the 4-digit pass-phrase
+    oo, sd: offset and seed for a 7-bit Galois LFSR to calculate the hop channel sequence
 
+    `oo` and `sd` are used to calculate the hop seqeunce for the connection.
+
+    `sd` is the initial state of a [7-bit Galois LFSR](https://en.wikipedia.org/wiki/Linear-feedback_shift_register), `polynomial x^7 + x^6 + 1`. `sd` must be between 1 and 127.
+    Offset `oo` is added after each LFSR round, with a modulo of 127.
+    Values larger than 69 are skipped so that the resulting hop channels are between 1 and 69 only.
+
+    **FIXME: add pseudo-code**
 
 ### nRF protocol *CONNECTED* state
 

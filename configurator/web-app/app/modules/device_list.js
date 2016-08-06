@@ -69,7 +69,7 @@ class DeviceList {
   transmitterReadyForConnect (data) {
     showToast = true;
 
-    let transmitterName = Utils.uint8array2string(data.slice(1, 16 + 1));
+    let transmitterName = Utils.uint8array2string(data.slice(9, 16 + 9));
     if (availableTransmitters.indexOf(transmitterName) >= 0) {
       return;
     }
@@ -107,7 +107,8 @@ class DeviceList {
     this.txModel.classList.add('hidden');
     this.txTransmitter.classList.add('hidden');
 
-    this.load('FIXME-save-uuid-in-availableTransmitters');
+    // FIXME Save uuid in availableTransmitters[]
+    this.load('0000-0000-0000-0000');
   }
 
   //*************************************************************************

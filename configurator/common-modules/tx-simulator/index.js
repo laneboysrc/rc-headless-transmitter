@@ -13,14 +13,14 @@ var PACKET_REPEAT_TIME_MS = 5;
 var PACKET_REPEAT_TIME_MS_NOT_CONNECTED = 100;
 // DEBUG: slow down communication
 // PACKET_REPEAT_TIME_MS = 500;
-PACKET_REPEAT_TIME_MS_NOT_CONNECTED = 1000;
+// PACKET_REPEAT_TIME_MS_NOT_CONNECTED = 1000;
 
 // Configurator protocol state
 var STATE = {NOT_CONNECTED: 'NOT_CONNECTED', CONNECTED: 'CONNECTED'};
 var state = STATE.NOT_CONNECTED;
 
 var packets = {
-    TX_FREE_TO_CONNECT: allocatePacket(0x30, 1 + 16 + 2),
+    TX_FREE_TO_CONNECT: allocatePacket(0x30, 1 + 8 + 16 + 2),
     TX_INFO: allocatePacket(0x49, 1),
 };
 
@@ -34,7 +34,7 @@ function allocatePacket(command, size) {
     return packet;
 }
 
-function uint8array2string (bytes) {
+function uint8array2string(bytes) {
     var result = '';
 
     for (var i = 0; i < bytes.length; i++) {
@@ -44,6 +44,24 @@ function uint8array2string (bytes) {
         }
         result += String.fromCharCode(code);
     }
+
+    return result;
+}
+
+function uuid2string(uuid_bytes) {
+    var result = '';
+
+    result += byte2string(uuid_bytes[0]);
+    result += byte2string(uuid_bytes[1]);
+    result += '-';
+    result += byte2string(uuid_bytes[2]);
+    result += byte2string(uuid_bytes[3]);
+    result += '-';
+    result += byte2string(uuid_bytes[4]);
+    result += byte2string(uuid_bytes[5]);
+    result += '-';
+    result += byte2string(uuid_bytes[6]);
+    result += byte2string(uuid_bytes[7]);
 
     return result;
 }
@@ -62,14 +80,14 @@ function dumpUint8Array(data) {
   return result.join(' ');
 }
 
-function buildFreeToConnectPacket(name, voltage) {
-    var packet = new Uint8Array(1 + 16 + 2);
+function buildFreeToConnectPacket(uuid, name, voltage) {
+    var packet = packets.TX_FREE_TO_CONNECT;
 
     var bat = new Uint8Array(new Uint16Array([voltage]).buffer);
 
-    packet[0] = 0x30;
-    packet.set(name, 1);
-    packet.set(bat, 1 + 16);
+    packet.set(uuid, 1);
+    packet.set(name, 1 + 8);
+    packet.set(bat, 1 + 8 + 16);
     return packet;
 }
 
@@ -81,10 +99,12 @@ function setState(newState) {
 }
 
 function handle_CFG_REQUEST_TO_CONNECT(packet) {
-    if (packet.length !== 26) {
-        console.error('CFG_REQUEST_TO_CONNECT invalid packet length' + packet.length);
+    if (packet.length !== (1 + 8 + 5 + 2 + 1 + 1)) {
+        console.error('CFG_REQUEST_TO_CONNECT invalid packet length ' + packet.length);
         return;
     }
+
+    // FIXME: match password and uuid
 
     console.log('CFG_REQUEST_TO_CONNECT');
     setState(STATE.CONNECTED);
@@ -92,7 +112,7 @@ function handle_CFG_REQUEST_TO_CONNECT(packet) {
 
 function handle_CFG_READ(packet) {
     if (packet.length !== 4) {
-        console.error('CFG_READ invalid packet length' + packet.length);
+        console.error('CFG_READ invalid packet length ' + packet.length);
         return;
     }
 
@@ -121,7 +141,7 @@ function handle_CFG_READ(packet) {
 
 function handle_CFG_WRITE(packet) {
     if (packet.length < 4) {
-        console.error('CFG_WRITE invalid packet length' + packet.length);
+        console.error('CFG_WRITE invalid packet length ' + packet.length);
         return;
     }
 
@@ -146,7 +166,7 @@ function handle_CFG_WRITE(packet) {
 
 function handle_CFG_COPY(packet) {
     if (packet.length !== 7) {
-        console.error('CFG_COPY invalid packet length' + packet.length);
+        console.error('CFG_COPY invalid packet length ' + packet.length);
         return;
     }
 
@@ -265,13 +285,17 @@ function start () {
     console.log('Simulator: Headless TX bridged over Websocket');
     console.log('=============================================');
 
+    var uuidOffset = 4;         // Skip CONFIG_VERSION
+    var uuidLength = 8;
     var nameOffset = 4 + 8;     // Skip CONFIG_VERSION and UUID
     var nameLength = 16;
 
+    var tx_uuid = new Uint8Array(testData.buffer, uuidOffset, uuidLength);
     var tx_name = new Uint8Array(testData.buffer, nameOffset, nameLength);
     var battery_mv = 3897;      // Simulated battery voltage of 3.897 V
-    packets.TX_FREE_TO_CONNECT = buildFreeToConnectPacket(tx_name, battery_mv);
+    packets.TX_FREE_TO_CONNECT = buildFreeToConnectPacket(tx_uuid, tx_name, battery_mv);
 
+    console.log('UUID of the simulated transmitter: ' + uint8array2string(tx_name));
     console.log('Name of the simulated transmitter: ' + uint8array2string(tx_name));
 
 

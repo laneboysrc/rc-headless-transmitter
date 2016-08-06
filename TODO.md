@@ -84,14 +84,11 @@
     a LFSR (0..125 range)
 - Remove copy command, it won't work over the slow websocket
   - Instead we must be able to get and set the whole mixerunit structure
+- Rework websocket protocol with less real-time dependence
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
 - Curve editing: show appropriate points and adjust their name
-
-- Re-arrange mixer units
-  - Use individual cards for each mixer, and have a up and down arrow to
-    move it around
 
 - ModelList needs a loading indicator while populating the available models

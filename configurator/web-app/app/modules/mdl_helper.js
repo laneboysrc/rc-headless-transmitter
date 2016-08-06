@@ -3,7 +3,7 @@
 var Utils = require('./utils');
 
 class MDLHelper {
-  constructor (devName, options) {
+  constructor(devName, options) {
     options = options || {
       offset: 0,
       index: undefined,
@@ -22,7 +22,7 @@ class MDLHelper {
     this.onChangeHandler = this.onChangeHandler.bind(this);
   }
 
-  setTextContent (selector, item, root) {
+  setTextContent(selector, item, root) {
     root = root || document;
 
     let value = Device[this.devName].getItem(item, {offset: this.offset});
@@ -33,13 +33,13 @@ class MDLHelper {
     root.querySelector(selector).textContent = value;
   }
 
-  setTextContentRaw (selector, value, root) {
+  setTextContentRaw(selector, value, root) {
     root = root || document;
 
     root.querySelector(selector).textContent = value;
   }
 
-  setSwitch (selector, item, root) {
+  setSwitch(selector, item, root) {
     root = root || document;
 
     let options = {
@@ -53,7 +53,7 @@ class MDLHelper {
     this.setChangeHandler(element, item);
   }
 
-  setSlider (selector, item, root) {
+  setSlider(selector, item, root) {
     root = root || document;
 
     let options = {
@@ -70,7 +70,7 @@ class MDLHelper {
     this.setChangeHandler(element, item);
   }
 
-  setTextfield (selector, item, root) {
+  setTextfield(selector, item, root) {
     root = root || document;
 
     let value = Device[this.devName].getItem(item, {offset: this.offset});
@@ -83,20 +83,24 @@ class MDLHelper {
     this.setChangeHandler(element, item);
   }
 
-  setChangeHandler (element, item) {
+  setChangeHandler(element, item) {
     element.setAttribute('data-mdlhelper', item);
     element.onchange = this.onChangeHandler;
   }
 
-  setDataURL (selector, list, root) {
+  setDataURL(selector, list, root) {
+    let url = Utils.buildURL(list);
+    this.setAttribute(selector, 'data-url', url, root);
+  }
+
+  setAttribute(selector, attribute, value, root) {
     root = root || document;
 
     let element = root.querySelector(selector);
-    let url = Utils.buildURL(list);
-    element.setAttribute('data-url', url);
+    element.setAttribute(attribute, value);
   }
 
-  clearDynamicElements (element) {
+  clearDynamicElements(element) {
     let child = element.querySelector('.can-delete');
 
     while (child) {
@@ -105,7 +109,7 @@ class MDLHelper {
     }
   }
 
-  onChangeHandler (event) {
+  onChangeHandler(event) {
     let element = event.target;
 
     let value = element.value;

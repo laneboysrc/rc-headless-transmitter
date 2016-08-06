@@ -17,7 +17,7 @@
   </header>
 
   <main id="app-mixer-list" class="mdl-layout__content" >
-    <!-- Card -->
+    <!-- Introduction Card -->
     <section class="section--center mdl-grid">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title mdl-card--expand">
@@ -30,7 +30,7 @@
       </div>
     </section>
 
-    <!-- Card -->
+    <!-- Individual mixer unit Card, one for each mixer unit -->
     <template id="app-mixer-template">
     <section class="section--center mdl-grid">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col app-mixer-mixer_unit" >
@@ -40,14 +40,14 @@
             <tr>
               <td class="mdl-data-table__cell--non-numeric app-mixer-template-src">ST</td>
               <td class="mdl-data-table__cell--non-numeric">
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-mixer_unit" onclick="location.hash = this.getAttribute('data-url')">Linear =</button>
+                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-mixer_unit" onclick="Mixer.editMixerUnit(event);">Linear =</button>
               </td>
               <td rclass="mdl-data-table__cell--non-numeric">
-                <button class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-dst" onclick="location.hash = this.getAttribute('data-url')">CH2</button>
+                <button class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-dst" onclick="Mixer.limits(event);">CH2</button>
               </td>
               <td class="mdl-data-table__cell--non-numeric app-mixer-mixer_unit_updown">
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect"><i class="material-icons">keyboard_arrow_up</i></button>
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect"><i class="material-icons">keyboard_arrow_down</i></button>
+                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-up" onclick="Mixer.up(event);"><i class="material-icons">keyboard_arrow_up</i></button>
+                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-down" onclick="Mixer.down(event);"><i class="material-icons">keyboard_arrow_down</i></button>
               </td>
             </tr>
           </tbody>

@@ -54,10 +54,15 @@ class Mixer {
       mdl.setTextContentRaw('.app-mixer-template-mixer_unit', curve, t);
       mdl.setDataURL('.app-mixer-template-mixer_unit', ['mixer_unit', i], t);
       mdl.setDataURL('.app-mixer-template-dst', ['limits', dst], t);
+      mdl.setAttribute('.app-mixer-template-up', 'data-index', i, t);
+      mdl.setAttribute('.app-mixer-template-down', 'data-index', i, t);
+
 
       let clone = document.importNode(t, true);
       this.mixerList.insertBefore(clone, this.cardAddMixerUnit);
     }
+
+    this.updateUpDownButtonVisibility();
 
     // Show/hide addMixderUnit card depending on available space
     if (this.mixerUnitCount < this.mixerUnitMaxCount) {
@@ -73,6 +78,21 @@ class Mixer {
   }
 
   //*************************************************************************
+  updateUpDownButtonVisibility() {
+    // Enable all but the first up button
+    let up = document.querySelectorAll('.app-mixer-template-up');
+    for (let i = 0; i < up.length; i++) {
+      up[i].disabled = (i === 0);
+    }
+
+    // Enable all but the last down button
+    let down = document.querySelectorAll('.app-mixer-template-down');
+    for (let i = 0; i < down.length; i++) {
+      down[i].disabled = (i === (down.length - 1));
+    }
+  }
+
+  //*************************************************************************
   add(event) {
     Utils.cancelBubble(event);
     let offset = this.mixerUnitCount * this.mixerUnitSize;
@@ -84,6 +104,18 @@ class Mixer {
     let typeValues = Device.MODEL.getTypeMembers(type);
     Device.MODEL.setItem('MIXER_UNITS_SRC', typeValues[0], {offset: offset});
     location.hash = Utils.buildURL(['mixer_unit', this.mixerUnitCount]);
+  }
+
+  //*************************************************************************
+  editMixerUnit(event) {
+    Utils.cancelBubble(event);
+    location.hash = event.target.getAttribute('data-url');
+  }
+
+  //*************************************************************************
+  limits(event) {
+    Utils.cancelBubble(event);
+    location.hash = event.target.getAttribute('data-url');
   }
 
   //*************************************************************************
@@ -144,6 +176,53 @@ class Mixer {
     this.snackbar.classList.add('hidden');
     location.hash = Utils.buildURL(['mixer_unit', this.UNDO.index]);
     this.UNDO = undefined;
+  }
+
+  //*************************************************************************
+  up(event) {
+    Utils.cancelBubble(event);
+
+    let element = event.target;
+    let mixerUnitIndex = parseInt(element.getAttribute('data-index'));
+
+    // Safety bail-out
+    if (mixerUnitIndex < 1) {
+      return;
+    }
+
+    console.log(`up: mixerUnitIndex=${mixerUnitIndex}`);
+    this.swap(mixerUnitIndex, mixerUnitIndex - 1);
+  }
+
+  //*************************************************************************
+  down(event) {
+    Utils.cancelBubble(event);
+
+    let element = event.target;
+    let mixerUnitIndex = parseInt(element.getAttribute('data-index'));
+
+    // Safety bail-out
+    if (mixerUnitIndex >= (this.mixerUnitCount - 1)) {
+      return;
+    }
+
+    console.log(`down: mixerUnitIndex=${mixerUnitIndex}`);
+    this.swap(mixerUnitIndex, mixerUnitIndex + 1);
+  }
+
+  //*************************************************************************
+  swap(index1, index2) {
+    let model = Device.MODEL;
+
+    let unit1 = model.getItem('MIXER_UNITS', {index: index1});
+    let unit2 = model.getItem('MIXER_UNITS', {index: index2});
+
+    model.setItem('MIXER_UNITS', unit2, {index: index1});
+    model.setItem('MIXER_UNITS', unit1, {index: index2});
+
+    // FIXME: this could be done smarter than brute-force rebuilding all page
+    // elements
+    this.init();
   }
 
   //*************************************************************************

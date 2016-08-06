@@ -83,8 +83,6 @@
 - Rework deleting of mixer units to use COPY
 - Remove HEX commands, cluster in device
 
-- Connect in simulator needs to check UUID and passphrase
-
 - Passphrase UI
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js

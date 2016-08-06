@@ -28,6 +28,7 @@ var packets = {
     WS_MAX_PACKETS_IN_TRANSIT: allocatePacket(0x42, 2),
 };
 
+var tx = {};
 var timerId;
 
 function allocatePacket(command, size) {
@@ -107,8 +108,22 @@ function handle_CFG_REQUEST_TO_CONNECT(packet) {
     }
 
     // FIXME: match password and uuid
+    var dv = new DataView(packet.buffer, 1 + 8 + 5);
+    var passphrase = dv.getUint16(0, true);
+    var uuid = uuid2string(packet.slice(1, 1 + 8));
 
-    console.log('CFG_REQUEST_TO_CONNECT');
+    console.log('CFG_REQUEST_TO_CONNECT uuid=' + uuid + ' passphrase=' + passphrase);
+
+    if (tx.uuid !== uuid) {
+        console.log('UUID mismatch, refusing connection request');
+        return;
+    }
+
+    if (tx.passphrase !== passphrase) {
+        console.log('Passphrase mismatch, refusing connection request');
+        return;
+    }
+
     setState(STATE.CONNECTED);
 }
 
@@ -293,18 +308,24 @@ function start () {
     var uuidLength = 8;
     var nameOffset = 4 + 8;     // Skip CONFIG_VERSION and UUID
     var nameLength = 16;
+    var passphraseOffset = 4 + 1712;
 
-    var tx_uuid = new Uint8Array(testData.buffer, uuidOffset, uuidLength);
-    var tx_name = new Uint8Array(testData.buffer, nameOffset, nameLength);
+    tx.uuidBytes = new Uint8Array(testData.buffer, uuidOffset, uuidLength);
+    tx.nameBytes = new Uint8Array(testData.buffer, nameOffset, nameLength);
+    var dv = new DataView(testData.buffer, passphraseOffset);
+    tx.passphrase = dv.getUint16(0, true);
+
     var battery_mv = 3897;      // Simulated battery voltage of 3.897 V
-    packets.TX_FREE_TO_CONNECT = buildFreeToConnectPacket(tx_uuid, tx_name, battery_mv);
-
+    packets.TX_FREE_TO_CONNECT = buildFreeToConnectPacket(tx.uuidBytes, tx.nameBytes, battery_mv);
     packets.WS_MAX_PACKETS_IN_TRANSIT[1] = MAX_PACKETS_IN_TRANSIT;
 
+    tx.uuid = uuid2string(tx.uuidBytes);
+    tx.name = uint8array2string(tx.nameBytes);
 
-    console.log('UUID of the simulated transmitter: ' + uuid2string(tx_uuid));
-    console.log('Name of the simulated transmitter: ' + uint8array2string(tx_name));
-
+    console.log('Simulated transmitter:');
+    console.log('  UUID:       ' + tx.uuid);
+    console.log('  Name:       ' + tx.name);
+    console.log('  Passphrase: ' + tx.passphrase);
 
     server.setEventListener('onconnect', onConnected);
     server.setEventListener('ondisconnect', onDisconnected);

@@ -34,6 +34,7 @@
     "ModelList": true,
     "Path": true,
     "RFProtocol": true,
+    "SelectIcon": true,
     "SelectSingle": true,
     "TransmitterList": true,
 

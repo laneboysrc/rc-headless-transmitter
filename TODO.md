@@ -65,15 +65,6 @@
 
 - Use input event on slider as it is active during sliding.
 
-- Add model icon data
-  - Car: directions_car
-  - Bike: motorcycle
-  - Truck: local_shipping
-  - Boat: directions_boat
-  - Airplane: flight
-  - Quad: `zoom_out_map`
-  - Helicopter
-
 - checkout beforeinstallprompt in manifest.json
 
 - WS protocol: test error handling

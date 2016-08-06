@@ -229,3 +229,32 @@ table.rf_protocol-hop_channels td:nth-child(2) {
   min-width: 40px;
 }
 
+
+/* Format the icon and name edit fields */
+form.app-model_details {
+  display: inline-block;
+}
+
+button.app-model_details {
+  position: relative;
+  bottom: 32px;
+  height: 40px;
+}
+
+button.app-model_details i {
+  font-size: 40px;
+}
+
+
+/* Enlarge icons on select_icon page and keep away from the card edge */
+label span i.mdl-list__item-icon.material-icons {
+  font-size: 40px;
+  position: relative;
+  bottom: -12px;
+  padding: 10px;
+}
+
+#app-select_icon-list {
+  padding-left: 20px;
+  padding-bottom: 20px;
+}

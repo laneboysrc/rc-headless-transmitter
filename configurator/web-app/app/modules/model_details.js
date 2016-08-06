@@ -4,17 +4,18 @@ var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
 class ModelDetails {
-  constructor () {
+  constructor() {
     // Nothing to do
   }
 
   //*************************************************************************
-  init (params) {
+  init(params) {
     let mdl = new MDLHelper('MODEL');
 
     mdl.setTextfield('#app-model_details-name', 'NAME');
     mdl.setDataURL('#app-model_details-mixer', ['mixer']);
     mdl.setDataURL('#app-model_details-rf_protocol', ['rf_protocol']);
+    mdl.setIcon('#app-model_details-icon');
 
     // Show/hide the menu depending on whether tx_uuid is undefined
     if (params.tx) {
@@ -30,17 +31,26 @@ class ModelDetails {
   }
 
   //*************************************************************************
-  back (params) {
+  back() {
     history.back();
   }
 
   //*************************************************************************
-  changeModel (event) {
+  changeModel(event) {
+    Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['model_list']);
   }
 
   //*************************************************************************
-  deleteModel (event) {
+  selectIcon(event) {
+    Utils.cancelBubble(event);
+    console.log('ModelDetails.selectIcon()')
+
+    location.hash = Utils.buildURL(['select_icon', 'MODEL', 'TAG', 0]);
+  }
+
+  //*************************************************************************
+  deleteModel(event) {
     Utils.cancelBubble(event);
 
     ModelList.deleteModel(Device.MODEL);

@@ -57,6 +57,7 @@ class ModelList {
         let model = new DatabaseObject(data);
         models.push({
           name: model.getItem('NAME'),
+          tag: model.getItem('TAG'),
           uuid: data.uuid
         });
       }
@@ -82,6 +83,7 @@ class ModelList {
       t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
       t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);
       mdl.setTextContentRaw('.app-model_list-list__template-name', models[i].name, t);
+      mdl.setIcon('.app-model_list-list__template-icon', models[i].tag, t);
 
       let clone = document.importNode(t, true);
       this.container.appendChild(clone);

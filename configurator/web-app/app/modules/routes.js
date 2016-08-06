@@ -25,6 +25,9 @@ var routes = {
     // uuid availability (none, model, tx, model+tx)
     '#/select_single/:devName/:item/:offset(/t/:tx)': SelectSingle,
     '#/select_single/:devName/:item/:offset/m/:model(/t/:tx)': SelectSingle,
+
+    '#/select_icon/:devName/:item/:offset(/t/:tx)': SelectIcon,
+    '#/select_icon/:devName/:item/:offset/m/:model(/t/:tx)': SelectIcon,
 };
 
 

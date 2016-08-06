@@ -1,0 +1,50 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--no-drawer-button mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="SelectIcon.back();">
+        <i class="material-icons">arrow_back</i>
+      </a>
+      <div class="mdl-layout-spacer"></div>
+      <span class="mdl-layout-title">Pick an icon</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </header>
+
+  <main class="mdl-layout__content" >
+
+
+    <!-- Select Single Card -->
+    <section class="section--center mdl-grid">
+
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+
+        <div class="mdl-card__title">
+          <h2 id="app-select_icon-name" class="mdl-card__title-text">Item name</h2>
+        </div>
+
+        <div id="app-select_icon-list" class="mdl-card__actions mdl-card--border">
+
+          <template id="app-select_icon-template">
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect can-delete">
+            <input type="radio" class="mdl-radio__button" name="selection">
+            <span class="mdl-radio__label">
+              <i class="material-icons mdl-list__item-icon">directions_car</i>
+            </span>
+          </label>
+          </template>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Floating Action Button to confirm the selection -->
+    <div class="app-floating-fab">
+      <div>
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onclick="SelectIcon.acceptChoice(event)">
+          <i class="material-icons">check</i>
+        </button>
+      </div>
+    </div>
+
+  </main>
+</div>

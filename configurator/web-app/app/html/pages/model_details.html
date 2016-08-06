@@ -29,7 +29,10 @@
           Give the model a unique name
         </div>
         <div class="mdl-card__actions">
-          <form>
+          <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-model_details" onclick="ModelDetails.selectIcon(event);">
+            <i id="app-model_details-icon" class="material-icons">directions_car</i>
+          </button>
+          <form class="app-model_details">
             <div class="mdl-textfield mdl-js-textfield">
               <input class="mdl-textfield__input" type="text" id="app-model_details-name" pattern="^\s*([\dA-Za-z ]{1,16})\s*$">
               <!-- <label class="mdl-textfield__label" for="app-model_details-name">Model name ...</label> -->

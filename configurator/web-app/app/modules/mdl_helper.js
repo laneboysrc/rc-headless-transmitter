@@ -11,6 +11,15 @@ class MDLHelper {
       parser: undefined
     };
 
+    this.icons = {
+      0: 'directions_car',      // Car
+      1: 'flight',              // Airplane
+      2: 'local_shipping',      // Truck
+      3: 'directions_boat',     // Boat
+      4: 'motorcycle',          // Motorcycle
+      5: 'zoom_out_map',        // Quadcopter
+    };
+
     this.devName = devName;
     this.offset = options.offset;
     this.index = options.index;
@@ -81,6 +90,18 @@ class MDLHelper {
     let element = root.querySelector(selector);
     element.value = value;
     this.setChangeHandler(element, item);
+  }
+
+  setIcon(selector, tag, root) {
+    root = root || document;
+
+    let element = root.querySelector(selector);
+    let value = Utils.isNumber(tag) ? tag : Device[this.devName].getItem('TAG');
+
+    if (!this.icons.hasOwnProperty(value)) {
+      value = 0;
+    }
+    element.textContent = this.icons[value];
   }
 
   setChangeHandler(element, item) {

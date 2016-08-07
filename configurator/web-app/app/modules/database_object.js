@@ -649,6 +649,10 @@ class DatabaseObject {
   // the configuration, so great care must be taken with using it.
   //
   rawCopy(srcOffset, dstOffset, count) {
+    if (count <= 0) {
+      return;
+    }
+
     let schema = this.getSchema();
 
     let copy = this.data.slice(srcOffset, srcOffset + count);

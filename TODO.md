@@ -76,8 +76,6 @@
 
 - WS protocol: improve comparison between request and response
 
-- Rework deleting of mixer units to use COPY
-
 - Passphrase UI
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js

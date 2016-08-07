@@ -133,20 +133,18 @@ class Mixer {
     };
 
     // Bring all mixer units behind 'index' forward
-    for (let i = index; i < this.mixerUnitMaxCount; i++) {
-      // The last element gets set to all zeros (= deleted)
-      let data = new Uint8Array(this.mixerUnitSize);
-      if (i !== (this.mixerUnitMaxCount - 1)) {
-        data = Device.MODEL.getItem('MIXER_UNITS', {index: i + 1});
-      }
-      Device.MODEL.setItem('MIXER_UNITS', data, {index: i});
+    let schema = Device.MODEL.getSchema();
+    let offset = schema.MIXER_UNITS.o;
+    let size = schema.MIXER_UNITS.s;
 
-      let offset = i * this.mixerUnitSize;
-      let src = Device.MODEL.getItem('MIXER_UNITS_SRC', {offset: offset});
-      if (src === 0) {
-        break;
-      }
-    }
+    let dst = offset + (index * size);
+    let src = offset + ((index + 1) * size);
+    let count = (this.mixerUnitMaxCount - 1 - index) * size;
+
+    Device.MODEL.rawCopy(src, dst, count);
+
+    // Make the last item to an unused mixer unit
+    Device.MODEL.setItem('MIXER_UNITS', new Uint8Array(size), {index: this.mixerUnitMaxCount - 1});
 
     this.snackbar.classList.remove('hidden');
     let data = {
@@ -165,15 +163,17 @@ class Mixer {
       return;
     }
 
-    let index = this.UNDO.index;
-
     // Move units from this.UNDO.index on backwards
-    let moveIndex = this.mixerUnitCount - 1;
-    while (moveIndex >= index) {
-      let data = Device.MODEL.getItem('MIXER_UNITS', {index: moveIndex});
-      Device.MODEL.setItem('MIXER_UNITS', data, {index: moveIndex + 1});
-      --moveIndex;
-    }
+    let index = this.UNDO.index;
+    let schema = Device.MODEL.getSchema();
+    let offset = schema.MIXER_UNITS.o;
+    let size = schema.MIXER_UNITS.s;
+
+    let src = offset + (index * size);
+    let dst = offset + ((index + 1) * size);
+    let count = (this.mixerUnitMaxCount - 1 - index) * size;
+
+    Device.MODEL.rawCopy(src, dst, count);
 
     // Put the deleted item back in place
     Device.MODEL.setItem('MIXER_UNITS', this.UNDO.data, {index: index});

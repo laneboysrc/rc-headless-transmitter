@@ -103,7 +103,7 @@ class ModelList {
     let configVersion = 1;
     let newModel = Device.makeNewDevice(configVersion, 'MODEL');
 
-    newModel.setItem('RF_PROTOCOL_HK310_ADDRESS', RFProtocol.newRandomAddress());
+    newModel.setItem('RF_PROTOCOL_HK310_ADDRESS', Utils.newRandomAddress());
     newModel.setItem('RF_PROTOCOL_HK310_HOP_CHANNELS', RFProtocol.newHopChannels());
 
     // Load useful values for limits

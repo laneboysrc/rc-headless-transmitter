@@ -4,7 +4,7 @@ var Utils = require('./utils');
 var dialogPolyfill = require('dialog-polyfill');
 
 class RFProtocol{
-  constructor () {
+  constructor() {
     this.hopChannelDialog = document.querySelector('#app-rf_protocol-hop_channel_dialog');
     if (! this.hopChannelDialog.showModal) {
       dialogPolyfill.registerDialog(this.hopChannelDialog);
@@ -12,7 +12,7 @@ class RFProtocol{
   }
 
   //*************************************************************************
-  init (params) {
+  init(params) {
     let model = Device.MODEL;
 
     let address = model.getItem('RF_PROTOCOL_HK310_ADDRESS');
@@ -29,17 +29,17 @@ class RFProtocol{
   }
 
   //*************************************************************************
-  back (params) {
+  back() {
     history.back();
   }
 
   //*************************************************************************
-  address2string (address) {
+  address2string(address) {
     return address.map(Utils.byte2string).join(':');
   }
 
   //*************************************************************************
-  generateRandomAddress (event) {
+  generateRandomAddress(event) {
     Utils.cancelBubble(event);
 
     let address = Utils.newRandomAddress();
@@ -50,7 +50,7 @@ class RFProtocol{
   }
 
   //*************************************************************************
-  showHopChannelDialog (event) {
+  showHopChannelDialog(event) {
     Utils.cancelBubble(event);
 
     // Select the first element
@@ -60,7 +60,7 @@ class RFProtocol{
   }
 
   //*************************************************************************
-  hopDialogOk (event) {
+  hopDialogOk(event) {
     Utils.cancelBubble(event);
     this.hopChannelDialog.close();
 
@@ -73,13 +73,13 @@ class RFProtocol{
   }
 
   //*************************************************************************
-  hopDialogCancel (event) {
+  hopDialogCancel(event) {
     Utils.cancelBubble(event);
     this.hopChannelDialog.close();
   }
 
   //*************************************************************************
-  newHopChannels (type) {
+  newHopChannels(type) {
     var hopChannels = [];
     var isNearBindChannel;
     var channelAlreadyUsed;

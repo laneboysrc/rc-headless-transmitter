@@ -84,8 +84,6 @@
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
-- Fix model details icon position on Android
-
 - Curve editing: show appropriate points and adjust their name
 
 

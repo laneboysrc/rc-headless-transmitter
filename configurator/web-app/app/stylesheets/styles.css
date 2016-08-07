@@ -230,19 +230,29 @@ table.rf_protocol-hop_channels td:nth-child(2) {
 }
 
 
-/* Format the icon and name edit fields */
+/* model_details: Format the icon and name edit fields */
 form.app-model_details {
   display: inline-block;
 }
 
+div.app-model_details {
+  display: flex;
+}
+
+div.app-model_details span {
+  padding-top: 12px;
+}
+
 button.app-model_details {
-  position: relative;
-  bottom: 32px;
-  height: 40px;
+  height: 44px;
 }
 
 button.app-model_details i {
   font-size: 40px;
+}
+
+form.app-model_details div.mdl-textfield {
+  width: 180px;
 }
 
 
@@ -258,3 +268,5 @@ label span i.mdl-list__item-icon.material-icons {
   padding-left: 20px;
   padding-bottom: 20px;
 }
+
+

@@ -28,10 +28,12 @@
         <div class="mdl-card__supporting-text mdl-card--expand">
           Give the model a unique name
         </div>
-        <div class="mdl-card__actions">
-          <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-model_details" onclick="ModelDetails.selectIcon(event);">
-            <i id="app-model_details-icon" class="material-icons">directions_car</i>
-          </button>
+        <div class="mdl-card__actions app-model_details">
+          <span>
+            <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-model_details" onclick="ModelDetails.selectIcon(event);">
+              <i id="app-model_details-icon" class="material-icons">directions_car</i>
+            </button>
+          </span>
           <form class="app-model_details">
             <div class="mdl-textfield mdl-js-textfield">
               <input class="mdl-textfield__input" type="text" id="app-model_details-name" pattern="^\s*([\dA-Za-z ]{1,16})\s*$">
@@ -39,6 +41,7 @@
               <span class="mdl-textfield__error">1 to 16 letters, numbers and spaces only</span>
             </div>
           </form>
+
         </div>
       </div>
     </section>

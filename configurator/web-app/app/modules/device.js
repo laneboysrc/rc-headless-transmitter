@@ -34,12 +34,25 @@ function buildChunks(offset, count, maxChunkSize) {
 // These objects determine the values shown and manipulated on almost all
 // pages of the configurator app.
 class Device {
+
   constructor() {
     this.MODEL = undefined;
     this.TX = undefined;
     this.UNDO = undefined;
     this.connected = false;
     this.wsOpen = false;
+
+    this.TX_FREE_TO_CONNECT = 0x30;
+    this.CFG_REQUEST_TO_CONNECT = 0x31;
+    this.CFG_READ = 0x72;
+    this.CFG_WRITE = 0x77;
+    this.CFG_COPY = 0x63;
+    this.CFG_DISCONNECT = 0x64;
+    this.TX_INFO = 0x49;
+    this.TX_REQUESTED_DATA = 0x52;
+    this.TX_WRITE_SUCCESSFUL = 0x57;
+    this.TX_COPY_SUCCESSFUL = 0x43;
+    this.WS_MAX_PACKETS_IN_TRANSIT = 0x42;
 
     document.addEventListener('ws-close', this.onclose.bind(this));
   }
@@ -62,7 +75,7 @@ class Device {
     console.log(`Device.connect uuid=${uuid}`)
 
     let connectPacket = new Uint8Array([
-      0x31,
+      this.CFG_REQUEST_TO_CONNECT,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x12, 0x13, 0x14, 0x15, 0x16,
       0x34, 0x12,
@@ -79,7 +92,7 @@ class Device {
       function onmessage(event) {
         let packet = event.detail;
 
-        if (packet[0] === 0x49) {
+        if (packet[0] === self.TX_INFO) {
           self.connected = true;
           document.removeEventListener('ws-message', onmessage);
           document.removeEventListener('ws-close', onclose);
@@ -112,7 +125,7 @@ class Device {
 
     return new Promise((resolve, reject) => {
       function onmessage(event) {
-        let disconnectPacket = new Uint8Array([0x64]);
+        let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
 
         WebsocketProtocol.send(disconnectPacket);
 
@@ -141,12 +154,14 @@ class Device {
       return Promise.reject(new Error('Device.read: not connected'));
     }
 
+    let self = this;
+
     return new Promise((resolve, reject) => {
       let data = new Uint8Array(count);
       let readChunks = buildChunks(offset, count);
 
       function response(packet) {
-        if (packet[0] !== 0x52) {
+        if (packet[0] !== self.TX_REQUESTED_DATA) {
           console.log('read(): not a READ response');
           return;
         }
@@ -191,11 +206,13 @@ class Device {
       return Promise.reject(new Error('Device.write: not connected'));
     }
 
+    let self = this;
+
     return new Promise((resolve, reject) => {
       let writeChunks = buildChunks(offset, data.length);
 
       function response(packet) {
-        if (packet[0] !== 0x57) {
+        if (packet[0] !== self.TX_WRITE_SUCCESSFUL) {
           return;
         }
 

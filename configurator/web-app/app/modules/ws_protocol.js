@@ -69,28 +69,26 @@ class WebsocketProtocol {
       count = 29;
     }
 
-    let packet = new Uint8Array([0x72, 0, 0, 0]);
+    let packet = new Uint8Array([Device.CFG_READ, 0, 0, count]);
     Utils.setUint16(packet, offset, 1);
-    packet[3] = count;
     return packet;
   }
 
   //*************************************************************************
   makeWritePacket(offset, data) {
     let packet = new Uint8Array(3 + data.length);
-    packet[0] = 0x77;
+    packet[0] = Device.CFG_WRITE;
     Utils.setUint16(packet, offset, 1);
     packet.set(data, 3);
 
     return packet;
   }
 
-
   //*************************************************************************
   _packetsMatch(request, response) {
 
     // Read
-    if (response[0] === 0x52  &&  request.packet[0] === 0x72) {
+    if (response[0] === Device.TX_REQUESTED_DATA  &&  request.packet[0] === Device.CFG_READ) {
       for (let j = 1; j < 3; j++) {
         if (response[j] !== request.packet[j]) {
           return false;
@@ -103,7 +101,7 @@ class WebsocketProtocol {
     }
 
     // Write
-    if (response[0] === 0x57  &&  request.packet[0] === 0x77) {
+    if (response[0] === Device.TX_WRITE_SUCCESSFUL  &&  request.packet[0] === Device.CFG_WRITE) {
       for (let i = 1; i < 3; i++) {
         if (response[i] !== request.packet[i]) {
           return false;
@@ -123,7 +121,7 @@ class WebsocketProtocol {
 
     // Handle special Websocket only command that indicates the maximum number
     // of bytes that can be in transit (= packet buffer size in the bridge)
-    if (data[0] === 0x42) {
+    if (data[0] === Device.WS_MAX_PACKETS_IN_TRANSIT) {
       if (data[1] > 1) {
         this.maxPacketsInTransit = data[1];
       }
@@ -135,7 +133,7 @@ class WebsocketProtocol {
       let request = this.inTransit[i];
 
       // Remove packets where we don't expect a particular response
-      if (request.packet[0] !== 0x77  &&  request.packet[0] !== 0x72) {
+      if (request.packet[0] !== Device.CFG_WRITE  &&  request.packet[0] !== Device.CFG_READ) {
         request.promise.resolve(data);
         this.inTransit.splice(i, 1);
         --i;

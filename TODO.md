@@ -77,7 +77,6 @@
 - WS protocol: improve comparison between request and response
 
 - Rework deleting of mixer units to use COPY
-- Remove HEX commands, cluster in device
 
 - Passphrase UI
 

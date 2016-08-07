@@ -299,7 +299,7 @@ class DeviceList {
 
     // FIXME: handle situation when we return to that page while already
     // connected to a transmitter
-    if (data[0] === 0x30) {
+    if (data[0] === Device.TX_FREE_TO_CONNECT) {
       this.transmitterReadyForConnect(data);
     }
   }

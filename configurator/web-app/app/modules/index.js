@@ -8,6 +8,7 @@ require('./device');
 
 // Singletons for pages
 require('./main');
+require('./about');
 require('./device_list');
 require('./edit_curve');
 require('./edit_switch');

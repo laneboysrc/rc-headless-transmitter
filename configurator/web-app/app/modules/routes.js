@@ -8,7 +8,7 @@ var DatabaseObject = require('./database_object');
 var routes = {
     // path: name
     '#/': Main,
-    '#/about': function () { Utils.showPage('about'); },
+    '#/about': About,
     '#/device_list': DeviceList,
     '#/edit_curve/:offset/m/:model(/t/:tx)': EditCurve,
     '#/edit_switch/:offset/m/:model(/t/:tx)': EditSwitch,

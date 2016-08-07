@@ -80,6 +80,11 @@ class TransmitterList {
   edit(element) {
     let index = element.getAttribute('data-index');
     console.log('TransmitterList.edit()', index)
+
+    Database.getEntry(transmitters[index].uuid, function (data) {
+      Device.TX = new DatabaseObject(data);
+      location.hash = Utils.buildURL(['transmitter_details']);
+    });
   }
 
   //*************************************************************************

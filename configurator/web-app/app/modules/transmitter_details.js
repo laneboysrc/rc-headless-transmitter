@@ -1,7 +1,7 @@
 'use strict';
 
 var Utils = require('./utils');
-
+var MDLHelper = require('./mdl_helper');
 
 class TransmitterDetails {
   constructor() {
@@ -10,6 +10,10 @@ class TransmitterDetails {
 
   //*************************************************************************
   init(params) {
+    let mdl = new MDLHelper('TX');
+
+    mdl.setTextfield('#app-transmitter_details-name', 'NAME');
+
     Utils.showPage('transmitter_details');
   }
 

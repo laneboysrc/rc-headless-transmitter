@@ -5,180 +5,76 @@
         <i class="material-icons">arrow_back</i>
       </button>
       <div class="mdl-layout-spacer"></div>
-      <span id="app-transmitter_details-tx_name" class="mdl-layout-title">Transmitter configuration</span>
+      <span id="app-transmitter_details-tx_name" class="mdl-layout-title">Transmitter details</span>
       <div class="mdl-layout-spacer"></div>
-    </div>
-
-    <!-- Tabs -->
-    <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-      <a href="#app-transmitter_details__hardware_tab" class="mdl-layout__tab is-active">Hardware</a>
-      <a href="#app-transmitter_details__logical_tab" class="mdl-layout__tab">Logical inputs</a>
-      <a href="#app-transmitter_details__name_tab" class="mdl-layout__tab">Name</a>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="app-transmitter_details__menu">
+        <i class="material-icons">more_vert</i>
+      </button>
+      <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="app-transmitter_details__menu">
+        <li class="mdl-menu__item  onclick="ModelDetails.deleteModel(event);">Delete transmitter</li>
+      </ul>
     </div>
   </header>
 
   <main class="mdl-layout__content" >
-    <!-- Hardware inputs Tab -->
-    <section class="mdl-layout__tab-panel is-active" id="app-transmitter_details__hardware_tab">
-      <div class="page-content">
 
-        <!-- Card -->
-        <section class="section--center mdl-grid"> <!-- style="display: none;"> -->
-          <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
-            <div class="mdl-card__title mdl-card--expand">
-              <h2 class="mdl-card__title-text">PA1 / ADC1</h2>
+    <!-- Transmitter name Card -->
+    <section class="section--center mdl-grid">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Transmitter name</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Give the transmitter a unique name
+        </div>
+        <div class="mdl-card__actions app-transmitter_details">
+          <span class="app-transmitter_details">
+            <i id="app-transmitter_details-icon" class="material-icons">router</i>
+          </span>
+          <form class="app-transmitter_details">
+            <div class="mdl-textfield mdl-js-textfield">
+              <input class="mdl-textfield__input" type="text" id="app-transmitter_details-name" pattern="^\s*([\dA-Za-z ]{1,16})\s*$">
+              <span class="mdl-textfield__error">1 to 16 letters, numbers and spaces only</span>
             </div>
-            <div class="mdl-card__supporting-text">
-              Can be used as <strong>analog</strong> or <strong>digital</strong> input.
-            </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <a id="usage-1" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" href="#/select_single">
-                ANALOG WITH CENTER
-              </a>
-            </div>
-          </div>
-        </section>
+          </form>
 
-        <!-- Card -->
-        <section class="section--center mdl-grid"> <!-- style="display: none;"> -->
-          <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
-            <div class="mdl-card__title mdl-card--expand">
-              <h2 class="mdl-card__title-text">PB10</h2>
-            </div>
-            <div class="mdl-card__supporting-text">
-              This is a <strong>digital</strong> input.
-            </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <a id="usage-2" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" href="#/select_single">
-                NOT USED
-              </a>
-            </div>
-          </div>
-        </section>
-
+        </div>
       </div>
     </section>
-    <!-- Hardware inputs Tab -->
 
-    <!-- Logical inputs Tab -->
-    <section class="mdl-layout__tab-panel" id="app-transmitter_details__logical_tab">
-      <div class="page-content">
-
-        <!-- Card -->
-        <section class="section--center mdl-grid"> <!-- style="display: none;"> -->
-          <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
-            <div class="mdl-card__actions mdl-card--border mdl-card--expand">
-              <div class="mdl-list">
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    Type
-                  </span>
-                  <a class="mdl-list__item-secondary-action" href="#/select_single">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                      <i class="material-icons">mode_edit</i>
-                    </button>
-                  </a>
-                </div>
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    Sub-type
-                  </span>
-                  <a class="mdl-list__item-secondary-action" href="#/select_single">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                      <i class="material-icons">mode_edit</i>
-                    </button>
-                  </a>
-                </div>
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    <label for="sw1">Switch positions:</label>
-                    <div id="sw1">3</div>
-                  </span>
-                  <span class="mdl-list__item-secondary-action">
-                    <input class="mdl-slider mdl-js-slider" type="range" min="2" max="12" value="3">
-                  </span>
-                </div>
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    <label for="hw1">Hardware inputs:</label>
-                    <div id="hw1">PB10, PB13, PB14</div>
-                  </span>
-                  <a class="mdl-list__item-secondary-action" href="#/select_multiple">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                      <i class="material-icons">mode_edit</i>
-                    </button>
-                  </a>
-                </div>
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    <label for="lab1">Labels:</label>
-                    <div id="lab1">ST, RUD</div>
-                  </span>
-                  <a class="mdl-list__item-secondary-action" href="#/select_multiple">
-                    <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                      <i class="material-icons">mode_edit</i>
-                    </button>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Card to add another logical input -->
-        <section class="section--center mdl-grid">
-          <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="this.getElementsByTagName('a')[0].click()">
-            <div class="mdl-card__title mdl-card--expand">
-              <div class="mdl-list">
-                <div class="mdl-list__item">
-                  <span class="mdl-list__item-primary-content">
-                    <i class="material-icons mdl-list__item-avatar">add_circle</i>
-                    <span>Add another logical input</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="mdl-card__actions mdl-card--border">
-              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="#/model_details" >
-                Add
-              </a>
-            </div>
-          </div>
-        </section>
-
+    <!-- Hardware inputs Card -->
+    <section class="section--center mdl-grid">
+      <div id="app-transmitter_details-mixer" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Hardware</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+            Configure hardware inputs
+          </button>
+        </div>
       </div>
     </section>
-    <!-- Logical inputs Tab -->
 
-    <!-- Name Tab -->
-    <section class="mdl-layout__tab-panel" id="app-transmitter_details__name_tab">
-      <div class="page-content">
-
-        <!-- Transmitter name Card -->
-        <section class="section--center mdl-grid">
-          <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
-            <div class="mdl-card__title">
-              <h2 class="mdl-card__title-text">Transmitter identifier</h2>
-            </div>
-            <div class="mdl-card__supporting-text mdl-card--expand">
-              Give the transmitter a unique name.
-            </div>
-            <div class="mdl-card__actions">
-              <form>
-                <div class="mdl-textfield mdl-js-textfield">
-                  <input class="mdl-textfield__input" type="text" id="app-transmitter_details-tx_name" pattern="^\s*([\dA-Za-z ]{1,16})\s*$">
-                  <!-- <label class="mdl-textfield__label" for="tx_name">Transmitter name ...</label> -->
-                  <span class="mdl-textfield__error">1 to 10 characters only</span>
-                </div>
-              </form>
-            </div>
-          </div>
-        </section>
-        <!-- Transmitter name Card -->
-
+    <!-- Logical inputs Card -->
+    <section class="section--center mdl-grid">
+      <div id="app-transmitter_details-rf_protocol" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Logical inputs</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"">
+            Configure logical inputs
+          </button>
+        </div>
       </div>
     </section>
-    <!-- Name inputs Tab -->
 
   </main>
 </div>

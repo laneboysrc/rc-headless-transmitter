@@ -58,10 +58,11 @@
         - List of cards, one for each transmitter
             - If card is selected: Show *Transmitter details*
                 - *Transmitter details*:
-                    - Tabs: *Hardware inputs*, *Logical inputs*, *Name*
+                    - Cards with the following items
+                        - *Name*
                         - *Hardware inputs*:
                             - List of cards, one for each hardware input
-                                - Unused hardware inputs are shown such
+                                - Unused hardware inputs are shown as such
                                 - Select pcb input (determines possible types!) (button -> *single selection page*)
                                 - Select type (button -> *single selection page*)
                                 - **FIXME**: how to do calibration?

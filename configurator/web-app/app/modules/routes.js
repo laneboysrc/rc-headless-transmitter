@@ -20,12 +20,12 @@ var routes = {
     '#/model_list': ModelList,
     '#/rf_protocol/m/:model(/t/:tx)': RFProtocol,
     '#/transmitter_list': TransmitterList,
-
+    '#/transmitter_details/t/:tx': TransmitterDetails,
+    '#/transmitter_details/m/:model/t/:tx': TransmitterDetails,
     // We need two entries to be able to match the four combinations of
     // uuid availability (none, model, tx, model+tx)
     '#/select_single/:devName/:item/:offset(/t/:tx)': SelectSingle,
     '#/select_single/:devName/:item/:offset/m/:model(/t/:tx)': SelectSingle,
-
     '#/select_icon/:devName/:item/:offset(/t/:tx)': SelectIcon,
     '#/select_icon/:devName/:item/:offset/m/:model(/t/:tx)': SelectIcon,
 };

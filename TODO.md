@@ -63,7 +63,8 @@
 
 - Show battery voltage on device_list
 
-- Transmitter details
+- Transmitter details:
+  - Add text for hardware and logical inputs
   - Delete transmitter
 - Hardware inputs
 - Logical inputs
@@ -80,4 +81,4 @@
 
 - Curve editing: show appropriate points and adjust their name
 
-
+- Make MDLHelper function that adds/remove class on a selector based on a boolean

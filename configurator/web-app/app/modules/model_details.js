@@ -57,6 +57,12 @@ class ModelDetails {
     Device.MODEL = undefined;
     history.back();
   }
+
+  //*************************************************************************
+  configureTransmitter(event) {
+    Utils.cancelBubble(event);
+    location.hash = Utils.buildURL(['transmitter_details']);
+  }
 }
 
 window['ModelDetails'] = new ModelDetails();

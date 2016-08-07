@@ -82,3 +82,6 @@
 - Curve editing: show appropriate points and adjust their name
 
 - Make MDLHelper function that adds/remove class on a selector based on a boolean
+
+- Simulatpr: take TX UUID and Name etc always out of the config data
+  - So that the free to connect packets are correct

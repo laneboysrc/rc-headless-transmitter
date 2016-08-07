@@ -13,6 +13,8 @@ class TransmitterDetails {
     let mdl = new MDLHelper('TX');
 
     mdl.setTextfield('#app-transmitter_details-name', 'NAME');
+    mdl.setDataURL('#app-transmitter_details-hardware', ['hardware_inputs']);
+    mdl.setDataURL('#app-transmitter_details-logical', ['logical_inputs']);
 
     Utils.showPage('transmitter_details');
   }

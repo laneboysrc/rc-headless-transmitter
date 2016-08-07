@@ -65,7 +65,6 @@
 
 - Show battery voltage on device_list
 
-- Transmitter list: show message if transmitters
 - Transmitter details
 - Hardware inputs
 - Logical inputs

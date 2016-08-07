@@ -10,18 +10,22 @@ var transmitters = [];
 class TransmitterList {
   constructor() {
     this.list = document.querySelector('#app-transmitter_list-list');
+    this.noTransmitter = document.querySelector('#app-transmitter_list-no_transmitter');
     this.container = document.querySelector('#app-transmitter_list-list__container');
     this.template = document.querySelector('#app-transmitter_list-list__template').content;
   }
 
   //*************************************************************************
   init(params) {
-    Utils.showPage('transmitter_list');
-
     transmitters = [];
+
+    this.noTransmitter.classList.add('hidden');
+    this.list.classList.add('hidden');
     mdl.clearDynamicElements(this.list);
 
     Database.listEntries(this.databaseCallback.bind(this));
+
+    Utils.showPage('transmitter_list');
   }
 
   //*************************************************************************
@@ -64,6 +68,11 @@ class TransmitterList {
 
     if (transmitters.length !==  0) {
       this.list.classList.remove('hidden');
+      this.noTransmitter.classList.add('hidden');
+    }
+    else {
+      this.list.classList.add('hidden');
+      this.noTransmitter.classList.remove('hidden');
     }
   }
 

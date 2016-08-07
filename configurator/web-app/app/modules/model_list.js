@@ -8,7 +8,7 @@ var mdl = new MDLHelper('MODEL');
 var models = [];
 
 class ModelList {
-  constructor () {
+  constructor() {
     this.list = document.querySelector('#app-model_list-list');
     this.container = document.querySelector('#app-model_list-list__container');
     this.template = document.querySelector('#app-model_list-list__template').content;
@@ -23,7 +23,7 @@ class ModelList {
   }
 
   //*************************************************************************
-  init (params) {
+  init(params) {
     // If we are called to select a model to load to the transmitter then hide
     // the 'add model' functionality
     this.mode = 'edit';
@@ -44,12 +44,12 @@ class ModelList {
   }
 
   //*************************************************************************
-  back (params) {
+  back() {
     history.back();
   }
 
   //*************************************************************************
-  databaseCallback (cursor) {
+  databaseCallback(cursor) {
     // console.log(cursor)
     if (cursor) {
       let data = cursor.value;
@@ -69,7 +69,7 @@ class ModelList {
   }
 
   //*************************************************************************
-  updateModelList () {
+  updateModelList() {
     mdl.clearDynamicElements(this.list);
 
     // Sort models[] by name
@@ -97,7 +97,7 @@ class ModelList {
   }
 
   //*************************************************************************
-  createModel (event) {
+  createModel(event) {
     Utils.cancelBubble(event);
 
     let configVersion = 1;
@@ -132,7 +132,7 @@ class ModelList {
   }
 
   //*************************************************************************
-  editModel (element) {
+  editModel(element) {
     let index = element.getAttribute('data-index');
 
     Database.getEntry(models[index].uuid, function (data) {
@@ -142,7 +142,7 @@ class ModelList {
   }
 
   //*************************************************************************
-  loadModel (element) {
+  loadModel(element) {
     let index = element.getAttribute('data-index');
     console.log('loadModel', index, Device.MODEL, models[index].uuid);
 
@@ -189,7 +189,7 @@ class ModelList {
   }
 
   //*************************************************************************
-  updateItemVisibility () {
+  updateItemVisibility() {
     if (this.mode === 'load') {
       Utils.addClassToSelector('.app-model_list--edit', 'hidden');
       Utils.removeClassFromSelector('.app-model_list--load', 'hidden');
@@ -201,7 +201,7 @@ class ModelList {
   }
 
   //*************************************************************************
-  deleteModel (model) {
+  deleteModel(model) {
     Device.UNDO = model;
     Database.deleteEntry(model);
 
@@ -216,7 +216,7 @@ class ModelList {
   }
 
   //*************************************************************************
-  undoDeleteModel () {
+  undoDeleteModel() {
     if (!Device.UNDO) {
       return;
     }

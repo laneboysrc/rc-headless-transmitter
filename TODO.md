@@ -40,6 +40,7 @@
 
 ## configurator
 - Offline mode
+- checkout beforeinstallprompt in manifest.json
 
 - Database syncing
   - Which protocol?
@@ -47,25 +48,29 @@
     - Custom REST protocol?
   - Look into Redis
 
-- Show which src labels are supported by the transmitter when selecting items
-
-- Delete transmitter
-
 - Prepare for translation
 
-- Show battery voltage on device_list
+- ModelList needs a loading indicator while populating the available models
 
-- Add tabindex=0 to sliders etc (test if focusable with keyboard)
-
-- How do we get a description of the elements in the configuration?
-
-- Live stick/switch/output view
+- How do we get a description of the elements in the configuration (for select single and others)?
 
 - Splash screen
 
 - Use input event on slider as it is active during sliding.
 
-- checkout beforeinstallprompt in manifest.json
+
+
+
+- Show which src labels are supported by the transmitter when selecting items
+
+- Show battery voltage on device_list
+
+- Transmitter list
+- Transmitter details
+- Hardware inputs
+- Logical inputs
+- Delete transmitter
+- Live stick/switch/output view
 
 - WS protocol: test error handling
 
@@ -79,8 +84,8 @@
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
+- Fix model details icon position on Android
+
 - Curve editing: show appropriate points and adjust their name
 
-- ModelList needs a loading indicator while populating the available models
 
-- Fix model details icon position on Android

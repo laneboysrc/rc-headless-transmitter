@@ -4,7 +4,7 @@ var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 var DatabaseObject = require('./database_object');
 
-var mdl = new MDLHelper('MODEL');
+var mdl = new MDLHelper('TX');
 var transmitters = [];
 
 class TransmitterList {

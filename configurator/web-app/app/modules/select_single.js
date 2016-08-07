@@ -35,6 +35,9 @@ class SelectSingle {
 
     let device = Device[this.devName];
 
+    let activeItems = TransmitterDetails.getActiveItems(this.item);
+    console.log('activeItems: ', activeItems)
+
     let name = device.getHumanFriendlyText(this.item);
     mdl.setTextContentRaw('#app-select_single-name', name);
     // FIXME: need to get item description
@@ -54,6 +57,13 @@ class SelectSingle {
       t.querySelector('input').id = 'app-select_single__item' + i;
       t.querySelector('input').value = entry;
       t.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
+
+      if (activeItems.has(entry)) {
+        t.querySelector('label').classList.add('mdl-color-text--primary');
+      }
+      else {
+        t.querySelector('label').classList.remove('mdl-color-text--primary');
+      }
 
       let clone = document.importNode(t, true);
       if (entry === current_choice) {

@@ -61,14 +61,12 @@
 
 
 
-- Show which src labels are supported by the transmitter when selecting items
-
 - Show battery voltage on device_list
 
 - Transmitter details
+  - Delete transmitter
 - Hardware inputs
 - Logical inputs
-- Delete transmitter
 - Live stick/switch/output view
 
 - WS protocol: test error handling

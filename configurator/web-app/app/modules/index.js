@@ -19,6 +19,7 @@ require('./model_list');
 require('./rf_protocol');
 require('./select_icon');
 require('./select_single');
+require('./transmitter_details');
 require('./transmitter_list');
 
 // All loaded, start routing!

@@ -36,6 +36,7 @@
     "RFProtocol": true,
     "SelectIcon": true,
     "SelectSingle": true,
+    "TransmitterDetails", true,
     "TransmitterList": true,
 
     "TEST_CONFIG_DATA": true,

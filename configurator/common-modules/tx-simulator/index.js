@@ -217,7 +217,8 @@ function handle_CFG_COPY(packet) {
         }
     }
 
-    var response = allocatePacket(0x43, 1);
+    packet[0] = 0x43;
+    var response = packet;
     nextPacket.push(response);
 }
 

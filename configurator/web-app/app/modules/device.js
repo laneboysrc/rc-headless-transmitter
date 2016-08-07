@@ -250,6 +250,27 @@ class Device {
   }
 
   //*************************************************************************
+  copy(src, dst, count) {
+    console.log(`Device.copy src=${src} dst=${dst} c=${count}`)
+
+    if (!this.connected) {
+      return Promise.reject(new Error('Device.copy: not connected'));
+    }
+
+    return new Promise((resolve, reject) => {
+      let copyPacket = WebsocketProtocol.makeCopyPacket(src, dst, count);
+
+      WebsocketProtocol.send(copyPacket)
+      .then(() => {
+        resolve();
+      })
+      .catch(error => {
+        reject(error);
+      });
+    });
+}
+
+  //*************************************************************************
   // Receives Websocket events
   onclose(event, data) {
     // console.log('Device ws: ', event, event.detail);

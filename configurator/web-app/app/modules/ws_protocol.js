@@ -85,6 +85,17 @@ class WebsocketProtocol {
   }
 
   //*************************************************************************
+  makeCopyPacket(src, dst, count) {
+    let packet = new Uint8Array(1 + 2 + 2 + 2);
+    packet[0] = Device.CFG_COPY;
+    Utils.setUint16(packet, src, 1);
+    Utils.setUint16(packet, dst, 1 + 2);
+    Utils.setUint16(packet, count, 1 + 2 + 2);
+
+    return packet;
+  }
+
+  //*************************************************************************
   _packetsMatch(request, response) {
 
     // Read
@@ -109,6 +120,16 @@ class WebsocketProtocol {
       }
       if ((request.packet.length - 3) !== response[3]) {
         return false;
+      }
+      return true;
+    }
+
+    // Copy
+    if (response[0] === Device.TX_COPY_SUCCESSFUL  &&  request.packet[0] === Device.CFG_COPY) {
+      for (let i = 1; i < 7; i++) {
+        if (response[i] !== request.packet[i]) {
+          return false;
+        }
       }
       return true;
     }

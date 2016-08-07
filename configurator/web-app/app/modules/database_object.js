@@ -3,13 +3,71 @@
 var Utils = require('./utils');
 
 
+function getGetter(bytesPerElement, type) {
+  const getters = {
+    'u': {
+      1: Uint8Array,
+      2: Uint16Array,
+      4: Uint32Array
+    },
+    'i': {
+      1: Int8Array,
+      2: Int16Array,
+      4: Int32Array
+    }
+  };
+
+  if (! getters.hasOwnProperty(type)) {
+    let message = `Invalid type ${type}`;
+    console.error(message);
+    throw new Error(message);
+  }
+
+  if (! getters[type].hasOwnProperty(bytesPerElement)) {
+    let message = `bytesPerElement is ${bytesPerElement} but must be 1, 2 or 4`;
+    console.error(message);
+    throw new Error(message);
+  }
+
+  return getters[type][bytesPerElement];
+}
+
+function getSetter(bytesPerElement, type) {
+  const setters = {
+    'u': {
+      1: DataView.prototype.setUint8,
+      2: DataView.prototype.setUint16,
+      4: DataView.prototype.setUint32
+    },
+    'i': {
+      1: DataView.prototype.setInt8,
+      2: DataView.prototype.setInt16,
+      4: DataView.prototype.setInt32
+    }
+  };
+
+  if (! setters.hasOwnProperty(type)) {
+    let message = `Invalid type ${type}`;
+    console.error(message);
+    throw new Error(message);
+  }
+
+  if (! setters[type].hasOwnProperty(bytesPerElement)) {
+    let message = `bytesPerElement is ${bytesPerElement} but must be 1, 2 or 4`;
+    console.error(message);
+    throw new Error(message);
+  }
+
+  return setters[type][bytesPerElement];
+}
+
 // DatabaseObject: Object representation of transmitter and model configuration
 //
 // IndexedDB is a Object database: instead of rows/columns like traditional
 // relational databases it stores 'objects'. The DatabaseObject represents one
 // of these objects in database that holds model or transmitter data.
 class DatabaseObject {
-  constructor (data) {
+  constructor(data) {
     this.uuid = data.uuid;
     this.data = data.data;
     this.configVersion = data.configVersion;
@@ -22,7 +80,7 @@ class DatabaseObject {
   //
   // In case an issue is found a console.error() message is written and a
   // Error() is thrown.
-  validateInputs (key, index) {
+  validateInputs(key, index) {
     let message;
     const schema = this.getSchema();
 
@@ -57,7 +115,7 @@ class DatabaseObject {
   // Translates a value that corresponds to type (which corresponds to a C
   // enumeration) into the human readable name. If the value is not in the
   // type then the value is returned verbatim.
-  typeLookupByNumber (type, value) {
+  typeLookupByNumber(type, value) {
     if (type) {
       for (let n in type) {
         if (type.hasOwnProperty(n)) {
@@ -75,13 +133,13 @@ class DatabaseObject {
   // The configuration is the metadata for the uuid contents. It holds the
   // MODEL and TX schemas as well as the TYPES (enumeration values used in
   // the schema)
-  getConfig () {
+  getConfig() {
     return CONFIG_VERSIONS[this.configVersion];
   }
 
   // Returns the schema of a database entry. The schema describes the
   // structure of the database entry, i.e. which elements it has.
-  getSchema () {
+  getSchema() {
     return this.getConfig()[this.schemaName];
   }
 
@@ -100,7 +158,7 @@ class DatabaseObject {
   //      > type == 'u' because the HARDWARE_INPUTS_CALIBRATION is an array
   //                    of three uint16_t values in the firmware.
   //
-  getType (key) {
+  getType(key) {
     this.validateInputs(key);
     return this.getSchema()[key].t;
   }
@@ -129,7 +187,7 @@ class DatabaseObject {
   //
   //      > Array [ "Linear", "Smoothing" ]
   //
-  getTypeMembers (type) {
+  getTypeMembers(type) {
     const config = this.getConfig();
     return Object.keys(config.TYPES[type]);
   }
@@ -143,7 +201,7 @@ class DatabaseObject {
   //
   //      > n == "Comparison"
   //
-  getHumanFriendlyText (key) {
+  getHumanFriendlyText(key) {
     this.validateInputs(key);
 
     const schema = this.getSchema();
@@ -230,7 +288,7 @@ class DatabaseObject {
   //
   //      > s == "RUD"
   //
-  getItem (key, options) {
+  getItem(key, options) {
     options = options || {offset: 0, index: undefined};
 
     this.validateInputs(key, options.index);
@@ -261,35 +319,6 @@ class DatabaseObject {
     // simplifies further code.
     if (item.c === 1) {
       index = 0;
-    }
-
-    function getGetter(bytesPerElement, type) {
-      const getters = {
-        'u': {
-          1: Uint8Array,
-          2: Uint16Array,
-          4: Uint32Array
-        },
-        'i': {
-          1: Int8Array,
-          2: Int16Array,
-          4: Int32Array
-        }
-      };
-
-      if (! getters.hasOwnProperty(type)) {
-        let message = `Invalid type ${type}`;
-        console.error(message);
-        throw new Error(message);
-      }
-
-      if (! getters[type].hasOwnProperty(bytesPerElement)) {
-        let message = `bytesPerElement is ${bytesPerElement} but must be 1, 2 or 4`;
-        console.error(message);
-        throw new Error(message);
-      }
-
-      return getters[type][bytesPerElement];
     }
 
     function getInteger() {
@@ -378,7 +407,7 @@ class DatabaseObject {
   // Note that writing an element of type s' (C structure) is not supported.
   //
   // Every time a value is set, the LAST_CHANGED element is updated as well.
-  setItem (key, value, options) {
+  setItem(key, value, options) {
     options = options || {offset: 0, index: undefined};
 
     this.validateInputs(key, options.index);
@@ -421,35 +450,6 @@ class DatabaseObject {
           throw new Error(message);
         }
       }
-    }
-
-    function getSetter(bytesPerElement, type) {
-      const setters = {
-        'u': {
-          1: DataView.prototype.setUint8,
-          2: DataView.prototype.setUint16,
-          4: DataView.prototype.setUint32
-        },
-        'i': {
-          1: DataView.prototype.setInt8,
-          2: DataView.prototype.setInt16,
-          4: DataView.prototype.setInt32
-        }
-      };
-
-      if (! setters.hasOwnProperty(type)) {
-        let message = `Invalid type ${type}`;
-        console.error(message);
-        throw new Error(message);
-      }
-
-      if (! setters[type].hasOwnProperty(bytesPerElement)) {
-        let message = `bytesPerElement is ${bytesPerElement} but must be 1, 2 or 4`;
-        console.error(message);
-        throw new Error(message);
-      }
-
-      return setters[type][bytesPerElement];
     }
 
     // This function logs metadata of all changes to the database.
@@ -622,12 +622,64 @@ class DatabaseObject {
           setTypedItem();
         }
         else {
-          message = `Schema type "${item.t}" for key "${key}" not defined`;
+          let message = `Schema type "${item.t}" for key "${key}" not defined`;
           console.error(message);
           throw new Error(message);
         }
         break;
     }
+  }
+
+  // Raw copy of bytes within the memory of the DBObject
+  //
+  // This method allows to copy a raw block of memory within the DBObject.
+  // It is useful for optimizing list operations: The list of mixer units
+  // needs to be organized in such a way that all used mixer units are
+  // in front of the list, and the empty (unused) mixer units at the end
+  // of the list. If we delete a mixer unit, we therefore need to move the
+  // remaining mixer units foward by one. Using the getItem and setItem API
+  // would mean that we would execute a lot of write operations to the
+  // Headless TX.
+  //
+  // If we use this raw copy operation, which of course must be implemented
+  // in the Headless TX firmware as well, then we can reduce these multiple
+  // write commands to COPY + WRITE (make last mixer unit an empty one)
+  //
+  // Of course the raw copy command has the potential to completely destroy
+  // the configuration, so great care must be taken with using it.
+  //
+  rawCopy(srcOffset, dstOffset, count) {
+    let schema = this.getSchema();
+
+    let copy = this.data.slice(srcOffset, srcOffset + count);
+    this.data.set(copy, dstOffset);
+
+    console.log(`${this.uuid} changed: copied src=${srcOffset} to dst=${dstOffset}, count=${count} config-srcOffset=${srcOffset + schema.o}`);
+
+    if (Device.connected) {
+      Device.copy(srcOffset + schema.o, dstOffset + schema.o, count);
+    }
+
+    // Add last change time stamp
+    if (schema.hasOwnProperty('LAST_CHANGED')) {
+      let now = parseInt(Date.now() / 1000);
+      let lc = schema.LAST_CHANGED;
+      let setter = getSetter(lc.s, lc.t);
+      let dv = new DataView(this.data.buffer, lc.o , lc.s);
+      setter.apply(dv, [0, now, true]);
+
+      console.log(`${this.uuid} changed: offset=${lc.o} count=${lc.s} config-offset=${lc.o + schema.o}`);
+
+      if (Device.connected) {
+        Device.write(lc.o + schema.o, this.data.slice(lc.o, lc.o + lc.s));
+      }
+
+      this.lastChanged = now;
+    }
+
+    Database.setEntry(this, function (result) {
+      console.log('Database updated', result);
+    });
   }
 }
 

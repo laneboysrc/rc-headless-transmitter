@@ -79,7 +79,8 @@
 - Edit hardware inputs
 
 
-- Logical inputs: when the position count slider is updated, update the position count number too
+- Logical inputs: when the position count slider is updated, update the position count number
+- Logical inputs: when the position count slider is updated, update the number of hardware inputs shown
 - Logical inputs: when selecting a new logical input type, adjust all other parameters to be correct (e.g. hw inputs)
 - Logical inputs: suitable HW inputs depend on the logical input type
 - Logical inputs: number of HW inputs depends on the logical input type, sub type, and position count

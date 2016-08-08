@@ -54,6 +54,12 @@ class LogicalInputs {
   }
 
   //*************************************************************************
+  delete(event) {
+    Utils.cancelBubble(event);
+    console.log('LogicalInputs.delete()')
+  }
+
+  //*************************************************************************
   _populateLogicalInputsList() {
     let mdl = new MDLHelper('TX');
     let tx = Device.TX;
@@ -93,6 +99,13 @@ class LogicalInputs {
       }
       mdl.setTextContentRaw('.app-logical_inputs-template--labels div', labels.sort().join(', '), t);
 
+      // FIXME: set slider according to current number of switch positions
+      // FIXME: when the position count slider is updated, update the position count number too
+      // FIXME: when selecting a new logical input type, adjust all other parameters to be correct (e.g. hw inputs)
+      // FIXME: suitable HW inputs depend on the logical input type
+      // FIXME: number of HW inputs depends on the logical input type, sub type, and position count
+      // FIXME: Even though it is not needed, shift elements down when deleting logical inputs
+      // FIXME: show ADD card only when emtpy slots available
 
       let hardwareInputsCount = Device.getNumberOfHardwareInputs(offset);
       let hardwareInputs = [];

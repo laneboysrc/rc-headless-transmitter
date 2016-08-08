@@ -121,19 +121,6 @@ class MDLHelper {
     element.setAttribute(attribute, value);
   }
 
-  setVisibility(elementOrSelector, value, root) {
-    Utils.setVisibility(elementOrSelector, value, root);
-  }
-
-  clearDynamicElements(element) {
-    let child = element.querySelector('.can-delete');
-
-    while (child) {
-      child.parentNode.removeChild(child);
-      child = element.querySelector('.can-delete');
-    }
-  }
-
   onChangeHandler(event) {
     let element = event.target;
 

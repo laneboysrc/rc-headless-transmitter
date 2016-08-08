@@ -25,7 +25,6 @@ class DeviceList {
     this.txModel = document.querySelector('#app-device_list-loading_transmitter__model');
     this.txTransmitter = document.querySelector('#app-device_list-loading_transmitter__transmitter');
 
-    this.mdl = new MDLHelper();
     this.progress = {};
 
     this._onmessage = this.onmessage.bind(this);
@@ -57,7 +56,7 @@ class DeviceList {
 
     // Empty the list of transmitters
     availableTransmitters = [];
-    this.mdl.clearDynamicElements(this.list);
+    Utils.clearDynamicElements(this.list);
 
     Utils.show(this.loading);
     Utils.hide(this.list);
@@ -90,10 +89,11 @@ class DeviceList {
     Utils.show(this.list);
     Utils.hide(this.loading);
 
+    let mdl = new MDLHelper();
     let t = this.template;
     t.querySelector('div').classList.add('can-delete');
     t.querySelector('button').setAttribute('data-index', index);
-    this.mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
+    mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
 
     let clone = document.importNode(t, true);
     this.container.appendChild(clone);
@@ -106,8 +106,8 @@ class DeviceList {
     document.removeEventListener('ws-message', this._onmessage);
 
     let tx = availableTransmitters[index];
-
-    this.mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', tx.name);
+    let mdl = new MDLHelper();
+    mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', tx.name);
 
     Utils.hide(this.list);
     Utils.show(this.txLoading);

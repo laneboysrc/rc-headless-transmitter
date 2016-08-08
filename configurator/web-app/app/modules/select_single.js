@@ -31,7 +31,7 @@ class SelectSingle {
     let mdl = new MDLHelper(this.devName);
 
     // Ged rid of existing elements
-    mdl.clearDynamicElements(this.list);
+    Utils.clearDynamicElements(this.list);
 
     let device = Device[this.devName];
 

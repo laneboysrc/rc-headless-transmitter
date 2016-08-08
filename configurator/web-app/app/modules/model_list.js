@@ -4,8 +4,6 @@ var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 var DatabaseObject = require('./database_object');
 
-var mdl = new MDLHelper('MODEL');
-var models = [];
 
 class ModelList {
   constructor() {
@@ -20,26 +18,22 @@ class ModelList {
     this.snackbar = document.querySelector('#app-model_list-snackbar');
 
     this.mode = 'edit';
+    this.models = [];
   }
 
   //*************************************************************************
   init(params) {
     // If we are called to select a model to load to the transmitter then hide
     // the 'add model' functionality
-    this.mode = 'edit';
-    if (params.tx) {
-      this.mode = 'load';
-    }
+    this.mode = params.tx ? 'load' : 'edit';
+    this.models = [];
+
     this.updateItemVisibility();
     Utils.hide(this.list);
     Utils.hide(this.loading);
-
-    models = [];
-    mdl.clearDynamicElements(this.list);
+    Utils.clearDynamicElements(this.list);
 
     Database.listEntries(this.databaseCallback.bind(this));
-
-
     Utils.showPage('model_list');
   }
 
@@ -55,7 +49,7 @@ class ModelList {
       let data = cursor.value;
       if (data.schemaName === 'MODEL') {
         let model = new DatabaseObject(data);
-        models.push({
+        this.models.push({
           name: model.getItem('NAME'),
           tag: model.getItem('TAG'),
           uuid: data.uuid
@@ -70,26 +64,29 @@ class ModelList {
 
   //*************************************************************************
   updateModelList() {
-    mdl.clearDynamicElements(this.list);
 
     // Sort models[] by name
-    models.sort((a, b) => {
+    this.models.sort((a, b) => {
       return (a.name < b.name) ? -1 : 1;
     });
 
+    let mdl = new MDLHelper('MODEL');
     let t = this.template;
-    for (let i = 0; i < models.length; i++) {
+
+    Utils.clearDynamicElements(this.list);
+
+    for (let i = 0; i < this.models.length; i++) {
       t.querySelector('div').classList.add('can-delete');
       t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
       t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);
-      mdl.setTextContentRaw('.app-model_list-list__template-name', models[i].name, t);
-      mdl.setIcon('.app-model_list-list__template-icon', models[i].tag, t);
+      mdl.setTextContentRaw('.app-model_list-list__template-name', this.models[i].name, t);
+      mdl.setIcon('.app-model_list-list__template-icon', this.models[i].tag, t);
 
       let clone = document.importNode(t, true);
       this.container.appendChild(clone);
     }
 
-    if (models.length !==  0) {
+    if (this.models.length !==  0) {
       Utils.show(this.list);
     }
 
@@ -135,7 +132,7 @@ class ModelList {
   editModel(element) {
     let index = element.getAttribute('data-index');
 
-    Database.getEntry(models[index].uuid, function (data) {
+    Database.getEntry(this.models[index].uuid, function (data) {
       Device.MODEL = new DatabaseObject(data);
       location.hash = Utils.buildURL(['model_details']);
     });
@@ -144,11 +141,11 @@ class ModelList {
   //*************************************************************************
   loadModel(element) {
     let index = element.getAttribute('data-index');
-    console.log('loadModel', index, Device.MODEL, models[index].uuid);
+    console.log('loadModel', index, Device.MODEL, this.models[index].uuid);
 
     // If the same model as the currently loaded one is selected then ignore
     // the request and return to model_details
-    if (Device.MODEL  &&  Device.MODEL.uuid === models[index].uuid) {
+    if (Device.MODEL  &&  Device.MODEL.uuid === this.models[index].uuid) {
       history.back();
       return;
     }
@@ -157,9 +154,9 @@ class ModelList {
     Utils.hide(this.list);
     Utils.show(this.loading);
     this.progress.classList.add('mdl-progress--indeterminate');
-    this.name.textContent = models[index].name;
+    this.name.textContent = this.models[index].name;
 
-    let uuid = models[index].uuid;
+    let uuid = this.models[index].uuid;
     let newModel;
 
     new Promise((resolve, reject) => {
@@ -190,8 +187,8 @@ class ModelList {
 
   //*************************************************************************
   updateItemVisibility() {
-    mdl.setVisibility('.app-model_list--load', this.mode === 'load');
-    mdl.setVisibility('.app-model_list--edit', this.mode !== 'load');
+    Utils.setVisibility('.app-model_list--load', this.mode === 'load');
+    Utils.setVisibility('.app-model_list--edit', this.mode !== 'load');
   }
 
   //*************************************************************************

@@ -167,6 +167,15 @@ export function show(elementOrSelector, root) {
   setVisibility(elementOrSelector, true, root);
 }
 
+export function clearDynamicElements(element) {
+  let child = element.querySelector('.can-delete');
+
+  while (child) {
+    child.parentNode.removeChild(child);
+    child = element.querySelector('.can-delete');
+  }
+}
+
 export function buildURL(list) {
   let url_fragments = ['#'];
 

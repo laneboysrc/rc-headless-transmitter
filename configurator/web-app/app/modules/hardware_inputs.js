@@ -19,7 +19,7 @@ class HardwareInputs {
     let size = hardwareInputs.s;
 
     // Empty the list of mixers
-    mdl.clearDynamicElements(this.list);
+    Utils.clearDynamicElements(this.list);
 
     for (let i = 0; i < count; i++) {
       let offset = i * size;
@@ -39,8 +39,8 @@ class HardwareInputs {
       mdl.setTextContent('button', 'HARDWARE_INPUTS_TYPE', t);
       mdl.setAttribute('button', 'data-index', i, t);
 
-      mdl.setVisibility('.app-hardware_inputs__analog', numericPcbInputType === 1, t);
-      mdl.setVisibility('.app-hardware_inputs__digital', numericPcbInputType === 2, t);
+      Utils.setVisibility('.app-hardware_inputs__analog', numericPcbInputType === 1, t);
+      Utils.setVisibility('.app-hardware_inputs__digital', numericPcbInputType === 2, t);
 
       let clone = document.importNode(t, true);
       this.list.appendChild(clone);

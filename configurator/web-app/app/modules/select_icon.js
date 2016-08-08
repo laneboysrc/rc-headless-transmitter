@@ -35,7 +35,7 @@ class SelectIcon {
     mdl.setTextContent('#app-select_icon-name', 'NAME');
 
     // Ged rid of existing elements
-    mdl.clearDynamicElements(this.list);
+    Utils.clearDynamicElements(this.list);
 
     let device = Device[this.devName];
     let current_choice = device.getItem(this.item, {offset: this.offset});

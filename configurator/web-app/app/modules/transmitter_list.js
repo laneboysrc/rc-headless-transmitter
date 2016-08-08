@@ -4,8 +4,6 @@ var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 var DatabaseObject = require('./database_object');
 
-var mdl = new MDLHelper('TX');
-var transmitters = [];
 
 class TransmitterList {
   constructor() {
@@ -13,15 +11,16 @@ class TransmitterList {
     this.noTransmitter = document.querySelector('#app-transmitter_list-no_transmitter');
     this.container = document.querySelector('#app-transmitter_list-list__container');
     this.template = document.querySelector('#app-transmitter_list-list__template').content;
+    this.transmitters = [];
   }
 
   //*************************************************************************
   init(params) {
-    transmitters = [];
+    this.transmitters = [];
 
     Utils.hide(this.noTransmitter);
     Utils.hide(this.list);
-    mdl.clearDynamicElements(this.list);
+    Utils.clearDynamicElements(this.list);
 
     Database.listEntries(this.databaseCallback.bind(this));
 
@@ -35,7 +34,7 @@ class TransmitterList {
       let data = cursor.value;
       if (data.schemaName === 'TX') {
         let transmitter = new DatabaseObject(data);
-        transmitters.push({
+        this.transmitters.push({
           name: transmitter.getItem('NAME'),
           uuid: data.uuid
         });
@@ -49,25 +48,26 @@ class TransmitterList {
 
   //*************************************************************************
   updateTransmitterList() {
-    mdl.clearDynamicElements(this.list);
+    Utils.clearDynamicElements(this.list);
 
     // Sort transmitters[] by name
-    transmitters.sort((a, b) => {
+    this.transmitters.sort((a, b) => {
       return (a.name < b.name) ? -1 : 1;
     });
 
+    let mdl = new MDLHelper('TX');
     let t = this.template;
-    for (let i = 0; i < transmitters.length; i++) {
+    for (let i = 0; i < this.transmitters.length; i++) {
       t.querySelector('div').classList.add('can-delete');
       t.querySelector('button.app-tramsmitter_list--edit').setAttribute('data-index', i);
-      mdl.setTextContentRaw('.app-tramsmitter_list-list__template-name', transmitters[i].name, t);
+      mdl.setTextContentRaw('.app-tramsmitter_list-list__template-name', this.transmitters[i].name, t);
 
       let clone = document.importNode(t, true);
       this.container.appendChild(clone);
     }
 
-    mdl.setVisibility(this.list, transmitters.length !==  0);
-    mdl.setVisibility(this.noTransmitter, transmitters.length ===  0);
+    Utils.setVisibility(this.list, this.transmitters.length !==  0);
+    Utils.setVisibility(this.noTransmitter, this.transmitters.length ===  0);
   }
 
   //*************************************************************************
@@ -75,7 +75,7 @@ class TransmitterList {
     let index = element.getAttribute('data-index');
     console.log('TransmitterList.edit()', index)
 
-    Database.getEntry(transmitters[index].uuid, function (data) {
+    Database.getEntry(this.transmitters[index].uuid, function (data) {
       Device.TX = new DatabaseObject(data);
       location.hash = Utils.buildURL(['transmitter_details']);
     });

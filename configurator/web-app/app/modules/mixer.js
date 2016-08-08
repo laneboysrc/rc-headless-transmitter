@@ -24,9 +24,8 @@ class Mixer {
     this.populateMixerUnitList();
 
     // Show/hide addMixderUnit card depending on available space
-    let mdl = new MDLHelper('MODEL');
-    mdl.setVisibility(this.cardAddMixerUnit, this.mixerUnitCount < this.mixerUnitMaxCount);
-    mdl.setVisibility(this.menuAddMixerUnit, this.mixerUnitCount < this.mixerUnitMaxCount);
+    Utils.setVisibility(this.cardAddMixerUnit, this.mixerUnitCount < this.mixerUnitMaxCount);
+    Utils.setVisibility(this.menuAddMixerUnit, this.mixerUnitCount < this.mixerUnitMaxCount);
 
     Utils.showPage('mixer');
   }
@@ -41,7 +40,7 @@ class Mixer {
     this.mixerUnitSize = mixer_units.s;
 
     // Empty the list of mixers
-    mdl.clearDynamicElements(this.mixerList);
+    Utils.clearDynamicElements(this.mixerList);
 
     for (let i = 0; i < this.mixerUnitMaxCount; i++) {
       let offset = i * this.mixerUnitSize;

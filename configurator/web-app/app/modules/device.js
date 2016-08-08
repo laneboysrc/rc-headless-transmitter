@@ -308,6 +308,97 @@ class Device {
 
     return newDBObject;
   }
+
+  //*************************************************************************
+  getActiveItems(item) {
+    let result = [];
+
+    if (! this.TX) {
+      return result;
+    }
+
+    if (item !== 'MIXER_UNITS_SRC') {
+      return result;
+    }
+
+    let schema = this.TX.getSchema();
+    let count = schema.LOGICAL_INPUTS.c;
+    let size = schema.LOGICAL_INPUTS.s;
+
+    for (let i = 0; i < count; i++) {
+      let offset = i * size;
+      let labels = this.TX.getItem('LOGICAL_INPUTS_LABELS', {offset: offset});
+      for (let j = 0; j < labels.length; j++) {
+        result.push(labels[j]);
+      }
+    }
+
+    return result;
+  }
+
+  //*************************************************************************
+  overrideType(item, offset) {
+    if (! this.TX) {
+      return [];
+    }
+
+    if (item !== 'HARDWARE_INPUTS_TYPE') {
+      return [];
+    }
+
+    let pcbInputType = this.TX.getItemNumber('HARDWARE_INPUTS_PCB_INPUT_TYPE', {offset: offset});
+    if (pcbInputType === 2) {
+      return this.TX.getTypeMembers('hardware_input_type_t_digital');
+    }
+
+    return [];
+  }
+
+  //*************************************************************************
+  getNumberOfHardwareInputs(offset) {
+    if (! this.TX) {
+      return 0;
+    }
+
+    let schema = this.TX.getSchema();
+    let hardwareInputsSize = schema.HARDWARE_INPUTS.s;
+
+    let type = this.TX.getItemNumber('LOGICAL_INPUTS_TYPE', {offset: offset});
+    let subType = this.TX.getItemNumber('LOGICAL_INPUTS_SUB_TYPE', {offset: offset});
+    let positionCount = this.TX.getItem('LOGICAL_INPUTS_POSITION_COUNT', {offset: offset});
+    let firstHardwareInput = this.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
+    let firstHardwareInputType = this.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: firstHardwareInput * hardwareInputsSize});
+
+    switch (type) {
+      case 1:   // Analog
+      case 4:   // Momentary switch
+        return 1;
+
+      case 2:   // Switch
+        if (firstHardwareInputType === 7) {   // Momentary push-button
+          if (subType === 1) {  // Up/Down buttons
+            return 2;
+          }
+          return 1;
+        }
+        return positionCount;
+
+      case 3:   // BCD switch
+        return positionCount;
+
+      case 5:   // Trim
+        if (firstHardwareInputType === 7) {   // Momentary push-button
+          return 2;
+        }
+        if ([2, 3].includes(firstHardwareInputType)) {  // Analog, center detent, Analog
+          return 1;
+        }
+        return 0;
+
+      default:
+        return 0;
+    }
+  }
 }
 
 window['Device'] = new Device();

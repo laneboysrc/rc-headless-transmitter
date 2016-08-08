@@ -126,6 +126,16 @@ export function isNumber(obj) {
   return !isNaN(parseInt(obj));
 }
 
+// Source: http://stackoverflow.com/a/4775737
+export function isArray(obj) {
+  return Object.prototype.toString.call(obj) === '[object Array]';
+}
+
+// Source: http://stackoverflow.com/a/17772086, http://stackoverflow.com/a/4775737
+export function isString(obj) {
+  return Object.prototype.toString.call(obj) === '[object String]';
+}
+
 export function showPage(name) {
   // Hide all sections with class 'app-page'
   hide('.app-page');
@@ -140,8 +150,7 @@ export function setVisibility(elementOrSelector, value, root) {
 
   // Check if we are dealing with a string (selector) or something else
   // (assume it is already a HTMLElement)
-  // Source: http://stackoverflow.com/a/17772086
-  if (window.toString.call(elementOrSelector) === "[object String]") {
+  if (isString(elementOrSelector)) {
     root = root || document;
     elements = root.querySelectorAll(elementOrSelector);
   }

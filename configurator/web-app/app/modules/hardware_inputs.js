@@ -24,15 +24,13 @@ class HardwareInputs {
 
     for (let i = 0; i < count; i++) {
       let offset = i * size;
-      let pcbInputType = tx.getItem('HARDWARE_INPUTS_PCB_INPUT_TYPE', {offset: offset});
+      let pcbInputType = tx.getItemNumber('HARDWARE_INPUTS_PCB_INPUT_TYPE', {offset: offset});
 
       if (pcbInputType === 0) {
         continue;
       }
 
-      let numericPcbInputType = tx.getNumberOfTypeMember('HARDWARE_INPUTS_PCB_INPUT_TYPE', pcbInputType);
       let t = this.template;
-
       mdl.offset = offset;
 
       t.querySelector('section').classList.add('can-delete');
@@ -40,8 +38,8 @@ class HardwareInputs {
       mdl.setTextContent('button', 'HARDWARE_INPUTS_TYPE', t);
       mdl.setAttribute('button', 'data-index', i, t);
 
-      Utils.setVisibility('.app-hardware_inputs__analog', numericPcbInputType === 1, t);
-      Utils.setVisibility('.app-hardware_inputs__digital', numericPcbInputType === 2, t);
+      Utils.setVisibility('.app-hardware_inputs__analog', pcbInputType === 1, t);
+      Utils.setVisibility('.app-hardware_inputs__digital', pcbInputType === 2, t);
 
       let clone = document.importNode(t, true);
       this.list.appendChild(clone);

@@ -284,4 +284,7 @@ label span i.mdl-list__item-icon.material-icons {
   padding-bottom: 20px;
 }
 
-
+/* Logical Inputs: space between label and value; */
+span.mdl-list__item-primary-content label {
+  padding-right: 5px;
+}

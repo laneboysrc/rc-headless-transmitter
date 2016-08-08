@@ -124,7 +124,7 @@ There are several types of *logical inputs* available
     * Output values are 0..(2^n-1)
 * Trims
     * Can have two Momentary type *Hardware inputs* assigned (up/down)
-    * Can have a single Analog type *Hardware input* assigned (with or without detent, but must not be *Analog without center detent, positive only*)
+    * Can have a single Analog type *Hardware input* assigned (with or without detent, but must not be *Analog without center detent, positive only* or *Analog with auto return to center*)
 
 **Every *Switch* or *Trim* that uses a Momentary type *Hardware input* must remember their state across power cycles**
 

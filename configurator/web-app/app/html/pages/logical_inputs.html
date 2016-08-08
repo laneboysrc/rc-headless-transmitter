@@ -10,70 +10,67 @@
     </div>
   </header>
 
-  <main class="mdl-layout__content" >
-    <!-- Card -->
-    <section class="section--center mdl-grid"> <!-- style="display: none;"> -->
+  <main class="mdl-layout__content" id="app-logical_inputs-list">
+
+    <!-- Individual logical input Card, one for each logical input -->
+    <template id="app-logical_inputs-template">
+    <section class="section--center mdl-grid">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__actions mdl-card--border mdl-card--expand">
           <div class="mdl-list">
-            <div class="mdl-list__item">
+            <div class="mdl-list__item app-logical_inputs-template--labels">
               <span class="mdl-list__item-primary-content">
-                Type
+                <label for="lab1">Labels:</label>
+                <div id="lab1">ST, RUD</div>
               </span>
-              <a class="mdl-list__item-secondary-action" href="#/select_single">
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                  <i class="material-icons">mode_edit</i>
-                </button>
-              </a>
+              <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="LogicalInputs.editLabels(event)">
+                <i class="material-icons">mode_edit</i>
+              </button>
             </div>
-            <div class="mdl-list__item">
-              <span class="mdl-list__item-primary-content">
-                Sub-type
+            <div class="mdl-list__item app-logical_inputs-template--type">
+              <span class="mdl-list__item-primary-content ">
+                <label for="sw1">Type: </label>
+                <div id="sw1">Analog</div>
               </span>
-              <a class="mdl-list__item-secondary-action" href="#/select_single">
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                  <i class="material-icons">mode_edit</i>
-                </button>
-              </a>
+              <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="LogicalInputs.editType(event)">
+                <i class="material-icons">mode_edit</i>
+              </button>
             </div>
-            <div class="mdl-list__item">
+            <div class="mdl-list__item app-logical_inputs-template--sub_type">
               <span class="mdl-list__item-primary-content">
-                <label for="sw1">Switch positions:</label>
-                <div id="sw1">3</div>
+                <label for="sw2">Sub-type:</label>
+                <div id="sw2">Increment-and-loop</div>
+              </span>
+              <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="LogicalInputs.editSubType(event)">
+                <i class="material-icons">mode_edit</i>
+              </button>
+            </div>
+            <div class="mdl-list__item app-logical_inputs-template--position_count">
+              <span class="mdl-list__item-primary-content">
+                <label for="sw3">Switch positions:</label>
+                <div id="sw3">3</div>
               </span>
               <span class="mdl-list__item-secondary-action">
                 <input class="mdl-slider mdl-js-slider" type="range" min="2" max="12" value="3">
               </span>
             </div>
-            <div class="mdl-list__item">
+            <div class="mdl-list__item app-logical_inputs-template--hardware_inputs">
               <span class="mdl-list__item-primary-content">
                 <label for="hw1">Hardware inputs:</label>
                 <div id="hw1">PB10, PB13, PB14</div>
               </span>
-              <a class="mdl-list__item-secondary-action" href="#/select_multiple">
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                  <i class="material-icons">mode_edit</i>
-                </button>
-              </a>
-            </div>
-            <div class="mdl-list__item">
-              <span class="mdl-list__item-primary-content">
-                <label for="lab1">Labels:</label>
-                <div id="lab1">ST, RUD</div>
-              </span>
-              <a class="mdl-list__item-secondary-action" href="#/select_multiple">
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect">
-                  <i class="material-icons">mode_edit</i>
-                </button>
-              </a>
+              <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect" onclick="LogicalInputs.editHardwareInputs(event)">
+                <i class="material-icons">mode_edit</i>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </section>
+    </template>
 
     <!-- Card to add another logical input -->
-    <section class="section--center mdl-grid" id="app-mixer-add" onclick="this.querySelector('button').click();">
+    <section class="section--center mdl-grid" id="app-logical_inputs-add" onclick="this.querySelector('button').click();">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title mdl-card--expand">
           <div class="mdl-list">

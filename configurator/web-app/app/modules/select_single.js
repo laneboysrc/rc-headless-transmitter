@@ -35,7 +35,7 @@ class SelectSingle {
     // If we are connected to a transmitter we can show the user available items.
     // For example, when selecting mixer source we can highlight the logical
     // inputs provided by the transmitter.
-    let activeItems = TransmitterDetails.getActiveItems(this.item);
+    let activeItems = Device.getActiveItems(this.item);
     console.log('activeItems: ', activeItems)
 
     // Allow overriding of the selectable items
@@ -46,7 +46,7 @@ class SelectSingle {
     // The overrideType() function allows to retreive a sub-set of the types
     // to fulfil the criteria.
     // In case the type is not overridden, the default type members are loaded.
-    let choices = TransmitterDetails.overrideType(this.item, this.offset);
+    let choices = Device.overrideType(this.item, this.offset);
     console.log('choices: ', choices)
     if (! choices.length) {
       let type = device.getType(this.item);

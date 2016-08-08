@@ -218,6 +218,19 @@ class DatabaseObject {
     return key;
   }
 
+  //
+  getItemNumber(key, options) {
+    let item = this.getItem(key, options);
+
+    if (Utils.isArray(item)) {
+      return item.map(i => {
+        return this.getNumberOfTypeMember(key, i);
+      });
+    }
+
+    return this.getNumberOfTypeMember(key, item);
+  }
+
   // Retrieve an element from the database entry.
   // The element to retrieve is passed in 'key'.
   //

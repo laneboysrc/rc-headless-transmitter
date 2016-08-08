@@ -22,13 +22,29 @@ class TransmitterList {
     Utils.hide(this.list);
     Utils.clearDynamicElements(this.list);
 
-    Database.listEntries(this.databaseCallback.bind(this));
+    Database.listEntries(this._databaseCallback.bind(this));
 
     Utils.showPage('transmitter_list');
   }
 
   //*************************************************************************
-  databaseCallback(cursor) {
+  back() {
+    history.back();
+  }
+
+  //*************************************************************************
+  edit(element) {
+    let index = element.getAttribute('data-index');
+    console.log('TransmitterList.edit()', index)
+
+    Database.getEntry(this.transmitters[index].uuid, function (data) {
+      Device.TX = new DatabaseObject(data);
+      location.hash = Utils.buildURL(['transmitter_details']);
+    });
+  }
+
+  //*************************************************************************
+  _databaseCallback(cursor) {
     // console.log(cursor)
     if (cursor) {
       let data = cursor.value;
@@ -42,12 +58,12 @@ class TransmitterList {
       cursor.continue();
     }
     else {
-      this.updateTransmitterList();
+      this._updateTransmitterList();
     }
   }
 
   //*************************************************************************
-  updateTransmitterList() {
+  _updateTransmitterList() {
     Utils.clearDynamicElements(this.list);
 
     // Sort transmitters[] by name
@@ -68,22 +84,6 @@ class TransmitterList {
 
     Utils.setVisibility(this.list, this.transmitters.length !==  0);
     Utils.setVisibility(this.noTransmitter, this.transmitters.length ===  0);
-  }
-
-  //*************************************************************************
-  edit(element) {
-    let index = element.getAttribute('data-index');
-    console.log('TransmitterList.edit()', index)
-
-    Database.getEntry(this.transmitters[index].uuid, function (data) {
-      Device.TX = new DatabaseObject(data);
-      location.hash = Utils.buildURL(['transmitter_details']);
-    });
-  }
-
-  //*************************************************************************
-  back() {
-    history.back();
   }
 }
 

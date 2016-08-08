@@ -2,12 +2,14 @@
 
 var Utils = require('./utils');
 
+
 class Main {
-  constructor () {
+  constructor() {
     // Nothing to do
   }
 
-  init () {
+  //*************************************************************************
+  init() {
     Device.MODEL = undefined;
     Device.TX = undefined;
     Device.UNDO = undefined;
@@ -16,30 +18,35 @@ class Main {
     Utils.showPage('main');
   }
 
-  connect (event) {
+  //*************************************************************************
+  connect(event) {
     Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['device_list']);
   }
 
-  about (event) {
+  //*************************************************************************
+  about(event) {
     Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['about']);
-    this.closeDrawer();
+    this._closeDrawer();
   }
 
-  models (event) {
+  //*************************************************************************
+  models(event) {
     Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['model_list']);
-    this.closeDrawer();
+    this._closeDrawer();
   }
 
-  transmitters (event) {
+  //*************************************************************************
+  transmitters(event) {
     Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['transmitter_list']);
-    this.closeDrawer();
+    this._closeDrawer();
   }
 
-  closeDrawer () {
+  //*************************************************************************
+  _closeDrawer() {
     // We can only do this after MDL has initialized, otherwise the drawer_button
     // does not exist
     let drawerButton = document.querySelector('#page_main .mdl-layout__drawer-button');

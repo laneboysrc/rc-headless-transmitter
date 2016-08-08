@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class MixerUnit {
   constructor() {
     this.offset = 0;
@@ -38,15 +39,15 @@ class MixerUnit {
   }
 
   //*************************************************************************
-  delete(event) {
-    Utils.cancelBubble(event);
-
-    Mixer.deleteMixerUnit(this.index);
+  back() {
     history.back();
   }
 
   //*************************************************************************
-  back(params) {
+  delete(event) {
+    Utils.cancelBubble(event);
+
+    Mixer.deleteMixerUnit(this.index);
     history.back();
   }
 }

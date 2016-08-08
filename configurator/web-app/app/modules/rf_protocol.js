@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var dialogPolyfill = require('dialog-polyfill');
 
+
 class RFProtocol{
   constructor() {
     this.hopChannelDialog = document.querySelector('#app-rf_protocol-hop_channel_dialog');
@@ -19,7 +20,7 @@ class RFProtocol{
     let hopChannels = model.getItem('RF_PROTOCOL_HK310_HOP_CHANNELS');
 
     // FIXME: parse address and hop channels and put them back into the db
-    let adressString = this.address2string(address);
+    let adressString = this._address2string(address);
     document.querySelector('#app-rf_protocol-address').value = adressString;
 
     let hopString = hopChannels.join(' ');
@@ -31,51 +32,6 @@ class RFProtocol{
   //*************************************************************************
   back() {
     history.back();
-  }
-
-  //*************************************************************************
-  address2string(address) {
-    return address.map(Utils.byte2string).join(':');
-  }
-
-  //*************************************************************************
-  generateRandomAddress(event) {
-    Utils.cancelBubble(event);
-
-    let address = Utils.newRandomAddress();
-    let adressString = this.address2string(address);
-    document.querySelector('#app-rf_protocol-address').value = adressString;
-
-    Device.MODEL.setItem('RF_PROTOCOL_HK310_ADDRESS', address);
-  }
-
-  //*************************************************************************
-  showHopChannelDialog(event) {
-    Utils.cancelBubble(event);
-
-    // Select the first element
-    this.hopChannelDialog.querySelector('input').checked = true;
-
-    this.hopChannelDialog.showModal();
-  }
-
-  //*************************************************************************
-  hopDialogOk(event) {
-    Utils.cancelBubble(event);
-    this.hopChannelDialog.close();
-
-    let value = this.hopChannelDialog.querySelector('input[type="radio"]:checked').value;
-    let hopChannels = this.newHopChannels(value);
-    let hopString = hopChannels.join(' ');
-    document.querySelector('#app-rf_protocol-hop_channels').value = hopString;
-
-    Device.MODEL.setItem('RF_PROTOCOL_HK310_HOP_CHANNELS', hopChannels);
-  }
-
-  //*************************************************************************
-  hopDialogCancel(event) {
-    Utils.cancelBubble(event);
-    this.hopChannelDialog.close();
   }
 
   //*************************************************************************
@@ -133,6 +89,51 @@ class RFProtocol{
     }
 
     return hopChannels;
+  }
+
+  //*************************************************************************
+  generateRandomAddress(event) {
+    Utils.cancelBubble(event);
+
+    let address = Utils.newRandomAddress();
+    let adressString = this._address2string(address);
+    document.querySelector('#app-rf_protocol-address').value = adressString;
+
+    Device.MODEL.setItem('RF_PROTOCOL_HK310_ADDRESS', address);
+  }
+
+  //*************************************************************************
+  showHopChannelDialog(event) {
+    Utils.cancelBubble(event);
+
+    // Select the first element
+    this.hopChannelDialog.querySelector('input').checked = true;
+
+    this.hopChannelDialog.showModal();
+  }
+
+  //*************************************************************************
+  hopDialogOk(event) {
+    Utils.cancelBubble(event);
+    this.hopChannelDialog.close();
+
+    let value = this.hopChannelDialog.querySelector('input[type="radio"]:checked').value;
+    let hopChannels = this.newHopChannels(value);
+    let hopString = hopChannels.join(' ');
+    document.querySelector('#app-rf_protocol-hop_channels').value = hopString;
+
+    Device.MODEL.setItem('RF_PROTOCOL_HK310_HOP_CHANNELS', hopChannels);
+  }
+
+  //*************************************************************************
+  hopDialogCancel(event) {
+    Utils.cancelBubble(event);
+    this.hopChannelDialog.close();
+  }
+
+  //*************************************************************************
+  _address2string(address) {
+    return address.map(Utils.byte2string).join(':');
   }
 }
 

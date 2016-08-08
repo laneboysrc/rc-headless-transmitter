@@ -2,6 +2,7 @@
 
 var Utils = require('./utils');
 
+
 class About {
   constructor() {
     // Nothing to do

@@ -1,7 +1,8 @@
 'use strict';
 
-var Utils       = require('./utils');
-var MDLHelper   = require('./mdl_helper');
+var Utils = require('./utils');
+var MDLHelper = require('./mdl_helper');
+
 
 class EditSwitch {
   constructor () {
@@ -9,7 +10,7 @@ class EditSwitch {
   }
 
   //*************************************************************************
-  init (params) {
+  init(params) {
     this.offset = params.offset;
 
     let mdl = new MDLHelper('MODEL', {offset: this.offset});
@@ -28,7 +29,7 @@ class EditSwitch {
   }
 
   //*************************************************************************
-  back (params) {
+  back() {
     history.back();
   }
 }

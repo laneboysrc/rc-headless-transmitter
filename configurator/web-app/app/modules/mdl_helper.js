@@ -28,7 +28,7 @@ class MDLHelper {
 
     // The change handler function is called in context of another
     // function, so we need to bind this object to it.
-    this.onChangeHandler = this.onChangeHandler.bind(this);
+    this.onChangeHandler = this._onchange.bind(this);
   }
 
   setTextContent(selector, item, root) {
@@ -121,7 +121,7 @@ class MDLHelper {
     element.setAttribute(attribute, value);
   }
 
-  onChangeHandler(event) {
+  _onchange(event) {
     let element = event.target;
 
     let value = element.value;

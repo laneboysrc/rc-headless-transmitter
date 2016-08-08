@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class ModelDetails {
   constructor() {
     // Nothing to do

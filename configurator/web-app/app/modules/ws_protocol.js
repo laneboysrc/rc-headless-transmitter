@@ -2,6 +2,7 @@
 
 var Utils = require('./utils');
 
+
 class WebsocketProtocol {
   constructor() {
     this.ws = undefined;
@@ -21,31 +22,16 @@ class WebsocketProtocol {
     this.maxPacketsInTransit = 1;
 
     // Set event handlers
-    this.ws.onopen = this.onopen.bind(this);
-    this.ws.onmessage = this.onmessage.bind(this);
-    this.ws.onclose = this.onclose.bind(this);
-    this.ws.onerror = this.onerror.bind(this);
+    this.ws.onopen = this._onopen.bind(this);
+    this.ws.onmessage = this._onmessage.bind(this);
+    this.ws.onclose = this._onclose.bind(this);
+    this.ws.onerror = this._onerror.bind(this);
   }
 
   //*************************************************************************
   close() {
     if (this.ws) {
       this.ws.close();
-    }
-  }
-
-  //*************************************************************************
-  _sendCfgPacket() {
-    if (this.inTransit.length >= this.maxPacketsInTransit) {
-      return;
-    }
-
-    if (this.pending.length) {
-      let request = this.pending.shift();
-      this.inTransit.push(request);
-
-      // console.log('WS: sendCustomEventing ' + dumpUint8Array(request.packet));
-      this.ws.send(request.packet);
     }
   }
 
@@ -93,6 +79,21 @@ class WebsocketProtocol {
     Utils.setUint16(packet, count, 1 + 2 + 2);
 
     return packet;
+  }
+
+  //*************************************************************************
+  _sendCfgPacket() {
+    if (this.inTransit.length >= this.maxPacketsInTransit) {
+      return;
+    }
+
+    if (this.pending.length) {
+      let request = this.pending.shift();
+      this.inTransit.push(request);
+
+      // console.log('WS: sendCustomEventing ' + dumpUint8Array(request.packet));
+      this.ws.send(request.packet);
+    }
   }
 
   //*************************************************************************
@@ -183,16 +184,16 @@ class WebsocketProtocol {
   }
 
   //*************************************************************************
-  onopen() {
+  _onopen() {
     Utils.sendCustomEvent('ws-open');
   }
 
   //*************************************************************************
-  onmessage(e) {
+  _onmessage(e) {
     // e.data contains received string
 
     if (!(e.data instanceof Blob)) {
-      throw new Error('WS: onmessage: String received; should have been Blob');
+      throw new Error('WS: _onmessage: String received; should have been Blob');
     }
 
     let reader = new FileReader();
@@ -212,14 +213,14 @@ class WebsocketProtocol {
   }
 
   //*************************************************************************
-  onerror(e) {
+  _onerror(e) {
     // FIXME: what kind of error may we receive here, and how do we communicate
     // that to pending requests?
     Utils.sendCustomEvent('ws-error', e);
   }
 
   //*************************************************************************
-  onclose() {
+  _onclose() {
     this.ws = undefined;
 
     // FIXME: got through this.pending[] and this.inTransit[] and reject all promises

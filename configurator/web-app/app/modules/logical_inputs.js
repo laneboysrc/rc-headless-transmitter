@@ -2,6 +2,7 @@
 
 var Utils = require('./utils');
 
+
 class LogicalInputs {
   constructor() {
     // Nothing to do

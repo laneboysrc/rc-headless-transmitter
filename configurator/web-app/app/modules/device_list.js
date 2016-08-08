@@ -5,20 +5,13 @@ var MDLHelper = require('./mdl_helper');
 var DatabaseObject = require('./database_object');
 
 
-var availableTransmitters = [];
-var showToast = false;
-
 class DeviceList {
   constructor() {
     this.loading = document.querySelector('#app-device_list-loading');
-
     this.noWebsocket = document.querySelector('#app-device_list-loading__no-websocket');
-
-
     this.list = document.querySelector('#app-device_list-list');
     this.container = document.querySelector('#app-device_list-list__container');
     this.template = document.querySelector('#app-device_list-list__template').content;
-
     this.txLoading = document.querySelector('#app-device_list-loading_transmitter');
     this.txProgress = document.querySelector('#app-device_list-loading_transmitter__progress');
     this.txConnecting = document.querySelector('#app-device_list-loading_transmitter__connecting');
@@ -26,13 +19,15 @@ class DeviceList {
     this.txTransmitter = document.querySelector('#app-device_list-loading_transmitter__transmitter');
 
     this.progress = {};
+    this.showToast = false;
+    this.availableTransmitters = [];
 
-    this._onmessage = this.onmessage.bind(this);
+    this.onmessageHandler = this._onmessage.bind(this);
   }
 
   //*************************************************************************
   init(params) {
-    this.resetPage();
+    this._resetPage();
 
     if (Device.connected) {
       Device.disconnect();
@@ -41,71 +36,20 @@ class DeviceList {
       Device.enableCommunication();
     }
 
-    document.addEventListener('dev-connectionlost', this.connectionlost.bind(this));
+    document.addEventListener('dev-connectionlost', this._connectionLost.bind(this));
     Utils.showPage('device_list');
   }
 
   //*************************************************************************
-  back(params) {
+  back() {
     history.back();
   }
 
   //*************************************************************************
-  resetPage() {
-    document.addEventListener('ws-message', this._onmessage);
-
-    // Empty the list of transmitters
-    availableTransmitters = [];
-    Utils.clearDynamicElements(this.list);
-
-    Utils.show(this.loading);
-    Utils.hide(this.list);
-    Utils.hide(this.txLoading);
-    Utils.hide(this.noWebsocket);
-  }
-
-  //*************************************************************************
-  transmitterReadyForConnect(data) {
-    showToast = true;
-
-    let newTx = {
-      name: Utils.uint8array2string(data.slice(9, 16 + 9)),
-      uuid: Utils.uuid2string(data.slice(1, 8 + 1))
-    };
-
-    let index = availableTransmitters.findIndex((element, index, array) => {
-      return element.name === newTx.name;
-    });
-
-    if (index >= 0) {
-      return;
-    }
-
-    availableTransmitters.push(newTx);
-    index = availableTransmitters.length - 1;
-
-    console.log('New transmitter: ' + newTx.name);
-
-    Utils.show(this.list);
-    Utils.hide(this.loading);
-
-    let mdl = new MDLHelper();
-    let t = this.template;
-    t.querySelector('div').classList.add('can-delete');
-    t.querySelector('button').setAttribute('data-index', index);
-    mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
-
-    let clone = document.importNode(t, true);
-    this.container.appendChild(clone);
-
-    showToast = true;
-  }
-
-  //*************************************************************************
   edit(index) {
-    document.removeEventListener('ws-message', this._onmessage);
+    document.removeEventListener('ws-message', this.onmessageHandler);
 
-    let tx = availableTransmitters[index];
+    let tx = this.availableTransmitters[index];
     let mdl = new MDLHelper();
     mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', tx.name);
 
@@ -125,8 +69,8 @@ class DeviceList {
   // if we don't know this configVersion
   //    send disconnect command
   //    abort (reset the pagge)
-  // loadDevice('TX')
-  // loadDevice('MODEL')
+  // _loadDevice('TX')
+  // _loadDevice('MODEL')
   load(uuid) {
     var configVersion;
 
@@ -145,18 +89,69 @@ class DeviceList {
       }
       Utils.hide(this.txConnecting);
       Utils.show(this.txTransmitter);
-      return this.loadDevice(configVersion, 'TX');
+      return this._loadDevice(configVersion, 'TX');
     }).then(() => {
       Utils.hide(this.txTransmitter);
       Utils.show(this.txModel);
-      return this.loadDevice(configVersion, 'MODEL');
+      return this._loadDevice(configVersion, 'MODEL');
     }).then(() => {
       location.hash = Utils.buildURL(['model_details']);
     }).catch(error => {
       console.log(error);
       // FIXME: we should let the user know that something went wrong
-      this.resetPage();
+      this._resetPage();
     });
+  }
+
+  //*************************************************************************
+  _resetPage() {
+    document.addEventListener('ws-message', this.onmessageHandler);
+
+    // Empty the list of transmitters
+    this.availableTransmitters = [];
+    Utils.clearDynamicElements(this.list);
+
+    Utils.show(this.loading);
+    Utils.hide(this.list);
+    Utils.hide(this.txLoading);
+    Utils.hide(this.noWebsocket);
+  }
+
+  //*************************************************************************
+  _transmitterReadyForConnect(data) {
+    this.showToast = true;
+
+    let newTx = {
+      name: Utils.uint8array2string(data.slice(9, 16 + 9)),
+      uuid: Utils.uuid2string(data.slice(1, 8 + 1))
+    };
+
+    let index = this.availableTransmitters.findIndex((element, index, array) => {
+      return element.name === newTx.name;
+    });
+
+    if (index >= 0) {
+      return;
+    }
+
+    this.availableTransmitters.push(newTx);
+    index = this.availableTransmitters.length - 1;
+
+    console.log('New transmitter: ' + newTx.name);
+
+    Utils.show(this.list);
+    Utils.hide(this.loading);
+
+    let mdl = new MDLHelper();
+    let t = this.template;
+    t.querySelector('div').classList.add('can-delete');
+    t.querySelector('button').setAttribute('data-index', index);
+    mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
+
+    let clone = document.importNode(t, true);
+    this.container.appendChild(clone);
+
+    this.showToast = true;
   }
 
   //*************************************************************************
@@ -178,8 +173,8 @@ class DeviceList {
   // else
   //     load hw.[schemaName] into Device.[schemaName]
   //     add Device.[schemaName] to our database
-  loadDevice(configVersion, schemaName) {
-    // console.log(`DeviceList.loadDevice configVersion=${configVersion} schemaName=${schemaName}`)
+  _loadDevice(configVersion, schemaName) {
+    // console.log(`DeviceList._loadDevice configVersion=${configVersion} schemaName=${schemaName}`)
 
     const schema = CONFIG_VERSIONS[configVersion][schemaName];
     var newDev = {};
@@ -225,7 +220,7 @@ class DeviceList {
               }
               else if (newDev.lastChanged > dbEntry.lastChanged) {
                 // console.log('device > db')
-                this.loadDeviceData(newDev).then(devdbentry => {
+                this._loadDeviceData(newDev).then(devdbentry => {
                   resolve(devdbentry);
                 });
               }
@@ -239,7 +234,7 @@ class DeviceList {
           });
         }
         else {
-          return this.loadDeviceData(newDev);
+          return this._loadDeviceData(newDev);
         }
       }).then(dbobject => {
         // console.log("RESOLVING read", schemaName)
@@ -252,11 +247,11 @@ class DeviceList {
   //*************************************************************************
   // load hw.[newDev.schemaName] into newDev
   // add newDev to our database
-  loadDeviceData (newDev) {
+  _loadDeviceData (newDev) {
     const schema = CONFIG_VERSIONS[newDev.configVersion][newDev.schemaName];
     return new Promise((resolve, reject) => {
       Device.read(schema.o, schema.s).then(data => {
-        // console.log('loadDeviceData read from device')
+        // console.log('_loadDeviceData read from device')
         newDev.data = data;
 
         var dbEntry = new DatabaseObject(newDev);
@@ -277,7 +272,7 @@ class DeviceList {
   }
 
   //*************************************************************************
-  connectionlost(event) {
+  _connectionLost(event) {
     if (Device.MODEL || Device.TX) {
       Device.MODEL = undefined;
       Device.TX = undefined;
@@ -285,39 +280,40 @@ class DeviceList {
       location.hash = Utils.buildURL(['device_list']);
     }
 
-    showConnectionLostMessage();
-    this.resetPage();
+    this._showConnectionLostMessage();
+    this._resetPage();
     Utils.show(this.noWebsocket);
   }
 
   //*************************************************************************
+  _showConnectionLostMessage() {
+    if (!this.showToast) {
+      return;
+    }
+    this.showToast = false;
+
+    // FIXME: the 'toast; should be one element for the whole app!
+    let toast = document.querySelector('#app-device_list-toast');
+    const message = {
+      message: 'Connection lost',
+      timeout: 5000
+    };
+    toast.MaterialSnackbar.showSnackbar(message);
+  }
+
+  //*************************************************************************
   // Receives Websocket messages
-  onmessage (event) {
+  _onmessage(event) {
     // console.log('DeviceList ws: ', event, data);
     let data = event.detail;
 
     // FIXME: handle situation when we return to that page while already
     // connected to a transmitter
     if (data[0] === Device.TX_FREE_TO_CONNECT) {
-      this.transmitterReadyForConnect(data);
+      this._transmitterReadyForConnect(data);
     }
   }
 }
 
-//*************************************************************************
-function showConnectionLostMessage () {
-  if (!showToast) {
-    return;
-  }
-  showToast = false;
-
-  // FIXME: the 'toast; should be one element for the whole app!
-  let toast = document.querySelector('#app-device_list-toast');
-  const message = {
-    message: 'Connection lost',
-    timeout: 5000
-  };
-  toast.MaterialSnackbar.showSnackbar(message);
-}
 
 window['DeviceList'] = new DeviceList();

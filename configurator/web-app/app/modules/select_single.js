@@ -3,8 +3,9 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class SelectSingle {
-  constructor () {
+  constructor() {
     this.devName = undefined;
     this.item = undefined;
     this.offset = 0;
@@ -14,16 +15,7 @@ class SelectSingle {
   }
 
   //*************************************************************************
-  accept_choice () {
-    let list = document.querySelector('#app-select_single-list');
-    let value = list.querySelector('input[type="radio"]:checked').value;
-
-    Device[this.devName].setItem(this.item, value, {offset: this.offset});
-    history.go(-1);
-  }
-
-  //*************************************************************************
-  init (params) {
+  init(params) {
     this.devName = params.devName;
     this.item = params.item;
     this.offset = parseInt(params.offset);
@@ -76,8 +68,19 @@ class SelectSingle {
   }
 
   //*************************************************************************
-  back (params) {
+  back() {
     history.back();
+  }
+
+  //*************************************************************************
+  accept_choice(event) {
+    Utils.cancelBubble(event);
+
+    let list = document.querySelector('#app-select_single-list');
+    let value = list.querySelector('input[type="radio"]:checked').value;
+
+    Device[this.devName].setItem(this.item, value, {offset: this.offset});
+    history.go(-1);
   }
 }
 

@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class Mixer {
   constructor() {
     this.template = document.querySelector('#app-mixer-template').content;
@@ -21,7 +22,7 @@ class Mixer {
 
   //*************************************************************************
   init(params) {
-    this.populateMixerUnitList();
+    this._populateMixerUnitList();
 
     // Show/hide addMixderUnit card depending on available space
     Utils.setVisibility(this.cardAddMixerUnit, this.mixerUnitCount < this.mixerUnitMaxCount);
@@ -31,64 +32,8 @@ class Mixer {
   }
 
   //*************************************************************************
-  populateMixerUnitList() {
-    let mdl = new MDLHelper('MODEL');
-    let model = Device.MODEL;
-    let mixer_units = model.getSchema()['MIXER_UNITS'];
-
-    this.mixerUnitMaxCount = mixer_units.c;
-    this.mixerUnitSize = mixer_units.s;
-
-    // Empty the list of mixers
-    Utils.clearDynamicElements(this.mixerList);
-
-    for (let i = 0; i < this.mixerUnitMaxCount; i++) {
-      let offset = i * this.mixerUnitSize;
-      let src = model.getItem('MIXER_UNITS_SRC', {offset: offset});
-
-      // End-of-list is indicated by the mixer unit source being 0
-      if (src === 0) {
-        this.mixerUnitCount = i;
-        break;
-      }
-
-      mdl.offset = offset;
-      let curve_type = model.getItem('MIXER_UNITS_CURVE_TYPE', {offset: offset});
-      let op = model.getItem('MIXER_UNITS_OP', {offset: offset});
-      let curve = curve_type + ' ' + op;
-      let dst = model.getItem('MIXER_UNITS_DST', {offset: offset});
-
-      let t = this.template;
-      t.querySelector('section').classList.add('can-delete');
-      mdl.setTextContent('.app-mixer-template-src', 'MIXER_UNITS_SRC', t);
-      mdl.setTextContent('.app-mixer-template-dst', 'MIXER_UNITS_DST', t);
-      mdl.setTextContentRaw('.app-mixer-template-mixer_unit', curve, t);
-      mdl.setDataURL('.app-mixer-template-mixer_unit', ['mixer_unit', i], t);
-      mdl.setDataURL('.app-mixer-template-dst', ['limits', dst], t);
-      mdl.setAttribute('.app-mixer-template-up', 'data-index', i, t);
-      mdl.setAttribute('.app-mixer-template-down', 'data-index', i, t);
-
-
-      let clone = document.importNode(t, true);
-      this.mixerList.insertBefore(clone, this.cardAddMixerUnit);
-    }
-
-    this.updateUpDownButtonVisibility();
-  }
-
-  //*************************************************************************
-  updateUpDownButtonVisibility() {
-    // Enable all but the first up button
-    let up = document.querySelectorAll('.app-mixer-template-up');
-    for (let i = 0; i < up.length; i++) {
-      up[i].disabled = (i === 0);
-    }
-
-    // Enable all but the last down button
-    let down = document.querySelectorAll('.app-mixer-template-down');
-    for (let i = 0; i < down.length; i++) {
-      down[i].disabled = (i === (down.length - 1));
-    }
+  back() {
+    history.back();
   }
 
   //*************************************************************************
@@ -144,15 +89,104 @@ class Mixer {
     let data = {
       message: 'Mixer unit deleted.',
       timeout: 5000,
-      actionHandler: this.undoDeleteMixerUnit.bind(this),
+      actionHandler: this._undoDeleteMixerUnit.bind(this),
       actionText: 'Undo'
     };
     this.snackbar.MaterialSnackbar.showSnackbar(data);
   }
 
   //*************************************************************************
-  undoDeleteMixerUnit() {
-    console.log('undoDeleteMixerUnit');
+  up(event, button) {
+    Utils.cancelBubble(event);
+
+    let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
+
+    // Safety bail-out
+    if (mixerUnitIndex < 1) {
+      return;
+    }
+
+    this._swap(mixerUnitIndex, mixerUnitIndex - 1);
+  }
+
+  //*************************************************************************
+  down(event, button) {
+    Utils.cancelBubble(event);
+
+    let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
+
+    // Safety bail-out
+    if (mixerUnitIndex >= (this.mixerUnitCount - 1)) {
+      return;
+    }
+
+    this._swap(mixerUnitIndex, mixerUnitIndex + 1);
+  }
+
+  //*************************************************************************
+  _populateMixerUnitList() {
+    let mdl = new MDLHelper('MODEL');
+    let model = Device.MODEL;
+    let mixer_units = model.getSchema()['MIXER_UNITS'];
+
+    this.mixerUnitMaxCount = mixer_units.c;
+    this.mixerUnitSize = mixer_units.s;
+
+    // Empty the list of mixers
+    Utils.clearDynamicElements(this.mixerList);
+
+    for (let i = 0; i < this.mixerUnitMaxCount; i++) {
+      let offset = i * this.mixerUnitSize;
+      let src = model.getItem('MIXER_UNITS_SRC', {offset: offset});
+
+      // End-of-list is indicated by the mixer unit source being 0
+      if (src === 0) {
+        this.mixerUnitCount = i;
+        break;
+      }
+
+      mdl.offset = offset;
+      let curve_type = model.getItem('MIXER_UNITS_CURVE_TYPE', {offset: offset});
+      let op = model.getItem('MIXER_UNITS_OP', {offset: offset});
+      let curve = curve_type + ' ' + op;
+      let dst = model.getItem('MIXER_UNITS_DST', {offset: offset});
+
+      let t = this.template;
+      t.querySelector('section').classList.add('can-delete');
+      mdl.setTextContent('.app-mixer-template-src', 'MIXER_UNITS_SRC', t);
+      mdl.setTextContent('.app-mixer-template-dst', 'MIXER_UNITS_DST', t);
+      mdl.setTextContentRaw('.app-mixer-template-mixer_unit', curve, t);
+      mdl.setDataURL('.app-mixer-template-mixer_unit', ['mixer_unit', i], t);
+      mdl.setDataURL('.app-mixer-template-dst', ['limits', dst], t);
+      mdl.setAttribute('.app-mixer-template-up', 'data-index', i, t);
+      mdl.setAttribute('.app-mixer-template-down', 'data-index', i, t);
+
+
+      let clone = document.importNode(t, true);
+      this.mixerList.insertBefore(clone, this.cardAddMixerUnit);
+    }
+
+    this._updateUpDownButtonVisibility();
+  }
+
+  //*************************************************************************
+  _updateUpDownButtonVisibility() {
+    // Enable all but the first up button
+    let up = document.querySelectorAll('.app-mixer-template-up');
+    for (let i = 0; i < up.length; i++) {
+      up[i].disabled = (i === 0);
+    }
+
+    // Enable all but the last down button
+    let down = document.querySelectorAll('.app-mixer-template-down');
+    for (let i = 0; i < down.length; i++) {
+      down[i].disabled = (i === (down.length - 1));
+    }
+  }
+
+  //*************************************************************************
+  _undoDeleteMixerUnit() {
+    console.log('_undoDeleteMixerUnit');
     if (!this.UNDO) {
       return;
     }
@@ -178,35 +212,7 @@ class Mixer {
   }
 
   //*************************************************************************
-  up(event, button) {
-    Utils.cancelBubble(event);
-
-    let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
-
-    // Safety bail-out
-    if (mixerUnitIndex < 1) {
-      return;
-    }
-
-    this.swap(mixerUnitIndex, mixerUnitIndex - 1);
-  }
-
-  //*************************************************************************
-  down(event, button) {
-    Utils.cancelBubble(event);
-
-    let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
-
-    // Safety bail-out
-    if (mixerUnitIndex >= (this.mixerUnitCount - 1)) {
-      return;
-    }
-
-    this.swap(mixerUnitIndex, mixerUnitIndex + 1);
-  }
-
-  //*************************************************************************
-  swap(index1, index2) {
+  _swap(index1, index2) {
     let model = Device.MODEL;
 
     let unit1 = model.getItem('MIXER_UNITS', {index: index1});
@@ -216,13 +222,9 @@ class Mixer {
     model.setItem('MIXER_UNITS', unit1, {index: index2});
 
     // Rebuild the list of mixer units
-    this.populateMixerUnitList();
+    this._populateMixerUnitList();
   }
 
-  //*************************************************************************
-  back(params) {
-    history.back();
-  }
 }
 
   window['Mixer'] = new Mixer();

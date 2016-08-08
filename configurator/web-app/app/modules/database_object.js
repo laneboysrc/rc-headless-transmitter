@@ -61,6 +61,7 @@ function getSetter(bytesPerElement, type) {
   return setters[type][bytesPerElement];
 }
 
+
 // DatabaseObject: Object representation of transmitter and model configuration
 //
 // IndexedDB is a Object database: instead of rows/columns like traditional

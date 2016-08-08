@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class SelectIcon {
   constructor() {
     this.devName = undefined;
@@ -11,17 +12,6 @@ class SelectIcon {
 
     this.template = document.querySelector('#app-select_icon-template').content;
     this.list = document.querySelector('#app-select_icon-list');
-  }
-
-  //*************************************************************************
-  acceptChoice(event) {
-    Utils.cancelBubble(event);
-
-    let list = document.querySelector('#app-select_icon-list');
-    let value = list.querySelector('input[type="radio"]:checked').value;
-
-    Device[this.devName].setItem(this.item, value, {offset: this.offset});
-    history.go(-1);
   }
 
   //*************************************************************************
@@ -67,6 +57,17 @@ class SelectIcon {
   //*************************************************************************
   back() {
     history.back();
+  }
+
+  //*************************************************************************
+  acceptChoice(event) {
+    Utils.cancelBubble(event);
+
+    let list = document.querySelector('#app-select_icon-list');
+    let value = list.querySelector('input[type="radio"]:checked').value;
+
+    Device[this.devName].setItem(this.item, value, {offset: this.offset});
+    history.go(-1);
   }
 }
 

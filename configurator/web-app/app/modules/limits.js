@@ -3,13 +3,14 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class Limits {
   constructor () {
     this.channel = undefined;
   }
 
   //*************************************************************************
-  init (params) {
+  init(params) {
     this.channel = params.channel;
 
     let model = Device.MODEL;
@@ -36,7 +37,7 @@ class Limits {
   }
 
   //*************************************************************************
-  back (params) {
+  back() {
     history.back();
   }
 }

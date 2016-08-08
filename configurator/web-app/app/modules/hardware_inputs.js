@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class HardwareInputs {
   constructor() {
     this.template = document.querySelector('#app-hardware_inputs-template').content;
@@ -50,16 +51,16 @@ class HardwareInputs {
   }
 
   //*************************************************************************
+  back() {
+    history.back();
+  }
+
+  //*************************************************************************
   selectType(event) {
     Utils.cancelBubble(event);
     let hardwareInputIndex = parseInt(event.target.getAttribute('data-index'));
 
     console.log('HardwareInputs.selectType()', hardwareInputIndex)
-  }
-
-  //*************************************************************************
-  back() {
-    history.back();
   }
 }
 

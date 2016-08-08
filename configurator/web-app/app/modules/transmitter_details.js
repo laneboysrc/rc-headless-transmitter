@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class TransmitterDetails {
   constructor() {
     // Nothing to do

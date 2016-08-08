@@ -3,13 +3,14 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+
 class EditCurve {
   constructor () {
     this.offset = 0;
   }
 
   //*************************************************************************
-  init (params) {
+  ini (params) {
     this.offset = params.offset;
 
     let mdl = new MDLHelper('MODEL', {offset: this.offset});
@@ -34,7 +35,7 @@ class EditCurve {
   }
 
   //*************************************************************************
-  back (params) {
+  back() {
     history.back();
   }
 }

@@ -10,14 +10,12 @@ class ModelList {
     this.list = document.querySelector('#app-model_list-list');
     this.container = document.querySelector('#app-model_list-list__container');
     this.template = document.querySelector('#app-model_list-list__template').content;
-
     this.loading = document.querySelector('#app-model_list-loading_model');
     this.name = document.querySelector('#app-model_list-loading_model__name');
     this.progress = document.querySelector('#app-model_list-loading_model__progress');
-
     this.snackbar = document.querySelector('#app-model_list-snackbar');
 
-    this.mode = 'edit';
+    this.tx = undefined;
     this.models = [];
   }
 
@@ -25,72 +23,21 @@ class ModelList {
   init(params) {
     // If we are called to select a model to load to the transmitter then hide
     // the 'add model' functionality
-    this.mode = params.tx ? 'load' : 'edit';
+    this.tx = params.tx;
     this.models = [];
 
-    this.updateItemVisibility();
+    this._updateItemVisibility();
     Utils.hide(this.list);
     Utils.hide(this.loading);
     Utils.clearDynamicElements(this.list);
 
-    Database.listEntries(this.databaseCallback.bind(this));
+    Database.listEntries(this._databaseCallback.bind(this));
     Utils.showPage('model_list');
   }
 
   //*************************************************************************
   back() {
     history.back();
-  }
-
-  //*************************************************************************
-  databaseCallback(cursor) {
-    // console.log(cursor)
-    if (cursor) {
-      let data = cursor.value;
-      if (data.schemaName === 'MODEL') {
-        let model = new DatabaseObject(data);
-        this.models.push({
-          name: model.getItem('NAME'),
-          tag: model.getItem('TAG'),
-          uuid: data.uuid
-        });
-      }
-      cursor.continue();
-    }
-    else {
-      this.updateModelList();
-    }
-  }
-
-  //*************************************************************************
-  updateModelList() {
-
-    // Sort models[] by name
-    this.models.sort((a, b) => {
-      return (a.name < b.name) ? -1 : 1;
-    });
-
-    let mdl = new MDLHelper('MODEL');
-    let t = this.template;
-
-    Utils.clearDynamicElements(this.list);
-
-    for (let i = 0; i < this.models.length; i++) {
-      t.querySelector('div').classList.add('can-delete');
-      t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
-      t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);
-      mdl.setTextContentRaw('.app-model_list-list__template-name', this.models[i].name, t);
-      mdl.setIcon('.app-model_list-list__template-icon', this.models[i].tag, t);
-
-      let clone = document.importNode(t, true);
-      this.container.appendChild(clone);
-    }
-
-    if (this.models.length !==  0) {
-      Utils.show(this.list);
-    }
-
-    this.updateItemVisibility();
   }
 
   //*************************************************************************
@@ -186,12 +133,6 @@ class ModelList {
   }
 
   //*************************************************************************
-  updateItemVisibility() {
-    Utils.setVisibility('.app-model_list--load', this.mode === 'load');
-    Utils.setVisibility('.app-model_list--edit', this.mode !== 'load');
-  }
-
-  //*************************************************************************
   deleteModel(model) {
     Device.UNDO = model;
     Database.deleteEntry(model);
@@ -200,14 +141,70 @@ class ModelList {
     let data = {
       message: 'Model deleted.',
       timeout: 5000,
-      actionHandler: this.undoDeleteModel.bind(this),
+      actionHandler: this._undoDeleteModel.bind(this),
       actionText: 'Undo'
     };
     this.snackbar.MaterialSnackbar.showSnackbar(data);
   }
 
   //*************************************************************************
-  undoDeleteModel() {
+  _databaseCallback(cursor) {
+    // console.log(cursor)
+    if (cursor) {
+      let data = cursor.value;
+      if (data.schemaName === 'MODEL') {
+        let model = new DatabaseObject(data);
+        this.models.push({
+          name: model.getItem('NAME'),
+          tag: model.getItem('TAG'),
+          uuid: data.uuid
+        });
+      }
+      cursor.continue();
+    }
+    else {
+      this._updateModelList();
+    }
+  }
+
+  //*************************************************************************
+  _updateModelList() {
+    // Sort models[] by name
+    this.models.sort((a, b) => {
+      return (a.name < b.name) ? -1 : 1;
+    });
+
+    let mdl = new MDLHelper('MODEL');
+    let t = this.template;
+
+    Utils.clearDynamicElements(this.list);
+
+    for (let i = 0; i < this.models.length; i++) {
+      t.querySelector('div').classList.add('can-delete');
+      t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
+      t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);
+      mdl.setTextContentRaw('.app-model_list-list__template-name', this.models[i].name, t);
+      mdl.setIcon('.app-model_list-list__template-icon', this.models[i].tag, t);
+
+      let clone = document.importNode(t, true);
+      this.container.appendChild(clone);
+    }
+
+    if (this.models.length !==  0) {
+      Utils.show(this.list);
+    }
+
+    this._updateItemVisibility();
+  }
+
+  //*************************************************************************
+  _updateItemVisibility() {
+    Utils.setVisibility('.app-model_list--load', this.tx);
+    Utils.setVisibility('.app-model_list--edit', !this.tx);
+  }
+
+  //*************************************************************************
+  _undoDeleteModel() {
     if (!Device.UNDO) {
       return;
     }

@@ -1,7 +1,7 @@
 'use strict';
 
 export function cancelBubble(event) {
-  if (event  &&  event.cancelBubble) {
+  if (event) {
     event.cancelBubble = true;
   }
 }

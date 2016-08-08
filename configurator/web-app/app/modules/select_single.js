@@ -27,21 +27,35 @@ class SelectSingle {
 
     let device = Device[this.devName];
 
-    let activeItems = TransmitterDetails.getActiveItems(this.item);
-    console.log('activeItems: ', activeItems)
-
     let name = device.getHumanFriendlyText(this.item);
     mdl.setTextContentRaw('#app-select_single-name', name);
     // FIXME: need to get item description
     mdl.setTextContentRaw('#app-select_single-description', 'FIXME');
 
+    // If we are connected to a transmitter we can show the user available items.
+    // For example, when selecting mixer source we can highlight the logical
+    // inputs provided by the transmitter.
+    let activeItems = TransmitterDetails.getActiveItems(this.item);
+    console.log('activeItems: ', activeItems)
+
+    // Allow overriding of the selectable items
+    // This is necessary because for some items the range of allowed values
+    // depends on another setting. For example, the HARDWARE_INPUT_TYPE
+    // is only allowed to have analog related values if the underlying
+    // PCB_INPUT is of type analog/digital.
+    // The overrideType() function allows to retreive a sub-set of the types
+    // to fulfil the criteria.
+    // In case the type is not overridden, the default type members are loaded.
+    let choices = TransmitterDetails.overrideType(this.item, this.offset);
+    console.log('choices: ', choices)
+    if (! choices.length) {
+      let type = device.getType(this.item);
+      choices = device.getTypeMembers(type);
+    }
+
     let current_choice = device.getItem(this.item, {offset: this.offset});
 
-    let type = device.getType(this.item);
-    let choices = device.getTypeMembers(type);
-
     let t = this.template;
-
     for (let i = 0; i < choices.length; i++) {
       let entry = choices[i];
 
@@ -50,7 +64,7 @@ class SelectSingle {
       t.querySelector('input').value = entry;
       t.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
 
-      if (activeItems.has(entry)) {
+      if (activeItems.includes(entry)) {
         t.querySelector('label').classList.add('mdl-color-text--primary');
       }
       else {

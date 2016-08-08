@@ -61,6 +61,29 @@ class HardwareInputs {
     let hardwareInputIndex = parseInt(event.target.getAttribute('data-index'));
 
     console.log('HardwareInputs.selectType()', hardwareInputIndex)
+
+    // FIXME: if we change the hardware input type, how are logical inputs
+    // affected?
+
+    // Ensure the following rules (see architecture.md)
+    // * Analog
+    //     * Can only have a single Analog type *Hardware input* assigned
+    // * Momentary
+    //     * Can only have a single Momentary type *Hardware input* assigned
+    // * Switches
+    //     * n-position switch
+    //         * Can have one or two Momentary type *Hardware input* assigned
+    //         * n=3: can have a single 3-position switch *Hardware input* assigned
+    //         * n=2,4..12 can have n on/off switch *Hardware input* assigned
+    // * BCD switch n=2..4
+    //     * Must have n on/off switch switch *Hardware input* assigned
+    // * Trims
+    //     * Can have a single Analog type *Hardware inputs* assigned (with or without detent, but must not be *Analog without center detent, positive only*)
+    //     * Can have two Momentary type *Hardware inputs* assigned (up/down)
+
+    let hardwareInputs = Device.TX.getSchema()['HARDWARE_INPUTS'];
+    let offset = hardwareInputIndex * hardwareInputs.s;
+    location.hash = Utils.buildURL(['select_single', 'TX', 'HARDWARE_INPUTS_TYPE', offset]);
   }
 }
 

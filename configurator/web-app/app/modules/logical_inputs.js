@@ -17,6 +17,12 @@ class LogicalInputs {
   back() {
     history.back();
   }
+
+  //*************************************************************************
+  add(event) {
+    Utils.cancelBubble(event);
+    console.log('LogicalInputs.add()')
+  }
 }
 
 window['LogicalInputs'] = new LogicalInputs();

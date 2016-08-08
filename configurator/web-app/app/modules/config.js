@@ -103,6 +103,12 @@ var CONFIG_VERSIONS = {
                 'On/Off/On switch': 6,
                 'Push-button': 7,
             },
+            hardware_input_type_t_digital: {
+                'Input not used': 0,
+                'On/Off switch': 5,
+                'On/Off/On switch': 6,
+                'Push-button': 7,
+            },
             input_type_t: {
                 'Analog': 1,
                 'Switch': 2,

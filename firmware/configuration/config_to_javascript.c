@@ -432,6 +432,14 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "Push-button", MOMENTARY_ON_OFF);
     sync_printf("            },\n");
 
+    // Same as hardware_input_type_t, but analog items removed
+    sync_printf("            hardware_input_type_t_digital: {\n");
+    sync_printf(t, "Input not used", TRANSMITTER_INPUT_NOT_USED);
+    sync_printf(t, "On/Off switch", SWITCH_ON_OFF);
+    sync_printf(t, "On/Off/On switch", SWITCH_ON_OPEN_OFF);
+    sync_printf(t, "Push-button", MOMENTARY_ON_OFF);
+    sync_printf("            },\n");
+
     sync_printf("            input_type_t: {\n");
     // sync_printf(t, "Input not used", LOGICAL_INPUT_NOT_USED); // Hide from UI
     sync_printf(t, "Analog", ANALOG);

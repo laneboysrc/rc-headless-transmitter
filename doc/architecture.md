@@ -80,6 +80,8 @@ Some, or all, *PCB inputs* are connected to control devices such as sticks, pots
 * Switch 3-position:  GND / Open / Vcc
 * Momentary: Open / Vcc (pull-down)
 
+The analog type *Hardware inputs* can only be assigned to *PCB inputs* of type analog/digital.
+
 For the analog inputs the *Hardware input* holds the endpoint- (and where applicable center-point) calibration values.
 *Hardware inputs* are usually setup once when configuring a newly built transmitter.
 

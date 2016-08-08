@@ -31,8 +31,8 @@ class ModelList {
       this.mode = 'load';
     }
     this.updateItemVisibility();
-    this.list.classList.add('hidden');
-    this.loading.classList.add('hidden');
+    Utils.hide(this.list);
+    Utils.hide(this.loading);
 
     models = [];
     mdl.clearDynamicElements(this.list);
@@ -90,7 +90,7 @@ class ModelList {
     }
 
     if (models.length !==  0) {
-      this.list.classList.remove('hidden');
+      Utils.show(this.list);
     }
 
     this.updateItemVisibility();
@@ -154,8 +154,8 @@ class ModelList {
     }
 
     // Show loading indicator
-    this.list.classList.add('hidden');
-    this.loading.classList.remove('hidden');
+    Utils.hide(this.list);
+    Utils.show(this.loading);
     this.progress.classList.add('mdl-progress--indeterminate');
     this.name.textContent = models[index].name;
 
@@ -190,14 +190,8 @@ class ModelList {
 
   //*************************************************************************
   updateItemVisibility() {
-    if (this.mode === 'load') {
-      Utils.addClassToSelector('.app-model_list--edit', 'hidden');
-      Utils.removeClassFromSelector('.app-model_list--load', 'hidden');
-    }
-    else {
-      Utils.addClassToSelector('.app-model_list--load', 'hidden');
-      Utils.removeClassFromSelector('.app-model_list--edit', 'hidden');
-    }
+    mdl.setVisibility('.app-model_list--load', this.mode === 'load');
+    mdl.setVisibility('.app-model_list--edit', this.mode !== 'load');
   }
 
   //*************************************************************************
@@ -205,7 +199,7 @@ class ModelList {
     Device.UNDO = model;
     Database.deleteEntry(model);
 
-    this.snackbar.classList.remove('hidden');
+    Utils.show(this.snackbar);
     let data = {
       message: 'Model deleted.',
       timeout: 5000,
@@ -224,7 +218,7 @@ class ModelList {
     Device.MODEL = Device.UNDO;
     Database.setEntry(Device.MODEL);
     location.hash = Utils.buildURL(['model_details']);
-    this.snackbar.classList.add('hidden');
+    Utils.hide(this.snackbar);
   }
 }
 

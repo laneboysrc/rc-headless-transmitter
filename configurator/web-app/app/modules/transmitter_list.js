@@ -19,8 +19,8 @@ class TransmitterList {
   init(params) {
     transmitters = [];
 
-    this.noTransmitter.classList.add('hidden');
-    this.list.classList.add('hidden');
+    Utils.hide(this.noTransmitter);
+    Utils.hide(this.list);
     mdl.clearDynamicElements(this.list);
 
     Database.listEntries(this.databaseCallback.bind(this));
@@ -66,14 +66,8 @@ class TransmitterList {
       this.container.appendChild(clone);
     }
 
-    if (transmitters.length !==  0) {
-      this.list.classList.remove('hidden');
-      this.noTransmitter.classList.add('hidden');
-    }
-    else {
-      this.list.classList.add('hidden');
-      this.noTransmitter.classList.remove('hidden');
-    }
+    mdl.setVisibility(this.list, transmitters.length !==  0);
+    mdl.setVisibility(this.noTransmitter, transmitters.length ===  0);
   }
 
   //*************************************************************************

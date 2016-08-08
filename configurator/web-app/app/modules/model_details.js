@@ -18,14 +18,8 @@ class ModelDetails {
     mdl.setIcon('#app-model_details-icon');
 
     // Show/hide the menu depending on whether tx_uuid is undefined
-    if (params.tx) {
-      Utils.removeClassFromSelector('.app-model_details--transmitter', 'hidden');
-      Utils.addClassToSelector('.app-model_details--no-transmitter', 'hidden');
-    }
-    else {
-      Utils.addClassToSelector('.app-model_details--transmitter', 'hidden');
-      Utils.removeClassFromSelector('.app-model_details--no-transmitter', 'hidden');
-    }
+    mdl.setVisibility('.app-model_details--transmitter', params.tx);
+    mdl.setVisibility('.app-model_details--no-transmitter', !params.tx);
 
     Utils.showPage('model_details');
   }

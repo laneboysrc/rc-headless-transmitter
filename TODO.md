@@ -24,23 +24,8 @@
 - Build a separate executable that dumps the configuration, instead of having
   the main app do it
 
-
-- Center detent: beep when center (`ANALOG_WITH_CENTER`)
-
-- Beep when throttle not 0 at start of transmitter, and refuse operation
-
-- Beep SOS when config broken
-
-
-
-- Create live_t that describes live inputs sent to the configurator. It compises
-  all `src_label_t` inputs, but also switch values, trim values, and others
-  such as battery voltage.
-
-
 ## configurator
 - Offline mode
-- checkout beforeinstallprompt in manifest.json
 
 - Database syncing
   - Which protocol?
@@ -48,40 +33,66 @@
     - Custom REST protocol?
   - Look into Redis
 
+- Show which src labels are supported by the transmitter when selecting items
+
+- Delete transmitter
+
 - Prepare for translation
 
-- ModelList needs a loading indicator while populating the available models
+- Show battery voltage on device_list
 
-- How do we get a description of the elements in the configuration (for select single and others)?
+- Add tabindex=0 to sliders etc (test if focusable with keyboard)
+
+- How do we get a description of the elements in the configuration?
+
+- Live stick/switch/output view
+  - Create live_t that describes live inputs sent to the configurator. It compises
+    all `src_label_t` inputs, but also switch values, trim values, and others
+    such as battery voltage.
 
 - Splash screen
 
 - Use input event on slider as it is active during sliding.
 
+- Add model icon data
+  - Car: directions_car
+  - Bike: motorcycle
+  - Truck: local_shipping
+  - Boat: directions_boat
+  - Airplane: flight
+  - Quad: `zoom_out_map`
+  - Helicopter
+
+- checkout beforeinstallprompt in manifest.json
 
 
+- In all button onclick handlers pass the event along (ModelList.addModel(event);)
+  In the function call Utils.cancelBubble(event);
+  We need this to make div onclick handlers that trigger the button work
 
-- Show battery voltage on device_list
+- Center detent: beep when center (configurable?)
 
-- Transmitter details:
-  - Add text for hardware and logical inputs
-  - Delete transmitter
-- Hardware inputs
-- Logical inputs
-- Live stick/switch/output view
+- Beep when throttle not 0 at start of transmitter, and refuse operation
 
-- WS protocol: test error handling
+- Beep SOS when config broken
 
-- WS protocol: improve comparison between request and response
 
-- Passphrase UI
+- Add password to config
+- Rework configurator protocol to use UUID so that we know to which device
+  we want to connect
+  - Instead of sending all hop channels, send a seed and max-channel and use
+    a LFSR (0..125 range)
+- Remove copy command, it won't work over the slow websocket
+  - Instead we must be able to get and set the whole mixerunit structure
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
 - Curve editing: show appropriate points and adjust their name
 
-- Make MDLHelper function that adds/remove class on a selector based on a boolean
+- Re-arrange mixer units
+  - Use individual cards for each mixer, and have a up and down arrow to
+    move it around
 
-- Simulatpr: take TX UUID and Name etc always out of the config data
-  - So that the free to connect packets are correct
+- ModelList needs a loading indicator while populating the available models
+

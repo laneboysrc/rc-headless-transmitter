@@ -1,7 +1,7 @@
 'use strict';
 
-var Utils       = require('./utils');
-var MDLHelper   = require('./mdl_helper');
+var Utils = require('./utils');
+var MDLHelper = require('./mdl_helper');
 
 class Mixer {
   constructor() {
@@ -24,14 +24,9 @@ class Mixer {
     this.populateMixerUnitList();
 
     // Show/hide addMixderUnit card depending on available space
-    if (this.mixerUnitCount < this.mixerUnitMaxCount) {
-      this.cardAddMixerUnit.classList.remove('hidden');
-      this.menuAddMixerUnit.classList.remove('hidden');
-    }
-    else {
-      this.cardAddMixerUnit.classList.add('hidden');
-      this.menuAddMixerUnit.classList.add('hidden');
-    }
+    let mdl = new MDLHelper('MODEL');
+    mdl.setVisibility(this.cardAddMixerUnit, this.mixerUnitCount < this.mixerUnitMaxCount);
+    mdl.setVisibility(this.menuAddMixerUnit, this.mixerUnitCount < this.mixerUnitMaxCount);
 
     Utils.showPage('mixer');
   }
@@ -146,7 +141,7 @@ class Mixer {
     // Make the last item to an unused mixer unit
     Device.MODEL.setItem('MIXER_UNITS', new Uint8Array(size), {index: this.mixerUnitMaxCount - 1});
 
-    this.snackbar.classList.remove('hidden');
+    Utils.show(this.snackbar);
     let data = {
       message: 'Mixer unit deleted.',
       timeout: 5000,
@@ -178,7 +173,7 @@ class Mixer {
     // Put the deleted item back in place
     Device.MODEL.setItem('MIXER_UNITS', this.UNDO.data, {index: index});
 
-    this.snackbar.classList.add('hidden');
+    Utils.hide(this.snackbar);
     location.hash = Utils.buildURL(['mixer_unit', this.UNDO.index]);
     this.UNDO = undefined;
   }

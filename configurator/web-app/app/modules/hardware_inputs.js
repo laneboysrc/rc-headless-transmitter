@@ -23,36 +23,28 @@ class HardwareInputs {
 
     for (let i = 0; i < count; i++) {
       let offset = i * size;
-
-      mdl.offset = offset;
-
       let pcbInputType = tx.getItem('HARDWARE_INPUTS_PCB_INPUT_TYPE', {offset: offset});
-      let numericPcbInputType = tx.getNumberOfTypeMember('HARDWARE_INPUTS_PCB_INPUT_TYPE', pcbInputType);
-      console.log(`pcbInputType: ${numericPcbInputType}`)
 
       if (pcbInputType === 0) {
         continue;
       }
 
+      let numericPcbInputType = tx.getNumberOfTypeMember('HARDWARE_INPUTS_PCB_INPUT_TYPE', pcbInputType);
       let t = this.template;
+
+      mdl.offset = offset;
+
       t.querySelector('section').classList.add('can-delete');
       mdl.setTextContent('.mdl-card__title-text', 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', t);
       mdl.setTextContent('button', 'HARDWARE_INPUTS_TYPE', t);
       mdl.setAttribute('button', 'data-index', i, t);
 
-      if (numericPcbInputType === 1) {
-        t.querySelector('.app-hardware_inputs__analog').classList.remove('hidden');
-        t.querySelector('.app-hardware_inputs__digital').classList.add('hidden');
-      }
-      else {
-        t.querySelector('.app-hardware_inputs__digital').classList.remove('hidden');
-        t.querySelector('.app-hardware_inputs__analog').classList.add('hidden');
-      }
+      mdl.setVisibility('.app-hardware_inputs__analog', numericPcbInputType === 1, t);
+      mdl.setVisibility('.app-hardware_inputs__digital', numericPcbInputType === 2, t);
 
       let clone = document.importNode(t, true);
       this.list.appendChild(clone);
     }
-
 
     Utils.showPage('hardware_inputs');
   }
@@ -60,7 +52,9 @@ class HardwareInputs {
   //*************************************************************************
   selectType(event) {
     Utils.cancelBubble(event);
-    console.log('HardwareInputs.selectType()')
+    let hardwareInputIndex = parseInt(event.target.getAttribute('data-index'));
+
+    console.log('HardwareInputs.selectType()', hardwareInputIndex)
   }
 
   //*************************************************************************

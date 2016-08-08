@@ -128,13 +128,43 @@ export function isNumber(obj) {
 
 export function showPage(name) {
   // Hide all sections with class 'app-page'
-  let pages = document.querySelectorAll('.app-page');
-  for (let i = 0; i < pages.length; i++) {
-    let page = pages[i];
-    page.classList.add('hidden');
+  hide('.app-page');
+
+  // Show the requested page
+  show('#page_' + name);
+}
+
+export function setVisibility(elementOrSelector, value, root) {
+  let classString = 'hidden';
+  let elements = [];
+
+  // Check if we are dealing with a string (selector) or something else
+  // (assume it is already a HTMLElement)
+  // Source: http://stackoverflow.com/a/17772086
+  if (window.toString.call(elementOrSelector) === "[object String]") {
+    root = root || document;
+    elements = root.querySelectorAll(elementOrSelector);
+  }
+  else {
+    elements.push(elementOrSelector);
   }
 
-  document.querySelector('#page_' + name).classList.remove('hidden');
+  for (let i = 0; i < elements.length; ++i) {
+    if (value) {
+      elements[i].classList.remove(classString);
+    }
+    else {
+      elements[i].classList.add(classString);
+    }
+  }
+}
+
+export function hide(elementOrSelector, root) {
+  setVisibility(elementOrSelector, false, root);
+}
+
+export function show(elementOrSelector, root) {
+  setVisibility(elementOrSelector, true, root);
 }
 
 export function buildURL(list) {
@@ -235,20 +265,6 @@ export function isValidUUID(uuid) {
   }
 
   return false;
-}
-
-export function addClassToSelector(selector, _class) {
-  let items = document.querySelectorAll(selector);
-  for (let i = 0; i < items.length; ++i) {
-    items[i].classList.add(_class);
-  }
-}
-
-export function removeClassFromSelector(selector, _class) {
-  let items = document.querySelectorAll(selector);
-  for (let i = 0; i < items.length; ++i) {
-    items[i].classList.remove(_class);
-  }
 }
 
 

@@ -55,14 +55,14 @@ class DeviceList {
   resetPage() {
     document.addEventListener('ws-message', this._onmessage);
 
-    this.loading.classList.remove('hidden');
-    this.list.classList.add('hidden');
-    this.txLoading.classList.add('hidden');
-    availableTransmitters = [];
-
     // Empty the list of transmitters
+    availableTransmitters = [];
     this.mdl.clearDynamicElements(this.list);
-    this.noWebsocket.classList.add('hidden');
+
+    Utils.show(this.loading);
+    Utils.hide(this.list);
+    Utils.hide(this.txLoading);
+    Utils.hide(this.noWebsocket);
   }
 
   //*************************************************************************
@@ -87,8 +87,8 @@ class DeviceList {
 
     console.log('New transmitter: ' + newTx.name);
 
-    this.list.classList.remove('hidden');
-    this.loading.classList.add('hidden');
+    Utils.show(this.list);
+    Utils.hide(this.loading);
 
     let t = this.template;
     t.querySelector('div').classList.add('can-delete');
@@ -109,13 +109,12 @@ class DeviceList {
 
     this.mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', tx.name);
 
-    this.list.classList.add('hidden');
-    this.txLoading.classList.remove('hidden');
+    Utils.hide(this.list);
+    Utils.show(this.txLoading);
+    Utils.show(this.txConnecting);
+    Utils.show(this.txModel);
+    Utils.show(this.txTransmitter);
     this.txProgress.classList.add('mdl-progress--indeterminate');
-
-    this.txConnecting.classList.remove('hidden');
-    this.txModel.classList.add('hidden');
-    this.txTransmitter.classList.add('hidden');
 
     this.load(tx.uuid);
   }
@@ -144,12 +143,12 @@ class DeviceList {
         return Promise.reject(
           new Error(`Unknown configVersion "${configVersion}"`));
       }
-      this.txConnecting.classList.add('hidden');
-      this.txTransmitter.classList.remove('hidden');
+      Utils.hide(this.txConnecting);
+      Utils.show(this.txTransmitter);
       return this.loadDevice(configVersion, 'TX');
     }).then(() => {
-      this.txTransmitter.classList.add('hidden');
-      this.txModel.classList.remove('hidden');
+      Utils.hide(this.txTransmitter);
+      Utils.show(this.txModel);
       return this.loadDevice(configVersion, 'MODEL');
     }).then(() => {
       location.hash = Utils.buildURL(['model_details']);
@@ -288,7 +287,7 @@ class DeviceList {
 
     showConnectionLostMessage();
     this.resetPage();
-    this.noWebsocket.classList.remove('hidden');
+    Utils.show(this.noWebsocket);
   }
 
   //*************************************************************************

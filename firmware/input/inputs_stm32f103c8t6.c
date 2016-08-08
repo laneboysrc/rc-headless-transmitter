@@ -16,19 +16,19 @@ const pcb_input_t pcb_inputs[MAX_TRANSMITTER_INPUTS] = {
      .pin_name = "PA2/ADC2", .schematic_reference = "ADC2"},
 
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO3, .adc_channel = 3,
-     .pin_name = "PA2/ADC2", .schematic_reference = "ADC2"},
+     .pin_name = "PA3/ADC3", .schematic_reference = "ADC3"},
 
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO4, .adc_channel = 4,
-     .pin_name = "PA2/ADC4", .schematic_reference = "ADC4"},
+     .pin_name = "PA4/ADC4", .schematic_reference = "ADC4"},
 
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO5, .adc_channel = 5,
-     .pin_name = "PA2/ADC5", .schematic_reference = "ADC5"},
+     .pin_name = "PA5/ADC5", .schematic_reference = "ADC5"},
 
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO6, .adc_channel = 6,
-     .pin_name = "PA2/ADC6", .schematic_reference = "ADC6"},
+     .pin_name = "PA6/ADC6", .schematic_reference = "ADC6"},
 
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO7, .adc_channel = 7,
-     .pin_name = "PA2/ADC7", .schematic_reference = "ADC7"},
+     .pin_name = "PA7/ADC7", .schematic_reference = "ADC7"},
 
     {.type = ANALOG_DIGITAL, .gpioport = GPIOB, .gpio = GPIO0, .adc_channel = 8,
      .pin_name = "PB0/ADC8", .schematic_reference = "ADC8"},

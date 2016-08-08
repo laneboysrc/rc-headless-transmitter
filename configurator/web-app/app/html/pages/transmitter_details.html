@@ -42,23 +42,6 @@
       </div>
     </section>
 
-    <!-- Hardware inputs Card -->
-    <section class="section--center mdl-grid">
-      <div id="app-transmitter_details-hardware" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
-        <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">Hardware</h2>
-        </div>
-        <div class="mdl-card__supporting-text mdl-card--expand">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </div>
-        <div class="mdl-card__actions mdl-card--border">
-          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-            Configure hardware inputs
-          </button>
-        </div>
-      </div>
-    </section>
-
     <!-- Logical inputs Card -->
     <section class="section--center mdl-grid">
       <div id="app-transmitter_details-logical" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
@@ -66,11 +49,29 @@
           <h2 class="mdl-card__title-text">Logical inputs</h2>
         </div>
         <div class="mdl-card__supporting-text mdl-card--expand">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          Logical inputs are the input signals that are processed by the mixer to output servo information sent to the transmitter. A logical input utilizes one or more hardware inputs to generate a value that can be read by the mixer.
         </div>
         <div class="mdl-card__actions mdl-card--border">
           <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"">
             Configure logical inputs
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hardware inputs Card -->
+    <section class="section--center mdl-grid">
+      <div id="app-transmitter_details-hardware" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Hardware</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Hardware inputs define what kind of input mechanism is connected to each of the individual I/O ports on the Headless transmitter circuit board.<br>
+          Hardware inputs are usually only configured once when you build a new transmitter.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+            Configure hardware inputs
           </button>
         </div>
       </div>

@@ -42,6 +42,8 @@
     "TransmitterDetails": true,
     "TransmitterList": true,
 
+    "componentHandler": true,
+
     "TEST_CONFIG_DATA": true,
     "CONFIG_VERSIONS": true
   }

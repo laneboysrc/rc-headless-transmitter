@@ -32,31 +32,41 @@ class LogicalInputs {
   //*************************************************************************
   editType(event) {
     Utils.cancelBubble(event);
-    console.log('LogicalInputs.editType()')
+
+    let index = parseInt(event.target.getAttribute('data-index'));
+    console.log('LogicalInputs.editType()', index)
   }
 
   //*************************************************************************
   editSubType(event) {
     Utils.cancelBubble(event);
-    console.log('LogicalInputs.editSubType()')
+
+    let index = parseInt(event.target.getAttribute('data-index'));
+    console.log('LogicalInputs.editSubType()', index)
   }
 
   //*************************************************************************
   editHardwareInputs(event) {
     Utils.cancelBubble(event);
-    console.log('LogicalInputs.editHardwareInputs()')
+
+    let index = parseInt(event.target.getAttribute('data-index'));
+    console.log('LogicalInputs.editHardwareInputs()', index)
   }
 
   //*************************************************************************
   editLabels(event) {
     Utils.cancelBubble(event);
-    console.log('LogicalInputs.editLabels()')
+
+    let index = parseInt(event.target.getAttribute('data-index'));
+    console.log('LogicalInputs.editLabels()', index)
   }
 
   //*************************************************************************
   delete(event) {
     Utils.cancelBubble(event);
-    console.log('LogicalInputs.delete()')
+
+    let index = parseInt(event.target.getAttribute('data-index'));
+    console.log('LogicalInputs.delete()', index)
   }
 
   //*************************************************************************
@@ -90,6 +100,7 @@ class LogicalInputs {
       mdl.setTextContent('.app-logical_inputs-template--sub_type div', 'LOGICAL_INPUTS_SUB_TYPE', t);
       mdl.setTextContent('.app-logical_inputs-template--position_count div', 'LOGICAL_INPUTS_POSITION_COUNT', t);
 
+
       let labels = [];
       for (let j = 0; j < logicalInputsLabels.c; j++) {
         let l = tx.getItem('LOGICAL_INPUTS_LABELS', {offset: offset, index: j});
@@ -98,14 +109,6 @@ class LogicalInputs {
         }
       }
       mdl.setTextContentRaw('.app-logical_inputs-template--labels div', labels.sort().join(', '), t);
-
-      // FIXME: set slider according to current number of switch positions
-      // FIXME: when the position count slider is updated, update the position count number too
-      // FIXME: when selecting a new logical input type, adjust all other parameters to be correct (e.g. hw inputs)
-      // FIXME: suitable HW inputs depend on the logical input type
-      // FIXME: number of HW inputs depends on the logical input type, sub type, and position count
-      // FIXME: Even though it is not needed, shift elements down when deleting logical inputs
-      // FIXME: show ADD card only when emtpy slots available
 
       let hardwareInputsCount = Device.getNumberOfHardwareInputs(offset);
       let hardwareInputs = [];
@@ -127,8 +130,21 @@ class LogicalInputs {
       mdl.setAttribute('.app-logical_inputs-template--type label', 'for', 'app-logical_inputs--type' + i, t);
       mdl.setAttribute('.app-logical_inputs-template--sub_type div', 'id', 'app-logical_inputs--sub_type' + i, t);
       mdl.setAttribute('.app-logical_inputs-template--sub_type label', 'for', 'app-logical_inputs--sub_type' + i, t);
+      mdl.setAttribute('.app-logical_inputs-template--hardware_inputs div', 'id', 'app-logical_inputs--sub_type' + i, t);
+      mdl.setAttribute('.app-logical_inputs-template--hardware_inputs label', 'for', 'app-logical_inputs--sub_type' + i, t);
+
+      mdl.setAttribute('.app-logical_inputs-template--labels button', 'data-index', i, t);
+      mdl.setAttribute('.app-logical_inputs-template--type button', 'data-index', i, t);
+      mdl.setAttribute('.app-logical_inputs-template--sub_type button', 'data-index', i, t);
+      mdl.setAttribute('.app-logical_inputs-template--hardware_inputs button', 'data-index', i, t);
+      mdl.setAttribute('.app-logical_inputs-template--delete button', 'data-index', i, t);
+
 
       let clone = document.importNode(t, true);
+
+      componentHandler.upgradeElement(clone.querySelector('.app-logical_inputs-template--position_count input'));
+      mdl.setSlider('.app-logical_inputs-template--position_count input', 'LOGICAL_INPUTS_POSITION_COUNT', clone);
+
       this.list.insertBefore(clone, this.cardAddLogicalInput);
     }
   }

@@ -172,8 +172,12 @@ class DatabaseObject {
   //
   //      > n == 6 as the enum in the firmware is CH1=0, CH2, CH3 ...
   //
-  getNumberOfTypeMember (key, value) {
+  getNumberOfTypeMember(key, value) {
     this.validateInputs(key);
+
+    if (Utils.isNumber(value)) {
+      return value;
+    }
 
     const config = this.getConfig();
     const type = this.getSchema()[key].t;

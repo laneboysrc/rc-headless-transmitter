@@ -33,9 +33,6 @@
     - Custom REST protocol?
   - Look into Redis
 
-- Show which src labels are supported by the transmitter when selecting items
-
-- Delete transmitter
 
 - Prepare for translation
 
@@ -54,21 +51,8 @@
 
 - Use input event on slider as it is active during sliding.
 
-- Add model icon data
-  - Car: directions_car
-  - Bike: motorcycle
-  - Truck: local_shipping
-  - Boat: directions_boat
-  - Airplane: flight
-  - Quad: `zoom_out_map`
-  - Helicopter
-
 - checkout beforeinstallprompt in manifest.json
 
-
-- In all button onclick handlers pass the event along (ModelList.addModel(event);)
-  In the function call Utils.cancelBubble(event);
-  We need this to make div onclick handlers that trigger the button work
 
 - Center detent: beep when center (configurable?)
 
@@ -76,23 +60,22 @@
 
 - Beep SOS when config broken
 
-
-- Add password to config
-- Rework configurator protocol to use UUID so that we know to which device
-  we want to connect
-  - Instead of sending all hop channels, send a seed and max-channel and use
-    a LFSR (0..125 range)
-- Remove copy command, it won't work over the slow websocket
-  - Instead we must be able to get and set the whole mixerunit structure
-
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
 - Curve editing: show appropriate points and adjust their name
 
-- Re-arrange mixer units
-  - Use individual cards for each mixer, and have a up and down arrow to
-    move it around
-
 - ModelList needs a loading indicator while populating the available models
 
+- Delete transmitter
+
+- Add logical input
+- Choose labels
+  - Check for duplicate labels
+- Delete logical input
+  - Undo function
+- Edit logical input type
+- Edit logical input sub-type
+- Edit hardware inputs
+
+- Logical inputs: shrink items within card a bit

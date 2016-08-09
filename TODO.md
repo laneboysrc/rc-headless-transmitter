@@ -85,3 +85,4 @@
   - Label: highlight ones that are not taken yet in select multiple
   - Even though it is not needed, shift elements down when deleting logical inputs
 
+- Make help page for logical inputs to explain valid combinations

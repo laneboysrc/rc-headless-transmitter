@@ -38,6 +38,7 @@
     "Path": true,
     "RFProtocol": true,
     "SelectIcon": true,
+    "SelectMultiple": true,
     "SelectSingle": true,
     "TransmitterDetails": true,
     "TransmitterList": true,

@@ -72,6 +72,10 @@ class LogicalInputs {
 
     let index = parseInt(event.target.getAttribute('data-index'));
     console.log('LogicalInputs.editLabels()', index)
+
+    let size = this.schema.LOGICAL_INPUTS.s;
+    let offset = index * size;
+    location.hash = Utils.buildURL(['select_multiple', 'TX', 'LOGICAL_INPUTS_LABELS', offset]);
   }
 
   //*************************************************************************

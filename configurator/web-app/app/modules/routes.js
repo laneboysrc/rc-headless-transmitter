@@ -29,6 +29,8 @@ var routes = {
 
     // We need two entries to be able to match the four combinations of
     // uuid availability (none, model, tx, model+tx)
+    '#/select_multiple/:devName/:item/:offset(/t/:tx)': SelectMultiple,
+    '#/select_multiple/:devName/:item/:offset/m/:model(/t/:tx)': SelectMultiple,
     '#/select_single/:devName/:item/:offset(/t/:tx)': SelectSingle,
     '#/select_single/:devName/:item/:offset/m/:model(/t/:tx)': SelectSingle,
     '#/select_icon/:devName/:item/:offset(/t/:tx)': SelectIcon,

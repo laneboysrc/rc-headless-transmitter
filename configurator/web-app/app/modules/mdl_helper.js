@@ -43,6 +43,13 @@ class MDLHelper {
     return span;
   }
 
+  cancelSnackbar(snackbarElement) {
+    // Hack: we are accessing internal MaterialSnackbar stuff here
+    if (snackbarElement.MaterialSnackbar.active) {
+      snackbarElement.MaterialSnackbar.cleanup_();
+    }
+  }
+
   setTextContent(selector, item, root) {
     root = root || document;
 

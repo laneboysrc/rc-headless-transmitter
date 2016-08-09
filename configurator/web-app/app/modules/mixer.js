@@ -85,7 +85,6 @@ class Mixer {
     // Make the last item to an unused mixer unit
     Device.MODEL.setItem('MIXER_UNITS', new Uint8Array(size), {index: this.mixerUnitMaxCount - 1});
 
-    Utils.show(this.snackbar);
     let data = {
       message: 'Mixer unit deleted.',
       timeout: 5000,
@@ -203,7 +202,9 @@ class Mixer {
     // Put the deleted item back in place
     Device.MODEL.setItem('MIXER_UNITS', this.UNDO.data, {index: index});
 
-    Utils.hide(this.snackbar);
+    let mdl = new MDLHelper();
+    mdl.cancelSnackbar(this.snackbar);
+
     location.hash = Utils.buildURL(['mixer_unit', this.UNDO.index]);
     this.UNDO = undefined;
   }

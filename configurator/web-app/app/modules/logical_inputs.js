@@ -135,7 +135,6 @@ class LogicalInputs {
 
     this._populateLogicalInputsList();
 
-    Utils.show(this.snackbar);
     let data = {
       message: 'Logical input unit deleted.',
       timeout: 5000,
@@ -173,7 +172,8 @@ class LogicalInputs {
 
   //*************************************************************************
   _populateLogicalInputsList() {
-    Utils.hide(this.snackbar);
+    let mdl = new MDLHelper();
+    mdl.cancelSnackbar(this.snackbar);
 
     let hardwareInputsSize = this.schema.HARDWARE_INPUTS.s;
     let logicalInputs = this.schema.LOGICAL_INPUTS;

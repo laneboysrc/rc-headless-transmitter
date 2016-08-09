@@ -137,7 +137,6 @@ class ModelList {
     Device.UNDO = model;
     Database.deleteEntry(model);
 
-    Utils.show(this.snackbar);
     let data = {
       message: 'Model deleted.',
       timeout: 5000,
@@ -209,8 +208,11 @@ class ModelList {
 
     Device.MODEL = Device.UNDO;
     Database.setEntry(Device.MODEL);
+
+    let mdl = new MDLHelper();
+    mdl.cancelSnackbar(this.snackbar);
+
     location.hash = Utils.buildURL(['model_details']);
-    Utils.hide(this.snackbar);
   }
 }
 

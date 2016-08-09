@@ -34,11 +34,7 @@
   - Look into Redis
 
 
-- Prepare for translation
-
 - Show battery voltage on device_list
-
-- Add tabindex=0 to sliders etc (test if focusable with keyboard)
 
 - How do we get a description of the elements in the configuration?
 
@@ -65,6 +61,8 @@
 
 - Curve editing: show appropriate points and adjust their name
 
+- Make help page for logical inputs to explain valid combinations
+
 - ModelList needs a loading indicator while populating the available models
 
 - Delete transmitter
@@ -72,6 +70,4 @@
 - Edit hardware inputs
   - high-light suitable HW inputs depend on the logical input type
 
-- Make help page for logical inputs to explain valid combinations
 
-- How to cancel pending snackbars instead of just hiding?

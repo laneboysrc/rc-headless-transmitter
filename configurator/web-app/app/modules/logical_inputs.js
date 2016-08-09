@@ -110,6 +110,11 @@ class LogicalInputs {
 
       componentHandler.upgradeElement(t.querySelector('.app-logical_inputs-template--position_count input'));
 
+      // Set the slider MAX to 4 if the logical input type is BCD switch
+      if (type === 3) {
+        t.querySelector('.app-logical_inputs-template--position_count input').setAttribute('MAX', 4);
+      }
+
       t.querySelector('section').classList.add('can-delete');
       mdl.setTextContent('.app-logical_inputs-template--type div', 'LOGICAL_INPUTS_TYPE', t);
       mdl.setTextContent('.app-logical_inputs-template--sub_type div', 'LOGICAL_INPUTS_SUB_TYPE', t);
@@ -142,6 +147,10 @@ class LogicalInputs {
       }
 
 
+      let firstHardwareInput = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
+      let firstHardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: firstHardwareInput * hardwareInputsSize});
+      let positionCount = Device.TX.getItem('LOGICAL_INPUTS_POSITION_COUNT', {offset: offset});
+
       // Create individual <span> for the hardwareInputs
       // This way we can check if they fit the type/sub-type and mark them if
       // something is wrong
@@ -150,47 +159,70 @@ class LogicalInputs {
       for (let j = 0; j < hardwareInputsCount; j++) {
         let hw = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: j});
         let pinName = Device.TX.getItem('HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: hw * hardwareInputsSize});
+        let hardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: hw * hardwareInputsSize});
 
         if (j) {
           container.appendChild(mdl.createSpan(', '));
         }
 
         let span = mdl.createSpan(pinName);
-                // 'Input not used': 0,
-                // 'Analog, returns to center': 1,
-                // 'Analog, center detent': 2,
-                // 'Analog': 3,
-                // 'Analog, positive only': 4,
-                // 'On/Off switch': 5,
-                // 'On/Off/On switch': 6,
-                // 'Push-button': 7,
-        // Check if the hardware type is correct
-        /*
-        switch LOGICAL_INPUTS_TYPE:
-          case ANALOG:
-          case SWITCH:
-          case BCD:
 
-          case MOMENTARY:
-            HARDWARE_INPUTS_TYPE must be:
-              Push-button
+        let validHardwareTypes = [];
+        switch (type) {
+          case 1:   // Analog logical input
+            //  Analog, returns to center
+            //  Analog, center detent
+            //  Analog
+            //  Analog, positive only
+            validHardwareTypes = [1, 2, 3, 4];
+            break;
 
-          case TRIM:
-            if (hardwareInputsCount == 1)
-              HARDWARE_INPUTS_TYPE must be:
-                Analog, center detent
-                Analog
-            else (can only be 2 then)
-              HARDWARE_INPUTS_TYPE must be:
-                Push-button
+          case 2:   // Switch logical input
+            if (firstHardwareInputType === 7) {
+              // Push-button
+              validHardwareTypes = [7];
+            }
+            else if (positionCount === 3) {
+              //  On/Off/On switch
+              validHardwareTypes = [6];
+            }
+            else {
+              //  On/Off switch
+              validHardwareTypes = [5];
+            }
+            break;
 
-        */
+          case 3:   // BCD Switch logical input
+            //  On/Off switch
+            validHardwareTypes = [5];
+            break;
+
+          case 4:   // Momentary Switch logical input
+            // Push-button
+            validHardwareTypes = [7];
+            break;
+
+          case 5:   // Trim logical input
+            if (hardwareInputsCount === 1) {
+              // Analog, center detent
+              // Analog
+              validHardwareTypes = [2, 3];
+            }
+            else {
+              // Push-button
+              validHardwareTypes = [7];
+            }
+            break;
+        }
+
+        if (! validHardwareTypes.includes(hardwareInputType)) {
+          span.classList.add('error');
+        }
+
         container.appendChild(span);
       }
 
 
-      let firstHardwareInput = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
-      let firstHardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: firstHardwareInput * hardwareInputsSize});
 
       // Show subtype only if type==switch and firstHardwareInputType==Monentary
       Utils.setVisibility('.app-logical_inputs-template--sub_type', type === 2 && firstHardwareInputType === 7, t);

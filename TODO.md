@@ -81,7 +81,6 @@
 - Logical inputs
   - when the position count slider is updated, update the position count number
   - when the position count slider is updated, update the number of hardware inputs shown
-  - show when something is wrong with the selected hardware inputs (e.g. a digital input selected with an analog type, or vice/versa)
   - Select HW input: high-light suitable HW inputs depend on the logical input type
   - Label: highlight ones that are not taken yet in select multiple
   - Even though it is not needed, shift elements down when deleting logical inputs

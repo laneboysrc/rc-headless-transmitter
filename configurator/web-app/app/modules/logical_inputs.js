@@ -116,6 +116,7 @@ class LogicalInputs {
       mdl.setTextContent('.app-logical_inputs-template--position_count div', 'LOGICAL_INPUTS_POSITION_COUNT', t);
       mdl.setSlider('.app-logical_inputs-template--position_count input', 'LOGICAL_INPUTS_POSITION_COUNT', t);
 
+
       // Create individual <span> for the labels
       // This way we can mark duplicates
       let container = t.querySelector('.app-logical_inputs-template--labels div');
@@ -155,6 +156,35 @@ class LogicalInputs {
         }
 
         let span = mdl.createSpan(pinName);
+                // 'Input not used': 0,
+                // 'Analog, returns to center': 1,
+                // 'Analog, center detent': 2,
+                // 'Analog': 3,
+                // 'Analog, positive only': 4,
+                // 'On/Off switch': 5,
+                // 'On/Off/On switch': 6,
+                // 'Push-button': 7,
+        // Check if the hardware type is correct
+        /*
+        switch LOGICAL_INPUTS_TYPE:
+          case ANALOG:
+          case SWITCH:
+          case BCD:
+
+          case MOMENTARY:
+            HARDWARE_INPUTS_TYPE must be:
+              Push-button
+
+          case TRIM:
+            if (hardwareInputsCount == 1)
+              HARDWARE_INPUTS_TYPE must be:
+                Analog, center detent
+                Analog
+            else (can only be 2 then)
+              HARDWARE_INPUTS_TYPE must be:
+                Push-button
+
+        */
         container.appendChild(span);
       }
 

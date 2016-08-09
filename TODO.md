@@ -67,9 +67,6 @@
 
 - Delete transmitter
 
-- Edit hardware inputs
-  - high-light suitable HW inputs depend on the logical input type
-
 - Make the number of switch positions depend on the max number of hardware inputs
 
 - Make isValidHardwareType generic, source from logicalInputs

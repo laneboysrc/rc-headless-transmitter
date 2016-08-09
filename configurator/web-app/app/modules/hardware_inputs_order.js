@@ -10,6 +10,7 @@ class HardwareInputsOrder {
     this.list = document.querySelector('#app-hardware_inputs_order-list');
 
     this.offset = 0;
+    this.hardwareInputsCount = 0;
   }
 
   //*************************************************************************
@@ -35,31 +36,31 @@ class HardwareInputsOrder {
   }
 
   //*************************************************************************
-  up(event, button) {
+  up(event) {
     Utils.cancelBubble(event);
 
-    // let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
+    let index = parseInt(event.target.getAttribute('data-index'));
 
-    // // Safety bail-out
-    // if (mixerUnitIndex < 1) {
-    //   return;
-    // }
+    // Safety bail-out
+    if (index < 1) {
+      return;
+    }
 
-    // this._swap(mixerUnitIndex, mixerUnitIndex - 1);
+    this._swap(index, index - 1);
   }
 
   //*************************************************************************
-  down(event, button) {
+  down(event) {
     Utils.cancelBubble(event);
 
-    // let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
+    let index = parseInt(event.target.getAttribute('data-index'));
 
-    // // Safety bail-out
-    // if (mixerUnitIndex >= (this.mixerUnitCount - 1)) {
-    //   return;
-    // }
+    // Safety bail-out
+    if (index >= (this.hardwareInputsCount - 1)) {
+      return;
+    }
 
-    // this._swap(mixerUnitIndex, mixerUnitIndex + 1);
+    this._swap(index, index + 1);
   }
 
   //*************************************************************************
@@ -68,13 +69,13 @@ class HardwareInputsOrder {
 
     Utils.clearDynamicElements(this.list);
 
-    let hardwareInputsCount = Device.getNumberOfHardwareInputs(this.offset);
+    this.hardwareInputsCount = Device.getNumberOfHardwareInputs(this.offset);
     let hardwareInputsSize = this.schema.HARDWARE_INPUTS.s;
 
-    for (let j = 0; j < hardwareInputsCount; j++) {
+    for (let i = 0; i < this.hardwareInputsCount; i++) {
       let t = document.importNode(this.template, true);
-      let pinName = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: this.offset, index: j});
-      let hw = Device.TX.getItemNumber('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: this.offset, index: j});
+      let pinName = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: this.offset, index: i});
+      let hw = Device.TX.getItemNumber('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: this.offset, index: i});
       let hardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: hw * hardwareInputsSize});
 
       mdl.setTextContentRaw('.app-hardware_inputs_order-template-name', pinName, t);
@@ -82,6 +83,8 @@ class HardwareInputsOrder {
       if (! Device.isValidHardwareType(hardwareInputType)) {
         t.querySelector('.app-hardware_inputs_order-template-name').classList.add('error');
       }
+      mdl.setAttribute('.app-hardware_inputs_order-template-up', 'data-index', i, t);
+      mdl.setAttribute('.app-hardware_inputs_order-template-down', 'data-index', i, t);
 
       this.list.appendChild(t);
     }
@@ -106,16 +109,17 @@ class HardwareInputsOrder {
 
   //*************************************************************************
   _swap(index1, index2) {
-    // let model = Device.MODEL;
+    let hardwareInputs = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: this.offset});
 
-    // let unit1 = model.getItem('MIXER_UNITS', {index: index1});
-    // let unit2 = model.getItem('MIXER_UNITS', {index: index2});
+    let input1 = hardwareInputs[index1];
+    let input2 = hardwareInputs[index2];
+    hardwareInputs[index1] = input2;
+    hardwareInputs[index2] = input1;
 
-    // model.setItem('MIXER_UNITS', unit2, {index: index1});
-    // model.setItem('MIXER_UNITS', unit1, {index: index2});
+    Device.TX.setItem('LOGICAL_INPUTS_HARDWARE_INPUTS', hardwareInputs, {offset: this.offset});
 
-    // // Rebuild the list of mixer units
-    // this._populateHardwareInputsList();
+    // Rebuild the list of hardware inputs
+    this._populateHardwareInputsList();
   }
 
 }

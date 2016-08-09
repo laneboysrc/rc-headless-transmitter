@@ -294,3 +294,8 @@ label span i.mdl-list__item-icon.material-icons {
 span.mdl-list__item-primary-content label {
   padding-right: 5px;
 }
+
+#app-logical_inputs-list .mdl-list__item {
+  padding-top: 0;
+  padding-bottom: 0;
+}

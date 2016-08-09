@@ -85,4 +85,3 @@
   - Label: highlight ones that are not taken yet in select multiple
   - Even though it is not needed, shift elements down when deleting logical inputs
 
-- Logical inputs: shrink items within card a bit

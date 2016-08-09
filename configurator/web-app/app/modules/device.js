@@ -310,27 +310,57 @@ class Device {
   }
 
   //*************************************************************************
-  getActiveItems(item) {
+  getActiveItems(item, offset) {
     let result = [];
 
     if (! this.TX) {
       return result;
     }
 
-    if (item !== 'MIXER_UNITS_SRC') {
-      return result;
-    }
+    if (item === 'MIXER_UNITS_SRC') {
+      let schema = this.TX.getSchema();
+      let count = schema.LOGICAL_INPUTS.c;
+      let size = schema.LOGICAL_INPUTS.s;
 
-    let schema = this.TX.getSchema();
-    let count = schema.LOGICAL_INPUTS.c;
-    let size = schema.LOGICAL_INPUTS.s;
-
-    for (let i = 0; i < count; i++) {
-      let offset = i * size;
-      let labels = this.TX.getItem('LOGICAL_INPUTS_LABELS', {offset: offset});
-      for (let j = 0; j < labels.length; j++) {
-        result.push(labels[j]);
+      for (let i = 0; i < count; i++) {
+        let offset = i * size;
+        let labels = this.TX.getItem('LOGICAL_INPUTS_LABELS', {offset: offset});
+        for (let j = 0; j < labels.length; j++) {
+          result.push(labels[j]);
+        }
       }
+    }
+    else if (item === 'LOGICAL_INPUTS_LABELS') {
+      // Load all potential labels
+      let type = this.TX.getType(item);
+      let labels = this.TX.getTypeMembers(type);
+
+      let schema = this.TX.getSchema();
+      let logicalInputs = schema.LOGICAL_INPUTS;
+      let count = logicalInputs.c;
+      let size = logicalInputs.s;
+
+      // For all logical inputs:
+      for (let i = 0; i < count; i++) {
+        let o = i * size;
+        let type = this.TX.getItemNumber('LOGICAL_INPUTS_TYPE', {offset: o});
+        // Skip if the logical input is unused, or the one that we are selecting
+        if (o === offset  ||  type === 0) {
+          continue;
+        }
+
+        // Retrieve the labels assigned to the logical input
+        let l = this.TX.getItem('LOGICAL_INPUTS_LABELS', {offset: o});
+        // Remove the labels from the total list of labels
+        for (let j = 0; j < l.length; j++) {
+          let index = labels.indexOf(l[j]);
+          if (index >= 0) {
+            labels.splice(index, 1);
+          }
+        }
+      }
+
+      result = labels;
     }
 
     return result;

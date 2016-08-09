@@ -71,14 +71,13 @@
 
 - Add logical input
 - Delete logical input
-  - Undo function
+  - Even though it is not needed, shift elements down when deleting logical inputs
+- Undo function
 - Edit hardware inputs
 
 - Logical inputs
   - when the position count slider is updated, update the position count number
   - when the position count slider is updated, update the number of hardware inputs shown
   - Select HW input: high-light suitable HW inputs depend on the logical input type
-  - Label: highlight ones that are not taken yet in select multiple
-  - Even though it is not needed, shift elements down when deleting logical inputs
 
 - Make help page for logical inputs to explain valid combinations

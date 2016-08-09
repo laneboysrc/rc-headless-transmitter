@@ -42,7 +42,7 @@ class SelectMultiple {
     // If we are connected to a transmitter we can show the user available items.
     // For example, when selecting mixer source we can highlight the logical
     // inputs provided by the transmitter.
-    let activeItems = Device.getActiveItems(this.item);
+    let activeItems = Device.getActiveItems(this.item, this.offset);
     console.log('activeItems: ', activeItems)
 
     // Allow overriding of the selectable items

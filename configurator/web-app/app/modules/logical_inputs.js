@@ -32,6 +32,32 @@ class LogicalInputs {
   add(event) {
     Utils.cancelBubble(event);
     console.log('LogicalInputs.add()')
+
+    let logicalInputs = this.schema.LOGICAL_INPUTS;
+    let logicalInputsSize = logicalInputs.s;
+
+    for (let i = 0; i < this.logicalInputsMaxCount; i++) {
+      let offset = i * logicalInputsSize;
+      let type = Device.TX.getItemNumber('LOGICAL_INPUTS_TYPE', {offset: offset});
+
+      if (type === 0) {
+        let type = Device.TX.getType('LOGICAL_INPUTS_TYPE');
+        let typeValues = Device.TX.getTypeMembers(type);
+
+        Device.TX.setItem('LOGICAL_INPUTS_TYPE', typeValues[0], {offset: offset});
+
+        // Assign the first unused label
+        let availableLabels = Device.getActiveItems('LOGICAL_INPUTS_LABELS', offset);
+        let labels = Device.TX.getItem('LOGICAL_INPUTS_LABELS', {offset: offset});
+        for (let j = 0; j < labels.length; j++) {
+          labels[j] = (j === 0) ? availableLabels[0]: 0;
+        }
+        Device.TX.setItem('LOGICAL_INPUTS_LABELS', labels, {offset: offset});
+
+        this._populateLogicalInputsList();
+        return;
+      }
+    }
   }
 
   //*************************************************************************

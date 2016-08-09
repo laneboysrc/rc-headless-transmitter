@@ -69,15 +69,14 @@
 
 - Delete transmitter
 
-- Add logical input
 - Delete logical input
   - Even though it is not needed, shift elements down when deleting logical inputs
-- Undo function
+  - Undo function
 - Edit hardware inputs
+  - high-light suitable HW inputs depend on the logical input type
 
 - Logical inputs
   - when the position count slider is updated, update the position count number
   - when the position count slider is updated, update the number of hardware inputs shown
-  - Select HW input: high-light suitable HW inputs depend on the logical input type
 
 - Make help page for logical inputs to explain valid combinations

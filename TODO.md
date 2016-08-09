@@ -70,12 +70,8 @@
 - Delete transmitter
 
 - Add logical input
-- Choose labels
-  - Check for duplicate labels
 - Delete logical input
   - Undo function
-- Edit logical input type
-- Edit logical input sub-type
 - Edit hardware inputs
 
 - Logical inputs

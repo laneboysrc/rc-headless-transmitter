@@ -5,7 +5,7 @@
         <i class="material-icons">arrow_back</i>
       </button>
       <div class="mdl-layout-spacer"></div>
-      <span class="mdl-layout-title">Pick multiple items</span>
+      <span class="mdl-layout-title">Pick up to <span id="app-select_multiple-count"></span> items</span>
       <div class="mdl-layout-spacer"></div>
     </div>
   </header>
@@ -40,6 +40,12 @@
           <i class="material-icons">check</i>
         </button>
       </div>
+    </div>
+
+    <!-- Temporary message shown when too many items selected -->
+    <div id="app-select_multiple-toast" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button type="button" class="mdl-snackbar__action"></button>
     </div>
 
   </main>

@@ -12,6 +12,8 @@ class SelectMultiple {
 
     this.template = document.querySelector('#app-select_multiple-template').content;
     this.list = document.querySelector('#app-select_multiple-list');
+
+    this.maxNumberOfChoices = 0;
   }
 
   //*************************************************************************
@@ -27,8 +29,13 @@ class SelectMultiple {
 
     let device = Device[this.devName];
 
+    let current_choices = device.getItem(this.item, {offset: this.offset});
+    this.maxNumberOfChoices = current_choices.length;
+    console.log(current_choices)
+
     let name = device.getHumanFriendlyText(this.item);
     mdl.setTextContentRaw('#app-select_multiple-name', name);
+    mdl.setTextContentRaw('#app-select_multiple-count', this.maxNumberOfChoices);
     // FIXME: need to get item description
     mdl.setTextContentRaw('#app-select_multiple-description', 'FIXME');
 
@@ -53,8 +60,6 @@ class SelectMultiple {
       choices = device.getTypeMembers(type);
     }
 
-    let current_choice = device.getItem(this.item, {offset: this.offset});
-
     for (let i = 0; i < choices.length; i++) {
       let entry = choices[i];
 
@@ -62,7 +67,8 @@ class SelectMultiple {
       t.querySelector('span').textContent = entry;
       t.querySelector('input').id = 'app-select_multiple__item' + i;
       t.querySelector('input').value = entry;
-      t.querySelector('input').checked = (entry === current_choice);
+      t.querySelector('input').checked = current_choices.includes(entry);
+      t.querySelector('input').addEventListener('change', this._onchange.bind(this));
       t.querySelector('label').setAttribute('for', 'app-select_multiple__item' + i);
       if (activeItems.includes(entry)) {
         t.querySelector('label').classList.add('mdl-color-text--primary');
@@ -83,12 +89,42 @@ class SelectMultiple {
   accept_choice(event) {
     Utils.cancelBubble(event);
 
-    let list = document.querySelector('#app-select_multiple-list');
-    // FIXME: make this into checkbox
-    // let value = list.querySelector('input[type="radio"]:checked').value;
+    let chosenItems = this._getChosenItems();
+    while (chosenItems.length < this.maxNumberOfChoices) {
+      chosenItems.push(0);
+    }
 
-    // Device[this.devName].setItem(this.item, value, {offset: this.offset});
+    Device[this.devName].setItem(this.item, chosenItems, {offset: this.offset});
     history.go(-1);
+  }
+
+  _getChosenItems() {
+    let result = [];
+    let list = document.querySelector('#app-select_multiple-list');
+    let selectedItems = list.querySelectorAll('input[type="checkbox"]:checked');
+    for (let item of selectedItems) {
+      result.push(item.value);
+    }
+    return result;
+  }
+
+  //*************************************************************************
+  _onchange(event) {
+    let items = this._getChosenItems();
+    if (items.length > this.maxNumberOfChoices) {
+      event.target.checked = false;
+      this._showToast();
+    }
+  }
+
+  //*************************************************************************
+  _showToast() {
+    let toast = document.querySelector('#app-select_multiple-toast');
+    const message = {
+      message: `Choose at most ${this.maxNumberOfChoices} items`,
+      timeout: 2000
+    };
+    toast.MaterialSnackbar.showSnackbar(message);
   }
 }
 

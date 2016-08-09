@@ -140,7 +140,7 @@ class LogicalInputs {
     this._populateLogicalInputsList();
 
     let data = {
-      message: 'Logical input unit deleted.',
+      message: 'Logical input deleted.',
       timeout: 5000,
       actionHandler: this._undoDelete.bind(this),
       actionText: 'Undo'

@@ -95,6 +95,8 @@ class LogicalInputs {
     // Empty the list of mixers
     Utils.clearDynamicElements(this.list);
 
+    let labelsSeen = [];
+
     for (let i = 0; i < this.logicalInputsMaxCount; i++) {
       let offset = i * logicalInputsSize;
       let type = Device.TX.getItemNumber('LOGICAL_INPUTS_TYPE', {offset: offset});
@@ -104,31 +106,58 @@ class LogicalInputs {
       }
 
       let mdl = new MDLHelper('TX', {offset:  offset});
+      let t = document.importNode(this.template, true);
 
-      let t = this.template;
+      componentHandler.upgradeElement(t.querySelector('.app-logical_inputs-template--position_count input'));
+
       t.querySelector('section').classList.add('can-delete');
       mdl.setTextContent('.app-logical_inputs-template--type div', 'LOGICAL_INPUTS_TYPE', t);
       mdl.setTextContent('.app-logical_inputs-template--sub_type div', 'LOGICAL_INPUTS_SUB_TYPE', t);
       mdl.setTextContent('.app-logical_inputs-template--position_count div', 'LOGICAL_INPUTS_POSITION_COUNT', t);
+      mdl.setSlider('.app-logical_inputs-template--position_count input', 'LOGICAL_INPUTS_POSITION_COUNT', t);
 
-
-      let labels = [];
+      // Create individual <span> for the labels
+      // This way we can mark duplicates
+      let container = t.querySelector('.app-logical_inputs-template--labels div');
       for (let j = 0; j < logicalInputsLabels.c; j++) {
         let l = Device.TX.getItem('LOGICAL_INPUTS_LABELS', {offset: offset, index: j});
-        if (l !== 0) {
-          labels.push(l);
+        if (l === 0) {
+          break;
         }
-      }
-      mdl.setTextContentRaw('.app-logical_inputs-template--labels div', labels.sort().join(', '), t);
 
+        if (j) {
+          container.appendChild(mdl.createSpan(', '));
+        }
+
+        let span = mdl.createSpan(l);
+
+        // If the label was already used by another logical input than flag it
+        if (labelsSeen.includes(l)) {
+          span.classList.add('error');
+        }
+        labelsSeen.push(l);
+
+        container.appendChild(span);
+      }
+
+
+      // Create individual <span> for the hardwareInputs
+      // This way we can check if they fit the type/sub-type and mark them if
+      // something is wrong
       let hardwareInputsCount = Device.getNumberOfHardwareInputs(offset);
-      let hardwareInputs = [];
+      container = t.querySelector('.app-logical_inputs-template--hardware_inputs div');
       for (let j = 0; j < hardwareInputsCount; j++) {
         let hw = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: j});
         let pinName = Device.TX.getItem('HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: hw * hardwareInputsSize});
-        hardwareInputs.push(pinName);
+
+        if (j) {
+          container.appendChild(mdl.createSpan(', '));
+        }
+
+        let span = mdl.createSpan(pinName);
+        container.appendChild(span);
       }
-      mdl.setTextContentRaw('.app-logical_inputs-template--hardware_inputs div', hardwareInputs.join(', '), t);
+
 
       let firstHardwareInput = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
       let firstHardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: firstHardwareInput * hardwareInputsSize});
@@ -138,6 +167,7 @@ class LogicalInputs {
       // Show position count only if type==switch or type==BCD
       Utils.setVisibility('.app-logical_inputs-template--position_count', (type === 2 || type === 3), t);
 
+      // Set the id and for attributes for all labels in the card
       mdl.setAttribute('.app-logical_inputs-template--labels div', 'id', 'app-logical_inputs--labels' + i, t);
       mdl.setAttribute('.app-logical_inputs-template--labels label', 'for', 'app-logical_inputs--labels' + i, t);
       mdl.setAttribute('.app-logical_inputs-template--position_count div', 'id', 'app-logical_inputs--position_count' + i, t);
@@ -149,19 +179,14 @@ class LogicalInputs {
       mdl.setAttribute('.app-logical_inputs-template--hardware_inputs div', 'id', 'app-logical_inputs--sub_type' + i, t);
       mdl.setAttribute('.app-logical_inputs-template--hardware_inputs label', 'for', 'app-logical_inputs--sub_type' + i, t);
 
+      // Let the button handler know which logical input index the card belongs to
       mdl.setAttribute('.app-logical_inputs-template--labels button', 'data-index', i, t);
       mdl.setAttribute('.app-logical_inputs-template--type button', 'data-index', i, t);
       mdl.setAttribute('.app-logical_inputs-template--sub_type button', 'data-index', i, t);
       mdl.setAttribute('.app-logical_inputs-template--hardware_inputs button', 'data-index', i, t);
       mdl.setAttribute('.app-logical_inputs-template--delete button', 'data-index', i, t);
 
-
-      let clone = document.importNode(t, true);
-
-      componentHandler.upgradeElement(clone.querySelector('.app-logical_inputs-template--position_count input'));
-      mdl.setSlider('.app-logical_inputs-template--position_count input', 'LOGICAL_INPUTS_POSITION_COUNT', clone);
-
-      this.list.insertBefore(clone, this.cardAddLogicalInput);
+      this.list.insertBefore(t, this.cardAddLogicalInput);
       ++this.logicalInputsCount;
     }
 

@@ -136,6 +136,10 @@ export function isString(obj) {
   return Object.prototype.toString.call(obj) === '[object String]';
 }
 
+export function isDefined(obj) {
+  return typeof obj !== 'undefined';
+}
+
 export function showPage(name) {
   // Hide all sections with class 'app-page'
   hide('.app-page');

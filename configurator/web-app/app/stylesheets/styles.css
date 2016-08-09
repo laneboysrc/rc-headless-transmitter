@@ -3,6 +3,12 @@ html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 
+/* Color for error messages */
+.error {
+  color: #d50000;
+  border-bottom: 1px solid #d50000;
+}
+
 /* Limit the size of the single-colum cards on large screens */
 section.section--center {
     max-width: 600px;

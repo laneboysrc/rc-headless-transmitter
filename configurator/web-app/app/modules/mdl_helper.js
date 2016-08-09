@@ -31,6 +31,18 @@ class MDLHelper {
     this.onChangeHandler = this._onchange.bind(this);
   }
 
+  createSpan(text, classes) {
+    let span = document.createElement('span');
+    let textNode = document.createTextNode(text);
+    span.appendChild(textNode);
+
+    if (Utils.isDefined(classes)) {
+      span.className = classes;
+    }
+
+    return span;
+  }
+
   setTextContent(selector, item, root) {
     root = root || document;
 

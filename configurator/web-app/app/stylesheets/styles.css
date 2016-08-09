@@ -299,3 +299,27 @@ span.mdl-list__item-primary-content label {
   padding-top: 0;
   padding-bottom: 0;
 }
+
+/* Hardware Inputs Order thin card */
+.app-hardware_inputs_order {
+  min-height: 0;
+}
+
+.app-hardware_inputs_order .mdl-data-table tbody tr,
+.app-hardware_inputs_order .mdl-data-table tbody td {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.app-hardware_inputs_order .mdl-card__supporting-text {
+  padding: 0;
+  width: 100%;
+}
+
+.app-hardware_inputs_order_updown {
+  width: 64px;
+}
+
+.app-hardware_inputs_order_updown button {
+  display: block;
+}

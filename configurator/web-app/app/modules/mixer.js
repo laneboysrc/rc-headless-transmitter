@@ -152,7 +152,6 @@ class Mixer {
       let dst = model.getItem('MIXER_UNITS_DST', {offset: offset});
 
       let t = document.importNode(this.template, true);
-      t.querySelector('section').classList.add('can-delete');
       mdl.setTextContent('.app-mixer-template-src', 'MIXER_UNITS_SRC', t);
       mdl.setTextContent('.app-mixer-template-dst', 'MIXER_UNITS_DST', t);
       mdl.setTextContentRaw('.app-mixer-template-mixer_unit', curve, t);

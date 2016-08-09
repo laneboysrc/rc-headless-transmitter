@@ -33,7 +33,6 @@ class HardwareInputs {
       let t = document.importNode(this.template, true);
       mdl.offset = offset;
 
-      t.querySelector('section').classList.add('can-delete');
       mdl.setTextContent('.mdl-card__title-text', 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', t);
       mdl.setTextContent('button', 'HARDWARE_INPUTS_TYPE', t);
       mdl.setAttribute('button', 'data-index', i, t);

@@ -180,8 +180,6 @@ class ModelList {
 
     for (let i = 0; i < this.models.length; i++) {
       let t = document.importNode(this.template, true);
-
-      t.querySelector('div').classList.add('can-delete');
       t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
       t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);
       mdl.setTextContentRaw('.app-model_list-list__template-name', this.models[i].name, t);

@@ -5,38 +5,42 @@
         <i class="material-icons">arrow_back</i>
       </button>
       <div class="mdl-layout-spacer"></div>
-      <span class="mdl-layout-title">Select multiple</span>
+      <span class="mdl-layout-title">Pick multiple items</span>
       <div class="mdl-layout-spacer"></div>
     </div>
   </header>
 
   <main class="mdl-layout__content" >
 
-    <!-- RF protocol type Card -->
+    <!-- Select Multiple Card -->
     <section class="section--center mdl-grid">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">Item name</h2>
+          <h2 id="app-select_multiple-name" class="mdl-card__title-text"></h2>
         </div>
-        <div class="mdl-card__supporting-text mdl-card--expand  ">
-          Item description.
-        </div>
-        <div class="mdl-card__actions mdl-card--border">
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="item1">
-            <input type="checkbox" id="item1" class="mdl-checkbox__input">
-            <span class="mdl-checkbox__label">SW1</span>
+        <div id="app-select_multiple-description" class="mdl-card__supporting-text">Item description.</div>
+
+        <div id="app-select_multiple-list" class="mdl-card__actions mdl-card--border">
+
+          <template id="app-select_multiple-template">
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect can-delete">
+            <input type="checkbox" class="mdl-checkbox__input">
+            <span class="mdl-checkbox__label"></span>
           </label>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="item2">
-            <input type="checkbox" id="item2" class="mdl-checkbox__input">
-            <span class="mdl-checkbox__label">SW2</span>
-          </label>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="item3">
-            <input type="checkbox" id="item3" class="mdl-checkbox__input">
-            <span class="mdl-checkbox__label">SW3</span>
-          </label>
+          </template>
+
         </div>
       </div>
     </section>
+
+    <!-- Floating Action Button to confirm the selection -->
+    <div class="app-floating-fab">
+      <div>
+        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored" onclick="SelectMultiple.accept_choice(event)">
+          <i class="material-icons">check</i>
+        </button>
+      </div>
+    </div>
 
   </main>
 </div>

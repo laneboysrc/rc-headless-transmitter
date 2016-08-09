@@ -144,7 +144,6 @@ class DeviceList {
 
     let mdl = new MDLHelper();
     let t = document.importNode(this.template, true);
-    t.querySelector('div').classList.add('can-delete');
     t.querySelector('button').setAttribute('data-index', index);
     mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
 

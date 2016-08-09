@@ -113,7 +113,6 @@ class LogicalInputs {
         t.querySelector('.app-logical_inputs-template--position_count input').setAttribute('MAX', 4);
       }
 
-      t.querySelector('section').classList.add('can-delete');
       mdl.setTextContent('.app-logical_inputs-template--type div', 'LOGICAL_INPUTS_TYPE', t);
       mdl.setTextContent('.app-logical_inputs-template--sub_type div', 'LOGICAL_INPUTS_SUB_TYPE', t);
       mdl.setTextContent('.app-logical_inputs-template--position_count div', 'LOGICAL_INPUTS_POSITION_COUNT', t);

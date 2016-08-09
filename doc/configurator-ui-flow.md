@@ -71,7 +71,7 @@
                                 - Unused logical inputs are hidden; last entry is "add new logical input"
                                 - Select type (and subtype if type is momentary) (button -> *single selection page*)
                                 - Select number of switch positions if type is switch (slider)
-                                - Select or Add/Remove Hardware inputs, depending on type (button -> *multiple selection page*)
+                                - Select or Add/Remove Hardware inputs, depending on type (button -> *multiple selection with order being important*, )
                                 - Add/Remove labels (button -> *multiple selection page*)
                     - Back: Show *Transmitter list*
                     - Context menu: Delete transmitter

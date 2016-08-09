@@ -93,6 +93,10 @@ class LogicalInputs {
 
     let index = parseInt(event.target.getAttribute('data-index'));
     console.log('LogicalInputs.editHardwareInputs()', index)
+
+    let size = this.schema.LOGICAL_INPUTS.s;
+    let offset = index * size;
+    location.hash = Utils.buildURL(['hardware_inputs_order', 'LOGICAL_INPUTS_HARDWARE_INPUTS', offset]);
   }
 
   //*************************************************************************

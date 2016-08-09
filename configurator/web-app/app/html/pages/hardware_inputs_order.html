@@ -1,0 +1,54 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--no-drawer-button mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="HardwareInputsOrder.back();">
+        <i class="material-icons">arrow_back</i>
+      </button>
+      <div class="mdl-layout-spacer"></div>
+      <span class="mdl-layout-title">Hardware inputs</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </header>
+
+  <main id="app-hardware_inputs_order-list" class="mdl-layout__content" >
+    <!-- Introduction Card -->
+    <section class="section--center mdl-grid">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Hardware Inputs</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Select the hardware inputs that belong to this logical input. Change
+          the order of the selected hardware inputs below.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="HardwareInputsOrder.edit(event);">
+            Select hardware inputs
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Individual hardware inputs Card, one for each hardware input -->
+    <template id="app-hardware_inputs_order-template">
+    <section class="section--center mdl-grid can-delete">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col app-hardware_inputs_order-hardware_inputs_order_unit" >
+        <div class="mdl-card__supporting-text">
+          <table class="mdl-data-table mdl-js-data-table">
+          <tbody>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric app-hardware_inputs_order-template-name"></td>
+              <td class="mdl-data-table__cell--non-numeric app-hardware_inputs_order-hardware_inputs_order_unit_updown">
+                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-hardware_inputs_order-template-up" onclick="HardwareInputsOrder.up(event, this);"><i class="material-icons">keyboard_arrow_up</i></button>
+                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-hardware_inputs_order-template-down" onclick="HardwareInputsOrder.down(event, this);"><i class="material-icons">keyboard_arrow_down</i></button>
+              </td>
+            </tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    </template>
+
+  </main>
+</div>

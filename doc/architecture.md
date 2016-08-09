@@ -115,8 +115,9 @@ There are several types of *logical inputs* available
             * Transmitter beeps the current number?
         * Can have a two Momentary type *Hardware input* assigned
             * up/down
+        * n=2: can have a on/off switch *Hardware input* assigned
         * n=3: can have a single 3-position switch *Hardware input* assigned
-        * n=2,4..12 can have n on/off switch *Hardware input* assigned
+        * n=4..12 can have n on/off switch *Hardware input* assigned
             * In theory we could do with n-1 digital inputs, using the state when all inputs are open as first position. However, this may cause issues that the first position is triggered when switching between the other positions, as contacts may temporarily open.
             * Therefore it is better to use n inputs and treat "all inputs open"as well as "more than one input closed" as error condition.
 * BCD switch n=2..4

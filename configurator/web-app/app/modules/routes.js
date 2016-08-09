@@ -14,6 +14,8 @@ var routes = {
     '#/edit_switch/:offset/m/:model(/t/:tx)': EditSwitch,
     '#/hardware_inputs/m/:model/t/:tx': HardwareInputs,
     '#/hardware_inputs/t/:tx': HardwareInputs,
+    '#/hardware_inputs_order/:item/:offset/m/:model/t/:tx': HardwareInputsOrder,
+    '#/hardware_inputs_order/:item/:offset/t/:tx': HardwareInputsOrder,
     '#/limits/:channel/m/:model(/t/:tx)': Limits,
     '#/logical_inputs/m/:model/t/:tx': LogicalInputs,
     '#/logical_inputs/t/:tx': LogicalInputs,

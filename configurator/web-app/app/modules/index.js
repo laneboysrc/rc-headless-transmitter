@@ -13,6 +13,7 @@ require('./device_list');
 require('./edit_curve');
 require('./edit_switch');
 require('./hardware_inputs');
+require('./hardware_inputs_order');
 require('./limits');
 require('./logical_inputs');
 require('./mixer');

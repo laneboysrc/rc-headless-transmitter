@@ -411,6 +411,10 @@ class Device {
           }
           return 1;
         }
+        //  2 or 3 position are covered by a single hardware input
+        if (positionCount < 4) {
+          return 1;
+        }
         return positionCount;
 
       case 3:   // BCD switch
@@ -428,6 +432,11 @@ class Device {
       default:
         return 0;
     }
+  }
+
+  //*************************************************************************
+  isValidHardwareType(type) {
+    return true;
   }
 }
 

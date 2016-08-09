@@ -70,4 +70,10 @@
 - Edit hardware inputs
   - high-light suitable HW inputs depend on the logical input type
 
+- Make the number of switch positions depend on the max number of hardware inputs
 
+- Make isValidHardwareType generic, source from logicalInputs
+
+- Config: make the type of logical_inputs_hardware_inputs refer to the pin names. This will solve recursive resolution. We can then also take the
+pin name out of the config to save space
+- Config: remove schematic reference, rather have schematic use pin names

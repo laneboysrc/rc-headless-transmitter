@@ -78,14 +78,14 @@
 - Edit logical input sub-type
 - Edit hardware inputs
 
-
-- Logical inputs: when the position count slider is updated, update the position count number
-- Logical inputs: when the position count slider is updated, update the number of hardware inputs shown
-- Logical inputs: when selecting a new logical input type, adjust all other parameters to be correct (e.g. hw inputs)
-- Logical inputs: suitable HW inputs depend on the logical input type
-- Logical inputs: number of HW inputs depends on the logical input type, sub type, and position count
-- Logical inputs: Even though it is not needed, shift elements down when deleting logical inputs
-- Logical inputs: show ADD card only when emtpy slots available
+- Logical inputs
+  - when the position count slider is updated, update the position count number
+  - when the position count slider is updated, update the number of hardware inputs shown
+  - show when something is wrong with the selected hardware inputs (e.g. a digital input selected with an analog type, or vice/versa)
+  - Select HW input: high-light suitable HW inputs depend on the logical input type
+  - Labels: show duplicates
+  - Label: highlight ones that are not taken yet in select multiple
+  - Even though it is not needed, shift elements down when deleting logical inputs
 
 
 - Logical inputs: shrink items within card a bit

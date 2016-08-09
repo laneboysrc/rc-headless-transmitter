@@ -55,27 +55,20 @@ class SelectSingle {
 
     let current_choice = device.getItem(this.item, {offset: this.offset});
 
-    let t = this.template;
     for (let i = 0; i < choices.length; i++) {
       let entry = choices[i];
 
+      let t = document.importNode(this.template, true);
       t.querySelector('span').textContent = entry;
       t.querySelector('input').id = 'app-select_single__item' + i;
       t.querySelector('input').value = entry;
+      t.querySelector('input').checked = (entry === current_choice);
       t.querySelector('label').setAttribute('for', 'app-select_single__item' + i);
-
       if (activeItems.includes(entry)) {
         t.querySelector('label').classList.add('mdl-color-text--primary');
       }
-      else {
-        t.querySelector('label').classList.remove('mdl-color-text--primary');
-      }
 
-      let clone = document.importNode(t, true);
-      if (entry === current_choice) {
-        clone.querySelector('input').checked = true;
-      }
-      this.list.appendChild(clone);
+      this.list.appendChild(t);
     }
 
     Utils.showPage('select_single');

@@ -151,7 +151,7 @@ class Mixer {
       let curve = curve_type + ' ' + op;
       let dst = model.getItem('MIXER_UNITS_DST', {offset: offset});
 
-      let t = this.template;
+      let t = document.importNode(this.template, true);
       t.querySelector('section').classList.add('can-delete');
       mdl.setTextContent('.app-mixer-template-src', 'MIXER_UNITS_SRC', t);
       mdl.setTextContent('.app-mixer-template-dst', 'MIXER_UNITS_DST', t);
@@ -161,9 +161,7 @@ class Mixer {
       mdl.setAttribute('.app-mixer-template-up', 'data-index', i, t);
       mdl.setAttribute('.app-mixer-template-down', 'data-index', i, t);
 
-
-      let clone = document.importNode(t, true);
-      this.mixerList.insertBefore(clone, this.cardAddMixerUnit);
+      this.mixerList.insertBefore(t, this.cardAddMixerUnit);
     }
 
     this._updateUpDownButtonVisibility();

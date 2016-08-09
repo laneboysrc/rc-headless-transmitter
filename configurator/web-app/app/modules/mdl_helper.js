@@ -69,6 +69,11 @@ class MDLHelper {
     };
     let value = Device[this.devName].getItem(item, options);
     let element = root.querySelector(selector);
+
+    // Ensure the element is already upgraded. This is important for dynamically
+    // added items
+    componentHandler.upgradeElement(element);
+
     element.checked = value;
     element.parentNode.MaterialSwitch.checkToggleState();
     this.setChangeHandler(element, item);
@@ -87,6 +92,11 @@ class MDLHelper {
     }
 
     let element = root.querySelector(selector);
+
+    // Ensure the element is already upgraded. This is important for dynamically
+    // added items
+    componentHandler.upgradeElement(element);
+
     element.MaterialSlider.change(value);
     this.setChangeHandler(element, item);
   }

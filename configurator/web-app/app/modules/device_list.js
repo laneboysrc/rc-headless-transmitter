@@ -143,13 +143,12 @@ class DeviceList {
     Utils.hide(this.loading);
 
     let mdl = new MDLHelper();
-    let t = this.template;
+    let t = document.importNode(this.template, true);
     t.querySelector('div').classList.add('can-delete');
     t.querySelector('button').setAttribute('data-index', index);
     mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
 
-    let clone = document.importNode(t, true);
-    this.container.appendChild(clone);
+    this.container.appendChild(t);
 
     this.showToast = true;
   }

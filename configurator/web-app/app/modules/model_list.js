@@ -175,19 +175,19 @@ class ModelList {
     });
 
     let mdl = new MDLHelper('MODEL');
-    let t = this.template;
 
     Utils.clearDynamicElements(this.list);
 
     for (let i = 0; i < this.models.length; i++) {
+      let t = document.importNode(this.template, true);
+
       t.querySelector('div').classList.add('can-delete');
       t.querySelector('button.app-model_list--load').setAttribute('data-index', i);
       t.querySelector('button.app-model_list--edit').setAttribute('data-index', i);
       mdl.setTextContentRaw('.app-model_list-list__template-name', this.models[i].name, t);
       mdl.setIcon('.app-model_list-list__template-icon', this.models[i].tag, t);
 
-      let clone = document.importNode(t, true);
-      this.container.appendChild(clone);
+      this.container.appendChild(t);
     }
 
     if (this.models.length !==  0) {

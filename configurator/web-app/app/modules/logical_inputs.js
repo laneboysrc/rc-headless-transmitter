@@ -108,8 +108,6 @@ class LogicalInputs {
       let mdl = new MDLHelper('TX', {offset:  offset});
       let t = document.importNode(this.template, true);
 
-      componentHandler.upgradeElement(t.querySelector('.app-logical_inputs-template--position_count input'));
-
       // Set the slider MAX to 4 if the logical input type is BCD switch
       if (type === 3) {
         t.querySelector('.app-logical_inputs-template--position_count input').setAttribute('MAX', 4);

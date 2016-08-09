@@ -72,14 +72,13 @@ class TransmitterList {
     });
 
     let mdl = new MDLHelper('TX');
-    let t = this.template;
     for (let i = 0; i < this.transmitters.length; i++) {
+      let t = document.importNode(this.template, true);
       t.querySelector('div').classList.add('can-delete');
       t.querySelector('button.app-tramsmitter_list--edit').setAttribute('data-index', i);
       mdl.setTextContentRaw('.app-tramsmitter_list-list__template-name', this.transmitters[i].name, t);
 
-      let clone = document.importNode(t, true);
-      this.container.appendChild(clone);
+      this.container.appendChild(t);
     }
 
     Utils.setVisibility(this.list, this.transmitters.length !==  0);

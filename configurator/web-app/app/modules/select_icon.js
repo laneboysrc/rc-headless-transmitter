@@ -31,23 +31,19 @@ class SelectIcon {
     let current_choice = device.getItem(this.item, {offset: this.offset});
     let choices = mdl.icons;
 
-    let t = this.template;
     let i = 0;
     for (let entry in choices) {
       if (!choices.hasOwnProperty(entry)) {
         continue;
       }
 
+      let t = document.importNode(this.template, true);
       t.querySelector('i').textContent = choices[entry];
       t.querySelector('input').id = 'app-select_icon__item' + i;
       t.querySelector('input').value = entry;
       t.querySelector('label').setAttribute('for', 'app-select_icon__item' + i);
-
-      let clone = document.importNode(t, true);
-      if (parseInt(entry) === current_choice) {
-        clone.querySelector('input').checked = true;
-      }
-      this.list.appendChild(clone);
+      t.querySelector('input').checked = (parseInt(entry) === current_choice);
+      this.list.appendChild(t);
       ++i;
     }
 

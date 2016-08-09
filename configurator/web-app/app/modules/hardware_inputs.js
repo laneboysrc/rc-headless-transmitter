@@ -30,7 +30,7 @@ class HardwareInputs {
         continue;
       }
 
-      let t = this.template;
+      let t = document.importNode(this.template, true);
       mdl.offset = offset;
 
       t.querySelector('section').classList.add('can-delete');
@@ -41,8 +41,7 @@ class HardwareInputs {
       Utils.setVisibility('.app-hardware_inputs__analog', pcbInputType === 1, t);
       Utils.setVisibility('.app-hardware_inputs__digital', pcbInputType === 2, t);
 
-      let clone = document.importNode(t, true);
-      this.list.appendChild(clone);
+      this.list.appendChild(t);
     }
 
     Utils.showPage('hardware_inputs');

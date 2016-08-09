@@ -86,6 +86,3 @@
   - Even though it is not needed, shift elements down when deleting logical inputs
 
 - Logical inputs: shrink items within card a bit
-
-- Clone all templates before modifying them
-  - Auto upgrade elements in setSlider etc

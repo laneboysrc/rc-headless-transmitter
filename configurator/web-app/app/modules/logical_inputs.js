@@ -199,16 +199,43 @@ class LogicalInputs {
       let mdl = new MDLHelper('TX', {offset:  offset});
       let t = document.importNode(this.template, true);
 
-      // Set the slider MAX to 4 if the logical input type is BCD switch
-      if (type === 3) {
-        t.querySelector('.app-logical_inputs-template--position_count input').setAttribute('MAX', 4);
+
+      // Clamp positionCount to allowed range for switch and BCD switch
+      let positionCount = Device.TX.getItem('LOGICAL_INPUTS_POSITION_COUNT', {offset: offset});
+      if ([2, 3].includes(type)) {   // Switch, BCD switch
+        let min = 2;
+        let max = 12;
+
+        if (type === 3) {  // BCD switch
+          // Set the slider MAX to 4 if the logical input type is BCD switch
+          max = 4;
+        }
+
+        t.querySelector('.app-logical_inputs-template--position_count input').setAttribute('MIN', min);
+        t.querySelector('.app-logical_inputs-template--position_count input').setAttribute('MAX', max);
+
+        // Keep the position count in range
+        if (positionCount < min) {
+          positionCount = min;
+          Device.TX.setItem('LOGICAL_INPUTS_POSITION_COUNT', positionCount, {offset: offset});
+        }
+        else if (positionCount > max) {
+          positionCount = max;
+          Device.TX.setItem('LOGICAL_INPUTS_POSITION_COUNT', positionCount, {offset: offset});
+        }
       }
+
 
       mdl.setTextContent('.app-logical_inputs-template--type div', 'LOGICAL_INPUTS_TYPE', t);
       mdl.setTextContent('.app-logical_inputs-template--sub_type div', 'LOGICAL_INPUTS_SUB_TYPE', t);
       mdl.setTextContent('.app-logical_inputs-template--position_count div', 'LOGICAL_INPUTS_POSITION_COUNT', t);
       mdl.setSlider('.app-logical_inputs-template--position_count input', 'LOGICAL_INPUTS_POSITION_COUNT', t);
 
+      // Register onchange and oninput handlers to live-update switch position
+      // related items
+      let positionCountElement = t.querySelector('.app-logical_inputs-template--position_count div');
+      t.querySelector('.app-logical_inputs-template--position_count input').addEventListener('change', this._onchange.bind(this, i));
+      t.querySelector('.app-logical_inputs-template--position_count input').addEventListener('input', this._oninput.bind(this, i, positionCountElement));
 
       // Create individual <span> for the labels
       // This way we can mark duplicates
@@ -237,7 +264,6 @@ class LogicalInputs {
 
       let firstHardwareInput = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
       let firstHardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: firstHardwareInput * hardwareInputsSize});
-      let positionCount = Device.TX.getItem('LOGICAL_INPUTS_POSITION_COUNT', {offset: offset});
 
       // Create individual <span> for the hardwareInputs
       // This way we can check if they fit the type/sub-type and mark them if
@@ -342,6 +368,18 @@ class LogicalInputs {
 
     // Show the Add Logical Input card only if there are available slots
     Utils.setVisibility('#app-logical_inputs-add', this.logicalInputsCount < this.logicalInputsMaxCount);
+  }
+
+  //*************************************************************************
+  _onchange(index, event) {
+    this._populateLogicalInputsList();
+  }
+
+  //*************************************************************************
+  _oninput(index, positionCountElement, event) {
+    if (positionCountElement.textContent !== event.target.value) {
+      positionCountElement.textContent = event.target.value;
+    }
   }
 }
 

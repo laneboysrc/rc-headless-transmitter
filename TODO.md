@@ -72,10 +72,6 @@
 - Edit hardware inputs
   - high-light suitable HW inputs depend on the logical input type
 
-- Logical inputs
-  - when the position count slider is updated, update the position count number
-  - when the position count slider is updated, update the number of hardware inputs shown
-
 - Make help page for logical inputs to explain valid combinations
 
 - How to cancel pending snackbars instead of just hiding?

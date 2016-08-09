@@ -13,6 +13,9 @@ class LogicalInputs {
     this.logicalInputsCount = 0;
     this.logicalInputsMaxCount = 0;
     this.schema = undefined;
+
+    this.UNDO = undefined;
+    this.snackbar = document.querySelector('#app-logical_inputs-snackbar');
   }
 
   //*************************************************************************
@@ -110,10 +113,68 @@ class LogicalInputs {
 
     let index = parseInt(event.target.getAttribute('data-index'));
     console.log('LogicalInputs.delete()', index)
+
+    this.UNDO = {
+      index: index,
+      data: Device.TX.getItem('LOGICAL_INPUTS', {index: index})
+    };
+
+    // Bring all mixer units behind 'index' forward
+    let schema = Device.TX.getSchema();
+    let offset = schema.LOGICAL_INPUTS.o;
+    let size = schema.LOGICAL_INPUTS.s;
+
+    let dst = offset + (index * size);
+    let src = offset + ((index + 1) * size);
+    let count = (this.logicalInputsMaxCount - 1 - index) * size;
+
+    Device.TX.rawCopy(src, dst, count);
+
+    // Make the last item to an unused mixer unit
+    Device.TX.setItem('LOGICAL_INPUTS', new Uint8Array(size), {index: this.logicalInputsMaxCount - 1});
+
+    this._populateLogicalInputsList();
+
+    Utils.show(this.snackbar);
+    let data = {
+      message: 'Logical input unit deleted.',
+      timeout: 5000,
+      actionHandler: this._undoDelete.bind(this),
+      actionText: 'Undo'
+    };
+    this.snackbar.MaterialSnackbar.showSnackbar(data);
+  }
+
+  //*************************************************************************
+  _undoDelete() {
+    console.log('_undoDelete')
+    if (!this.UNDO) {
+      return;
+    }
+
+    // Move units from this.UNDO.index on backwards
+    let index = this.UNDO.index;
+    let schema = Device.TX.getSchema();
+    let offset = schema.LOGICAL_INPUTS.o;
+    let size = schema.LOGICAL_INPUTS.s;
+
+    let src = offset + (index * size);
+    let dst = offset + ((index + 1) * size);
+    let count = (this.logicalInputsMaxCount - 1 - index) * size;
+
+    Device.TX.rawCopy(src, dst, count);
+
+    // Put the deleted item back in place
+    Device.TX.setItem('LOGICAL_INPUTS', this.UNDO.data, {index: index});
+
+    this.UNDO = undefined;
+    this._populateLogicalInputsList();
   }
 
   //*************************************************************************
   _populateLogicalInputsList() {
+    Utils.hide(this.snackbar);
+
     let hardwareInputsSize = this.schema.HARDWARE_INPUTS.s;
     let logicalInputs = this.schema.LOGICAL_INPUTS;
     let logicalInputsLabels = this.schema.LOGICAL_INPUTS_LABELS;

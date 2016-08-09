@@ -69,9 +69,6 @@
 
 - Delete transmitter
 
-- Delete logical input
-  - Even though it is not needed, shift elements down when deleting logical inputs
-  - Undo function
 - Edit hardware inputs
   - high-light suitable HW inputs depend on the logical input type
 
@@ -80,3 +77,5 @@
   - when the position count slider is updated, update the number of hardware inputs shown
 
 - Make help page for logical inputs to explain valid combinations
+
+- How to cancel pending snackbars instead of just hiding?

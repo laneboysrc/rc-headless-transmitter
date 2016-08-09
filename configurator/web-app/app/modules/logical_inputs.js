@@ -266,7 +266,7 @@ class LogicalInputs {
       }
 
 
-      let firstHardwareInput = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
+      let firstHardwareInput = Device.TX.getItemNumber('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
       let firstHardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: firstHardwareInput * hardwareInputsSize});
 
       // Create individual <span> for the hardwareInputs
@@ -275,8 +275,8 @@ class LogicalInputs {
       let hardwareInputsCount = Device.getNumberOfHardwareInputs(offset);
       container = t.querySelector('.app-logical_inputs-template--hardware_inputs div');
       for (let j = 0; j < hardwareInputsCount; j++) {
-        let hw = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: j});
-        let pinName = Device.TX.getItem('HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: hw * hardwareInputsSize});
+        let pinName = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: j});
+        let hw = Device.TX.getItemNumber('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: j});
         let hardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: hw * hardwareInputsSize});
 
         if (j) {

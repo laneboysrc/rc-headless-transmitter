@@ -73,8 +73,8 @@ class HardwareInputsOrder {
 
     for (let j = 0; j < hardwareInputsCount; j++) {
       let t = document.importNode(this.template, true);
-      let hw = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: this.offset, index: j});
-      let pinName = Device.TX.getItem('HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: hw * hardwareInputsSize});
+      let pinName = Device.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: this.offset, index: j});
+      let hw = Device.TX.getItemNumber('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: this.offset, index: j});
       let hardwareInputType = Device.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: hw * hardwareInputsSize});
 
       mdl.setTextContentRaw('.app-hardware_inputs_order-template-name', pinName, t);

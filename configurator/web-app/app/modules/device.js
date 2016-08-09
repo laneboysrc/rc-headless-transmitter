@@ -396,7 +396,7 @@ class Device {
     let type = this.TX.getItemNumber('LOGICAL_INPUTS_TYPE', {offset: offset});
     let subType = this.TX.getItemNumber('LOGICAL_INPUTS_SUB_TYPE', {offset: offset});
     let positionCount = this.TX.getItem('LOGICAL_INPUTS_POSITION_COUNT', {offset: offset});
-    let firstHardwareInput = this.TX.getItem('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
+    let firstHardwareInput = this.TX.getItemNumber('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
     let firstHardwareInputType = this.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: firstHardwareInput * hardwareInputsSize});
 
     switch (type) {

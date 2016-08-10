@@ -71,8 +71,10 @@
 
 - Make isValidHardwareType generic, source from logicalInputs
 
-- Config: make the type of logical_inputs_hardware_inputs refer to the pin names. This will solve recursive resolution. We can then also take the
-pin name out of the config to save space
 - Config: remove schematic reference, rather have schematic use pin names
+- Config: make the type of `logical_inputs_hardware_inputs` refer to the pin names. This will solve recursive resolution.
+  - However, we want to do that when we load the transmitter, so that we can use the same config on different physical hardware that has other pin references. This smells like a hack, but will make the rest of the code better. Since the pin names are read-only, we can safely do that whenever we create a new DB object for a transmitter. Since we can only have one transmitter loaded at a given time, this will work.
+  - We go through all PCB inputs, and collect names where the `pcb_input_type` is not 0
+  - We also have to think about how to deal with unused pins. Best is to filter them out in select_single, where we already have a way to do that
 
 - Toast and Snackbar text needs to move into HTML for translation

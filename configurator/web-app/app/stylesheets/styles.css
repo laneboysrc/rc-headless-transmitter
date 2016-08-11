@@ -271,6 +271,7 @@ span.app-transmitter_details {
 }
 span.app-transmitter_details i {
   font-size: 40px;
+  color: #757575;
 }
 form.app-transmitter_details div.mdl-textfield {
   width: 180px;

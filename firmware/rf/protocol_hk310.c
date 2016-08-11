@@ -25,6 +25,7 @@
 #define PACKET_SIZE 10
 #define NUMBER_OF_BIND_PACKETS 4
 #define BIND_CHANNEL 81
+#define CONFIGURATOR_CHANNEL 79
 #define FAILSAFE_PRESCALER_COUNT 17
 
 typedef enum {
@@ -45,6 +46,7 @@ static uint8_t hop_index = 0;
 static bool bind_enabled = false;
 
 static const uint8_t bind_address[ADDRESS_SIZE] = {0x12, 0x23, 0x23, 0x45, 0x78};
+static const uint8_t configurator_address[ADDRESS_SIZE] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 
 // This counter determines how often failsafe packets are sent in relation to
 // stick packets. The failsafe packets are sent every FAILSAFE_PRESCALER_COUNT.
@@ -147,12 +149,20 @@ static void build_bind_packets(void)
 
 
 // ****************************************************************************
-static void send_stick_packet(void)
+static void setup_stick_packet(void)
 {
+    // Disable Auto Acknoledgement on all pipes
+    NRF24_write_register(NRF24_EN_AA, 0x00);
+    NRF24_set_bitrate(250);
     NRF24_set_power(NRF24_POWER_0dBm);
     NRF24_write_register(NRF24_RF_CH, cfg->hop_channels[hop_index]);
     NRF24_write_multi_byte_register(NRF24_TX_ADDR, cfg->address, ADDRESS_SIZE);
+}
 
+
+// ****************************************************************************
+static void send_stick_packet(void)
+{
     // Send failsafe packets instead of stick pacekts every
     // FAILSAFE_PRESCALER_COUNT times.
     if (failsafe_counter == 0) {
@@ -161,7 +171,6 @@ static void send_stick_packet(void)
     else {
         NRF24_write_payload(stick_packet, PACKET_SIZE);
     }
-
 }
 
 
@@ -178,8 +187,15 @@ static void send_bind_packet(void)
 
 
 // ****************************************************************************
-static void send_programming_box_packet(void)
+static void send_configurator_packet(void)
 {
+    // FIXME: if not connected, do this only if first hop channel
+
+    NRF24_write_register(NRF24_EN_AA, 0x01);    // Enable Auto-ack on pipe 0
+    NRF24_set_bitrate(2);                       // 2 Mbps
+    NRF24_set_power(NRF24_POWER_n18dBm);
+    NRF24_write_register(NRF24_RF_CH, CONFIGURATOR_CHANNEL);
+    NRF24_write_multi_byte_register(NRF24_TX_ADDR, configurator_address, ADDRESS_SIZE);
 }
 
 
@@ -191,6 +207,7 @@ static void nrf_transmit_done_callback(void)
 
     switch (frame_state) {
         case SEND_STICK1:
+            setup_stick_packet();
             send_stick_packet();
             frame_state = SEND_STICK2;
             break;
@@ -206,7 +223,7 @@ static void nrf_transmit_done_callback(void)
             break;
 
         case SEND_PROGRAMBOX:
-            send_programming_box_packet();
+            send_configurator_packet();
             frame_state = FRAME_DONE;
 
             hop_index = (hop_index + 1) % NUMBER_OF_HOP_CHANNELS;
@@ -283,11 +300,13 @@ void PROTOCOL_HK310_init(void)
     // nRF24 initialization
     NRF24_write_register(NRF24_SETUP_AW, NRF24_ADDRESS_WIDTH_5_BYTES);
 
-    // Disable Auto Acknoledgement on all pipes
-    NRF24_write_register(NRF24_EN_AA, 0x00);
+    // Enable dynamic ACK payload on Pipe 0
+    NRF24_write_register(NRF24_DYNPD, 0x01);
+    NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY |
+        NRF24_EN_DPL);
 
-    // Set bitrate to 250 kbps
-    NRF24_set_bitrate(250);
+    // No Auto-retransmit; ARD is 500us (required for 32 byte payload at 2 Mbps)
+    NRF24_write_register(NRF24_SETUP_RETR, 0x10);
 
     // TX mode, 2-byte CRC, power-up, Enable TX interrupt
     //

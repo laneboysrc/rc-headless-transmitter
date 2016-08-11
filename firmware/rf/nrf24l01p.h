@@ -65,11 +65,14 @@
 #define NRF24_FIFO_STATUS     0x17        // FIFO Status Register
 #define NRF24_DYNPD           0x1c        // Enable dynamic payload length
 #define NRF24_FEATURE         0x1d        // Feature register
+    #define NRF24_EN_DYN_ACK  1
+    #define NRF24_EN_ACK_PAY  2
+    #define NRF24_EN_DPL      4
 
 #define NRF24_POWER_n18dBm    0
 #define NRF24_POWER_n12dBm    1
 #define NRF24_POWER_n6dBm     2
-#define NRF24_POWER_0dBm     3
+#define NRF24_POWER_0dBm      3
 
 //******************************************************************************
 void NRF24_init(void);

@@ -1,11 +1,6 @@
 - Add sensible failsafe configuration
 
 - Configurator nRF protocol
-- Configurator Wi-Fi protocol
-  - Using UART and Websocket, Python
-  - Using nRF and Websocket, ESP8622
-- Configurator UART protocol
-- Configurator BT protocol
 
 - Add auto-stick calibration function
     - Applies to all analog inputs
@@ -24,6 +19,13 @@
 - Build a separate executable that dumps the configuration, instead of having
   the main app do it
 
+- Center detent: beep when center (configurable?)
+
+- Beep when throttle not 0 at start of transmitter, and refuse operation
+
+- Beep SOS when config broken
+
+
 ## configurator
 - Offline mode
 
@@ -32,7 +34,6 @@
     - File storage using JSON?
     - Custom REST protocol?
   - Look into Redis
-
 
 - Show battery voltage on device_list
 
@@ -50,16 +51,13 @@
 - checkout beforeinstallprompt in manifest.json
 
 
-- Center detent: beep when center (configurable?)
-
-- Beep when throttle not 0 at start of transmitter, and refuse operation
-
-- Beep SOS when config broken
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
 - Toast and Snackbar text needs to move into HTML for translation
+
+
 
 - Curve editing: show appropriate points and adjust their name
 
@@ -70,4 +68,8 @@
 - LogicalInputs: Scroll to created logical input after performing 'add'
 
 - Delete transmitter
+
+
+- Stick calibration
+
 

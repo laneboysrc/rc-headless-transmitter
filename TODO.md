@@ -67,8 +67,11 @@
 
 - Delete transmitter
 
-- Make select multiple number depend on logical input type, i.e. analog can only have one input
 
 - Config: remove schematic reference, rather have schematic use pin names
+
+- Make select multiple number depend on logical input type, i.e. analog can only have one input
+
+- Add another logical input needs a menu
 
 - Toast and Snackbar text needs to move into HTML for translation

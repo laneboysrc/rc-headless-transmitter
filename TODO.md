@@ -59,17 +59,17 @@
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
+- Toast and Snackbar text needs to move into HTML for translation
+
 - Curve editing: show appropriate points and adjust their name
 
 - Make help page for logical inputs to explain valid combinations
 
 - ModelList needs a loading indicator while populating the available models
 
+- LogicalInputs: Scroll to created logical input after performing 'add'
+
 - Delete transmitter
 
 
-- Config: remove schematic reference, rather have schematic use pin names
-
 - Make select multiple number depend on logical input type, i.e. analog can only have one input
-
-- Toast and Snackbar text needs to move into HTML for translation

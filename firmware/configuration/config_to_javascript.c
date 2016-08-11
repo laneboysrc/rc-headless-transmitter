@@ -157,11 +157,6 @@ void CONFIG_dump_javascript_information(void)
         1,
         membersizeof(tx_t, hardware_inputs[0].pcb_input.pin_name) / sizeof(config.tx.hardware_inputs[0].pcb_input.pin_name[0]));
 
-    sync_printf(m, "HARDWARE_INPUTS_PCB_INPUT_SCHEMATIC_REFERENCE", "c",
-        offsetof(tx_t, hardware_inputs[0].pcb_input.schematic_reference),
-        1,
-        membersizeof(tx_t, hardware_inputs[0].pcb_input.schematic_reference) / sizeof(config.tx.hardware_inputs[0].pcb_input.schematic_reference[0]));
-
     sync_printf(m, "HARDWARE_INPUTS_TYPE", "hardware_input_type_t",
         offsetof(tx_t, hardware_inputs[0].type),
         membersizeof(tx_t, hardware_inputs[0].type),
@@ -177,12 +172,12 @@ void CONFIG_dump_javascript_information(void)
         sizeof(logical_input_t),
         membersizeof(tx_t, logical_inputs) / sizeof(logical_input_t));
 
-    sync_printf(m, "LOGICAL_INPUTS_TYPE", "input_type_t", "Input type"
+    sync_printf(m, "LOGICAL_INPUTS_TYPE", "input_type_t", "Input type",
         offsetof(tx_t, logical_inputs[0].type),
         membersizeof(tx_t, logical_inputs[0].type),
         1);
 
-    sync_printf(m, "LOGICAL_INPUTS_SUB_TYPE", "input_sub_type_t", "Push-button behavior"
+    sync_printf(m, "LOGICAL_INPUTS_SUB_TYPE", "input_sub_type_t", "Push-button behavior",
         offsetof(tx_t, logical_inputs[0].sub_type),
         membersizeof(tx_t, logical_inputs[0].sub_type),
         1);
@@ -192,7 +187,7 @@ void CONFIG_dump_javascript_information(void)
         membersizeof(tx_t, logical_inputs[0].position_count),
         1);
 
-    sync_printf(m, "LOGICAL_INPUTS_HARDWARE_INPUTS", "u", "Hardware inputs"
+    sync_printf(m, "LOGICAL_INPUTS_HARDWARE_INPUTS", "u", "Hardware inputs",
         offsetof(tx_t, logical_inputs[0].hardware_inputs),
         sizeof(port_t),
         membersizeof(tx_t, logical_inputs[0].hardware_inputs) / sizeof(port_t));

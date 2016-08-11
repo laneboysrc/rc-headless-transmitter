@@ -23,7 +23,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "STM32F1 NRF24L01 RC transmitter"
-Date "19 jun 2016"
+Date "11 aug 2016"
 Rev "1"
 Comp "LANE Boys RC"
 Comment1 ""
@@ -283,23 +283,23 @@ Battery level\nsensing
 Text Label 4050 1800 0    60   ~ 0
 ADC0
 Text Label 4050 1950 0    60   ~ 0
-ADC1
+PA1/ADC1
 Text Label 4050 2100 0    60   ~ 0
-ADC2
+PA2/ADC2
 Text Label 4050 2250 0    60   ~ 0
-ADC3
+PA3/ADC3
 Text Label 4050 2400 0    60   ~ 0
-ADC4
+PA4/ADC4
 Text Label 4050 2550 0    60   ~ 0
-ADC5
+PA5/ADC5
 Text Label 4050 2700 0    60   ~ 0
-ADC6
+PA6/ADC6
 Text Label 4050 2850 0    60   ~ 0
-ADC7
+PA7/ADC7
 Text Label 7550 1800 2    60   ~ 0
-ADC8
+PB0/ADC8
 Text Label 7550 1950 2    60   ~ 0
-ADC9
+PB1/ADC9
 Text Label 4050 3000 0    60   ~ 0
 IRQ
 $Comp
@@ -556,35 +556,35 @@ Wire Wire Line
 	1650 1350 1950 1350
 Connection ~ 1950 1750
 Text Label 2450 1150 2    60   ~ 0
-ADC1
+PA1/ADC1
 Text Label 2450 1550 2    60   ~ 0
-ADC2
+PA2/ADC2
 Text Label 2450 1950 2    60   ~ 0
-ADC3
+PA3/ADC3
 Text Label 2450 2350 2    60   ~ 0
-ADC4
+PA4/ADC4
 Text Label 2450 2750 2    60   ~ 0
-ADC5
+PA5/ADC5
 Text Label 2450 3150 2    60   ~ 0
-ADC6
+PA6/ADC6
 Text Label 2450 3550 2    60   ~ 0
-ADC7
+PA7/ADC7
 Text Label 2450 3950 2    60   ~ 0
-ADC8
+PB0/ADC8
 Text Label 2450 4350 2    60   ~ 0
-ADC9
+PB1/ADC9
 Text Label 2450 4750 2    60   ~ 0
-SW1
+PB11
 Text Label 2450 5150 2    60   ~ 0
-SW2
+PB10
 Wire Wire Line
 	7550 3300 7100 3300
 Wire Wire Line
 	7550 3150 7100 3150
 Text Label 7550 3150 2    60   ~ 0
-SW2
+PB10
 Text Label 7550 3300 2    60   ~ 0
-SW1
+PB11
 $Comp
 L GND #PWR015
 U 1 1 57204AD8
@@ -1029,17 +1029,17 @@ Wire Wire Line
 Wire Wire Line
 	7550 3000 7100 3000
 Text Label 7550 2100 2    60   ~ 0
-SW3
+PB3
 Text Label 7550 2250 2    60   ~ 0
-SW4
+PB4
 Text Label 7550 2400 2    60   ~ 0
-SW5
+PB5
 Text Label 7550 2550 2    60   ~ 0
-SW6
+PB6
 Text Label 7550 2700 2    60   ~ 0
-SW7
+PB7
 Text Label 7550 2850 2    60   ~ 0
-SW8
+PB8
 Text Label 7550 3000 2    60   ~ 0
-SW9
+PB9
 $EndSCHEMATC

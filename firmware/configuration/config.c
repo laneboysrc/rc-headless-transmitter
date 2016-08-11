@@ -41,34 +41,33 @@ const config_t config_flash = {
         .uuid = {0x43, 0x53, 0x8f, 0xe8, 0x44, 0xc9, 0x11, 0xe6},
         .passphrase = 1234,                                 // What else :)
         .hardware_inputs = {
-            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // PA1/ADC1 Ailerons
+            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // 0: PA1/ADC1 Ailerons
              .calibration = {510, 1962, 3380}},
 
-            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // PA2/ADC2 Elevator
+            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // 1: PA2/ADC2 Elevator
              .calibration = {590, 1943, 3240}},
 
-            {.type = ANALOG_NO_CENTER,                      // PA3/ADC3 Throttle
+            {.type = ANALOG_NO_CENTER,                      // 2: PA3/ADC3 Throttle
              .calibration = {670, ADC_VALUE_HALF, 3370}},
 
-            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // PA4/ADC4 Rudder
+            {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // 3: PA4/ADC4 Rudder
              .calibration = {580, 1874, 3410}},
 
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA5/ADC5
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA5/ADC6
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA6/ADC7
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA8/ADC8
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PA9/ADC9
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 4: PA5/ADC5
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 5: PA5/ADC6
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 6: PA6/ADC7
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 7: PB0/ADC8
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 8: PB1/ADC9
 
-            {.type = MOMENTARY_ON_OFF},                     // PB11/SW1
-            {.type = MOMENTARY_ON_OFF},                     // PB10/SW2
-
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB3/SW3
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB4/SW4
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB5/SW5
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB6/SW6
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB7/SW7
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // PB8/SW8
-            {.type = TRANSMITTER_INPUT_NOT_USED}            // PB9/SW9
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 9: PB3
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 10: PB4
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 11: PB5
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 12: PB6
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 13: PB7
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 14: PB8
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 15: PB9
+            {.type = MOMENTARY_ON_OFF},                     // 16: PB10
+            {.type = MOMENTARY_ON_OFF}                      // 17: PB11
         },
         .logical_inputs = {
             {.type = ANALOG, .hardware_inputs = {0}, .labels = {AIL}},
@@ -76,12 +75,12 @@ const config_t config_flash = {
             {.type = ANALOG, .hardware_inputs = {2}, .labels = {THR, TH}},
             {.type = ANALOG, .hardware_inputs = {3}, .labels = {RUD, ST}},
 
-            // {.type = SWITCH, .hardware_inputs = {9, 10}, .labels = {SW1},
+            // {.type = SWITCH, .hardware_inputs = {17, 16}, .labels = {SW1},
             //  .position_count = 3}
-            {.type = SWITCH, .hardware_inputs = {9, 10}, .labels = {SW1},
+            {.type = SWITCH, .hardware_inputs = {17, 16}, .labels = {SW1},
              .sub_type = UP_DOWN_BUTTONS, .position_count = 3}
 
-            // {.type = TRIM, .hardware_inputs = {9, 10}, .labels = {AIL}},
+            // {.type = TRIM, .hardware_inputs = {17, 16}, .labels = {AIL}},
             // {.type = TRIM, .hardware_inputs = {0}, .labels = {RUD, ST}},
         },
         .trim_range = PERCENT_TO_CHANNEL(30),

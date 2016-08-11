@@ -7,6 +7,12 @@
       <div class="mdl-layout-spacer"></div>
       <span id="app-transmitter_details-tx_name" class="mdl-layout-title">Logical Inputs</span>
       <div class="mdl-layout-spacer"></div>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="app-logical_inputs-menu">
+        <i class="material-icons">more_vert</i>
+      </button>
+      <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="app-logical_inputs-menu">
+        <li class="mdl-menu__item" onclick="LogicalInputs.add(event);">Add logical input</li>
+      </ul>
     </div>
   </header>
 

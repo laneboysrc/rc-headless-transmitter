@@ -321,8 +321,10 @@ class LogicalInputs {
       ++this.logicalInputsCount;
     }
 
-    // Show the Add Logical Input card only if there are available slots
-    Utils.setVisibility('#app-logical_inputs-add', this.logicalInputsCount < this.logicalInputsMaxCount);
+    // Show the Add Logical Input card and menu only if there are available slots
+    let showAddItems = (this.logicalInputsCount < this.logicalInputsMaxCount);
+    Utils.setVisibility('#app-logical_inputs-add', showAddItems);
+    Utils.setVisibility('#app-logical_inputs-menu', showAddItems);
   }
 
   //*************************************************************************

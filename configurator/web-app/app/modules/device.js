@@ -435,8 +435,64 @@ class Device {
   }
 
   //*************************************************************************
-  isValidHardwareType(type) {
-    return true;
+  isValidHardwareType(type, logicalInputsOffset) {
+    let offset = logicalInputsOffset;
+    let hardwareInputsSize = this.TX.getSchema().HARDWARE_INPUTS.s;
+    let hardwareInputsCount = this.getNumberOfHardwareInputs(offset);
+    let firstHardwareInput = this.TX.getItemNumber('LOGICAL_INPUTS_HARDWARE_INPUTS', {offset: offset, index: 0});
+    let firstHardwareInputType = this.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: firstHardwareInput * hardwareInputsSize});
+    let positionCount = this.TX.getItem('LOGICAL_INPUTS_POSITION_COUNT', {offset: offset});
+    let logicalInputType = this.TX.getItemNumber('LOGICAL_INPUTS_TYPE', {offset: offset});
+
+    let validHardwareTypes = [];
+    switch (logicalInputType) {
+      case 1:   // Analog logical input
+        //  Analog, returns to center
+        //  Analog, center detent
+        //  Analog
+        //  Analog, positive only
+        validHardwareTypes = [1, 2, 3, 4];
+        break;
+
+      case 2:   // Switch logical input
+        if (firstHardwareInputType === 7) {
+          // Push-button
+          validHardwareTypes = [7];
+        }
+        else if (positionCount === 3) {
+          //  On/Off/On switch
+          validHardwareTypes = [6];
+        }
+        else {
+          //  On/Off switch
+          validHardwareTypes = [5];
+        }
+        break;
+
+      case 3:   // BCD Switch logical input
+        //  On/Off switch
+        validHardwareTypes = [5];
+        break;
+
+      case 4:   // Momentary Switch logical input
+        // Push-button
+        validHardwareTypes = [7];
+        break;
+
+      case 5:   // Trim logical input
+        if (hardwareInputsCount === 1) {
+          // Analog, center detent
+          // Analog
+          validHardwareTypes = [2, 3];
+        }
+        else {
+          // Push-button
+          validHardwareTypes = [7];
+        }
+        break;
+    }
+
+    return validHardwareTypes.includes(type);
   }
 }
 

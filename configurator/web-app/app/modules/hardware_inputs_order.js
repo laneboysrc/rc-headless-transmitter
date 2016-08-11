@@ -80,7 +80,7 @@ class HardwareInputsOrder {
 
       mdl.setTextContentRaw('.app-hardware_inputs_order-template-name', pinName, t);
 
-      if (! Device.isValidHardwareType(hardwareInputType)) {
+      if (! Device.isValidHardwareType(hardwareInputType, this.offset)) {
         t.querySelector('.app-hardware_inputs_order-template-name').classList.add('error');
       }
       mdl.setAttribute('.app-hardware_inputs_order-template-up', 'data-index', i, t);

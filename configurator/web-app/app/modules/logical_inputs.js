@@ -284,56 +284,7 @@ class LogicalInputs {
         }
 
         let span = mdl.createSpan(pinName);
-
-        let validHardwareTypes = [];
-        switch (type) {
-          case 1:   // Analog logical input
-            //  Analog, returns to center
-            //  Analog, center detent
-            //  Analog
-            //  Analog, positive only
-            validHardwareTypes = [1, 2, 3, 4];
-            break;
-
-          case 2:   // Switch logical input
-            if (firstHardwareInputType === 7) {
-              // Push-button
-              validHardwareTypes = [7];
-            }
-            else if (positionCount === 3) {
-              //  On/Off/On switch
-              validHardwareTypes = [6];
-            }
-            else {
-              //  On/Off switch
-              validHardwareTypes = [5];
-            }
-            break;
-
-          case 3:   // BCD Switch logical input
-            //  On/Off switch
-            validHardwareTypes = [5];
-            break;
-
-          case 4:   // Momentary Switch logical input
-            // Push-button
-            validHardwareTypes = [7];
-            break;
-
-          case 5:   // Trim logical input
-            if (hardwareInputsCount === 1) {
-              // Analog, center detent
-              // Analog
-              validHardwareTypes = [2, 3];
-            }
-            else {
-              // Push-button
-              validHardwareTypes = [7];
-            }
-            break;
-        }
-
-        if (! validHardwareTypes.includes(hardwareInputType)) {
+        if (! Device.isValidHardwareType(hardwareInputType, offset)) {
           span.classList.add('error');
         }
 

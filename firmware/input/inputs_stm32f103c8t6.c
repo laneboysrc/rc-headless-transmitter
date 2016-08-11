@@ -9,6 +9,9 @@ const uint8_t adc_channel_selection[NUMBER_OF_ADC_CHANNELS] = {1, 2, 3, 4, 5, 6,
 
 
 const pcb_input_t pcb_inputs[MAX_TRANSMITTER_INPUTS] = {
+    // Note: ADC0 is used for measuring the battery voltage, therefore it does
+    // not appear in this list
+
     {.type = ANALOG_DIGITAL, .gpioport = GPIOA, .gpio = GPIO1, .adc_channel = 1,
      .pin_name = "PA1/ADC1"},
 
@@ -62,8 +65,5 @@ const pcb_input_t pcb_inputs[MAX_TRANSMITTER_INPUTS] = {
 
     {.type = DIGITAL, .gpioport = GPIOB, .gpio = GPIO11,
      .pin_name = "PB11"}
-
-    // Note: ADC0 is used for measuring the battery voltage, therefore it does
-    // not appear in this list
 };
 

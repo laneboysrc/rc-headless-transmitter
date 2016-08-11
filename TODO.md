@@ -71,3 +71,8 @@
 
 - Delete transmitter
 
+- Add configuration of `TRIM_RANGE`
+- Add configuration of `TRIM_STEP_SIZE`
+- Add configuration of `BIND_TIMEOUT_MS`
+- Add configuration of `DOUBLE_CLICK_TIMEOUT_MS`
+- Add configuration of `LED_PWM_PERCENT`

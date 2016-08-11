@@ -42,19 +42,24 @@
       </div>
     </section>
 
-    <!-- Logical inputs Card -->
-    <section class="section--center mdl-grid">
-      <div id="app-transmitter_details-logical" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
+    <!-- Passphrase Card -->
+    <section class="section--center mdl-grid" id="app-transmitter_details-passphrase-card">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">Logical inputs</h2>
+          <h2 class="mdl-card__title-text">Passphrase</h2>
         </div>
         <div class="mdl-card__supporting-text mdl-card--expand">
-          Logical inputs are the input signals that are processed by the mixer to output servo information sent to the transmitter. A logical input utilizes one or more hardware inputs to generate a value that can be read by the mixer.
+          Choose a 4-digit passphrase that is required to be able to connect
+          to this transmitter.
         </div>
-        <div class="mdl-card__actions mdl-card--border">
-          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"">
-            Configure logical inputs
-          </button>
+        <div class="mdl-card__actions app-transmitter_details">
+          <form class="app-transmitter_details">
+            <div class="mdl-textfield mdl-js-textfield">
+              <input class="mdl-textfield__input" type="text" id="app-transmitter_details-passphrase" pattern="^\s*(\d\d\d\d)\s*$">
+              <span class="mdl-textfield__error">4 digits only</span>
+            </div>
+          </form>
+
         </div>
       </div>
     </section>
@@ -72,6 +77,23 @@
         <div class="mdl-card__actions mdl-card--border">
           <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
             Configure hardware inputs
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logical inputs Card -->
+    <section class="section--center mdl-grid">
+      <div id="app-transmitter_details-logical" class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col" onclick="location.hash = this.getAttribute('data-url')">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Logical inputs</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Logical inputs are the input signals that are processed by the mixer to output servo information sent to the transmitter. A logical input utilizes one or more hardware inputs to generate a value that can be read by the mixer.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"">
+            Configure logical inputs
           </button>
         </div>
       </div>

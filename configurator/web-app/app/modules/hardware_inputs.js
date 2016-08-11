@@ -52,9 +52,9 @@ class HardwareInputs {
   }
 
   //*************************************************************************
-  selectType(event) {
+  selectType(event, button) {
     Utils.cancelBubble(event);
-    let hardwareInputIndex = parseInt(event.target.getAttribute('data-index'));
+    let hardwareInputIndex = parseInt(button.getAttribute('data-index'));
 
     console.log('HardwareInputs.selectType()', hardwareInputIndex)
 

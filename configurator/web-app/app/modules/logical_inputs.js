@@ -64,10 +64,10 @@ class LogicalInputs {
   }
 
   //*************************************************************************
-  editType(event) {
+  editType(event, button) {
     Utils.cancelBubble(event);
 
-    let index = parseInt(event.target.getAttribute('data-index'));
+    let index = parseInt(button.getAttribute('data-index'));
     console.log('LogicalInputs.editType()', index)
 
     let size = this.schema.LOGICAL_INPUTS.s;
@@ -76,10 +76,10 @@ class LogicalInputs {
   }
 
   //*************************************************************************
-  editSubType(event) {
+  editSubType(event, button) {
     Utils.cancelBubble(event);
 
-    let index = parseInt(event.target.getAttribute('data-index'));
+    let index = parseInt(button.getAttribute('data-index'));
     console.log('LogicalInputs.editSubType()', index)
 
     let size = this.schema.LOGICAL_INPUTS.s;
@@ -88,10 +88,10 @@ class LogicalInputs {
   }
 
   //*************************************************************************
-  editHardwareInputs(event) {
+  editHardwareInputs(event, button) {
     Utils.cancelBubble(event);
 
-    let index = parseInt(event.target.getAttribute('data-index'));
+    let index = parseInt(button.getAttribute('data-index'));
     console.log('LogicalInputs.editHardwareInputs()', index)
 
     let size = this.schema.LOGICAL_INPUTS.s;
@@ -100,10 +100,10 @@ class LogicalInputs {
   }
 
   //*************************************************************************
-  editLabels(event) {
+  editLabels(event, button) {
     Utils.cancelBubble(event);
 
-    let index = parseInt(event.target.getAttribute('data-index'));
+    let index = parseInt(button.getAttribute('data-index'));
     console.log('LogicalInputs.editLabels()', index)
 
     let size = this.schema.LOGICAL_INPUTS.s;
@@ -112,10 +112,10 @@ class LogicalInputs {
   }
 
   //*************************************************************************
-  delete(event) {
+  delete(event, button) {
     Utils.cancelBubble(event);
 
-    let index = parseInt(event.target.getAttribute('data-index'));
+    let index = parseInt(button.getAttribute('data-index'));
     console.log('LogicalInputs.delete()', index)
 
     this.UNDO = {

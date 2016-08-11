@@ -29,17 +29,17 @@ class HardwareInputsOrder {
   }
 
   //*************************************************************************
-  edit(event) {
+  edit(event, button) {
     Utils.cancelBubble(event);
 
     location.hash = Utils.buildURL(['select_multiple', 'TX', 'LOGICAL_INPUTS_HARDWARE_INPUTS', this.offset]);
   }
 
   //*************************************************************************
-  up(event) {
+  up(event, button) {
     Utils.cancelBubble(event);
 
-    let index = parseInt(event.target.getAttribute('data-index'));
+    let index = parseInt(button.getAttribute('data-index'));
 
     // Safety bail-out
     if (index < 1) {
@@ -50,10 +50,10 @@ class HardwareInputsOrder {
   }
 
   //*************************************************************************
-  down(event) {
+  down(event, button) {
     Utils.cancelBubble(event);
 
-    let index = parseInt(event.target.getAttribute('data-index'));
+    let index = parseInt(button.getAttribute('data-index'));
 
     // Safety bail-out
     if (index >= (this.hardwareInputsCount - 1)) {

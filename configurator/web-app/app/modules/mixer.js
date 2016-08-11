@@ -51,15 +51,15 @@ class Mixer {
   }
 
   //*************************************************************************
-  editMixerUnit(event) {
+  editMixerUnit(event, button) {
     Utils.cancelBubble(event);
-    location.hash = event.target.getAttribute('data-url');
+    location.hash = button.getAttribute('data-url');
   }
 
   //*************************************************************************
-  limits(event) {
+  limits(event, button) {
     Utils.cancelBubble(event);
-    location.hash = event.target.getAttribute('data-url');
+    location.hash = button.getAttribute('data-url');
   }
 
   //*************************************************************************

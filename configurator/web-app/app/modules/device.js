@@ -362,6 +362,21 @@ class Device {
 
       result = labels;
     }
+    else if (item === 'LOGICAL_INPUTS_HARDWARE_INPUTS') {
+      let schema = this.TX.getSchema();
+      let count = schema.HARDWARE_INPUTS.c;
+      let size = schema.HARDWARE_INPUTS.s;
+
+      for (let i = 0; i < count; i++) {
+        let o = i * size;
+        let pinName = this.TX.getItem('HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: o});
+        let type = this.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: o});
+
+        if (this.isValidHardwareType(type, offset)) {
+          result.push(pinName);
+        }
+      }
+    }
 
     return result;
   }
@@ -372,16 +387,40 @@ class Device {
       return [];
     }
 
-    if (item !== 'HARDWARE_INPUTS_TYPE') {
+    if (item === 'HARDWARE_INPUTS_TYPE') {
+      let pcbInputType = this.TX.getItemNumber('HARDWARE_INPUTS_PCB_INPUT_TYPE', {offset: offset});
+      if (pcbInputType === 2) {
+        return this.TX.getTypeMembers('hardware_input_type_t_digital');
+      }
       return [];
     }
+    else if (item === 'LOGICAL_INPUTS_HARDWARE_INPUTS') {
+      // Collect all hardware inputs that are not defined as "unused"
+      let schema = this.TX.getSchema();
+      let count = schema.HARDWARE_INPUTS.c;
+      let size = schema.HARDWARE_INPUTS.s;
 
-    let pcbInputType = this.TX.getItemNumber('HARDWARE_INPUTS_PCB_INPUT_TYPE', {offset: offset});
-    if (pcbInputType === 2) {
-      return this.TX.getTypeMembers('hardware_input_type_t_digital');
+      let result = [];
+      for (let i = 0; i < count; i++) {
+        let o = i * size;
+        let pinName = this.TX.getItem('HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: o});
+        let type = this.TX.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: o});
+        if (type !== 0) {
+          result.push(pinName);
+        }
+      }
+      return result;
     }
 
     return [];
+  }
+
+  //*************************************************************************
+  overrideNumberOfChoices(item, offset) {
+    if (item === 'LOGICAL_INPUTS_HARDWARE_INPUTS') {
+      return this.getNumberOfHardwareInputs(offset);
+    }
+    return undefined;
   }
 
   //*************************************************************************

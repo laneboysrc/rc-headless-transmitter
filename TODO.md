@@ -71,5 +71,3 @@
 
 - Delete transmitter
 
-
-- Make select multiple number depend on logical input type, i.e. analog can only have one input

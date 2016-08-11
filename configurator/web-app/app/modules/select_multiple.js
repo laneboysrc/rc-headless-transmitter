@@ -29,9 +29,16 @@ class SelectMultiple {
 
     let device = Device[this.devName];
 
-    let current_choices = device.getItem(this.item, {offset: this.offset});
-    this.maxNumberOfChoices = current_choices.length;
-    console.log(current_choices)
+    let currentChoices = device.getItem(this.item, {offset: this.offset});
+    this.maxNumberOfChoices = currentChoices.length;
+
+    let override = Device.overrideNumberOfChoices(this.item, this.offset);
+    if (Utils.isNumber(override)  &&  override < this.maxNumberOfChoices) {
+      this.maxNumberOfChoices = override;
+      currentChoices = currentChoices.slice(0, this.maxNumberOfChoices);
+    }
+
+    console.log(currentChoices)
 
     let name = device.getHumanFriendlyText(this.item);
     mdl.setTextContentRaw('#app-select_multiple-name', name);
@@ -43,7 +50,7 @@ class SelectMultiple {
     // For example, when selecting mixer source we can highlight the logical
     // inputs provided by the transmitter.
     let activeItems = Device.getActiveItems(this.item, this.offset);
-    console.log('activeItems: ', activeItems)
+    // console.log('activeItems: ', activeItems)
 
     // Allow overriding of the selectable items
     // This is necessary because for some items the range of allowed values
@@ -54,7 +61,7 @@ class SelectMultiple {
     // to fulfil the criteria.
     // In case the type is not overridden, the default type members are loaded.
     let choices = Device.overrideType(this.item, this.offset);
-    console.log('choices: ', choices)
+    // console.log('choices: ', choices)
     if (! choices.length) {
       let type = device.getType(this.item);
       choices = device.getTypeMembers(type);
@@ -67,7 +74,7 @@ class SelectMultiple {
       t.querySelector('span').textContent = entry;
       t.querySelector('input').id = 'app-select_multiple__item' + i;
       t.querySelector('input').value = entry;
-      t.querySelector('input').checked = current_choices.includes(entry);
+      t.querySelector('input').checked = currentChoices.includes(entry);
       t.querySelector('input').addEventListener('change', this._onchange.bind(this));
       t.querySelector('label').setAttribute('for', 'app-select_multiple__item' + i);
       if (activeItems.includes(entry)) {
@@ -89,8 +96,9 @@ class SelectMultiple {
   accept_choice(event) {
     Utils.cancelBubble(event);
 
+    let itemCount = Device[this.devName].getSchema()[this.item].c;
     let chosenItems = this._getChosenItems();
-    while (chosenItems.length < this.maxNumberOfChoices) {
+    while (chosenItems.length < itemCount) {
       chosenItems.push(0);
     }
 

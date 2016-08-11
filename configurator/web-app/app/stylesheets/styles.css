@@ -324,3 +324,8 @@ span.mdl-list__item-primary-content label {
 .app-hardware_inputs_order_updown button {
   display: block;
 }
+
+.app-select_multiple__info {
+  font-size: 0.75rem;
+  color: #757575;
+}

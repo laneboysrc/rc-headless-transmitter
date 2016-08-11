@@ -33,9 +33,9 @@ class SelectMultiple {
     this.maxNumberOfChoices = currentChoices.length;
 
     let override = Device.overrideNumberOfChoices(this.item, this.offset);
-    if (Utils.isNumber(override)  &&  override < this.maxNumberOfChoices) {
-      this.maxNumberOfChoices = override;
-      currentChoices = currentChoices.slice(0, this.maxNumberOfChoices);
+    if (override  &&  override.max < this.maxNumberOfChoices) {
+      this.maxNumberOfChoices = override.max;
+      currentChoices = currentChoices.slice(0, override.current);
     }
 
     console.log(currentChoices)
@@ -72,6 +72,16 @@ class SelectMultiple {
 
       let t = document.importNode(this.template, true);
       t.querySelector('span').textContent = entry;
+
+      if (this.item === 'LOGICAL_INPUTS_HARDWARE_INPUTS') {
+        let index = device.getNumberOfTypeMember('LOGICAL_INPUTS_HARDWARE_INPUTS', entry);
+        let hardwareInputsSize = device.getSchema().HARDWARE_INPUTS.s;
+        let type = device.getItem('HARDWARE_INPUTS_TYPE', {offset: index * hardwareInputsSize});
+
+        let info = mdl.createSpan(' ' + type, 'app-select_multiple__info');
+        t.querySelector('span').appendChild(info);
+      }
+
       t.querySelector('input').id = 'app-select_multiple__item' + i;
       t.querySelector('input').value = entry;
       t.querySelector('input').checked = currentChoices.includes(entry);

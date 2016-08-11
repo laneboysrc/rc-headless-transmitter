@@ -418,7 +418,34 @@ class Device {
   //*************************************************************************
   overrideNumberOfChoices(item, offset) {
     if (item === 'LOGICAL_INPUTS_HARDWARE_INPUTS') {
-      return this.getNumberOfHardwareInputs(offset);
+
+      let current = this.getNumberOfHardwareInputs(offset)
+
+      let type = this.TX.getItemNumber('LOGICAL_INPUTS_TYPE', {offset: offset});
+      let positionCount = this.TX.getItem('LOGICAL_INPUTS_POSITION_COUNT', {offset: offset});
+
+      switch (type) {
+        case 1:   // Analog
+        case 4:   // Momentary switch
+          return {max: 1, current: current};
+
+        case 2:   // Switch
+          //  2 or 3 position may be one switch or two push-buttons
+          if (positionCount < 4) {
+            return {max: 2, current: current};
+          }
+          return {max: positionCount, current: current};
+
+        case 3:   // BCD switch
+          return {max: positionCount, current: current};
+
+        case 5:   // Trim
+          // Two push-buttons or one analog input
+          return {max: 2, current: current};
+
+        default:
+          return undefined;
+      }
     }
     return undefined;
   }

@@ -74,6 +74,39 @@ class DatabaseObject {
     this.configVersion = data.configVersion;
     this.schemaName = data.schemaName;
     this.lastChanged = data.lastChanged;
+
+    // If we are dealing with a transmitter, we create a type named x_pin_name_t
+    // so that the UI does not have to resolve the pin names manually.
+    //
+    // Since there is only one global config holding the schema, this means we
+    // are performing a hack here, modifying the global config object every
+    // time a transmitter DBObject is created.
+    // This means we can only use one transmitter DBObject at a time, which
+    // is fine for the current application.
+    // If that ever becomes an issue we need to attach (clone) the schema to the
+    // DBOBject.
+    if (this.schemaName === 'TX') {
+      let customType = 'x_pin_name_t';
+
+      let config = this.getConfig();
+      let schema = this.getSchema();
+
+      let hwi = schema.HARDWARE_INPUTS;
+      let xPinNameT = {};
+      for (let i = 0; i < hwi.c; i++) {
+        let offset = hwi.s* i;
+        let type = this.getItem('HARDWARE_INPUTS_PCB_INPUT_TYPE', {offset: offset});
+        if (type === 0) {
+          continue;
+        }
+
+        let pinName = this.getItem('HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', {offset: offset});
+        xPinNameT[pinName] = i;
+      }
+
+      config.TYPES[customType] = xPinNameT;
+      schema.LOGICAL_INPUTS_HARDWARE_INPUTS.t = customType;
+    }
   }
 
   // This function performs basic checks on the most common inputs to

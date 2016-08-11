@@ -208,7 +208,7 @@ class LogicalInputs {
       let positionCount = Device.TX.getItem('LOGICAL_INPUTS_POSITION_COUNT', {offset: offset});
       if ([2, 3].includes(type)) {   // Switch, BCD switch
         let min = 2;
-        let max = 12;
+        let max = this.schema.LOGICAL_INPUTS_HARDWARE_INPUTS.c;
 
         if (type === 3) {  // BCD switch
           // Set the slider MAX to 4 if the logical input type is BCD switch

@@ -67,7 +67,6 @@
 
 - Delete transmitter
 
-- Make the number of switch positions depend on the max number of hardware inputs
 - Make select multiple number depend on logical input type, i.e. analog can only have one input
 
 - Config: remove schematic reference, rather have schematic use pin names

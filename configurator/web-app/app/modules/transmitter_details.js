@@ -24,6 +24,8 @@ class TransmitterDetails {
     let mdl = new MDLHelper('TX');
 
     mdl.setTextfield('#app-transmitter_details-name', 'NAME');
+    mdl.setSlider('#app-transmitter_details-trim_range', 'TRIM_RANGE');
+    mdl.setSlider('#app-transmitter_details-trim_step_size', 'TRIM_STEP_SIZE');
 
     mdl.formatter = passphraseFormatter;
     mdl.setTextfield('#app-transmitter_details-passphrase', 'PASSPHRASE');

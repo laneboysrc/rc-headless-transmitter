@@ -99,5 +99,40 @@
       </div>
     </section>
 
+    <!-- Trim configuration card -->
+    <section class="section--center mdl-grid"> <!-- style="display: none;"> -->
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <div class="mdl-card__title-text">Trim</div>
+        </div>
+        <div class="mdl-card__supporting-text">
+          Configure how much much the trim can move the servo, and how much
+          one button press moves the trim in case push-buttons are used.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <table class="limits mdl-data-table mdl-js-data-table">
+          <tbody>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                Trim range:
+              </td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <input id="app-transmitter_details-trim_range" class="mdl-slider mdl-js-slider" type="range" min="0" max="10000">
+              </td>
+            </tr>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                Step size:
+              </td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <input id="app-transmitter_details-trim_step_size" class="mdl-slider mdl-js-slider" type="range" min="1" max="1000">
+              </td>
+            </tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>

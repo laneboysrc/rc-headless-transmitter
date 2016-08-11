@@ -313,10 +313,8 @@ state.
 
 This is the default state for both the *Headless TX* and the *configurator*.
 
-All communication in this state happens on the fixed nRF channel 111 with
+All communication in this state happens on the fixed nRF channel 79 with
 address 4C:42:72:63:78 (`LBrcx` in hex).
-
-**NOTE: Channel 111 is 2.511 GHz, which is out of the 2.4 GHz band. Maybe we should rather use another channel, e.g. 79?**
 
 The *Headless TX* sends a `TX_FREE_TO_CONNECT` packet whenever the transmission
 burst for the vehicle is sending on the first hop channel. This means that

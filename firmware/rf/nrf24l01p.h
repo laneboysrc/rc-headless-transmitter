@@ -63,11 +63,16 @@
 #define NRF24_RX_PW_P4        0x15        // RX payload width, pipe4
 #define NRF24_RX_PW_P5        0x16        // RX payload width, pipe5
 #define NRF24_FIFO_STATUS     0x17        // FIFO Status Register
+    #define NRF24_RX_EMPTY    (1 << 0)
+    #define NRF24_RX_FULL     (1 << 1)
+    #define NRF24_TX_EMPTY    (1 << 4)
+    #define NRF24_TX_FULL     (1 << 5)
+    #define NRF24_TX_REUSE    (1 << 6)
 #define NRF24_DYNPD           0x1c        // Enable dynamic payload length
 #define NRF24_FEATURE         0x1d        // Feature register
-    #define NRF24_EN_DYN_ACK  1
-    #define NRF24_EN_ACK_PAY  2
-    #define NRF24_EN_DPL      4
+    #define NRF24_EN_DYN_ACK  (1 << 0)
+    #define NRF24_EN_ACK_PAY  (1 << 1)
+    #define NRF24_EN_DPL      (1 << 2)
 
 #define NRF24_POWER_n18dBm    0
 #define NRF24_POWER_n12dBm    1

@@ -80,11 +80,22 @@ bool CONFIGURATOR_event(uint8_t nrf_status)
         puts("TX_DS ");
     }
     if (nrf_status & NRF24_RX_RD) {
-        puts("RX_RD ");
-        NRF24_flush_rx_fifo();
+        uint8_t bytes_read;
+        uint8_t fifo_status;
+        uint8_t read_packet[32];
+
+        puts("RX_RD");
+
+        fifo_status = NRF24_read_register(NRF24_FIFO_STATUS);
+        while (! (fifo_status & NRF24_RX_EMPTY)) {
+            bytes_read = NRF24_read_register(NRF24_RX_PW_P0);
+            NRF24_read_payload(read_packet, bytes_read);
+            printf("(%d bytes) ", bytes_read);
+        }
     }
     if (nrf_status & NRF24_MAX_RT) {
         puts("MAX_RT ");
+        NRF24_flush_tx_fifo();
     }
     puts("\n");
 

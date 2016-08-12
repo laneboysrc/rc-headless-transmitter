@@ -326,14 +326,13 @@ void PROTOCOL_HK310_init(void)
     // No Auto-retransmit; ARD is 500us (required for 32 byte payload at 2 Mbps)
     NRF24_write_register(NRF24_SETUP_RETR, 0x10);
 
-    // TX mode, 2-byte CRC, power-up, Enable TX interrupt
+    // TX mode, 2-byte CRC, power-up, Enable TX, RX and MAX_RT interrupts
     //
     // IMPORTANT: reverse logic: setting one of the "mask interrupt" pins
     // disables the IRQ output, while having the bit cleared enables IRQ output!
     //
     // See nRF24L01+ specification v1.0, section "Register map table", page 57
-    NRF24_write_register(NRF24_CONFIG,
-        NRF24_EN_CRC | NRF24_CRCO | NRF24_PWR_UP | NRF24_RX_RD | NRF24_MAX_RT);
+    NRF24_write_register(NRF24_CONFIG, NRF24_EN_CRC | NRF24_CRCO | NRF24_PWR_UP);
 
     SYSTICK_set_rf_callback(hk310_protocol_frame_callback, FRAME_TIME_MS);
 }

@@ -8,6 +8,7 @@
 
 #include <channels.h>
 #include <config.h>
+#include <configurator.h>
 #include <nrf24l01p.h>
 #include <protocol_hk310.h>
 #include <systick.h>
@@ -25,14 +26,14 @@
 #define PACKET_SIZE 10
 #define NUMBER_OF_BIND_PACKETS 4
 #define BIND_CHANNEL 81
-#define CONFIGURATOR_CHANNEL 79
 #define FAILSAFE_PRESCALER_COUNT 17
 
 typedef enum {
     SEND_STICK1 = 0,
     SEND_STICK2,
     SEND_BIND_INFO,
-    SEND_PROGRAMBOX,
+    SEND_CONFIGURATOR,
+    RECEIVE_CONFIGURATOR,
     FRAME_DONE
 } frame_state_t;
 
@@ -46,7 +47,6 @@ static uint8_t hop_index = 0;
 static bool bind_enabled = false;
 
 static const uint8_t bind_address[ADDRESS_SIZE] = {0x12, 0x23, 0x23, 0x45, 0x78};
-static const uint8_t configurator_address[ADDRESS_SIZE] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 
 // This counter determines how often failsafe packets are sent in relation to
 // stick packets. The failsafe packets are sent every FAILSAFE_PRESCALER_COUNT.
@@ -187,23 +187,33 @@ static void send_bind_packet(void)
 
 
 // ****************************************************************************
-static void send_configurator_packet(void)
+static bool send_configurator_packet(void)
 {
-    // FIXME: if not connected, do this only if first hop channel
+    const configurator_packet_t *p;
+
+    p = CONFIGURATOR_send_request(hop_index);
+    if (p == NULL  ||  p->payload_size == 0) {
+        return false;
+    }
 
     NRF24_write_register(NRF24_EN_AA, 0x01);    // Enable Auto-ack on pipe 0
     NRF24_set_bitrate(2);                       // 2 Mbps
     NRF24_set_power(NRF24_POWER_n18dBm);
-    NRF24_write_register(NRF24_RF_CH, CONFIGURATOR_CHANNEL);
-    NRF24_write_multi_byte_register(NRF24_TX_ADDR, configurator_address, ADDRESS_SIZE);
+    NRF24_write_register(NRF24_RF_CH, p->channel);
+    NRF24_write_multi_byte_register(NRF24_TX_ADDR, p->address, ADDRESS_SIZE);
+    NRF24_write_payload(p->payload, p->payload_size);
+    return true;
 }
 
 
 // ****************************************************************************
 static void nrf_transmit_done_callback(void)
 {
-    // Clear the TX_DS status flags
-    NRF24_write_register(NRF24_STATUS, NRF24_TX_DS);
+    uint8_t status;
+
+    // Load and clear all status flags
+    status = NRF24_get_status();
+    NRF24_write_register(NRF24_STATUS, NRF24_TX_DS | NRF24_MAX_RT | NRF24_RX_RD);
 
     switch (frame_state) {
         case SEND_STICK1:
@@ -214,20 +224,28 @@ static void nrf_transmit_done_callback(void)
 
         case SEND_STICK2:
             send_stick_packet();
-            frame_state = bind_enabled ? SEND_BIND_INFO : SEND_PROGRAMBOX;
+            frame_state = bind_enabled ? SEND_BIND_INFO : SEND_CONFIGURATOR;
             break;
 
         case SEND_BIND_INFO:
             send_bind_packet();
-            frame_state = SEND_PROGRAMBOX;
+            frame_state = SEND_CONFIGURATOR;
             break;
 
-        case SEND_PROGRAMBOX:
-            send_configurator_packet();
+        case SEND_CONFIGURATOR:
             frame_state = FRAME_DONE;
+            if (send_configurator_packet()) {
+                frame_state = RECEIVE_CONFIGURATOR;
+            }
 
             hop_index = (hop_index + 1) % NUMBER_OF_HOP_CHANNELS;
             failsafe_counter = (failsafe_counter + 1) % FAILSAFE_PRESCALER_COUNT;
+            break;
+
+        case RECEIVE_CONFIGURATOR:
+            if (CONFIGURATOR_event(status)) {
+                frame_state = FRAME_DONE;
+            }
             break;
 
         case FRAME_DONE:

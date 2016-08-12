@@ -8,6 +8,7 @@
 
 #include <battery.h>
 #include <config.h>
+#include <configurator.h>
 #include <inputs.h>
 #include <led.h>
 #include <mixer.h>
@@ -84,6 +85,7 @@ int main(void)
 
     INPUTS_init();
     MIXER_init();
+    CONFIGURATOR_init();
     PROTOCOL_HK310_init();
 
     printf("\n\n\n**********\nTransmitter initialized\n");

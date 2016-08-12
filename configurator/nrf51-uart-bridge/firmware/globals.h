@@ -5,17 +5,6 @@
 
 #define PIPE_NUMBER 0
 
-#define LENZ_LZ100_COMMAND_STATION_ID 0x00
-#define LENZ_LH200_COMMAND_STATION_ID 0x01
-#define LENZ_DPC_COMMAND_STATION_ID 0x02
-#define LENZ_CONTROL_PLUS_COMMAND_STATION_ID 0x03
-#define MULTIMAUS_COMMAND_STATION_ID 0x10
-
-#define ACCELERATION_INITIAL 500
-#define ACCELERATION_STEP 50
-#define ACCELERATION_FINAL 100
-
-
 // ****************************************************************************
 typedef struct {
     unsigned int systick : 1;                   // Set for one mainloop every 10 ms
@@ -29,6 +18,3 @@ typedef struct {
 // ****************************************************************************
 extern GLOBAL_FLAGS_T global_flags;
 extern volatile uint32_t milliseconds;
-
-
-void reboot(void);

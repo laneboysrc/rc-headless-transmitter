@@ -25,16 +25,19 @@ static void rf_event_handler(nrf_esb_evt_t const * p_event)
     switch (p_event->evt_id)
     {
         case NRF_ESB_EVENT_TX_SUCCESS:
-            NRF_LOG("TX SUCCESS EVENT\r\n");
+            printf("TX SUCCESS EVENT\n");
             break;
+
         case NRF_ESB_EVENT_TX_FAILED:
             printf("%08lu nrf_esb_tx_failed()\n", milliseconds);
             break;
+
         case NRF_ESB_EVENT_RX_RECEIVED:
-            NRF_LOG("RX RECEIVED EVENT\r\n");
+            printf("RX RECEIVED EVENT\n");
             if (nrf_esb_read_rx_payload(&rx_payload) == NRF_SUCCESS) {
                 last_successful_rf_ms = milliseconds;
                 // Do something with payload
+                printf("  Payload size: %d\n", rx_payload.length);
             }
             break;
     }

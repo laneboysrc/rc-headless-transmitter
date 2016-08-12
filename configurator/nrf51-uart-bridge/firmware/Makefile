@@ -1,6 +1,6 @@
 e.DEFAULT_GOAL := program
 
-PROJECT_NAME := throttle
+PROJECT_NAME := nrf51-uart-bridge
 
 NRF_SDK_PATH = nrf51_sdk
 

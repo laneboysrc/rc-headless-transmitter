@@ -90,7 +90,7 @@ int main(void)
 
     printf("\n\n\n**********\nTransmitter initialized\n");
 
-#if 1
+#if 0
     CONFIG_dump_javascript_information();
 #endif
 

@@ -151,8 +151,12 @@ static void build_bind_packets(void)
 // ****************************************************************************
 static void setup_stick_packet(void)
 {
+    // Disable Dynamic payload length
+    NRF24_write_register(NRF24_FEATURE, 0);
+
     // Disable Auto Acknoledgement on all pipes
     NRF24_write_register(NRF24_EN_AA, 0x00);
+
     NRF24_set_bitrate(250);
     NRF24_set_power(NRF24_POWER_0dBm);
     NRF24_write_register(NRF24_RF_CH, cfg->hop_channels[hop_index]);
@@ -195,6 +199,10 @@ static bool send_configurator_packet(void)
     if (p == NULL  ||  p->payload_size == 0) {
         return false;
     }
+
+    // Enable dynamic payload length and dynamic ACK
+    NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY |
+        NRF24_EN_DPL);
 
     NRF24_write_register(NRF24_EN_AA, 0x01);    // Enable Auto-ack on pipe 0
     NRF24_set_bitrate(2);                       // 2 Mbps
@@ -318,14 +326,6 @@ void PROTOCOL_HK310_init(void)
     // nRF24 initialization
     NRF24_write_register(NRF24_SETUP_AW, NRF24_ADDRESS_WIDTH_5_BYTES);
 
-    // Enable dynamic ACK payload on Pipe 0
-    NRF24_write_register(NRF24_DYNPD, 0x01);
-    NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY |
-        NRF24_EN_DPL);
-
-    // No Auto-retransmit; ARD is 500us (required for 32 byte payload at 2 Mbps)
-    NRF24_write_register(NRF24_SETUP_RETR, 0x10);
-
     // TX mode, 2-byte CRC, power-up, Enable TX, RX and MAX_RT interrupts
     //
     // IMPORTANT: reverse logic: setting one of the "mask interrupt" pins
@@ -333,6 +333,17 @@ void PROTOCOL_HK310_init(void)
     //
     // See nRF24L01+ specification v1.0, section "Register map table", page 57
     NRF24_write_register(NRF24_CONFIG, NRF24_EN_CRC | NRF24_CRCO | NRF24_PWR_UP);
+
+
+    // The following commands set up the nRF24 for the configurator
+    // protocol. We can do them once globally as they do not interfere with
+    // the HK310 protocol.
+    //
+    // Enable dynamic ACK payload on Pipe 0
+    NRF24_write_register(NRF24_DYNPD, 0x01);
+    // No Auto-retransmit; ARD is 500us (required for 32 byte payload at 2 Mbps)
+    NRF24_write_register(NRF24_SETUP_RETR, 0x10);
+
 
     SYSTICK_set_rf_callback(hk310_protocol_frame_callback, FRAME_TIME_MS);
 }

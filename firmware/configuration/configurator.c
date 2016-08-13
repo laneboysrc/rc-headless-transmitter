@@ -51,7 +51,7 @@ static void make_free_to_connect_packet(void)
     offset += 2;
 
     packet.payload_size = offset;
-    puts("CONF: FTC\n");
+    // puts("CONF: FTC");
 }
 
 
@@ -75,16 +75,16 @@ configurator_packet_t *CONFIGURATOR_send_request(uint8_t hop_index)
 // ****************************************************************************
 bool CONFIGURATOR_event(uint8_t nrf_status)
 {
-    puts("CONF: ");
+    printf("CONF: ");
     if (nrf_status & NRF24_TX_DS) {
-        puts("TX_DS ");
+        printf("TX_DS ");
     }
     if (nrf_status & NRF24_RX_RD) {
         uint8_t bytes_read;
         uint8_t fifo_status;
         uint8_t read_packet[32];
 
-        puts("RX_RD");
+        printf("RX_RD ");
 
         fifo_status = NRF24_read_register(NRF24_FIFO_STATUS);
         while (! (fifo_status & NRF24_RX_EMPTY)) {
@@ -94,10 +94,10 @@ bool CONFIGURATOR_event(uint8_t nrf_status)
         }
     }
     if (nrf_status & NRF24_MAX_RT) {
-        puts("MAX_RT ");
+        printf("MAX_RT ");
         NRF24_flush_tx_fifo();
     }
-    puts("\n");
+    puts("");
 
     return true;
 }

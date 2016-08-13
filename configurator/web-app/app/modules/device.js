@@ -72,7 +72,7 @@ class Device {
 
   //*************************************************************************
   connect(uuid, passphrase) {
-    console.log(`Device.connect uuid=${uuid}`)
+    console.log(`Device.connect uuid=${uuid} passphrase=${passphrase}`)
 
     let connectPacket = new Uint8Array([
       this.CFG_REQUEST_TO_CONNECT,

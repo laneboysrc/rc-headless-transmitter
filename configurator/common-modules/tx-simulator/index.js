@@ -309,7 +309,7 @@ function start () {
     var uuidLength = 8;
     var nameOffset = 4 + 8;     // Skip CONFIG_VERSION and UUID
     var nameLength = 16;
-    var passphraseOffset = 4 + 1712;
+    var passphraseOffset = 4 + 1584;
 
     tx.uuidBytes = new Uint8Array(testData.buffer, uuidOffset, uuidLength);
     tx.nameBytes = new Uint8Array(testData.buffer, nameOffset, nameLength);

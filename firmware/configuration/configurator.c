@@ -30,7 +30,7 @@ static const uint8_t configurator_address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 
 
 // ****************************************************************************
-static void make_free_to_connect_packet(void)
+static configurator_packet_t * make_free_to_connect_packet(void)
 {
     uint8_t offset;
     uint16_t battery_voltage;
@@ -51,12 +51,30 @@ static void make_free_to_connect_packet(void)
     offset += 2;
 
     packet.payload_size = offset;
-    // puts("CONF: FTC");
+
+    packet.send_without_ack = true;
+    packet.send_another_packet = true;
+
+    return &packet;
 }
 
 
 // ****************************************************************************
-configurator_packet_t *CONFIGURATOR_send_request(uint8_t hop_index)
+static configurator_packet_t * make_connect_response_packet(void)
+{
+    memcpy(packet.address, config.tx.uuid, 5);
+    packet.channel = CONFIGURATOR_CHANNEL;
+    packet.payload[0] = TX_FREE_TO_CONNECT;
+    packet.payload_size = 1;
+    packet.send_without_ack = false;
+    packet.send_another_packet = false;
+
+    return &packet;
+}
+
+
+// ****************************************************************************
+configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t transmission_index)
 {
     // If we are not connected we send configurator packets only on the first
     // hop channel (= every 100 ms)
@@ -64,46 +82,43 @@ configurator_packet_t *CONFIGURATOR_send_request(uint8_t hop_index)
         if (hop_index != 0) {
             return NULL;
         }
-        make_free_to_connect_packet();
-        return &packet;
+
+        switch (transmission_index) {
+            case 1:
+                return make_free_to_connect_packet();
+
+            case 2:
+            default:
+                return make_connect_response_packet();
+        }
     }
 
     return NULL;
 }
 
 
+
 // ****************************************************************************
-bool CONFIGURATOR_event(uint8_t nrf_status)
+void CONFIGURATOR_event(uint8_t event, uint8_t *rx_packet, uint8_t length)
 {
-    printf("CONF: ");
-    if (nrf_status & NRF24_TX_DS) {
-        printf("TX_DS\n");
+    (void) rx_packet;
+
+    switch (event) {
+        case CONFIGURATOR_EVENT_TX_SUCCESS:
+            printf("TX SUCCESS\n");
+            break;
+
+        case CONFIGURATOR_EVENT_TIMEOUT:
+            printf("TIMEOUT \n");
+            break;
+
+        case CONFIGURATOR_EVENT_RX:
+            printf("RX %d\n", length);
+            break;
+
+        default:
+            break;
     }
-
-    if (nrf_status & NRF24_MAX_RT) {
-        printf("MAX_RT\n");
-        NRF24_flush_tx_fifo();
-    }
-
-    if (nrf_status & NRF24_RX_RD) {
-        do {
-            uint8_t bytes_read;
-            bytes_read = NRF24_read_register(NRF24_R_RX_PL_WID);
-
-            if (bytes_read > 0  &&  bytes_read < 32) {
-                uint8_t rx[32];
-
-                printf("RX: %u\n", bytes_read);
-                NRF24_read_payload(rx, bytes_read);
-            }
-            else {
-                NRF24_flush_rx_fifo();
-                break;
-            }
-        } while (! (NRF24_read_register(NRF24_FIFO_STATUS) & NRF24_RX_EMPTY));
-    }
-
-    return true;
 }
 
 

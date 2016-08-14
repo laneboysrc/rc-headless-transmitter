@@ -95,6 +95,7 @@ void NRF24_flush_rx_fifo(void);
 void NRF24_flush_tx_fifo(void);
 
 void NRF24_write_payload(const uint8_t payload[], uint8_t payload_size);
+void NRF24_write_payload_noack(const uint8_t payload[], uint8_t payload_size);
 void NRF24_read_payload(uint8_t *payload, uint8_t payload_size);
 
 void NRF24_set_bitrate(uint8_t bitrate);

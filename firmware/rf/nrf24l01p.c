@@ -142,6 +142,13 @@ void NRF24_write_payload(const uint8_t payload[], uint8_t payload_size)
 
 
 // ****************************************************************************
+void NRF24_write_payload_noack(const uint8_t payload[], uint8_t payload_size)
+{
+    write_command_buffer(NRF24_W_TX_PAYLOAD_NOACK, payload, payload_size);
+}
+
+
+// ****************************************************************************
 void NRF24_read_payload(uint8_t *payload, uint8_t payload_size)
 {
     read_command_buffer(NRF24_R_RX_PAYLOAD, payload, payload_size);

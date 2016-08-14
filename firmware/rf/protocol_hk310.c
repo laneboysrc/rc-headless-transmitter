@@ -33,9 +33,16 @@ typedef enum {
     SEND_STICK2,
     SEND_BIND_INFO,
     SEND_CONFIGURATOR,
+    SEND_CONFIGURATOR_2,
     RECEIVE_CONFIGURATOR,
     FRAME_DONE
 } frame_state_t;
+
+typedef enum {
+    CONFIGURATOR_NOTHING_TO_DO = 0,
+    CONFIGURATOR_SEND_ANOTHER_PACKET,
+    CONFIGURATOR_RECEIVE,
+} configurator_action_t;
 
 
 static frame_state_t frame_state;
@@ -191,13 +198,13 @@ static void send_bind_packet(void)
 
 
 // ****************************************************************************
-static bool send_configurator_packet(void)
+static configurator_action_t send_configurator_packet(uint8_t current_hop_index, uint8_t transmission_index)
 {
     const configurator_packet_t *p;
 
-    p = CONFIGURATOR_send_request(hop_index);
+    p = CONFIGURATOR_send_request(current_hop_index, transmission_index);
     if (p == NULL  ||  p->payload_size == 0) {
-        return false;
+        return CONFIGURATOR_NOTHING_TO_DO;
     }
 
     // Enable dynamic payload length and dynamic ACK
@@ -213,8 +220,46 @@ static bool send_configurator_packet(void)
     NRF24_write_multi_byte_register(NRF24_TX_ADDR, p->address, sizeof(p->address));
     NRF24_write_multi_byte_register(NRF24_RX_ADDR_P0, p->address, sizeof(p->address));
 
-    NRF24_write_payload(p->payload, p->payload_size);
-    return true;
+    if (p->send_without_ack) {
+        NRF24_write_payload_noack(p->payload, p->payload_size);
+    }
+    else {
+        NRF24_write_payload(p->payload, p->payload_size);
+    }
+
+    return p->send_another_packet ? CONFIGURATOR_SEND_ANOTHER_PACKET : CONFIGURATOR_RECEIVE;
+}
+
+
+// ****************************************************************************
+static void nrf_receive(uint8_t status)
+{
+    if (status & NRF24_TX_DS) {
+        CONFIGURATOR_event(CONFIGURATOR_EVENT_TX_SUCCESS, NULL, 0);
+    }
+
+    if (status & NRF24_MAX_RT) {
+        CONFIGURATOR_event(CONFIGURATOR_EVENT_TIMEOUT, NULL, 0);
+        NRF24_flush_tx_fifo();
+    }
+
+    if (status & NRF24_RX_RD) {
+        do {
+            uint8_t bytes_read;
+            bytes_read = NRF24_read_register(NRF24_R_RX_PL_WID);
+
+            if (bytes_read > 0  &&  bytes_read < 32) {
+                uint8_t rx[32];
+
+                NRF24_read_payload(rx, bytes_read);
+                CONFIGURATOR_event(CONFIGURATOR_EVENT_RX, rx, bytes_read);
+            }
+            else {
+                NRF24_flush_rx_fifo();
+                break;
+            }
+        } while (! (NRF24_read_register(NRF24_FIFO_STATUS) & NRF24_RX_EMPTY));
+    }
 }
 
 
@@ -222,6 +267,7 @@ static bool send_configurator_packet(void)
 static void nrf_transmit_done_callback(void)
 {
     uint8_t status;
+    static uint8_t current_hop_index;
 
     // Load and clear all status flags
     status = NRF24_get_status();
@@ -229,6 +275,7 @@ static void nrf_transmit_done_callback(void)
 
     switch (frame_state) {
         case SEND_STICK1:
+            current_hop_index = hop_index;
             setup_stick_packet();
             send_stick_packet();
             frame_state = SEND_STICK2;
@@ -237,6 +284,8 @@ static void nrf_transmit_done_callback(void)
         case SEND_STICK2:
             send_stick_packet();
             frame_state = bind_enabled ? SEND_BIND_INFO : SEND_CONFIGURATOR;
+            hop_index = (hop_index + 1) % NUMBER_OF_HOP_CHANNELS;
+            failsafe_counter = (failsafe_counter + 1) % FAILSAFE_PRESCALER_COUNT;
             break;
 
         case SEND_BIND_INFO:
@@ -245,19 +294,32 @@ static void nrf_transmit_done_callback(void)
             break;
 
         case SEND_CONFIGURATOR:
-            frame_state = FRAME_DONE;
-            if (send_configurator_packet()) {
-                frame_state = RECEIVE_CONFIGURATOR;
+            switch (send_configurator_packet(current_hop_index, 1)) {
+                case CONFIGURATOR_SEND_ANOTHER_PACKET:
+                    frame_state = SEND_CONFIGURATOR_2;
+                    break;
+
+                case CONFIGURATOR_RECEIVE:
+                    frame_state = RECEIVE_CONFIGURATOR;
+                    break;
+
+                case CONFIGURATOR_NOTHING_TO_DO:
+                default:
+                    frame_state = FRAME_DONE;
+                    break;
             }
 
-            hop_index = (hop_index + 1) % NUMBER_OF_HOP_CHANNELS;
-            failsafe_counter = (failsafe_counter + 1) % FAILSAFE_PRESCALER_COUNT;
+            break;
+
+        case SEND_CONFIGURATOR_2:
+            send_configurator_packet(current_hop_index, 2);
+            frame_state = RECEIVE_CONFIGURATOR;
             break;
 
         case RECEIVE_CONFIGURATOR:
-            if (CONFIGURATOR_event(status)) {
-                frame_state = FRAME_DONE;
-            }
+            nrf_receive(status);
+            frame_state = FRAME_DONE;
+
             break;
 
         case FRAME_DONE:

@@ -161,13 +161,13 @@ void NRF24_activate(uint8_t code)
 // ****************************************************************************
 void NRF24_set_bitrate(uint8_t bitrate)
 {
-    rf_setup = (rf_setup & 0xd7);   // Preset 1 mbps
+    rf_setup = rf_setup & 0xd7;             // Preset 1 mbps
 
     if (bitrate == 250) {
-        rf_setup |= NRF24_RF_DR_LOW;      // 250 kbps
+        rf_setup |= NRF24_RF_DR_LOW;        // 250 kbps
     }
     else if (bitrate != 1) {
-        rf_setup |= NRF24_RF_DR_HIGH;     // Default to 2 Mbps
+        rf_setup |= NRF24_RF_DR_HIGH;       // Default to 2 Mbps
     }
 
     NRF24_write_register(NRF24_RF_SETUP, rf_setup);

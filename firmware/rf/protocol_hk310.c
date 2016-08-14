@@ -201,14 +201,18 @@ static bool send_configurator_packet(void)
     }
 
     // Enable dynamic payload length and dynamic ACK
-    NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY |
-        NRF24_EN_DPL);
+    NRF24_write_register(NRF24_FEATURE,
+        NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY | NRF24_EN_DPL);
 
-    NRF24_write_register(NRF24_EN_AA, 0x01);    // Enable Auto-ack on pipe 0
-    NRF24_set_bitrate(2);                       // 2 Mbps
-    NRF24_set_power(NRF24_POWER_n18dBm);
+    // Enable Auto-ack on pipe 0
+    NRF24_write_register(NRF24_EN_AA, 0x01);
+
+    NRF24_set_bitrate(2);
+    NRF24_set_power(NRF24_POWER_0dBm);
     NRF24_write_register(NRF24_RF_CH, p->channel);
-    NRF24_write_multi_byte_register(NRF24_TX_ADDR, p->address, ADDRESS_SIZE);
+    NRF24_write_multi_byte_register(NRF24_TX_ADDR, p->address, sizeof(p->address));
+    NRF24_write_multi_byte_register(NRF24_RX_ADDR_P0, p->address, sizeof(p->address));
+
     NRF24_write_payload(p->payload, p->payload_size);
     return true;
 }
@@ -343,6 +347,8 @@ void PROTOCOL_HK310_init(void)
     NRF24_write_register(NRF24_DYNPD, 0x01);
     // No Auto-retransmit; ARD is 500us (required for 32 byte payload at 2 Mbps)
     NRF24_write_register(NRF24_SETUP_RETR, 0x10);
+    // Enable pipe 0 receiver
+    NRF24_write_register(NRF24_EN_RXADDR, 0x01);
 
 
     SYSTICK_set_rf_callback(hk310_protocol_frame_callback, FRAME_TIME_MS);

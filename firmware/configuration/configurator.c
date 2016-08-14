@@ -26,7 +26,7 @@
 static bool connected = false;
 static configurator_packet_t packet;
 
-static const uint8_t configurator_address[ADDRESS_SIZE] = {0x4c, 0x42, 0x72, 0x63, 0x78};
+static const uint8_t configurator_address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 
 
 // ****************************************************************************
@@ -77,27 +77,31 @@ bool CONFIGURATOR_event(uint8_t nrf_status)
 {
     printf("CONF: ");
     if (nrf_status & NRF24_TX_DS) {
-        printf("TX_DS ");
+        printf("TX_DS\n");
     }
-    if (nrf_status & NRF24_RX_RD) {
-        uint8_t bytes_read;
-        uint8_t fifo_status;
-        uint8_t read_packet[32];
 
-        printf("RX_RD ");
-
-        fifo_status = NRF24_read_register(NRF24_FIFO_STATUS);
-        while (! (fifo_status & NRF24_RX_EMPTY)) {
-            bytes_read = NRF24_read_register(NRF24_RX_PW_P0);
-            NRF24_read_payload(read_packet, bytes_read);
-            printf("(%d bytes) ", bytes_read);
-        }
-    }
     if (nrf_status & NRF24_MAX_RT) {
-        printf("MAX_RT ");
+        printf("MAX_RT\n");
         NRF24_flush_tx_fifo();
     }
-    puts("");
+
+    if (nrf_status & NRF24_RX_RD) {
+        do {
+            uint8_t bytes_read;
+            bytes_read = NRF24_read_register(NRF24_R_RX_PL_WID);
+
+            if (bytes_read > 0  &&  bytes_read < 32) {
+                uint8_t rx[32];
+
+                printf("RX: %u\n", bytes_read);
+                NRF24_read_payload(rx, bytes_read);
+            }
+            else {
+                NRF24_flush_rx_fifo();
+                break;
+            }
+        } while (! (NRF24_read_register(NRF24_FIFO_STATUS) & NRF24_RX_EMPTY));
+    }
 
     return true;
 }

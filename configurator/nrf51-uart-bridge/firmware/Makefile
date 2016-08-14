@@ -26,49 +26,47 @@ OBJCOPY          	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
 SIZE             	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
 
 OPENOCD          	:= /opt/openocd/bin/openocd
+# OPENOCD_FLAGS       := --debug=0 -f interface/stlink-v2.cfg -f target/nrf51.cfg
+OPENOCD_FLAGS       := --debug=0 -f ./discovery-st-link-serial.cfg -f target/nrf51.cfg
 
 MK 				 	:= mkdir -p
 RM 					:= rm -rf
 
 
 C_SOURCE_FILES  = $(abspath main.c)
-C_SOURCE_FILES += $(abspath rf_protocol.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/toolchain/system_nrf51.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/util/app_util_platform.c)
+C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/common/nrf_drv_common.c)
+C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rtc/nrf_drv_rtc.c)
+C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/uart/nrf_drv_uart.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/fifo/app_fifo.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/uart/app_uart_fifo.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/uart/retarget.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/common/nrf_drv_common.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/hal/nrf_adc.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/uart/nrf_drv_uart.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/clock/nrf_drv_clock.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rtc/nrf_drv_rtc.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/delay/nrf_delay.c)
+C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/util/app_error.c)
+C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/util/nrf_log.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/properitary_rf/esb/nrf_esb.c)
+C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/toolchain/system_nrf51.c)
 
 ASM_SOURCE_FILES = $(abspath $(NRF_SDK_PATH)/components/toolchain/gcc/gcc_startup_nrf51.s)
 
 INC_PATHS += -I$(abspath .)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/toolchain)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/nrf_soc_nosd)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/device)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/toolchain/gcc)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/toolchain/CMSIS/Include)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/common)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/config)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/hal)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rtc)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/nrf_soc_nosd)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/uart)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/button)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/fifo)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/uart)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/util)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/clock)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/config)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/common)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/delay)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/hal)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rtc)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/uart)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/properitary_rf/esb)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/toolchain)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/toolchain/CMSIS/Include)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/examples/bsp)
 
 # LIBS  = $(abspath $(NRF_SDK_PATH)/components/properitary_rf/esb/gcc/esb_gcc.a)
 
-OBJECT_DIRECTORY = build
+OBJECT_DIRECTORY = _build
 LISTING_DIRECTORY = $(OBJECT_DIRECTORY)
 OUTPUT_BINARY_DIRECTORY = $(OBJECT_DIRECTORY)
 
@@ -79,7 +77,8 @@ BUILD_DIRECTORIES := $(sort $(OBJECT_DIRECTORY) $(OUTPUT_BINARY_DIRECTORY) $(LIS
 # C compiler flags
 CFLAGS := -DNRF51
 CFLAGS += -DBOARD_CUSTOM
-CFLAGS += -DBSP_DEFINES_ONLY
+CFLAGS += -DNRF_LOG_USES_UART=1
+
 CFLAGS += -mcpu=cortex-m0
 CFLAGS += -mthumb -mabi=aapcs
 CFLAGS += --std=gnu99
@@ -94,8 +93,6 @@ CFLAGS += -fno-builtin --short-enums
 # Assembler flags
 ASMFLAGS += -x assembler-with-cpp
 ASMFLAGS += -DNRF51
-ASMFLAGS += -DBOARD_CUSTOM
-ASMFLAGS += -DBSP_DEFINES_ONLY
 
 
 # Linker flags
@@ -165,10 +162,10 @@ clean:
 	$(ECHO)$(RM) $(BUILD_DIRECTORIES)
 
 program: $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex
-	$(OPENOCD) -f interface/stlink-v2.cfg -f target/nrf51.cfg -c "init; reset halt ; nrf51 mass_erase ; sleep 500 ; flash write_image $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex ; reset ; shutdown"
+	$(OPENOCD) $(OPENOCD_FLAGS) -c "init; reset halt ; nrf51 mass_erase ; sleep 500 ; flash write_image $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex ; reset ; shutdown"
 
 reset:
-	$(OPENOCD) -f interface/stlink-v2.cfg -f target/nrf51.cfg -c "init; reset ; shutdown"
+	$(OPENOCD) $(OPENOCD_FLAGS) -c "init; reset ; shutdown"
 
 terminal:
 	miniterm.py -p /dev/ttyUSB1 -b 230400

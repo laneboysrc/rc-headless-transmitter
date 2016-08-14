@@ -1,43 +1,83 @@
-#include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
+#include <stdbool.h>
 
-#include <nrf.h>
-#include <nrf_gpio.h>
-#include <nrf_drv_config.h>
+#include <sdk_common.h>
+#include <app_util_platform.h>
+#include <nrf_log.h>
+#include <nrf_esb.h>
 #include <nrf_drv_rtc.h>
-#include <nrf_drv_clock.h>
-#include <app_uart.h>
 
-#include "board.h"
-#include "globals.h"
-#include "rf_protocol.h"
+#define SYSTICK_IN_MS 10
 
+#define CHANNEL 79
+static const uint8_t address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 
-// ****************************************************************************
-#define UART_TX_BUFFER_SIZE 128
-#define UART_RX_BUFFER_SIZE 16
-
-
-// ****************************************************************************
-GLOBAL_FLAGS_T global_flags;
 volatile uint32_t milliseconds;
 
-static volatile uint8_t systick_count;
 
-
-// ****************************************************************************
-// ****************************************************************************
-// ****************************************************************************
-// Callbacks required by the NRF SDK
-
-// ****************************************************************************
-static void uart_callback(app_uart_evt_t *p_event)
+static void send_packet(void)
 {
-    if (p_event->evt_type == APP_UART_TX_EMPTY) {
-        // led_off(LED_4);
+    static nrf_esb_payload_t tx = {
+        .pipe = 0,
+        .data = {0x42, 0x00, 0x17},
+        .length = 3
+    };
+
+    nrf_esb_write_payload(&tx);
+    ++tx.data[1];
+}
+
+static void rf_event_handler(nrf_esb_evt_t const *event)
+{
+    nrf_esb_payload_t rx_payload;
+
+    switch (event->evt_id) {
+        case NRF_ESB_EVENT_TX_SUCCESS:
+            NRF_LOG_PRINTF("%lu TX SUCCESS\n", milliseconds);
+            nrf_esb_flush_tx();
+            break;
+
+        case NRF_ESB_EVENT_TX_FAILED:
+            NRF_LOG_PRINTF("%lu TX FAILED\n", milliseconds);
+            nrf_esb_flush_tx();
+            break;
+
+        case NRF_ESB_EVENT_RX_RECEIVED:
+            NRF_LOG_PRINTF("%lu RX: ", milliseconds);
+            if (nrf_esb_read_rx_payload(&rx_payload) == NRF_SUCCESS) {
+                static int prescaler;
+                int i;
+
+                for  (i = 0; i < rx_payload.length; i++) {
+                    NRF_LOG_PRINTF("%02X ", rx_payload.data[i]);
+                }
+
+                ++prescaler;
+                if ((prescaler % 7) == 0) {
+                    send_packet();
+                }
+            }
+            NRF_LOG_PRINTF("\n");
+            break;
     }
+}
+
+
+static void CLOCKS_init( void )
+{
+    /* Start 16 MHz crystal oscillator */
+    NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
+    NRF_CLOCK->TASKS_HFCLKSTART    = 1;
+
+    /* Wait for the external oscillator to start up */
+    while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0);
+
+    /* Start low frequency crystal oscillator for app_timer(used by bsp)*/
+    NRF_CLOCK->LFCLKSRC            = (CLOCK_LFCLKSRC_SRC_Xtal << CLOCK_LFCLKSRC_SRC_Pos);
+    NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
+    NRF_CLOCK->TASKS_LFCLKSTART    = 1;
+
+    while (NRF_CLOCK->EVENTS_LFCLKSTARTED == 0);
 }
 
 
@@ -45,37 +85,13 @@ static void uart_callback(app_uart_evt_t *p_event)
 static void rtc_callback(nrf_drv_rtc_int_type_t int_type)
 {
     if (int_type == NRF_DRV_RTC_INT_TICK) {
-        ++systick_count;
         milliseconds += SYSTICK_IN_MS;
     }
 }
 
-
-// END of callbacks required by the NRF SDK
-// ****************************************************************************
-// ****************************************************************************
-// ****************************************************************************
-
-
-// ****************************************************************************
-static void init_hardware(void)
-{
-
-}
-
-
-// ****************************************************************************
-// Start the internal LFCLK XTAL oscillator
-static void init_lfclk(void)
-{
-    nrf_drv_clock_init();
-    nrf_drv_clock_lfclk_request(NULL);
-}
-
-
 // ****************************************************************************
 // Setup the RTC to provide a TICK
-static void init_rtc(void)
+static void RTC_init(void)
 {
     static const nrf_drv_rtc_t rtc = NRF_DRV_RTC_INSTANCE(0);
 
@@ -97,102 +113,49 @@ static void init_rtc(void)
 }
 
 
-// ****************************************************************************
-static void service_systick(void)
+static uint32_t RF_init( void )
 {
-    static uint32_t prescaler_for_seconds;
+    uint32_t err_code;
 
-    global_flags.systick = 0;
-    global_flags.fourty_milliseconds_tick = 0;
-    global_flags.third_second_tick = 0;
-    global_flags.half_second_tick = 0;
-    global_flags.seconds_tick = 0;
+    nrf_esb_config_t nrf_esb_config         = NRF_ESB_DEFAULT_CONFIG;
+    nrf_esb_config.protocol                 = NRF_ESB_PROTOCOL_ESB_DPL;
+    nrf_esb_config.bitrate                  = NRF_ESB_BITRATE_2MBPS;
+    nrf_esb_config.mode                     = NRF_ESB_MODE_PRX;
+    nrf_esb_config.event_handler            = rf_event_handler;
+    nrf_esb_config.selective_auto_ack       = false;
 
-    if (!systick_count) {
-        return;
-    }
+    err_code = nrf_esb_init(&nrf_esb_config);
+    VERIFY_SUCCESS(err_code);
 
-    --systick_count;
-    global_flags.systick = 1;
+    err_code = nrf_esb_set_base_address_0(&address[1]);
+    VERIFY_SUCCESS(err_code);
 
-    ++prescaler_for_seconds;
-    if ((prescaler_for_seconds & 0x03) == 0) {
-        global_flags.fourty_milliseconds_tick = 1;
-    }
+    err_code = nrf_esb_set_prefixes(address, 1);
+    VERIFY_SUCCESS(err_code);
 
-    if (prescaler_for_seconds == (333 / SYSTICK_IN_MS)) {
-        global_flags.third_second_tick = 1;
-    }
-    else if (prescaler_for_seconds == (500 / SYSTICK_IN_MS)) {
-        global_flags.half_second_tick = 1;
-    }
-    else if (prescaler_for_seconds == (666 / SYSTICK_IN_MS)) {
-        global_flags.third_second_tick = 1;
-    }
-    else if (prescaler_for_seconds >= (1000 / SYSTICK_IN_MS)) {
-        prescaler_for_seconds = 0;
-        global_flags.seconds_tick = 1;
-        global_flags.third_second_tick = 1;
-        global_flags.half_second_tick = 1;
-    }
+    err_code = nrf_esb_set_rf_channel(CHANNEL);
+    VERIFY_SUCCESS(err_code);
+
+    err_code = nrf_esb_start_rx();
+    VERIFY_SUCCESS(err_code);
+
+    return NRF_SUCCESS;
 }
 
 
-// ****************************************************************************
-static void init_uart(void)
-{
-    static uint8_t tx_buffer[UART_TX_BUFFER_SIZE];
-    static uint8_t rx_buffer[UART_RX_BUFFER_SIZE];
 
-    static const app_uart_comm_params_t uart_params = {
-        .rx_pin_no = RX_PIN_NUMBER,
-        .tx_pin_no = TX_PIN_NUMBER,
-        // .rts_pin_no = RTS_PIN_NUMBER,
-        // .cts_pin_no = CTS_PIN_NUMBER,
-        .flow_control = APP_UART_FLOW_CONTROL_DISABLED,
-        .use_parity = false,
-        .baud_rate = UART_BAUDRATE_BAUDRATE_Baud230400
-    };
-
-    // Can not be const as it would conflict with the function prototype
-    static app_uart_buffers_t uart_buffers = {
-        .tx_buf = tx_buffer,
-        .rx_buf = rx_buffer,
-        .tx_buf_size = sizeof(tx_buffer),
-        .rx_buf_size = sizeof(rx_buffer)
-    };
-
-    app_uart_init(&uart_params, &uart_buffers, uart_callback, APP_IRQ_PRIORITY_LOW);
-}
-
-
-// ****************************************************************************
 int main(void)
 {
-    // setvbuf(stdout, NULL, _IONBF, 0);
-    init_hardware();
-    init_lfclk();
-    init_rtc();
-    init_uart();
-    printf("\n");
+    CLOCKS_init();
+    RTC_init();
+    NRF_LOG_INIT();
+    RF_init();
 
-    while (milliseconds < 100);
+    NRF_LOG("Enhanced ShockBurst Receiver Example running.\n");
 
-    printf("\n===\n");
+    send_packet();
 
-    init_rf();
-
-    printf("Resuming normal operation.\n");
-
-    while (1) {
-        service_systick();
-        service_rf_protocol();
-
-        // Put the CPU in a low-power state until an event occurs
-        __SEV();
-        __WFE();
+    while (true) {
         __WFE();
     }
 }
-
-

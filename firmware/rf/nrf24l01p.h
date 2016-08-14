@@ -17,7 +17,7 @@
 #define NRF24_REUSE_TX_PL         0xe3    // Reuse TX payload
 #define NRF24_R_RX_PL_WID         0x60    // Payload width for the top payload in the RX FIFO
 #define NRF24_W_ACK_PAYLOAD       0xa8    // Write payload to be transmitted together with ACK
-#define NRF24_W_TX_PAYLOAD_NOACK  0x0b    // Disables AUTOACK on this packet
+#define NRF24_W_TX_PAYLOAD_NOACK  0xb0    // Disables AUTOACK on this packet
 #define NRF24_NOP                 0xff    // No Operation; used to read the status register
 #define NRF24_ACTIVATE            0x50    // BK241 specific command
 

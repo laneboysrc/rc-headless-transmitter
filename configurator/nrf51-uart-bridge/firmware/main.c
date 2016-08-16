@@ -27,6 +27,16 @@ static void send_packet(void)
     ++tx.data[1];
 }
 
+static void parse_packet(const uint8_t * packet, uint8_t packet_length)
+{
+    static int prescaler;
+
+    ++prescaler;
+    if ((prescaler % 7) == 0) {
+        send_packet();
+    }
+}
+
 static void rf_event_handler(nrf_esb_evt_t const *event)
 {
     nrf_esb_payload_t rx_payload;
@@ -45,17 +55,13 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
         case NRF_ESB_EVENT_RX_RECEIVED:
             NRF_LOG_PRINTF("%lu RX: ", milliseconds);
             if (nrf_esb_read_rx_payload(&rx_payload) == NRF_SUCCESS) {
-                static int prescaler;
                 int i;
 
                 for  (i = 0; i < rx_payload.length; i++) {
                     NRF_LOG_PRINTF("%02X ", rx_payload.data[i]);
                 }
 
-                ++prescaler;
-                if ((prescaler % 7) == 0) {
-                    send_packet();
-                }
+                parse_packet(rx_payload.data, rx_payload.length);
             }
             NRF_LOG_PRINTF("\n");
             break;

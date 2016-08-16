@@ -19,4 +19,4 @@ typedef struct {
 
 void CONFIGURATOR_init(void);
 configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t transmission_index);
-void CONFIGURATOR_event(uint8_t nrf_status, uint8_t *packet, uint8_t packet_length);
+void CONFIGURATOR_event(uint8_t nrf_status, const uint8_t * packet, uint8_t packet_length);

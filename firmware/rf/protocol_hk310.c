@@ -159,7 +159,8 @@ static void build_bind_packets(void)
 static void setup_stick_packet(void)
 {
     // Disable Dynamic payload length
-    NRF24_write_register(NRF24_FEATURE, 0);
+    // FIXME: do we even need this? Not according to the datasheet ...
+    // NRF24_write_register(NRF24_FEATURE, 0);
 
     // Disable Auto Acknoledgement on all pipes
     NRF24_write_register(NRF24_EN_AA, 0x00);
@@ -207,9 +208,9 @@ static configurator_action_t send_configurator_packet(uint8_t current_hop_index,
         return CONFIGURATOR_NOTHING_TO_DO;
     }
 
+    // FIXME: we shoud be able to do this once in the configuration
     // Enable dynamic payload length and dynamic ACK
-    NRF24_write_register(NRF24_FEATURE,
-        NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY | NRF24_EN_DPL);
+    // NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY | NRF24_EN_DPL);
 
     // Enable Auto-ack on pipe 0
     NRF24_write_register(NRF24_EN_AA, 0x01);
@@ -232,7 +233,7 @@ static configurator_action_t send_configurator_packet(uint8_t current_hop_index,
 
 
 // ****************************************************************************
-static void nrf_receive(uint8_t status)
+static void receive_configurator_packet(uint8_t status)
 {
     if (status & NRF24_TX_DS) {
         CONFIGURATOR_event(CONFIGURATOR_EVENT_TX_SUCCESS, NULL, 0);
@@ -245,14 +246,14 @@ static void nrf_receive(uint8_t status)
 
     if (status & NRF24_RX_RD) {
         do {
-            uint8_t bytes_read;
-            bytes_read = NRF24_read_register(NRF24_R_RX_PL_WID);
+            uint8_t count;
+            count = NRF24_read_register(NRF24_R_RX_PL_WID);
 
-            if (bytes_read > 0  &&  bytes_read < 32) {
+            if (count > 0  &&  count < 32) {
                 uint8_t rx[32];
 
-                NRF24_read_payload(rx, bytes_read);
-                CONFIGURATOR_event(CONFIGURATOR_EVENT_RX, rx, bytes_read);
+                NRF24_read_payload(rx, count);
+                CONFIGURATOR_event(CONFIGURATOR_EVENT_RX, rx, count);
             }
             else {
                 NRF24_flush_rx_fifo();
@@ -267,7 +268,7 @@ static void nrf_receive(uint8_t status)
 static void nrf_transmit_done_callback(void)
 {
     uint8_t status;
-    static uint8_t current_hop_index;
+    static uint8_t packet_number;
 
     // Load and clear all status flags
     status = NRF24_get_status();
@@ -275,7 +276,6 @@ static void nrf_transmit_done_callback(void)
 
     switch (frame_state) {
         case SEND_STICK1:
-            current_hop_index = hop_index;
             setup_stick_packet();
             send_stick_packet();
             frame_state = SEND_STICK2;
@@ -284,19 +284,17 @@ static void nrf_transmit_done_callback(void)
         case SEND_STICK2:
             send_stick_packet();
             frame_state = bind_enabled ? SEND_BIND_INFO : SEND_CONFIGURATOR;
-            hop_index = (hop_index + 1) % NUMBER_OF_HOP_CHANNELS;
-            failsafe_counter = (failsafe_counter + 1) % FAILSAFE_PRESCALER_COUNT;
             break;
 
         case SEND_BIND_INFO:
             send_bind_packet();
             frame_state = SEND_CONFIGURATOR;
+            packet_number = 1;
             break;
 
         case SEND_CONFIGURATOR:
-            switch (send_configurator_packet(current_hop_index, 1)) {
+            switch (send_configurator_packet(hop_index, packet_number)) {
                 case CONFIGURATOR_SEND_ANOTHER_PACKET:
-                    frame_state = SEND_CONFIGURATOR_2;
                     break;
 
                 case CONFIGURATOR_RECEIVE:
@@ -308,16 +306,11 @@ static void nrf_transmit_done_callback(void)
                     frame_state = FRAME_DONE;
                     break;
             }
-
-            break;
-
-        case SEND_CONFIGURATOR_2:
-            send_configurator_packet(current_hop_index, 2);
-            frame_state = RECEIVE_CONFIGURATOR;
+            ++packet_number;
             break;
 
         case RECEIVE_CONFIGURATOR:
-            nrf_receive(status);
+            receive_configurator_packet(status);
             frame_state = FRAME_DONE;
 
             break;
@@ -339,6 +332,9 @@ static void hk310_protocol_frame_callback(void)
     pulse_to_stickdata(channel_to_pulse_ns(failsafe[0]), &failsafe_packet[0]);
     pulse_to_stickdata(channel_to_pulse_ns(failsafe[1]), &failsafe_packet[2]);
     pulse_to_stickdata(channel_to_pulse_ns(failsafe[2]), &failsafe_packet[4]);
+
+    hop_index = (hop_index + 1) % NUMBER_OF_HOP_CHANNELS;
+    failsafe_counter = (failsafe_counter + 1) % FAILSAFE_PRESCALER_COUNT;
 
     frame_state = SEND_STICK1;
     nrf_transmit_done_callback();
@@ -405,13 +401,14 @@ void PROTOCOL_HK310_init(void)
     // protocol. We can do them once globally as they do not interfere with
     // the HK310 protocol.
     //
-    // Enable dynamic ACK payload on Pipe 0
-    NRF24_write_register(NRF24_DYNPD, 0x01);
-    // No Auto-retransmit; ARD is 500us (required for 32 byte payload at 2 Mbps)
+    // No Auto-retransmit (ARC = 0); ARD is 500us (required for 32 byte payload at 2 Mbps)
     NRF24_write_register(NRF24_SETUP_RETR, 0x10);
     // Enable pipe 0 receiver
     NRF24_write_register(NRF24_EN_RXADDR, 0x01);
-
+    // Enable dynamic ACK payload on pipe 0
+    NRF24_write_register(NRF24_DYNPD, 0x01);
+    // Enable dynamic payload length and dynamic ACK
+    NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY | NRF24_EN_DPL);
 
     SYSTICK_set_rf_callback(hk310_protocol_frame_callback, FRAME_TIME_MS);
 }

@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := all
 
-PROJECT_NAME := tx
+PROGRAM := tx
 
 ###############################################################################
 # Supress or show diagnostic compiler output
@@ -42,9 +42,9 @@ OPENCM3_LIBNAME		:= opencm3_stm32f1
 
 ###############################################################################
 # Source files, include paths, library paths and libraries
+ifeq ($(PROGRAM),tx)
 C_SOURCE_FILES += $(abspath main.c)
 C_SOURCE_FILES += $(abspath configuration/config.c)
-C_SOURCE_FILES += $(abspath configuration/config_to_javascript.c)
 C_SOURCE_FILES += $(abspath configuration/configurator.c)
 C_SOURCE_FILES += $(abspath input/inputs.c)
 C_SOURCE_FILES += $(abspath input/inputs_stm32f103c8t6.c)
@@ -65,6 +65,22 @@ C_SOURCE_FILES += $(abspath system/systick.c)
 C_SOURCE_FILES += $(abspath system/uart.c)
 C_SOURCE_FILES += $(abspath system/watchdog.c)
 C_SOURCE_FILES += $(abspath utils/ring_buffer.c)
+endif
+
+# Source files and invocation rule for a separate "another-program" executable
+# Build of this executable can be invoked by running "make PROGRAM=another-program"
+ifeq ($(PROGRAM),dump-config)
+C_SOURCE_FILES += $(abspath configuration/config_to_javascript.c)
+C_SOURCE_FILES += $(abspath configuration/config.c)
+C_SOURCE_FILES += $(abspath system/uart.c)
+C_SOURCE_FILES += $(abspath system/watchdog.c)
+C_SOURCE_FILES += $(abspath utils/ring_buffer.c)
+endif
+.PHONY: dump-config
+dump-config:
+	@echo Use \"make PROGRAM=dump-config ...\"
+
+
 
 LIBS += -lc -lnosys
 LIBS += -l$(OPENCM3_LIBNAME)
@@ -137,7 +153,7 @@ LDFLAGS	+= --static
 LDFLAGS	+= -nostartfiles
 LDFLAGS += $(LIB_PATHS)
 LDFLAGS += -T$(LINKER_SCRIPT)
-LDFLAGS += -Wl,-Map=$(LISTING_DIRECTORY)/$(PROJECT_NAME).map
+LDFLAGS += -Wl,-Map=$(LISTING_DIRECTORY)/$(PROGRAM).map
 LDFLAGS += -Wl,--gc-sections
 LDFLAGS += --specs=nano.specs
 
@@ -177,7 +193,7 @@ libopencm3 :
 # Build rules
 
 # Building all targets
-all : $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex echosize
+all : $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).hex echosize
 
 # Create build directories
 $(BUILD_DIRECTORIES) : libopencm3
@@ -195,33 +211,33 @@ $(LISTING_DIRECTORY)/%.lst : %.c
 	$(ECHO)$(CC) $(CFLAGS) $(INC_PATHS) -c -g -Wa,-adlhn -o $(patsubst %.lst,%.o,$@) $< > $@
 
 # Link
-$(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out : $(BUILD_DIRECTORIES) $(OBJECTS)
-	@echo [LD] $(PROJECT_NAME).out
-	$(ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out
+$(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).out : $(BUILD_DIRECTORIES) $(OBJECTS)
+	@echo [LD] $(PROGRAM).out
+	$(ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).out
 
 # Create binary .bin file from the .out file
-$(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).bin : $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out
-	@echo [OBJCOPY] $(PROJECT_NAME).bin
-	$(ECHO)$(OBJCOPY) -O binary $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).bin
+$(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).bin : $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).out
+	@echo [OBJCOPY] $(PROGRAM).bin
+	$(ECHO)$(OBJCOPY) -O binary $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).out $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).bin
 
 # Create binary .hex file from the .out file
-$(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex : $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out
-	@echo [OBJCOPY] $(PROJECT_NAME).hex
-	$(ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex
+$(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).hex : $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).out
+	@echo [OBJCOPY] $(PROGRAM).hex
+	$(ECHO)$(OBJCOPY) -O ihex $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).out $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).hex
 
 # Create list files that include C code as well as Assembler
 list : $(BUILD_DIRECTORIES) $(OBJECTS:.o=.lst)
 
 echosize :
 	-@echo ''
-	$(ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out
+	$(ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).out
 	-@echo ''
 
 clean :
 	$(ECHO)$(RM) $(BUILD_DIRECTORIES)
 
-program : $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex
-	$(OPENOCD) $(OPENOCD_FLAGS) -c "program $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex reset exit"
+program : $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).hex
+	$(OPENOCD) $(OPENOCD_FLAGS) -c "program $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).hex reset exit"
 
 flash : program
 
@@ -229,7 +245,7 @@ reset :
 	$(OPENOCD) -f $(OPENOCD_FLAGS) -c "init; reset ; shutdown"
 
 # Invoke openocd for a debugging session
-debug : $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out
+debug : $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).out
 	$(ECHO)$(GDB) -ex "target extended-remote | $(OPENOCD) $(OPENOCD_FLAGS) -c \"gdb_port pipe; log_output openocd.log\"" $<
 
 terminal :

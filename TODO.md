@@ -15,10 +15,6 @@
       before finishing the procedure, with a different beep.
     - While calibrating, still run the RF(?)
 
-
-- Build a separate executable that dumps the configuration, instead of having
-  the main app do it
-
 - Center detent: beep when center (configurable?)
 
 - Beep when throttle not 0 at start of transmitter, and refuse operation

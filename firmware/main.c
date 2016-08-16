@@ -90,10 +90,6 @@ int main(void)
 
     printf("\n\n\n**********\nTransmitter initialized\n");
 
-#if 0
-    CONFIG_dump_javascript_information();
-#endif
-
     LED_on();
     SOUND_play(C5, 100, NULL);
     // MUSIC_play(&song_connecting);

@@ -3,8 +3,10 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include <libopencm3/stm32/rcc.h>
+#include <libopencmsis/core_cm3.h>
+
 #include <config.h>
-#include <systick.h>
 #include <uart.h>
 
 
@@ -786,3 +788,14 @@ void CONFIG_dump_javascript_information(void)
     dump_javascript_config();
 }
 
+int main(void)
+{
+    rcc_clock_setup_in_hse_8mhz_out_24mhz();
+
+    UART_init();
+    CONFIG_dump_javascript_information();
+
+    while (1) {
+        __WFI();
+    }
+}

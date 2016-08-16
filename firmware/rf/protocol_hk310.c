@@ -33,7 +33,6 @@ typedef enum {
     SEND_STICK2,
     SEND_BIND_INFO,
     SEND_CONFIGURATOR,
-    SEND_CONFIGURATOR_2,
     RECEIVE_CONFIGURATOR,
     FRAME_DONE
 } frame_state_t;
@@ -159,8 +158,8 @@ static void build_bind_packets(void)
 static void setup_stick_packet(void)
 {
     // Disable Dynamic payload length
-    // FIXME: do we even need this? Not according to the datasheet ...
-    // NRF24_write_register(NRF24_FEATURE, 0);
+    // Note: this is required even though the nRF24 manual does not mention it!
+    NRF24_write_register(NRF24_FEATURE, 0);
 
     // Disable Auto Acknoledgement on all pipes
     NRF24_write_register(NRF24_EN_AA, 0x00);
@@ -208,9 +207,8 @@ static configurator_action_t send_configurator_packet(uint8_t current_hop_index,
         return CONFIGURATOR_NOTHING_TO_DO;
     }
 
-    // FIXME: we shoud be able to do this once in the configuration
     // Enable dynamic payload length and dynamic ACK
-    // NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY | NRF24_EN_DPL);
+    NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY | NRF24_EN_DPL);
 
     // Enable Auto-ack on pipe 0
     NRF24_write_register(NRF24_EN_AA, 0x01);
@@ -278,6 +276,7 @@ static void nrf_transmit_done_callback(void)
         case SEND_STICK1:
             setup_stick_packet();
             send_stick_packet();
+            packet_number = 1;
             frame_state = SEND_STICK2;
             break;
 
@@ -289,7 +288,6 @@ static void nrf_transmit_done_callback(void)
         case SEND_BIND_INFO:
             send_bind_packet();
             frame_state = SEND_CONFIGURATOR;
-            packet_number = 1;
             break;
 
         case SEND_CONFIGURATOR:
@@ -407,8 +405,6 @@ void PROTOCOL_HK310_init(void)
     NRF24_write_register(NRF24_EN_RXADDR, 0x01);
     // Enable dynamic ACK payload on pipe 0
     NRF24_write_register(NRF24_DYNPD, 0x01);
-    // Enable dynamic payload length and dynamic ACK
-    NRF24_write_register(NRF24_FEATURE, NRF24_EN_DYN_ACK | NRF24_EN_ACK_PAY | NRF24_EN_DPL);
 
     SYSTICK_set_rf_callback(hk310_protocol_frame_callback, FRAME_TIME_MS);
 }

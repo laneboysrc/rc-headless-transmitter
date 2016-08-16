@@ -14,26 +14,50 @@ static const uint8_t address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 
 volatile uint32_t milliseconds;
 
+static nrf_esb_payload_t tx = {
+    .pipe = 0,
+    .data = {
+        0x31,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x12, 0x23, 0x34, 0x45, 0x56,
+        0xd2, 0x04,
+        0x00, 0x01
+    },
+    .length = 18
+};
 
-static void send_packet(void)
+
+static void send_packet(const uint8_t * packet)
 {
-    static nrf_esb_payload_t tx = {
-        .pipe = 0,
-        .data = {0x42, 0x00, 0x17},
-        .length = 3
-    };
-
     nrf_esb_write_payload(&tx);
-    ++tx.data[1];
 }
 
 static void parse_packet(const uint8_t * packet, uint8_t packet_length)
 {
-    static int prescaler;
+    static uint32_t prescaler = 0;
 
-    ++prescaler;
-    if ((prescaler % 7) == 0) {
-        send_packet();
+    if (packet[0] == 0x30  &&  packet_length == 27) {
+        NRF_LOG_PRINTF("FREE_TO_CONNECT received!\n");
+
+
+        memcpy(&tx.data[1], &packet[1], 8);
+        memcpy(&tx.data[1+8], &packet[1], 5);
+
+        // nrf_esb_disable();
+        nrf_esb_stop_rx();
+        nrf_esb_set_base_address_0(&packet[2]);
+        nrf_esb_set_prefixes(&packet[1], 1);
+        nrf_esb_start_rx();
+
+        prescaler = 0;
+    }
+
+    if (packet[0] == 0x30  &&  packet_length == 1) {
+        NRF_LOG_PRINTF("FREE_TO_CONNECT POLL received!\n");
+        if (prescaler == 50) {
+            send_packet(packet);
+        }
+        ++prescaler;
     }
 }
 
@@ -53,17 +77,17 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
             break;
 
         case NRF_ESB_EVENT_RX_RECEIVED:
-            NRF_LOG_PRINTF("%lu RX: ", milliseconds);
             if (nrf_esb_read_rx_payload(&rx_payload) == NRF_SUCCESS) {
                 int i;
 
+                NRF_LOG_PRINTF("%lu RX (%d) ", milliseconds, rx_payload.length);
                 for  (i = 0; i < rx_payload.length; i++) {
                     NRF_LOG_PRINTF("%02X ", rx_payload.data[i]);
                 }
+                NRF_LOG_PRINTF("\n");
 
                 parse_packet(rx_payload.data, rx_payload.length);
             }
-            NRF_LOG_PRINTF("\n");
             break;
     }
 }
@@ -158,8 +182,6 @@ int main(void)
     RF_init();
 
     NRF_LOG("Enhanced ShockBurst Receiver Example running.\n");
-
-    send_packet();
 
     while (true) {
         __WFE();

@@ -138,6 +138,10 @@ static void calculate_hop_sequence(uint8_t offset, uint8_t seed)
                     break;
                 }
             }
+
+            // FIXME: test only
+            session_hop_channels[i] = 79;
+
         } while (channel > 69  ||  channel_already_used);
         // Note: this loop runs worst-case 7 times
     }
@@ -184,6 +188,7 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 
         connected = true;
         MUSIC_play(&song_connecting);
+        printf("!!!!! CONNECTED\n");
         return;
     }
 
@@ -200,7 +205,6 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
 // ****************************************************************************
 configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t transmission_index)
 {
-
     // If we are not connected we send configurator packets only on the first
     // hop channel (= every 100 ms)
     if (!connected) {
@@ -242,6 +246,7 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
                 if (milliseconds > last_successful_transmission_ms + CONNECTION_TIMEOUT_MS) {
                     MUSIC_play(&song_disconnecting);
                     connected = false;
+                    printf("!!!!! DISCONNECTED\n");
                 }
             }
             break;

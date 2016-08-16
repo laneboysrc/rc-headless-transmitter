@@ -200,7 +200,6 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
 // ****************************************************************************
 configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t transmission_index)
 {
-    configurator_packet_t *p;
 
     // If we are not connected we send configurator packets only on the first
     // hop channel (= every 100 ms)
@@ -218,18 +217,19 @@ configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t tra
                 return make_connect_response_packet();
         }
     }
+    else {
+        configurator_packet_t *p;
 
-    p = make_info_packet();
-    session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
-    return p;
+        p = make_info_packet();
+        session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
+        return p;
+    }
 }
 
 
 // ****************************************************************************
 void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length)
 {
-    (void) rx_packet;
-
     switch (event) {
         case CONFIGURATOR_EVENT_TX_SUCCESS:
             printf("TX SUCCESS\n");
@@ -259,7 +259,6 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
         default:
             break;
     }
-
 }
 
 

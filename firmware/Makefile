@@ -11,6 +11,7 @@ ifeq ("$(V)", "1")
 ECHO :=
 else
 ECHO := @
+MAKEFLAGS += --no-print-directory
 endif
 endif
 

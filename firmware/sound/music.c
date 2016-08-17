@@ -137,12 +137,24 @@ const song song_alarm_battery_very_low = {
 
 // ****************************************************************************
 static const tone song_config_invalid_tones[] = {
-        {G5, 200},
-        {A5, 200},
-        {G5, 200},
-        {A5, 200},
-        {G5, 200},
-        {A5, 200},
+        // SOS in morse code
+        {D6, 50},
+        {PAUSE, 50},
+        {D6, 50},
+        {PAUSE, 50},
+        {D6, 50},
+        {PAUSE, 150},
+        {D6, 150},
+        {PAUSE, 50},
+        {D6, 150},
+        {PAUSE, 50},
+        {D6, 150},
+        {PAUSE, 150},
+        {D6, 50},
+        {PAUSE, 50},
+        {D6, 50},
+        {PAUSE, 50},
+        {D6, 50},
         {SONG_END, 0}
 };
 

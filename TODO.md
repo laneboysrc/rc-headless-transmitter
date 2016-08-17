@@ -29,10 +29,8 @@
   - Can this be an issue when the sticks are not calibrated yet?
 
 
-- Beep SOS when config broken
 
-
-## configurator
+## Csonfigurator
 - Offline mode
 
 - Database syncing

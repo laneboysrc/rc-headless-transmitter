@@ -1,10 +1,12 @@
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 
 #include <sdk_common.h>
 #include <nrf_esb.h>
-#include <nrf_log.h>
+#include <app_uart.h>
+#include <app_simple_timer.h>
 
 #include <rf_protocol.h>
 
@@ -117,11 +119,11 @@ static void calculate_hop_sequence(uint8_t offset, uint8_t seed)
         // Note: this loop runs worst-case 7 times
     }
 
-    NRF_LOG_PRINTF("Session hop channels: ");
+    printf("Session hop channels: ");
     for (i = 0; i < CONFIGURATOR_NUMBER_OF_HOP_CHANNELS; i++) {
-        NRF_LOG_PRINTF("%d ", session_hop_channels[i]);
+        printf("%d ", session_hop_channels[i]);
     }
-    NRF_LOG_PRINTF("\n");
+    printf("\n");
 }
 
 
@@ -196,14 +198,14 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 {
     if (rx_packet[0] == TX_FREE_TO_CONNECT) {
         if (length == 1) {
-            NRF_LOG_PRINTF("TX_FREE_TO_CONNECT (ack)\n");
+            printf("TX_FREE_TO_CONNECT (ack)\n");
             return;
         }
 
-        NRF_LOG_PRINTF("TX_FREE_TO_CONNECT!\n");
+        printf("TX_FREE_TO_CONNECT!\n");
 
         if (length != 27) {
-            NRF_LOG_PRINTF("  ERROR: Packet length is not 27\n");
+            printf("  ERROR: Packet length is not 27\n");
             return;
         }
 
@@ -212,14 +214,14 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
         return;
     }
 
-    NRF_LOG_PRINTF("NOT_CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
+    printf("NOT_CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
 }
 
 
 // ****************************************************************************
 static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
 {
-    NRF_LOG_PRINTF("CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
+    printf("CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
 }
 
 
@@ -230,14 +232,14 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
 
     switch (event->evt_id) {
         case NRF_ESB_EVENT_TX_SUCCESS:
-            NRF_LOG_PRINTF("%lu TX SUCCESS\n", milliseconds);
+            printf("%lu TX SUCCESS\n", milliseconds);
 
             // FIXME: why do we need to flush here?
             nrf_esb_flush_tx();
             break;
 
         case NRF_ESB_EVENT_TX_FAILED:
-            NRF_LOG_PRINTF("%lu TX FAILED\n", milliseconds);
+            printf("%lu TX FAILED\n", milliseconds);
             nrf_esb_flush_tx();
             break;
 
@@ -246,11 +248,11 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
             if (nrf_esb_read_rx_payload(&payload) == NRF_SUCCESS) {
                 // int i;
 
-                // NRF_LOG_PRINTF("%lu RX (%d) ", milliseconds, payload.length);
+                // printf("%lu RX (%d) ", milliseconds, payload.length);
                 // for  (i = 0; i < payload.length; i++) {
-                //     NRF_LOG_PRINTF("%02X ", payload.data[i]);
+                //     printf("%02X ", payload.data[i]);
                 // }
-                // NRF_LOG_PRINTF("\n");
+                // printf("\n");
 
                 if (connected) {
                     parse_command_connected(payload.data, payload.length);
@@ -267,14 +269,12 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
 // ****************************************************************************
 #define BUFFER_SIZE 80
 static void read_UART() {
-    char msg[BUFFER_SIZE];
+    uint8_t msg[BUFFER_SIZE];
     int count = 0;
 
     memset(msg, 0, BUFFER_SIZE);
 
-    while (NRF_LOG_HAS_INPUT()) {
-        NRF_LOG_READ_INPUT(&msg[count]);
-
+    while (app_uart_get(&msg[count]) == NRF_SUCCESS) {
         ++count;
         if (count >= (BUFFER_SIZE - 1)) {
             break;
@@ -282,8 +282,15 @@ static void read_UART() {
     }
 
     if (count) {
-        NRF_LOG_PRINTF("UART RX: %s\n", msg);
+        printf("UART RX: %s\n", msg);
     }
+}
+
+
+// ****************************************************************************
+void timer_handler(void * p_context)
+{
+    printf("%lu TIMER 15 ms later\n", milliseconds);
 }
 
 
@@ -300,14 +307,17 @@ void RF_service(void)
             connected = false;
             uuid_received = false;
             state = APP_NOT_CONNECTED;
-            NRF_LOG_PRINTF("!!!!! DISCONNECTED DUE TO TIMEOUT\n");
+            printf("!!!!! DISCONNECTED DUE TO TIMEOUT\n");
         }
     }
 
     switch (state) {
         case APP_NOT_CONNECTED:
             if (uuid_received) {
-                NRF_LOG_PRINTF("APP got UUID\n");
+                printf("%lu APP got UUID\n", milliseconds);
+
+                app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 15000, NULL);
+
                 state = APP_GOT_UUID;
                 timer = milliseconds;
             }
@@ -315,7 +325,7 @@ void RF_service(void)
 
         case APP_GOT_UUID:
             if (milliseconds > timer + 5000) {
-                NRF_LOG_PRINTF("APP Connecting\n");
+                printf("APP Connecting\n");
                 send_request_to_connect();
                 state = APP_CONNECTED;
                 timer = milliseconds;
@@ -325,7 +335,7 @@ void RF_service(void)
 
         case APP_CONNECTED:
             if (milliseconds > timer + 5000) {
-                NRF_LOG_PRINTF("APP Disconnecting\n");
+                printf("APP Disconnecting\n");
                 send_disconnect();
 
                 // FIXME: we should only do that after the disconnect packet
@@ -351,6 +361,8 @@ uint32_t RF_init(void)
 {
     uint32_t err_code;
 
+    app_simple_timer_init();
+
     nrf_esb_config_t nrf_esb_config         = NRF_ESB_DEFAULT_CONFIG;
     nrf_esb_config.protocol                 = NRF_ESB_PROTOCOL_ESB_DPL;
     nrf_esb_config.bitrate                  = NRF_ESB_BITRATE_2MBPS;
@@ -374,6 +386,8 @@ uint32_t RF_init(void)
 
     err_code = nrf_esb_start_rx();
     VERIFY_SUCCESS(err_code);
+
+
 
     return NRF_SUCCESS;
 }

@@ -4,8 +4,7 @@
 		{
 			"cmd":
 			[
-				"make",
-				"all"
+				"make"
 			],
 			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"name": "make all",
@@ -49,8 +48,7 @@
 		{
 			"cmd":
 			[
-				"make",
-				"all"
+				"make"
 			],
 			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"name": "nrf51-uart-bridge make",

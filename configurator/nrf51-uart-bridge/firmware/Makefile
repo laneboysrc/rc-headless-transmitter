@@ -1,4 +1,4 @@
-e.DEFAULT_GOAL := program
+.DEFAULT_GOAL := all
 
 PROJECT_NAME := nrf51-uart-bridge
 
@@ -37,12 +37,12 @@ C_SOURCE_FILES  = $(abspath main.c)
 C_SOURCE_FILES += $(abspath rf_protocol.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/common/nrf_drv_common.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rtc/nrf_drv_rtc.c)
+C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/timer/nrf_drv_timer.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/uart/nrf_drv_uart.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/fifo/app_fifo.c)
+C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/simple_timer/app_simple_timer.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/uart/app_uart_fifo.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/uart/retarget.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/util/app_error.c)
-C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/libraries/util/nrf_log.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/properitary_rf/esb/nrf_esb.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/toolchain/system_nrf51.c)
 
@@ -51,21 +51,19 @@ ASM_SOURCE_FILES = $(abspath $(NRF_SDK_PATH)/components/toolchain/gcc/gcc_startu
 INC_PATHS += -I$(abspath .)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/device)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/common)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/config)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/hal)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rtc)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/nrf_soc_nosd)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rtc)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/timer)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/drivers_nrf/uart)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/button)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/fifo)
+INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/simple_timer)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/uart)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/libraries/util)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/properitary_rf/esb)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/toolchain)
 INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/components/toolchain/CMSIS/Include)
-INC_PATHS += -I$(abspath $(NRF_SDK_PATH)/examples/bsp)
 
-# LIBS  = $(abspath $(NRF_SDK_PATH)/components/properitary_rf/esb/gcc/esb_gcc.a)
 
 OBJECT_DIRECTORY = _build
 LISTING_DIRECTORY = $(OBJECT_DIRECTORY)
@@ -122,7 +120,7 @@ vpath %.s $(ASM_PATHS)
 OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 
 # Building all targets
-all: $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex echosize
+all: clean $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex echosize
 
 # Create build directories
 $(BUILD_DIRECTORIES):

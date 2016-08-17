@@ -28,9 +28,10 @@
   - But still allow configurator to work
   - Can this be an issue when the sticks are not calibrated yet?
 
+- Run-time adaptation to `hardware_inputs` and `logical_inputs` changes
 
 
-## Csonfigurator
+## Configurator
 - Offline mode
 
 - Database syncing

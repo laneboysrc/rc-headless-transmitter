@@ -45,7 +45,6 @@ static uint8_t session_hop_index;
 static uint32_t last_successful_transmission_ms;
 
 
-
 typedef enum {
     APP_NOT_CONNECTED = 0,
     APP_GOT_UUID,
@@ -221,6 +220,15 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 // ****************************************************************************
 static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
 {
+    // if (set_session_address) {
+        if (rx_packet[0] == 0x30) {
+            printf("setting session address\n");
+            set_address_and_channel(session_address, CONFIGURATOR_CHANNEL);
+        }
+        // set_session_address = false;
+        // return;
+    // }
+
     printf("CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
 }
 
@@ -303,7 +311,8 @@ void RF_service(void)
     read_UART();
 
     if (connected) {
-        if (milliseconds > last_successful_transmission_ms + CONNECTION_TIMEOUT_MS) {
+        if (milliseconds > (last_successful_transmission_ms + CONNECTION_TIMEOUT_MS)) {
+            set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
             connected = false;
             uuid_received = false;
             state = APP_NOT_CONNECTED;

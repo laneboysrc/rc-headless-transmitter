@@ -15,6 +15,7 @@
 
 
 #define RTC_COUNT                   1
+#define RTC0_ENABLED                1
 #define RTC0_CONFIG_FREQUENCY       100
 #define RTC0_CONFIG_IRQ_PRIORITY    APP_IRQ_PRIORITY_LOW
 #define RTC0_CONFIG_RELIABLE        false

@@ -265,10 +265,35 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
 
 
 // ****************************************************************************
+#define BUFFER_SIZE 80
+static void read_UART() {
+    char msg[BUFFER_SIZE];
+    int count = 0;
+
+    memset(msg, 0, BUFFER_SIZE);
+
+    while (NRF_LOG_HAS_INPUT()) {
+        NRF_LOG_READ_INPUT(&msg[count]);
+
+        ++count;
+        if (count >= (BUFFER_SIZE - 1)) {
+            break;
+        }
+    }
+
+    if (count) {
+        NRF_LOG_PRINTF("UART RX: %s\n", msg);
+    }
+}
+
+
+// ****************************************************************************
 void RF_service(void)
 {
     static app_state_t state = APP_NOT_CONNECTED;
     static uint32_t timer;
+
+    read_UART();
 
     if (connected) {
         if (milliseconds > last_successful_transmission_ms + CONNECTION_TIMEOUT_MS) {

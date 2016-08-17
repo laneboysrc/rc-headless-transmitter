@@ -1,6 +1,11 @@
+- APACHE 2 license where necessary
+
 - Add sensible failsafe configuration
 
-- Configurator nRF protocol
+- Separate hardware dependent files so that it is easy to port to other chips
+  - How to deal with libopencm3?
+  - Support STM32 Nucleo?
+  - Support Teensy?
 
 - Add auto-stick calibration function
     - Applies to all analog inputs
@@ -15,9 +20,14 @@
       before finishing the procedure, with a different beep.
     - While calibrating, still run the RF(?)
 
-- Center detent: beep when center (configurable?)
+- Center detent: beep when center
+  - Applies to `ANALOG_WITH_CENTER` only
 
 - Beep when throttle not 0 at start of transmitter, and refuse operation
+  - Find throttle by looking for "TH" and "THR" with analog type that is not `ANALOG_WITH_CENTER_AUTO_RETURN`
+  - But still allow configurator to work
+  - Can this be an issue when the sticks are not calibrated yet?
+
 
 - Beep SOS when config broken
 

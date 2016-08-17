@@ -75,12 +75,10 @@ BUILD_DIRECTORIES := $(sort $(OBJECT_DIRECTORY) $(OUTPUT_BINARY_DIRECTORY) $(LIS
 
 # C compiler flags
 CFLAGS := -DNRF51
-CFLAGS += -DBOARD_CUSTOM
-CFLAGS += -DNRF_LOG_USES_UART=1
 
 CFLAGS += -mcpu=cortex-m0
 CFLAGS += -mthumb -mabi=aapcs
-CFLAGS += --std=gnu99
+CFLAGS += --std=c99
 CFLAGS += -MD
 CFLAGS += -Wall -Werror -O3 -g3
 CFLAGS += -mfloat-abi=soft
@@ -102,8 +100,9 @@ LDFLAGS += -L$(TEMPLATE_PATH)
 LDFLAGS += -T$(LINKER_SCRIPT)
 LDFLAGS += -Xlinker -Map=$(LISTING_DIRECTORY)/$(PROJECT_NAME).map
 LDFLAGS += -Wl,--gc-sections
-# use newlib in nano version
+# Use newlib in nano version
 LDFLAGS += --specs=nano.specs -lc -lnosys
+
 
 
 C_SOURCE_FILE_NAMES = $(notdir $(C_SOURCE_FILES))
@@ -118,6 +117,8 @@ vpath %.c $(C_PATHS)
 vpath %.s $(ASM_PATHS)
 
 OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
+
+
 
 # Building all targets
 all: clean $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex echosize
@@ -171,6 +172,7 @@ terminal:
 
 
 .PHONY: clean program flash reset terminal echosize list all
+
 
 ###############################################################################
 # Include (optional) dependency files. Needs -MD in CFLAGS

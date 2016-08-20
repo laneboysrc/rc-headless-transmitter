@@ -140,7 +140,7 @@ static void calculate_hop_sequence(uint8_t offset, uint8_t seed)
             }
 
             // FIXME: test only
-            session_hop_channels[i] = 79;
+            // session_hop_channels[i] = 79;
 
         } while (channel > 69  ||  channel_already_used);
         // Note: this loop runs worst-case 7 times
@@ -187,8 +187,8 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
         session_hop_index = 0;
 
         connected = true;
-        MUSIC_play(&song_connecting);
-        printf("!!!!! CONNECTED\n");
+        // MUSIC_play(&song_connecting);
+        printf("%lu !!!!! CONNECTED\n", milliseconds);
         return;
     }
 
@@ -198,6 +198,18 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 
 // ****************************************************************************
 static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
+    if (rx_packet[0] == CFG_DISCONNECT) {
+        if (length != 1) {
+            printf("CFG_DISCONNECT packet length is not 1\n");
+            return;
+        }
+
+        // MUSIC_play(&song_disconnecting);
+        connected = false;
+        printf("CFG_DISCONNECT\n");
+        return;
+    }
+
     printf("CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
 }
 
@@ -236,17 +248,18 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
 {
     switch (event) {
         case CONFIGURATOR_EVENT_TX_SUCCESS:
-            printf("TX SUCCESS\n");
+            // printf("TX SUCCESS\n");
             last_successful_transmission_ms = milliseconds;
             break;
 
         case CONFIGURATOR_EVENT_TIMEOUT:
-            printf("TIMEOUT \n");
+            // printf("TIMEOUT \n");
             if (connected) {
+                printf("TIMEOUT \n");
                 if (milliseconds > last_successful_transmission_ms + CONNECTION_TIMEOUT_MS) {
-                    MUSIC_play(&song_disconnecting);
+                    // MUSIC_play(&song_disconnecting);
                     connected = false;
-                    printf("!!!!! DISCONNECTED\n");
+                    printf("%lu !!!!! DISCONNECTED DUE TO TIMEOUT\n", milliseconds);
                 }
             }
             break;

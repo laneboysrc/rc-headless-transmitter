@@ -17,8 +17,7 @@ volatile uint32_t milliseconds;
 static void rtc_callback(nrf_drv_rtc_int_type_t int_type)
 {
     if (int_type == NRF_DRV_RTC_INT_TICK) {
-        // milliseconds += 1000 / RTC0_CONFIG_FREQUENCY;
-        milliseconds += 10;
+        milliseconds += 1000 / RTC0_CONFIG_FREQUENCY;
     }
 }
 
@@ -74,8 +73,6 @@ static void RTC_init(void)
 {
     // Use the defaults from nrf_drv_config.h
     static const nrf_drv_rtc_t rtc = NRF_DRV_RTC_INSTANCE(0);
-    // static const nrf_drv_rtc_config_t rtc_config = NRF_DRV_RTC_DEFAULT_CONFIG(0);
-
     static const nrf_drv_rtc_config_t rtc_config = {
         .prescaler = (uint16_t)(RTC_INPUT_FREQ / RTC0_CONFIG_FREQUENCY)-1,
         .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
@@ -83,31 +80,10 @@ static void RTC_init(void)
         .reliable = false
     };
 
-
     // Initialize and start RTC0
     nrf_drv_rtc_init(&rtc, &rtc_config, rtc_callback);
     nrf_drv_rtc_tick_enable(&rtc, true);
     nrf_drv_rtc_enable(&rtc);
-
-
-    // static const nrf_drv_rtc_t rtc = NRF_DRV_RTC_INSTANCE(0);
-
-    // static const nrf_drv_rtc_config_t rtc_config = {
-    //     .prescaler = (uint16_t)(RTC_INPUT_FREQ / RTC0_CONFIG_FREQUENCY)-1,
-    //     .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
-    //     .tick_latency = RTC_US_TO_TICKS(NRF_MAXIMUM_LATENCY_US, RTC0_CONFIG_FREQUENCY),
-    //     .reliable = false
-    // };
-
-    // //Initialize RTC instance
-    // nrf_drv_rtc_init(&rtc, &rtc_config, rtc_callback);
-
-    // //Enable tick event & interrupt
-    // nrf_drv_rtc_tick_enable(&rtc, true);
-
-    // //Power on RTC instance
-    // nrf_drv_rtc_enable(&rtc);
-
 }
 
 
@@ -118,7 +94,7 @@ int main(void)
     RTC_init();
     UART_init();
     RF_init();
-    printf("nRF51 UART bridge running.\n");
+    printf("\n\n\nnRF51 UART bridge running\n");
 
     while (true) {
         RF_service();

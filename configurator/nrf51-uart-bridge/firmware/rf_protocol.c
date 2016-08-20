@@ -4,11 +4,15 @@
 #include <string.h>
 
 #include <sdk_common.h>
+#include <nrf_drv_rng.h>
 #include <nrf_esb.h>
 #include <app_uart.h>
 #include <app_simple_timer.h>
 
 #include <rf_protocol.h>
+
+
+extern volatile uint32_t milliseconds;
 
 
 #define CONFIGURATOR_ADDRESS_SIZE 5
@@ -29,7 +33,12 @@
 #define TX_COPY_SUCCESSFUL 0x43
 
 
-extern volatile uint32_t milliseconds;
+typedef enum {
+    APP_NOT_CONNECTED = 0,
+    APP_GOT_UUID,
+    APP_CONNECT,
+    APP_CONNECTED
+} app_state_t;
 
 
 static const uint8_t configurator_address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
@@ -45,41 +54,68 @@ static uint8_t session_hop_index;
 static uint32_t last_successful_transmission_ms;
 
 
-typedef enum {
-    APP_NOT_CONNECTED = 0,
-    APP_GOT_UUID,
-    APP_CONNECT,
-    APP_CONNECTED
-} app_state_t;
+static bool wait_for_disconnected = false;
+
+
+// ****************************************************************************
+void rand(uint8_t * buffer, uint8_t length) {
+    uint8_t bytes_available;
+
+    do {
+        __WFE();
+        nrf_drv_rng_bytes_available(&bytes_available);
+    } while (length > bytes_available);
+
+    nrf_drv_rng_rand(buffer, length);
+}
 
 
 // ****************************************************************************
 static void set_address_and_channel(const uint8_t * address, uint8_t channel)
 {
     bool idle;
+    uint32_t err_code;
 
     if (address == NULL  &&  channel > 125) {
         // No inputs given, so we have nothing to do
+            printf("ERROR No inputs given\n");
         return;
     }
 
     idle = nrf_esb_is_idle();
 
     if (!idle) {
-        nrf_esb_stop_rx();
+        do {
+            err_code = nrf_esb_stop_rx();
+        } while (err_code != NRF_SUCCESS);
     }
 
     if (address != NULL) {
-        nrf_esb_set_base_address_0(address + 1);
-        nrf_esb_set_prefixes(address, 1);
+        err_code = nrf_esb_set_base_address_0(address + 1);
+        if (err_code != NRF_SUCCESS) {
+            printf("ERROR nrf_esb_set_base_address_0: %lu\n", err_code);
+        }
+        err_code = nrf_esb_set_prefixes(address, 1);
+        if (err_code != NRF_SUCCESS) {
+            printf("ERROR nrf_esb_set_prefixes: %lu\n", err_code);
+        }
     }
 
     if (channel <= 125) {
-        nrf_esb_set_rf_channel(CONFIGURATOR_CHANNEL);
+        err_code = nrf_esb_set_rf_channel(channel);
+        if (err_code != NRF_SUCCESS) {
+            printf("ERROR nrf_esb_set_rf_channel: %lu\n", err_code);
+        }
     }
 
     if (!idle) {
-        nrf_esb_start_rx();
+        nrf_esb_flush_tx();
+        nrf_esb_flush_rx();
+
+        err_code = nrf_esb_start_rx();
+        if (err_code != NRF_SUCCESS) {
+            printf("ERROR nrf_esb_start_rx: %lu\n", err_code);
+        }
     }
 }
 
@@ -127,21 +163,46 @@ static void calculate_hop_sequence(uint8_t offset, uint8_t seed)
 
 
 // ****************************************************************************
+void timer_handler(void * context)
+{
+    if (connected) {
+        session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
+        set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
+        app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 5000, NULL);
+        printf("%lu HOP TIMER\n", milliseconds);
+    }
+}
+
+
+// ****************************************************************************
 static void send_request_to_connect()
 {
     nrf_esb_payload_t tx;
-    uint8_t lfsr_offset;
-    uint8_t lfsr_seed;
+    static uint8_t lfsr_offset = 0;
+    static uint8_t lfsr_seed = 1;
     uint8_t offset = 0;
+    uint8_t i;
 
-    const uint8_t dummy_address[] = {0x12, 0x23, 0x34, 0x45, 0x56};
+    // Generate random session_address
+    rand(session_address, CONFIGURATOR_ADDRESS_SIZE);
 
-    // FIXME: generate random session_address
-    memcpy(session_address, dummy_address, CONFIGURATOR_ADDRESS_SIZE);
-    // FIXME: generate random offset 0..255
-    lfsr_offset = 0;
-    // FIXME: generate random seed 1..127
-    lfsr_seed = 1;
+    printf("Session address: ");
+    for (i = 0; i < CONFIGURATOR_ADDRESS_SIZE; i++) {
+        if (i) {
+            printf(":");
+        }
+        printf("%02x", session_address[i]);
+    }
+    printf("\n");
+
+    // Generate random offset 0..255
+    rand(&lfsr_offset, 1);
+
+    // Generate seed offset 1..127
+    do {
+        rand(&lfsr_seed, 1);
+        lfsr_seed %= 127;
+    } while (lfsr_seed < 1);
 
 
     tx.data[offset] = CFG_REQUEST_TO_CONNECT;
@@ -171,7 +232,6 @@ static void send_request_to_connect()
 
     nrf_esb_write_payload(&tx);
 
-    // FIXME: *after* the packet was sent, we need to start hopping
     calculate_hop_sequence(lfsr_offset, lfsr_seed);
     session_hop_index = 0;
 }
@@ -197,11 +257,15 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 {
     if (rx_packet[0] == TX_FREE_TO_CONNECT) {
         if (length == 1) {
-            printf("TX_FREE_TO_CONNECT (ack)\n");
+            connected = true;
+            set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
+            printf("Hop channel: %d\n", session_hop_channels[session_hop_index]);
+
+            printf("%lu TX_FREE_TO_CONNECT (ack)\n", milliseconds);
             return;
         }
 
-        printf("TX_FREE_TO_CONNECT!\n");
+        // printf("TX_FREE_TO_CONNECT\n");
 
         if (length != 27) {
             printf("  ERROR: Packet length is not 27\n");
@@ -220,14 +284,18 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 // ****************************************************************************
 static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
 {
-    // if (set_session_address) {
-        if (rx_packet[0] == 0x30) {
-            printf("setting session address\n");
-            set_address_and_channel(session_address, CONFIGURATOR_CHANNEL);
-        }
-        // set_session_address = false;
-        // return;
-    // }
+    if (wait_for_disconnected) {
+        printf("%lu disconnecting now\n", milliseconds);
+        wait_for_disconnected = false;
+        connected = false;
+        set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
+        return;
+    }
+
+    if (rx_packet[0] == TX_INFO) {
+        // printf("%lu TX_INFO\n", milliseconds);
+        return;
+    }
 
     printf("CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
 }
@@ -241,9 +309,6 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
     switch (event->evt_id) {
         case NRF_ESB_EVENT_TX_SUCCESS:
             printf("%lu TX SUCCESS\n", milliseconds);
-
-            // FIXME: why do we need to flush here?
-            nrf_esb_flush_tx();
             break;
 
         case NRF_ESB_EVENT_TX_FAILED:
@@ -263,6 +328,11 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
                 // printf("\n");
 
                 if (connected) {
+                    session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
+                    set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
+
+                    app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 7500, NULL);
+
                     parse_command_connected(payload.data, payload.length);
                 }
                 else {
@@ -295,12 +365,6 @@ static void read_UART() {
 }
 
 
-// ****************************************************************************
-void timer_handler(void * p_context)
-{
-    printf("%lu TIMER 15 ms later\n", milliseconds);
-}
-
 
 // ****************************************************************************
 void RF_service(void)
@@ -314,9 +378,10 @@ void RF_service(void)
         if (milliseconds > (last_successful_transmission_ms + CONNECTION_TIMEOUT_MS)) {
             set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
             connected = false;
+            wait_for_disconnected = false;
             uuid_received = false;
             state = APP_NOT_CONNECTED;
-            printf("!!!!! DISCONNECTED DUE TO TIMEOUT\n");
+            printf("%lu !!!!! DISCONNECTED DUE TO TIMEOUT\n", milliseconds);
         }
     }
 
@@ -324,36 +389,32 @@ void RF_service(void)
         case APP_NOT_CONNECTED:
             if (uuid_received) {
                 printf("%lu APP got UUID\n", milliseconds);
-
-                app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 15000, NULL);
-
                 state = APP_GOT_UUID;
                 timer = milliseconds;
             }
             break;
 
         case APP_GOT_UUID:
-            if (milliseconds > timer + 5000) {
-                printf("APP Connecting\n");
+            if (milliseconds > timer + 30000) {
+                printf("%lu APP Connecting\n", milliseconds);
                 send_request_to_connect();
                 state = APP_CONNECTED;
                 timer = milliseconds;
-                connected = true;
+                // connected = true;
             }
             break;
 
         case APP_CONNECTED:
-            if (milliseconds > timer + 5000) {
-                printf("APP Disconnecting\n");
+            if (milliseconds > timer + 10000) {
+                printf("%lu APP Disconnecting\n", milliseconds);
                 send_disconnect();
 
-                // FIXME: we should only do that after the disconnect packet
-                // was sent!
-                set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
+                wait_for_disconnected = true;
+
+
 
                 uuid_received = false;
                 state = APP_NOT_CONNECTED;
-                connected = false;
             }
             break;
 
@@ -369,34 +430,29 @@ void RF_service(void)
 uint32_t RF_init(void)
 {
     uint32_t err_code;
+    nrf_esb_config_t nrf_esb_config = NRF_ESB_DEFAULT_CONFIG;
 
-    app_simple_timer_init();
-
-    nrf_esb_config_t nrf_esb_config         = NRF_ESB_DEFAULT_CONFIG;
     nrf_esb_config.protocol                 = NRF_ESB_PROTOCOL_ESB_DPL;
     nrf_esb_config.bitrate                  = NRF_ESB_BITRATE_2MBPS;
     nrf_esb_config.mode                     = NRF_ESB_MODE_PRX;
     nrf_esb_config.event_handler            = rf_event_handler;
     nrf_esb_config.selective_auto_ack       = false;
 
+
+    app_simple_timer_init();
+
+
+    err_code = nrf_drv_rng_init(NULL);
+    VERIFY_SUCCESS(err_code);
+
+
     err_code = nrf_esb_init(&nrf_esb_config);
     VERIFY_SUCCESS(err_code);
 
     set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
 
-    // err_code = nrf_esb_set_base_address_0(&configurator_address[1]);
-    // VERIFY_SUCCESS(err_code);
-
-    // err_code = nrf_esb_set_prefixes(configurator_address, 1);
-    // VERIFY_SUCCESS(err_code);
-
-    // err_code = nrf_esb_set_rf_channel(CONFIGURATOR_CHANNEL);
-    // VERIFY_SUCCESS(err_code);
-
     err_code = nrf_esb_start_rx();
     VERIFY_SUCCESS(err_code);
-
-
 
     return NRF_SUCCESS;
 }

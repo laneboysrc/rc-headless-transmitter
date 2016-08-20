@@ -170,7 +170,7 @@ reset:
 	$(OPENOCD) $(OPENOCD_FLAGS) -c "init; reset ; shutdown"
 
 terminal:
-	miniterm.py -p /dev/ttyUSB1 -b 230400
+	miniterm.py -p /dev/ttyUSB1 -b 115200
 
 
 .PHONY: clean program flash reset terminal echosize list all

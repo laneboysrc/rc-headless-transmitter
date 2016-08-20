@@ -32,6 +32,9 @@ static const uint8_t configurator_address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 static bool connected = false;
 static configurator_packet_t packet;
 
+static bool send_response = false;
+static configurator_packet_t response_packet;
+
 static uint32_t last_successful_transmission_ms;
 
 static uint8_t session_address[CONFIGURATOR_ADDRESS_SIZE];
@@ -86,25 +89,31 @@ static configurator_packet_t * make_connect_response_packet(void)
 // ****************************************************************************
 static configurator_packet_t * make_info_packet(void)
 {
-    static uint8_t counter = 0;
-
     memcpy(packet.address, session_address, CONFIGURATOR_ADDRESS_SIZE);
     packet.channel = session_hop_channels[session_hop_index];
     packet.payload[0] = TX_INFO;
 
-    packet.payload[1] = 0;
-    packet.payload[2] = 0;
-
-    packet.payload[3] = 0;
-    packet.payload[4] = 0;
-    packet.payload[5] = 0;
-    packet.payload[6] = counter++;
+    // FIXME: build actual info packet
 
     packet.payload_size = 1;
     packet.send_without_ack = false;
     packet.send_another_packet = false;
 
     return &packet;
+}
+
+
+// ****************************************************************************
+static configurator_packet_t * make_response_packet(void)
+{
+    send_response = false;
+
+    memcpy(response_packet.address, session_address, CONFIGURATOR_ADDRESS_SIZE);
+    response_packet.channel = session_hop_channels[session_hop_index];
+    response_packet.send_without_ack = false;
+    response_packet.send_another_packet = false;
+
+    return &response_packet;
 }
 
 
@@ -210,6 +219,76 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
         return;
     }
 
+
+    if (rx_packet[0] == CFG_READ) {
+        uint16_t offset;
+        uint8_t count;
+
+        if (length != 4) {
+            printf("CFG_READ packet length is not 4\n");
+            return;
+        }
+
+        offset = (rx_packet[2] << 8) + rx_packet[1];
+        count = rx_packet[3];
+
+        if (count < 1  ||  count > 29) {
+            printf("CFG_READ count must be between 1 and 29\n");
+            return;
+        }
+
+        if ((offset + count) > sizeof(config)) {
+            printf("CFG_READ request out of config area\n");
+            return;
+        }
+
+        response_packet.payload[0] = TX_REQUESTED_DATA;
+        response_packet.payload[1] = rx_packet[1];
+        response_packet.payload[2] = rx_packet[2];
+        memcpy(&response_packet.payload[3], (uint8_t *)&config + offset, count);
+
+        response_packet.payload_size = 3 + count;
+        send_response = true;
+
+        printf("CFG_READ o=%u, c=%u\n", offset, count);
+        return;
+    }
+
+    if (rx_packet[0] == CFG_WRITE) {
+        uint16_t offset;
+        uint8_t count;
+
+        if (length < 4) {
+            printf("CFG_WRITE packet length is less than 4\n");
+            return;
+        }
+
+        offset = (rx_packet[2] << 8) + rx_packet[1];
+        count = length - 3;
+
+        if ((offset + count) > sizeof(config)) {
+            printf("CFG_WRITE request out of config area\n");
+            return;
+        }
+
+        memcpy((uint8_t *)&config + offset, &rx_packet[3], count);
+
+        response_packet.payload[0] = TX_WRITE_SUCCESSFUL;
+        response_packet.payload[1] = rx_packet[1];
+        response_packet.payload[2] = rx_packet[2];
+        response_packet.payload[3] = count;
+        response_packet.payload_size = 4;
+        send_response = true;
+
+        printf("CFG_WRITE\n");
+        return;
+    }
+
+    if (rx_packet[0] == CFG_COPY) {
+        printf("CFG_COPY\n");
+        return;
+    }
+
     printf("CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
 }
 
@@ -236,7 +315,12 @@ configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t tra
     else {
         configurator_packet_t *p;
 
-        p = make_info_packet();
+        if (send_response) {
+            p = make_response_packet();
+        }
+        else {
+            p = make_info_packet();
+        }
         session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
         return p;
     }
@@ -265,7 +349,7 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
             break;
 
         case CONFIGURATOR_EVENT_RX:
-            printf("RX %d\n", length);
+            // printf("RX %d\n", length);
             if (connected) {
                 parse_command_connected(rx_packet, length);
             }

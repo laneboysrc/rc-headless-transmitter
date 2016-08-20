@@ -254,6 +254,39 @@ static void send_disconnect()
 
 
 // ****************************************************************************
+static void send_read_test_request()
+{
+    nrf_esb_payload_t tx = {
+        .pipe = 0,
+        .data = {
+            CFG_READ,
+            12, 0,
+            16
+        },
+        .length = 4
+    };
+
+    nrf_esb_write_payload(&tx);
+}
+
+
+// ****************************************************************************
+static void send_write_test_request()
+{
+    nrf_esb_payload_t tx = {
+        .pipe = 0,
+        .data = {
+            CFG_WRITE,
+            12, 0,
+            'X', 'Y', 'Z'
+        },
+        .length = 6
+    };
+
+    nrf_esb_write_payload(&tx);
+}
+
+// ****************************************************************************
 static void configurator_connected()
 {
     connected = true;
@@ -310,6 +343,38 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
 
     if (rx_packet[0] == TX_INFO) {
         // printf("%lu TX_INFO\n", milliseconds);
+        return;
+    }
+
+    if (rx_packet[0] == TX_REQUESTED_DATA) {
+        uint16_t offset;
+        uint8_t count;
+
+        if (length < 4) {
+            printf("%lu TX_REQUESTED_DATA length is less than 4\n", milliseconds);
+            return;
+        }
+
+        offset = (rx_packet[2] << 8) + rx_packet[1];
+        count = length - 3;
+
+        printf("%lu TX_REQUESTED_DATA o=%u, c=%d \"%s\"\n", milliseconds, offset, count, &rx_packet[3]);
+        return;
+    }
+
+    if (rx_packet[0] == TX_WRITE_SUCCESSFUL) {
+        uint16_t offset;
+        uint8_t count;
+
+        if (length != 4) {
+            printf("%lu TX_WRITE_SUCCESSFUL length is not 4\n", milliseconds);
+            return;
+        }
+
+        offset = (rx_packet[2] << 8) + rx_packet[1];
+        count = rx_packet[3];
+
+        printf("%lu TX_WRITE_SUCCESSFUL o=%u, c=%d\n", milliseconds, offset, count);
         return;
     }
 
@@ -389,6 +454,12 @@ static void read_UART() {
         else if (msg[0] == 'a') {
             mode_auto = true;
         }
+        else if (msg[0] == 'r'  &&  connected) {
+            send_read_test_request();
+        }
+        else if (msg[0] == 'w'  &&  connected) {
+            send_write_test_request();
+        }
     }
 }
 
@@ -427,7 +498,7 @@ void RF_service(void)
             break;
 
         case APP_GOT_UUID:
-            if (milliseconds > timer + 5000) {
+            if (milliseconds > timer + 1000) {
                 if (!connected) {
 
                 printf("%lu APP Connecting\n", milliseconds);

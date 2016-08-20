@@ -287,6 +287,23 @@ static void send_write_test_request()
 }
 
 // ****************************************************************************
+static void send_copy_test_request()
+{
+    nrf_esb_payload_t tx = {
+        .pipe = 0,
+        .data = {
+            CFG_COPY,
+            12, 0,
+            14, 0,
+            3, 0
+        },
+        .length = 7
+    };
+
+    nrf_esb_write_payload(&tx);
+}
+
+// ****************************************************************************
 static void configurator_connected()
 {
     connected = true;
@@ -378,6 +395,24 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
         return;
     }
 
+    if (rx_packet[0] == TX_COPY_SUCCESSFUL) {
+        uint16_t src;
+        uint16_t dst;
+        uint16_t count;
+
+        if (length != 7) {
+            printf("%lu TX_COPY_SUCCESSFUL length is not 7\n", milliseconds);
+            return;
+        }
+
+        src = (rx_packet[2] << 8) + rx_packet[1];
+        dst = (rx_packet[4] << 8) + rx_packet[3];
+        count = (rx_packet[6] << 8) + rx_packet[5];
+
+        printf("%lu TX_COPY_SUCCESSFUL src=%u, dst=%u, c=%d\n", milliseconds, src, dst, count);
+        return;
+    }
+
     printf("CONNECTED: Unhandled packet 0x%x, length %d\n", rx_packet[0], length);
 }
 
@@ -459,6 +494,9 @@ static void read_UART() {
         }
         else if (msg[0] == 'w'  &&  connected) {
             send_write_test_request();
+        }
+        else if (msg[0] == 'p'  &&  connected) {
+            send_copy_test_request();
         }
     }
 }

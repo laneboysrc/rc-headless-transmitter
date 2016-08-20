@@ -206,6 +206,118 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 
 
 // ****************************************************************************
+static void handle_CFG_READ(const uint8_t * rx_packet, uint8_t length) {
+    uint16_t offset;
+    uint8_t count;
+
+    if (length != 4) {
+        printf("CFG_READ packet length is not 4\n");
+        return;
+    }
+
+    offset = (rx_packet[2] << 8) + rx_packet[1];
+    count = rx_packet[3];
+
+    if (count < 1  ||  count > 29) {
+        printf("CFG_READ count must be between 1 and 29\n");
+        return;
+    }
+
+    if ((offset + count) > sizeof(config)) {
+        printf("CFG_READ request out of config area\n");
+        return;
+    }
+
+    response_packet.payload[0] = TX_REQUESTED_DATA;
+    response_packet.payload[1] = rx_packet[1];
+    response_packet.payload[2] = rx_packet[2];
+    memcpy(&response_packet.payload[3], (uint8_t *)&config + offset, count);
+
+    response_packet.payload_size = 3 + count;
+    send_response = true;
+
+    printf("CFG_READ o=%u, c=%u\n", offset, count);
+}
+
+
+// ****************************************************************************
+static void handle_CFG_WRITE(const uint8_t * rx_packet, uint8_t length) {
+    uint16_t offset;
+    uint8_t count;
+
+    if (length < 4) {
+        printf("CFG_WRITE packet length is less than 4\n");
+        return;
+    }
+
+    offset = (rx_packet[2] << 8) + rx_packet[1];
+    count = length - 3;
+
+    if ((offset + count) > sizeof(config)) {
+        printf("CFG_WRITE request out of config area\n");
+        return;
+    }
+
+    memcpy((uint8_t *)&config + offset, &rx_packet[3], count);
+
+    response_packet.payload[0] = TX_WRITE_SUCCESSFUL;
+    response_packet.payload[1] = rx_packet[1];
+    response_packet.payload[2] = rx_packet[2];
+    response_packet.payload[3] = count;
+    response_packet.payload_size = 4;
+    send_response = true;
+
+    printf("CFG_WRITE\n");
+}
+
+
+// ****************************************************************************
+static void handle_CFG_COPY(const uint8_t * rx_packet, uint8_t length) {
+    uint16_t src;
+    uint16_t dst;
+    uint16_t count;
+    int i;
+    uint8_t *c = (uint8_t *)&config ;
+
+    if (length != 7) {
+        printf("CFG_COPY packet length is not 4\n");
+        return;
+    }
+
+    src = (rx_packet[2] << 8) + rx_packet[1];
+    dst = (rx_packet[4] << 8) + rx_packet[3];
+    count = (rx_packet[6] << 8) + rx_packet[5];
+
+    if ((src + count) > sizeof(config)) {
+        printf("CFG_COPY Request source offset out of config area\n");
+        return;
+    }
+
+    if ((dst + count) > sizeof(config)) {
+        printf("CFG_COPY Request destination offset out of config area\n");
+        return;
+    }
+
+    if (src > dst) {
+        for (i = 0; i < count; i++) {
+            c[dst + i] = c[src + i];
+        }
+    }
+    else if (src < dst) {
+        for (i = count - 1; i >= 0; i--) {
+            c[dst + i] = c[src + i];
+        }
+    }
+
+    response_packet.payload[0] = TX_COPY_SUCCESSFUL;
+    memcpy(&response_packet.payload[1], &rx_packet[1], 6);
+    response_packet.payload_size = 7;
+    send_response = true;
+    printf("CFG_COPY src=%u dst=%u c=%u\n", src, dst, count);
+}
+
+
+// ****************************************************************************
 static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
     if (rx_packet[0] == CFG_DISCONNECT) {
         if (length != 1) {
@@ -219,73 +331,18 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
         return;
     }
 
-
     if (rx_packet[0] == CFG_READ) {
-        uint16_t offset;
-        uint8_t count;
-
-        if (length != 4) {
-            printf("CFG_READ packet length is not 4\n");
-            return;
-        }
-
-        offset = (rx_packet[2] << 8) + rx_packet[1];
-        count = rx_packet[3];
-
-        if (count < 1  ||  count > 29) {
-            printf("CFG_READ count must be between 1 and 29\n");
-            return;
-        }
-
-        if ((offset + count) > sizeof(config)) {
-            printf("CFG_READ request out of config area\n");
-            return;
-        }
-
-        response_packet.payload[0] = TX_REQUESTED_DATA;
-        response_packet.payload[1] = rx_packet[1];
-        response_packet.payload[2] = rx_packet[2];
-        memcpy(&response_packet.payload[3], (uint8_t *)&config + offset, count);
-
-        response_packet.payload_size = 3 + count;
-        send_response = true;
-
-        printf("CFG_READ o=%u, c=%u\n", offset, count);
+        handle_CFG_READ(rx_packet, length);
         return;
     }
 
     if (rx_packet[0] == CFG_WRITE) {
-        uint16_t offset;
-        uint8_t count;
-
-        if (length < 4) {
-            printf("CFG_WRITE packet length is less than 4\n");
-            return;
-        }
-
-        offset = (rx_packet[2] << 8) + rx_packet[1];
-        count = length - 3;
-
-        if ((offset + count) > sizeof(config)) {
-            printf("CFG_WRITE request out of config area\n");
-            return;
-        }
-
-        memcpy((uint8_t *)&config + offset, &rx_packet[3], count);
-
-        response_packet.payload[0] = TX_WRITE_SUCCESSFUL;
-        response_packet.payload[1] = rx_packet[1];
-        response_packet.payload[2] = rx_packet[2];
-        response_packet.payload[3] = count;
-        response_packet.payload_size = 4;
-        send_response = true;
-
-        printf("CFG_WRITE\n");
+        handle_CFG_WRITE(rx_packet, length);
         return;
     }
 
     if (rx_packet[0] == CFG_COPY) {
-        printf("CFG_COPY\n");
+        handle_CFG_COPY(rx_packet, length);
         return;
     }
 

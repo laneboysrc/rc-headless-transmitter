@@ -5,23 +5,24 @@
 #define NRF_MAXIMUM_LATENCY_US    2000
 
 
-#define TIMER_COUNT                 1
 #define TIMER1_ENABLED              1
 #define TIMER1_CONFIG_FREQUENCY     NRF_TIMER_FREQ_1MHz
 #define TIMER1_CONFIG_MODE          TIMER_MODE_MODE_Timer
 #define TIMER1_CONFIG_BIT_WIDTH     TIMER_BITMODE_BITMODE_16Bit
 #define TIMER1_CONFIG_IRQ_PRIORITY  APP_IRQ_PRIORITY_LOW
 #define TIMER1_INSTANCE_INDEX       0
+#define TIMER_COUNT                 1
 
 
-#define RTC_COUNT                   1
 #define RTC0_ENABLED                1
 #define RTC0_CONFIG_FREQUENCY       1000
 #define RTC0_CONFIG_IRQ_PRIORITY    APP_IRQ_PRIORITY_LOW
 #define RTC0_CONFIG_RELIABLE        false
 #define RTC0_INSTANCE_INDEX         0
+#define RTC_COUNT                   1
 
 
+#define UART0_ENABLED               1
 #define UART0_CONFIG_HWFC           NRF_UART_HWFC_DISABLED
 #define UART0_CONFIG_PARITY         NRF_UART_PARITY_EXCLUDED
 #define UART0_CONFIG_BAUDRATE       NRF_UART_BAUDRATE_115200

@@ -16,9 +16,8 @@ volatile uint32_t milliseconds;
 // ****************************************************************************
 static void rtc_callback(nrf_drv_rtc_int_type_t int_type)
 {
-    if (int_type == NRF_DRV_RTC_INT_TICK) {
-        milliseconds += 1000 / RTC0_CONFIG_FREQUENCY;
-    }
+    // Since we only enable the tick callback we don't have to test int_type
+    milliseconds += 1000 / RTC0_CONFIG_FREQUENCY;
 }
 
 
@@ -71,17 +70,10 @@ static void UART_init(void)
 // Setup the RTC to provide a TICK
 static void RTC_init(void)
 {
-    // Use the defaults from nrf_drv_config.h
     static const nrf_drv_rtc_t rtc = NRF_DRV_RTC_INSTANCE(0);
-    static const nrf_drv_rtc_config_t rtc_config = {
-        .prescaler = (uint16_t)(RTC_INPUT_FREQ / RTC0_CONFIG_FREQUENCY)-1,
-        .interrupt_priority = APP_IRQ_PRIORITY_HIGH,
-        .tick_latency = RTC_US_TO_TICKS(NRF_MAXIMUM_LATENCY_US, RTC0_CONFIG_FREQUENCY),
-        .reliable = false
-    };
 
-    // Initialize and start RTC0
-    nrf_drv_rtc_init(&rtc, &rtc_config, rtc_callback);
+    // Initialize and start RTC0, using the defaults from nrf_drv_config.h
+    nrf_drv_rtc_init(&rtc, NULL, rtc_callback);
     nrf_drv_rtc_tick_enable(&rtc, true);
     nrf_drv_rtc_enable(&rtc);
 }

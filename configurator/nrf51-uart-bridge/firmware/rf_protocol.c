@@ -55,6 +55,7 @@ static uint32_t last_successful_transmission_ms;
 
 
 static bool wait_for_disconnected = false;
+static bool mode_auto = true;
 
 
 // ****************************************************************************
@@ -233,7 +234,6 @@ static void send_request_to_connect()
     nrf_esb_write_payload(&tx);
 
     calculate_hop_sequence(lfsr_offset, lfsr_seed);
-    session_hop_index = 0;
 }
 
 
@@ -249,6 +249,25 @@ static void send_disconnect()
     };
 
     nrf_esb_write_payload(&tx);
+    wait_for_disconnected = true;
+}
+
+
+// ****************************************************************************
+static void configurator_connected()
+{
+    connected = true;
+    session_hop_index = 0;
+    set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
+}
+
+
+// ****************************************************************************
+static void configurator_disconnected()
+{
+    wait_for_disconnected = false;
+    connected = false;
+    set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
 }
 
 
@@ -257,9 +276,7 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 {
     if (rx_packet[0] == TX_FREE_TO_CONNECT) {
         if (length == 1) {
-            connected = true;
-            set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
-            printf("Hop channel: %d\n", session_hop_channels[session_hop_index]);
+            configurator_connected();
 
             printf("%lu TX_FREE_TO_CONNECT (ack)\n", milliseconds);
             return;
@@ -281,14 +298,13 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 }
 
 
+
 // ****************************************************************************
 static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
 {
     if (wait_for_disconnected) {
-        printf("%lu disconnecting now\n", milliseconds);
-        wait_for_disconnected = false;
-        connected = false;
-        set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
+        configurator_disconnected();
+        printf("%lu Disconnected\n", milliseconds);
         return;
     }
 
@@ -361,6 +377,18 @@ static void read_UART() {
 
     if (count) {
         printf("UART RX: %s\n", msg);
+
+        if (msg[0] == 'c'  &&  !connected) {
+            mode_auto = false;
+            send_request_to_connect();
+        }
+        else if (msg[0] == 'd'  &&  connected) {
+            mode_auto = false;
+            send_disconnect();
+        }
+        else if (msg[0] == 'a') {
+            mode_auto = true;
+        }
     }
 }
 
@@ -376,13 +404,17 @@ void RF_service(void)
 
     if (connected) {
         if (milliseconds > (last_successful_transmission_ms + CONNECTION_TIMEOUT_MS)) {
-            set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
-            connected = false;
-            wait_for_disconnected = false;
             uuid_received = false;
             state = APP_NOT_CONNECTED;
             printf("%lu !!!!! DISCONNECTED DUE TO TIMEOUT\n", milliseconds);
+
+            configurator_disconnected();
         }
+    }
+
+    if (!mode_auto) {
+        state = APP_NOT_CONNECTED;
+        return;
     }
 
     switch (state) {
@@ -395,22 +427,24 @@ void RF_service(void)
             break;
 
         case APP_GOT_UUID:
-            if (milliseconds > timer + 30000) {
+            if (milliseconds > timer + 5000) {
+                if (!connected) {
+
                 printf("%lu APP Connecting\n", milliseconds);
                 send_request_to_connect();
+                }
                 state = APP_CONNECTED;
                 timer = milliseconds;
-                // connected = true;
             }
             break;
 
         case APP_CONNECTED:
-            if (milliseconds > timer + 10000) {
+            if (milliseconds > timer + 5000) {
+                if (connected) {
+
                 printf("%lu APP Disconnecting\n", milliseconds);
                 send_disconnect();
-
-                wait_for_disconnected = true;
-
+                }
 
 
                 uuid_received = false;

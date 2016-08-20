@@ -188,7 +188,7 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 
         connected = true;
         // MUSIC_play(&song_connecting);
-        printf("%lu !!!!! CONNECTED\n", milliseconds);
+        printf("%lu CONNECTED\n", milliseconds);
         return;
     }
 

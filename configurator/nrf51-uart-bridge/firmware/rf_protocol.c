@@ -57,6 +57,7 @@ static uint32_t last_successful_transmission_ms;
 
 static bool wait_for_disconnected = false;
 static bool mode_auto = true;
+static bool slip_active = false;
 
 
 static slip_t slip;
@@ -84,7 +85,7 @@ static void set_address_and_channel(const uint8_t * address, uint8_t channel)
 
     if (address == NULL  &&  channel > 125) {
         // No inputs given, so we have nothing to do
-            printf("ERROR No inputs given\n");
+        printf("ERROR No inputs given\n");
         return;
     }
 
@@ -169,6 +170,24 @@ static void calculate_hop_sequence(uint8_t offset, uint8_t seed)
 
 
 // ****************************************************************************
+void set_session_address(const uint8_t address[CONFIGURATOR_ADDRESS_SIZE])
+{
+    int i;
+
+    memcpy(session_address, address, CONFIGURATOR_ADDRESS_SIZE);
+
+    printf("Session address: ");
+    for (i = 0; i < CONFIGURATOR_ADDRESS_SIZE; i++) {
+        if (i) {
+            printf(":");
+        }
+        printf("%02x", session_address[i]);
+    }
+    printf("\n");
+}
+
+
+// ****************************************************************************
 void timer_handler(void * context)
 {
     if (connected) {
@@ -181,25 +200,51 @@ void timer_handler(void * context)
 
 
 // ****************************************************************************
+static void send_packet(const uint8_t *data, uint8_t length)
+{
+    nrf_esb_payload_t tx = {
+        .pipe = 0,
+        .length = length
+    };
+
+    memcpy(tx.data, data, length);
+
+    switch (tx.data[0]) {
+        case CFG_DISCONNECT:
+            wait_for_disconnected = true;
+            break;
+
+        case CFG_REQUEST_TO_CONNECT:
+            if (length == 18) {
+                set_address_and_channel(&tx.data[1], CONFIGURATOR_CHANNEL);
+                set_session_address(&tx.data[9]);
+                calculate_hop_sequence(tx.data[16], tx.data[17]);
+                // FIXME: need to set timeout in case the TX is not sending
+            }
+            else {
+                printf("CFG_REQUEST_TO_CONNECT length is not 18\n");
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    nrf_esb_write_payload(&tx);
+}
+
+
+// ****************************************************************************
 static void send_request_to_connect()
 {
-    nrf_esb_payload_t tx;
-    static uint8_t lfsr_offset = 0;
-    static uint8_t lfsr_seed = 1;
-    uint8_t offset = 0;
-    uint8_t i;
+    uint8_t packet[18];
+    uint8_t address[CONFIGURATOR_ADDRESS_SIZE];
+    uint8_t lfsr_offset = 0;
+    uint8_t lfsr_seed = 1;
+
 
     // Generate random session_address
-    rand(session_address, CONFIGURATOR_ADDRESS_SIZE);
-
-    printf("Session address: ");
-    for (i = 0; i < CONFIGURATOR_ADDRESS_SIZE; i++) {
-        if (i) {
-            printf(":");
-        }
-        printf("%02x", session_address[i]);
-    }
-    printf("\n");
+    rand(address, CONFIGURATOR_ADDRESS_SIZE);
 
     // Generate random offset 0..255
     rand(&lfsr_offset, 1);
@@ -211,116 +256,52 @@ static void send_request_to_connect()
     } while (lfsr_seed < 1);
 
 
-    tx.data[offset] = CFG_REQUEST_TO_CONNECT;
-    offset += sizeof(uint8_t);
+    packet[0] = CFG_REQUEST_TO_CONNECT;
+    memcpy(&packet[1], uuid, sizeof(uuid));
+    memcpy(&packet[9], address, CONFIGURATOR_ADDRESS_SIZE);
+    *(uint16_t *)(packet + 14) = 1234;
+    packet[16] = lfsr_offset;
+    packet[17] = lfsr_seed;
 
-    memcpy(&tx.data[offset], uuid, sizeof(uuid));
-    offset += sizeof(uuid);
-
-    memcpy(&tx.data[offset], session_address, CONFIGURATOR_ADDRESS_SIZE);
-    offset += CONFIGURATOR_ADDRESS_SIZE;
-
-    *(uint16_t *)(tx.data+offset) = 1234;
-    offset += sizeof(uint16_t);
-
-    tx.data[offset] = lfsr_offset;
-    offset += sizeof(uint8_t);
-
-    tx.data[offset] = lfsr_seed;
-    offset += sizeof(uint8_t);
-
-    tx.length = offset;
-    tx.pipe = 0;
-
-
-    // Listen to the address corresponding to the lower 5 bytes of the UUID
-    set_address_and_channel(uuid, CONFIGURATOR_CHANNEL);
-
-    nrf_esb_write_payload(&tx);
-
-    calculate_hop_sequence(lfsr_offset, lfsr_seed);
+    send_packet(packet, sizeof(packet));
 }
 
 
 // ****************************************************************************
 static void send_disconnect()
 {
-    nrf_esb_payload_t tx = {
-        .pipe = 0,
-        .data = {
-            CFG_DISCONNECT
-        },
-        .length = 1
-    };
+    const uint8_t packet[] = {CFG_DISCONNECT};
 
-    nrf_esb_write_payload(&tx);
-    wait_for_disconnected = true;
+    send_packet(packet, sizeof(packet));
 }
 
 
 // ****************************************************************************
 static void send_read_test_request()
 {
-    nrf_esb_payload_t tx = {
-        .pipe = 0,
-        .data = {
-            CFG_READ,
-            12, 0,
-            16
-        },
-        .length = 4
-    };
+    const uint8_t packet[] = {CFG_READ, 12, 0, 16};
 
-    nrf_esb_write_payload(&tx);
+    send_packet(packet, sizeof(packet));
 }
 
 
 // ****************************************************************************
 static void send_write_test_request()
 {
-    nrf_esb_payload_t tx = {
-        .pipe = 0,
-        .data = {
-            CFG_WRITE,
-            12, 0,
-            'X', 'Y', 'Z'
-        },
-        .length = 6
-    };
+    const uint8_t packet[] = {CFG_WRITE, 12, 0, 'X', 'Y', 'Z'};
 
-    nrf_esb_write_payload(&tx);
+    send_packet(packet, sizeof(packet));
 }
 
 
 // ****************************************************************************
 static void send_copy_test_request()
 {
-    nrf_esb_payload_t tx = {
-        .pipe = 0,
-        .data = {
-            CFG_COPY,
-            12, 0,
-            14, 0,
-            3, 0
-        },
-        .length = 7
-    };
+    const uint8_t packet[] = {CFG_COPY, 12, 0, 14, 0, 3, 0};
 
-    nrf_esb_write_payload(&tx);
+    send_packet(packet, sizeof(packet));
 }
 
-
-// ****************************************************************************
-static void send_packet(const uint8_t *data, uint8_t length)
-{
-    nrf_esb_payload_t tx = {
-        .pipe = 0,
-        .length = length
-    };
-
-    memcpy(tx.data, data, length);
-    nrf_esb_write_payload(&tx);
-}
 
 
 // ****************************************************************************
@@ -355,7 +336,7 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
         // printf("TX_FREE_TO_CONNECT\n");
 
         if (length != 27) {
-            printf("  ERROR: Packet length is not 27\n");
+            printf("TX_FREE_TO_CONNECT length is not 27\n");
             return;
         }
 
@@ -490,9 +471,11 @@ static void read_UART() {
     memset(msg, 0, BUFFER_SIZE);
 
     while (app_uart_get(&byte) == NRF_SUCCESS) {
-
         if (SLIP_decode(&slip, byte)) {
             int i;
+
+            slip_active = true;
+            mode_auto = false;
 
             printf("%lu SLIP decoded (%d) ", milliseconds, slip.message_size);
             for  (i = 0; i < slip.message_size; i++) {
@@ -512,7 +495,8 @@ static void read_UART() {
         }
     }
 
-    if (count) {
+
+    if (!slip_active  &&  count) {
         printf("UART RX: %s\n", msg);
 
         if (msg[0] == 'c'  &&  !connected) {

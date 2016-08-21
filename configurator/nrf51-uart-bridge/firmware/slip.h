@@ -21,3 +21,4 @@ typedef struct {
 
 void SLIP_init(slip_t *s);
 bool SLIP_decode(slip_t *s, uint8_t new_input);
+void SLIP_encode(const uint8_t *data, uint8_t length, int (* callback)(int));

@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 
 #include <slip.h>
 
@@ -80,4 +81,38 @@ bool SLIP_decode(slip_t *s, uint8_t new_input)
     }
 
     return false;
+}
+
+
+// ****************************************************************************
+void SLIP_encode(const uint8_t *data, uint8_t length, int (* callback)(int))
+{
+    if (callback == NULL  ||  length == 0) {
+        return;
+    }
+
+    callback(END);
+
+    while (length) {
+
+        switch (*data) {
+            case END:
+                callback(ESC);
+                callback(ESC_END);
+                break;
+
+            case ESC:
+                callback(ESC);
+                callback(ESC_ESC);
+                break;
+
+            default:
+                callback(*data);
+        }
+
+        --length;
+        ++data;
+    }
+
+    callback(END);
 }

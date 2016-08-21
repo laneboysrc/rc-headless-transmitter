@@ -63,6 +63,10 @@ static void UART_init(void)
         err_code);
 
     (void) err_code;
+
+    // Prevent the C library from buffering as otherwise it interferes with
+    // the UART FIFO
+    setbuf(stdout, NULL);
 }
 
 
@@ -86,7 +90,6 @@ int main(void)
     RTC_init();
     UART_init();
     RF_init();
-    printf("\n\n\nnRF51 UART bridge running\n");
 
     while (true) {
         RF_service();

@@ -10,6 +10,7 @@
 #include <app_simple_timer.h>
 
 #include <rf_protocol.h>
+#include <slip.h>
 
 
 extern volatile uint32_t milliseconds;
@@ -56,6 +57,10 @@ static uint32_t last_successful_transmission_ms;
 
 static bool wait_for_disconnected = false;
 static bool mode_auto = true;
+
+
+static slip_t slip;
+static uint8_t slip_buffer[32];
 
 
 // ****************************************************************************
@@ -286,6 +291,7 @@ static void send_write_test_request()
     nrf_esb_write_payload(&tx);
 }
 
+
 // ****************************************************************************
 static void send_copy_test_request()
 {
@@ -302,6 +308,20 @@ static void send_copy_test_request()
 
     nrf_esb_write_payload(&tx);
 }
+
+
+// ****************************************************************************
+static void send_packet(const uint8_t *data, uint8_t length)
+{
+    nrf_esb_payload_t tx = {
+        .pipe = 0,
+        .length = length
+    };
+
+    memcpy(tx.data, data, length);
+    nrf_esb_write_payload(&tx);
+}
+
 
 // ****************************************************************************
 static void configurator_connected()
@@ -463,12 +483,29 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
 // ****************************************************************************
 #define BUFFER_SIZE 80
 static void read_UART() {
+    uint8_t byte;
     uint8_t msg[BUFFER_SIZE];
     int count = 0;
 
     memset(msg, 0, BUFFER_SIZE);
 
-    while (app_uart_get(&msg[count]) == NRF_SUCCESS) {
+    while (app_uart_get(&byte) == NRF_SUCCESS) {
+
+        if (SLIP_decode(&slip, byte)) {
+            int i;
+
+            printf("%lu SLIP decoded (%d) ", milliseconds, slip.message_size);
+            for  (i = 0; i < slip.message_size; i++) {
+                printf("%02X ", slip.buffer[i]);
+            }
+            printf("\n");
+
+            send_packet(slip.buffer, slip.message_size);
+
+            SLIP_init(&slip);
+        }
+
+        msg[count] = byte;
         ++count;
         if (count >= (BUFFER_SIZE - 1)) {
             break;
@@ -580,6 +617,11 @@ uint32_t RF_init(void)
     nrf_esb_config.mode                     = NRF_ESB_MODE_PRX;
     nrf_esb_config.event_handler            = rf_event_handler;
     nrf_esb_config.selective_auto_ack       = false;
+
+
+    slip.buffer = slip_buffer;
+    slip.buffer_size = sizeof(slip_buffer);
+    SLIP_init(&slip);
 
 
     app_simple_timer_init();

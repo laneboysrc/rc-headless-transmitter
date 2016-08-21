@@ -35,6 +35,7 @@ RM 					:= rm -rf
 
 C_SOURCE_FILES  = $(abspath main.c)
 C_SOURCE_FILES += $(abspath rf_protocol.c)
+C_SOURCE_FILES += $(abspath slip.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/common/nrf_drv_common.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rng/nrf_drv_rng.c)
 C_SOURCE_FILES += $(abspath $(NRF_SDK_PATH)/components/drivers_nrf/rtc/nrf_drv_rtc.c)
@@ -123,7 +124,7 @@ OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 
 
 # Building all targets
-all: clean $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex echosize
+all: $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex echosize
 
 # Create build directories
 $(BUILD_DIRECTORIES):

@@ -31,7 +31,7 @@ function onWebsocketReceivedPacket(packet) {
 
 function onUartData(data) {
     console.log('UART data:          ', new Buffer(data));
-    slipDecoder.decode(data);
+    // slipDecoder.decode(data);
 }
 
 function onUartError(error) {

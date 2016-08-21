@@ -55,7 +55,8 @@ static uint8_t session_hop_index;
 static uint32_t last_successful_transmission_ms;
 
 
-static bool wait_for_disconnected = false;
+static bool waiting_for_disconnect = false;
+static bool waiting_for_connection = false;
 static bool mode_auto = true;
 static bool slip_active = false;
 
@@ -211,7 +212,7 @@ static void send_packet(const uint8_t *data, uint8_t length)
 
     switch (tx.data[0]) {
         case CFG_DISCONNECT:
-            wait_for_disconnected = true;
+            waiting_for_disconnect = true;
             break;
 
         case CFG_REQUEST_TO_CONNECT:
@@ -219,7 +220,9 @@ static void send_packet(const uint8_t *data, uint8_t length)
                 set_address_and_channel(&tx.data[1], CONFIGURATOR_CHANNEL);
                 set_session_address(&tx.data[9]);
                 calculate_hop_sequence(tx.data[16], tx.data[17]);
-                // FIXME: need to set timeout in case the TX is not sending
+
+                last_successful_transmission_ms = milliseconds;
+                waiting_for_connection = true;
             }
             else {
                 printf("CFG_REQUEST_TO_CONNECT length is not 18\n");
@@ -307,6 +310,8 @@ static void send_copy_test_request()
 // ****************************************************************************
 static void configurator_connected()
 {
+    waiting_for_connection = false;
+    waiting_for_disconnect = false;
     connected = true;
     session_hop_index = 0;
     set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
@@ -316,7 +321,8 @@ static void configurator_connected()
 // ****************************************************************************
 static void configurator_disconnected()
 {
-    wait_for_disconnected = false;
+    waiting_for_connection = false;
+    waiting_for_disconnect = false;
     connected = false;
     set_address_and_channel(configurator_address, CONFIGURATOR_CHANNEL);
 }
@@ -353,7 +359,7 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
 // ****************************************************************************
 static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
 {
-    if (wait_for_disconnected) {
+    if (waiting_for_disconnect) {
         configurator_disconnected();
         printf("%lu Disconnected\n", milliseconds);
         return;
@@ -499,24 +505,24 @@ static void read_UART() {
     if (!slip_active  &&  count) {
         printf("UART RX: %s\n", msg);
 
-        if (msg[0] == 'c'  &&  !connected) {
+        if (msg[0] == 'c') {
             mode_auto = false;
             send_request_to_connect();
         }
-        else if (msg[0] == 'd'  &&  connected) {
+        else if (msg[0] == 'd') {
             mode_auto = false;
             send_disconnect();
         }
         else if (msg[0] == 'a') {
             mode_auto = true;
         }
-        else if (msg[0] == 'r'  &&  connected) {
+        else if (msg[0] == 'r') {
             send_read_test_request();
         }
-        else if (msg[0] == 'w'  &&  connected) {
+        else if (msg[0] == 'w') {
             send_write_test_request();
         }
-        else if (msg[0] == 'p'  &&  connected) {
+        else if (msg[0] == 'p') {
             send_copy_test_request();
         }
     }
@@ -541,6 +547,15 @@ void RF_service(void)
             configurator_disconnected();
         }
     }
+
+    if (waiting_for_connection) {
+        if (milliseconds > (last_successful_transmission_ms + CONNECTION_TIMEOUT_MS)) {
+            printf("%lu !!!!! DISCONNECTED DURING CONNECTION PHASE DUE TO TIMEOUT\n", milliseconds);
+            configurator_disconnected();
+        }
+    }
+
+
 
     if (!mode_auto) {
         state = APP_NOT_CONNECTED;

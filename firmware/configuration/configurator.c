@@ -168,6 +168,7 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
     if (rx_packet[0] == CFG_REQUEST_TO_CONNECT) {
         uint8_t offset;
         uint8_t seed;
+        int i;
 
         if (length != 18) {
             printf("CFG_REQUEST_TO_CONNECT packet length is not 18\n");
@@ -191,13 +192,23 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
             return;
         }
 
+        printf("CFG_REQUEST_TO_CONNECT\n");
+
         memcpy(session_address, &rx_packet[1+8], sizeof(session_address));
+        printf("Session address: ");
+        for (i = 0; i < CONFIGURATOR_ADDRESS_SIZE; i++) {
+            if (i) {
+                printf(":");
+            }
+            printf("%02x", session_address[i]);
+        }
+        printf("\n");
+
         calculate_hop_sequence(offset, seed);
         session_hop_index = 0;
 
         connected = true;
         // MUSIC_play(&song_connecting);
-        printf("%lu CONNECTED\n", milliseconds);
         return;
     }
 
@@ -267,7 +278,7 @@ static void handle_CFG_WRITE(const uint8_t * rx_packet, uint8_t length) {
     response_packet.payload_size = 4;
     send_response = true;
 
-    printf("CFG_WRITE\n");
+    printf("CFG_WRITE o=%u, c=%u\n", offset, count);
 }
 
 
@@ -407,6 +418,7 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
 
         case CONFIGURATOR_EVENT_RX:
             // printf("RX %d\n", length);
+            printf("%lu ", milliseconds);
             if (connected) {
                 parse_command_connected(rx_packet, length);
             }

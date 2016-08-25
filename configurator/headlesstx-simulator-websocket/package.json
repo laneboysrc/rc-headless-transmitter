@@ -9,6 +9,6 @@
     "start": "./simulator.js"
   },
   "dependencies": {
-    "tx-simulator": "file:../common-modules/tx-simulator"
-  }
+    "configurator-ws-server": "file:../common-modules/configurator-ws-server",
+    "test-data": "file:../common-modules/test-data"  }
 }

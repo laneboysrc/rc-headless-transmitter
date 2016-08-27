@@ -37,7 +37,6 @@ var packets = {
 };
 
 var ws_connected = false;
-var connected = false;
 
 function allocatePacket(command, size) {
     var packet = new Uint8Array(size);
@@ -106,7 +105,6 @@ function decode(packet) {
 function onWebsocketConnected() {
     packetCache = [];
     ws_connected = true;
-    connected = false;
     console.log('\nConfigurator connected');
 
     uart.write(slip.encode(packets.CFG_DISCONNECT));
@@ -116,7 +114,6 @@ function onWebsocketConnected() {
 function onWebsocketDisconnected() {
     packetCache = [];
     ws_connected = false;
-    connected = false;
     console.log('Configurator disconnected');
 
     uart.write(slip.encode(packets.CFG_DISCONNECT));
@@ -124,17 +121,6 @@ function onWebsocketDisconnected() {
 
 function onWebsocketReceivedPacket(packet) {
     console.log('    <- WS           ', decode(packet));
-
-    if (packet[0] === CFG_REQUEST_TO_CONNECT) {
-        if (connected) {
-            return;
-        }
-        connected = true;
-    }
-    if (packet[0] === CFG_DISCONNECT) {
-        connected = false;
-    }
-
     packetCache.push(packet);
 }
 

@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var DatabaseObject = require('./database_object');
 
+const TIMEOUT_MS = 600;
 
 //*************************************************************************
 // Split up the requested read/write block into small chunks since a single
@@ -89,28 +90,38 @@ class Device {
     let self = this;
 
     return new Promise((resolve, reject) => {
+      let timer;
+
+      function cleanup() {
+        clearTimeout(timer);
+        document.removeEventListener('ws-message', onmessage);
+        document.removeEventListener('ws-close', onclose);
+      }
+
       function onmessage(event) {
         let packet = event.detail;
 
         if (packet[0] === self.TX_INFO) {
+          cleanup();
           self.connected = true;
-          document.removeEventListener('ws-message', onmessage);
-          document.removeEventListener('ws-close', onclose);
           resolve();
           return;
         }
-
-        WebsocketProtocol.send(connectPacket);
       }
 
       function onclose(event) {
-        document.removeEventListener('ws-message', onmessage);
-        document.removeEventListener('ws-close', onclose);
+        cleanup();
         reject(new Error('Connection closed'));
+      }
+
+      function ontimeout() {
+        cleanup();
+        reject(new Error('Connection timeout'));
       }
 
       document.addEventListener('ws-message', onmessage);
       document.addEventListener('ws-close', onclose);
+      timer = setTimeout(ontimeout, TIMEOUT_MS);
       WebsocketProtocol.send(connectPacket);
     });
   }

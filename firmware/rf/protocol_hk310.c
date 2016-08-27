@@ -248,7 +248,7 @@ static void receive_configurator_packet(uint8_t status)
             uint8_t count;
             count = NRF24_read_register(NRF24_R_RX_PL_WID);
 
-            if (count > 0  &&  count < 32) {
+            if (count > 0  &&  count <= 32) {
                 uint8_t rx[32];
 
                 NRF24_read_payload(rx, count);

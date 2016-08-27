@@ -36,6 +36,7 @@ var packets = {
     WS_MAX_PACKETS_IN_TRANSIT: allocatePacket(0x42, 2),
 };
 
+var ws_connected = false;
 var connected = false;
 
 function allocatePacket(command, size) {
@@ -65,7 +66,7 @@ function decode(packet) {
             dv = new DataView(packet.buffer, 1);
             offset = dv.getUint16(0, true);
             count = packet[3];
-            return "CFG_REQUEST_TO_CONNECT     o=" + offset + " c=" + count;
+            return "CFG_READ                   o=" + offset + " c=" + count;
 
         case CFG_WRITE:
             dv = new DataView(packet.buffer, 1);
@@ -104,20 +105,25 @@ function decode(packet) {
 
 function onWebsocketConnected() {
     packetCache = [];
+    ws_connected = true;
+    connected = false;
     console.log('\nConfigurator connected');
+
     uart.write(slip.encode(packets.CFG_DISCONNECT));
     // server.sendPacket(packets.WS_MAX_PACKETS_IN_TRANSIT);
 }
 
 function onWebsocketDisconnected() {
     packetCache = [];
-    console.log('Configurator disconnected');
+    ws_connected = false;
     connected = false;
+    console.log('Configurator disconnected');
+
     uart.write(slip.encode(packets.CFG_DISCONNECT));
 }
 
 function onWebsocketReceivedPacket(packet) {
-    console.log('WS data:            ', decode(packet));
+    console.log('    <- WS           ', decode(packet));
 
     if (packet[0] === CFG_REQUEST_TO_CONNECT) {
         if (connected) {
@@ -142,13 +148,18 @@ function onUartError(error) {
 }
 
 function onSlipData(data) {
+    if (!ws_connected) {
+        return;
+    }
+
     if (uart  &&  packetCache.length) {
         var packet = packetCache.shift();
         uart.write(slip.encode(packet));
+        console.log('NRF <-              ', decode(packet));
     }
 
     if (data[0] !== TX_INFO) {
-        console.log('SLIP decoded data:  ', decode(data));
+        console.log('NRF -> WS           ', decode(data));
     }
 
     server.sendPacket(data);
@@ -170,7 +181,7 @@ function start() {
     });
 
     uart = new SerialPort(uartPort, {
-        baudRate: 115200,
+        baudRate: 115200
     });
     uart.on('error', onUartError);
     uart.on('data', onUartData);

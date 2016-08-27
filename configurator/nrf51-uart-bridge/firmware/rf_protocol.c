@@ -63,7 +63,7 @@ static bool slip_active = true;
 
 
 static slip_t slip;
-static uint8_t slip_buffer[32];
+static uint8_t slip_buffer[128];
 
 
 // ****************************************************************************
@@ -516,6 +516,14 @@ static void read_UART() {
             mode_auto = false;
 
             send_packet(slip.buffer, slip.message_size);
+
+            // if (slip.buffer[0] == CFG_WRITE) {
+            //     slip.buffer[0] = TX_WRITE_SUCCESSFUL;
+            //     slip.buffer[3] = slip.message_size - 3;
+            //     slip_reply(slip.buffer, 4);
+            // }
+
+
             SLIP_init(&slip);
         }
 

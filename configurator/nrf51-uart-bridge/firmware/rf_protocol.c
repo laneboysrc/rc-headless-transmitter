@@ -58,8 +58,8 @@ static uint32_t last_successful_transmission_ms;
 
 static bool waiting_for_disconnect = false;
 static bool waiting_for_connection = false;
-static bool mode_auto = true;
-static bool slip_active = false;
+static bool mode_auto = false;
+static bool slip_active = true;
 
 
 static slip_t slip;
@@ -256,6 +256,13 @@ static void send_packet(const uint8_t *data, uint8_t length)
 // ****************************************************************************
 static void slip_reply(const uint8_t *data, uint8_t length)
 {
+    // While we are waiting for a connection, we are listening for special
+    // TX_FREE_TO_CONNECT packets with size == 1. These are NRF protocol
+    // specific and we don't want to send them up the chain.
+    if (length == 1   &&  data[0] == TX_FREE_TO_CONNECT) {
+        return;
+    }
+
     SLIP_encode(data, length, putchar);
 }
 

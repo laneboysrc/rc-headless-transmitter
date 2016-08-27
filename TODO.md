@@ -78,3 +78,9 @@
 - Stick calibration
 
 
+- Websocket and UART protocol considered w/o error, NRF protocol auto-retry
+- Fix issue with mixer unit when tx connected
+- Fix issue with curve editing
+- `CFG_REQUEST_TO_CONNECT` must only be sent once, with timeout
+- WRITE/READ/COPY promises must be stopped when disconnecting
+- Write of 29 byte value not working

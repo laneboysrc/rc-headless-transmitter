@@ -123,7 +123,8 @@ class DeviceList {
 
     let newTx = {
       name: Utils.uint8array2string(data.slice(9, 16 + 9)),
-      uuid: Utils.uuid2string(data.slice(1, 8 + 1))
+      uuid: Utils.uuid2string(data.slice(1, 8 + 1)),
+      battery: data[1 + 8 + 16] + (data[1 + 8 + 16 + 1] * 256)
     };
 
     let index = this.availableTransmitters.findIndex((element, index, array) => {
@@ -144,8 +145,10 @@ class DeviceList {
 
     let mdl = new MDLHelper();
     let t = document.importNode(this.template, true);
+    let voltage = parseFloat(newTx.battery/1000).toFixed(2);
     t.querySelector('button').setAttribute('data-index', index);
     mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
+    mdl.setTextContentRaw('.app-device_list-list__template-battery', '' + voltage + 'V', t);
 
     this.container.appendChild(t);
 

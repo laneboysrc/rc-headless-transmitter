@@ -40,8 +40,6 @@
     - Custom REST protocol?
   - Look into Redis
 
-- Show battery voltage on device_list
-
 - How do we get a description of the elements in the configuration?
 
 - Live stick/switch/output view
@@ -51,20 +49,12 @@
 
 - Splash screen
 
-- Use input event on slider as it is active during sliding.
-
 - checkout beforeinstallprompt in manifest.json
-
-
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
 - Toast and Snackbar text needs to move into HTML for translation
-
-
-
-- Curve editing: show appropriate points and adjust their name
 
 - Make help page for logical inputs to explain valid combinations
 
@@ -75,10 +65,10 @@
 - Delete transmitter
 
 
+
+
+- Use input event on slider as it is active during sliding.
 - Stick calibration
-
-
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
-- Fix issue with mixer unit when tx connected
-- Fix issue with curve editing
 - WRITE/READ/COPY promises must be stopped when disconnecting
+- Curve editing: show appropriate points and adjust their name

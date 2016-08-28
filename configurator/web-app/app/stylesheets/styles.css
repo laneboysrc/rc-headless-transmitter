@@ -329,3 +329,11 @@ span.mdl-list__item-primary-content label {
   font-size: 0.75rem;
   color: #757575;
 }
+
+
+/* Device list battery voltage*/
+.app-device_list-list__template-battery {
+  padding-left: 8px;
+  font-size: 0.75rem;
+  vertical-align: bottom;
+}

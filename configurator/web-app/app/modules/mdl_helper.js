@@ -25,10 +25,12 @@ class MDLHelper {
     this.index = options.index;
     this.formatter = options.formatter;
     this.parser = options.parser;
+    this.timer = null;
 
     // The change handler function is called in context of another
     // function, so we need to bind this object to it.
     this.onChangeHandler = this._onchange.bind(this);
+    this.onInputHandler = this._oninput.bind(this);
   }
 
   createSpan(text, classes) {
@@ -106,6 +108,7 @@ class MDLHelper {
 
     element.MaterialSlider.change(value);
     this.setChangeHandler(element, item);
+    element.oninput = this.onInputHandler;
   }
 
   setTextfield(selector, item, root) {
@@ -201,6 +204,26 @@ class MDLHelper {
     // Update the DatabaseObject
     Device[this.devName].setItem(item, value, options);
   }
-}
 
+  _oninput(event) {
+    let element = event.target;
+    let value = element.value;
+    let item = element.getAttribute('data-mdlhelper');
+    let options = {offset: this.offset, index: this.index, preview: true};
+    let self = this;
+
+    this.timerParameters = {item: item, value: value, options: options};
+
+    function timerExpired() {
+      self.timer = null;
+      let p = self.timerParameters;
+      Device[self.devName].setItem(p.item, p.value, p.options);
+    }
+
+    if (this.timer === null) {
+      this.timer = setTimeout(timerExpired, 50);
+    }
+  }
+
+}
 module.exports = MDLHelper;

@@ -64,11 +64,13 @@
 
 - Delete transmitter
 
+- Make ranges (limits, endpoints) not be able to go past each-other
+  - Maybe make a custom element that limits upper and lower?
+
 
 
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
-- Use input event on slider as it is active during sliding.
 - Stick calibration
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
 - WRITE/READ/COPY promises must be stopped when disconnecting

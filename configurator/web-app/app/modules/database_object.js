@@ -459,7 +459,7 @@ class DatabaseObject {
   //
   // Every time a value is set, the LAST_CHANGED element is updated as well.
   setItem(key, value, options) {
-    options = options || {offset: 0, index: undefined};
+    options = options || {offset: 0, index: undefined, preview: false};
 
     this.validateInputs(key, options.index);
 
@@ -469,6 +469,7 @@ class DatabaseObject {
     // during the rest of the code
     var index = parseInt(options.index);
     var offset = parseInt(options.offset);
+    var preview = Boolean(options.preview);
 
     if (!Utils.isNumber(offset)) {
       offset = 0;
@@ -514,6 +515,12 @@ class DatabaseObject {
 
       if (Device.connected) {
         Device.write(offset + schema.o, data.slice(offset, offset + count));
+      }
+
+      // If we are getting called with options.preview set to true, when
+      // we bail out after sending the command to the connected device
+      if (preview) {
+        return;
       }
 
       // Add last change time stamp

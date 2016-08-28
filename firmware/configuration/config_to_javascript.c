@@ -780,6 +780,24 @@ void CONFIG_dump_javascript_information(void)
     sync_printf(t, "Smoothing", INTERPOLATION_SMOOTHING);
     sync_printf("            },\n");
 
+    sync_printf("            curve_points_t: {\n");
+    sync_printf("                \"Linear\": [],\n");
+    sync_printf("                \"Fixed value\": [\"Value\"],\n");
+    sync_printf("                \"Min/Max\": [\"Threshold\"],\n");
+    sync_printf("                \"0/Max\": [\"Threshold\"],\n");
+    sync_printf("                \">0\": [\"Threshold\"],\n");
+    sync_printf("                \"<0\": [\"Threshold\"],\n");
+    sync_printf("                \"Absolute\": [\"Threshold\"],\n");
+    sync_printf("                \"Expo\": [\">0\", \"<0\"],\n");
+    sync_printf("                \"Deadband\": [\">0\", \"<0\"],\n");
+    sync_printf("                \"3-Point\": [\"+100%%\", \"0\", \"-100%%\"],\n");
+    sync_printf("                \"5-Point\": [\"+100%%\", \"+50%%\", \"0\", \"-50%%\", \"-100%%\"],\n");
+    sync_printf("                \"7-Point\": [\"+100%%\", \"+66%%\", \"+33%%\", \"0\", \"-33%%\", \"-66%%\", \"-100%%\"],\n");
+    sync_printf("                \"9-Point\": [\"+100%%\", \"+75%%\", \"+50%%\", \"+25%%\", \"0\", \"-25\", \"-50%%\", \"-75%%\", \"-100%%\"],\n");
+    sync_printf("                \"11-Point\": [\"+100%%\", \"+80%%\", \"+60%%\", \"+40%%\", \"+20%%\", \"0\", \"-20%%\", \"-40%%\", \"-60%%\", \"-80%%\", \"-100%%\"],\n");
+    sync_printf("                \"13-Point\": [\"+100%%\", \"+83%%\", \"+67%%\", \"+50%%\", \"+33%%\", \"+17%%\", \"0\", \"-17%%\", \"-33%%\", \"-50%%\", \"-67%%\", \"-83%%\", \"-100%%\"],\n");
+    sync_printf("            },\n");
+
     sync_printf("        }\n");
     sync_printf("    }\n");
     sync_printf("};\n");

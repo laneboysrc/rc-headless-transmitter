@@ -76,5 +76,5 @@
 - WRITE/READ/COPY promises must be stopped when disconnecting
 
 - Curve editing:
-    - Get number of sliders and their label from config for each curve type
+    - Show smoothing only when applicable
 

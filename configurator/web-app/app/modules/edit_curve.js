@@ -6,41 +6,13 @@ var MDLHelper = require('./mdl_helper');
 function getCurvePoints(curveType)
 {
 
-  // FIXME: get this from the CONFIG
-  switch (curveType) {
-    case 'Fixed value':
-    case 'Min/Max':
-    case '0/Max':
-    case '>0':
-    case '<0':
-    case 'Absolute':
-        return ['Point1'];
+  let config = Device.MODEL.getConfig();
+  let curvePoints = config.TYPES.curve_points_t;
 
-    case 'Expo':
-    case 'Deadband':
-      return ['>0', '<0'];
-
-    case '3-Point':
-      return ['Point1', 'Point2', 'Point3'];
-
-    case '5-Point':
-      return ['Point1', 'Point2', 'Point3', 'Point4', 'Point5'];
-
-    case '7-Point':
-      return ['Point1', 'Point2', 'Point3', 'Point4', 'Point5', 'Point6', 'Point7'];
-
-    case '9-Point':
-      return ['Point1', 'Point2', 'Point3', 'Point4', 'Point5', 'Point6', 'Point7', 'Point8', 'Point9'];
-
-    case '11-Point':
-      return ['Point1', 'Point2', 'Point3', 'Point4', 'Point5', 'Point6', 'Point7', 'Point8', 'Point9', 'Point10', 'Point11'];
-
-    case '13-Point':
-      return ['Point1', 'Point2', 'Point3', 'Point4', 'Point5', 'Point6', 'Point7', 'Point8', 'Point9', 'Point10', 'Point11', 'Point12', 'Point13'];
-
-    default:
-      return [];
+  if (curvePoints.hasOwnProperty(curveType)) {
+    return curvePoints[curveType];
   }
+  return [];
 }
 
 

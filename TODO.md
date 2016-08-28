@@ -74,4 +74,8 @@
 - Stick calibration
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
 - WRITE/READ/COPY promises must be stopped when disconnecting
-- Curve editing: show appropriate points and adjust their name
+
+- Curve editing:
+    - Get number of sliders and their label from config for each curve type
+    - Build curve points sliders from a template
+

@@ -18,7 +18,7 @@ function getCurvePoints(curveType)
 
     case 'Expo':
     case 'Deadband':
-      return ['Point1', 'Point2'];
+      return ['>0', '<0'];
 
     case '3-Point':
       return ['Point1', 'Point2', 'Point3'];
@@ -47,6 +47,8 @@ function getCurvePoints(curveType)
 class EditCurve {
   constructor () {
     this.offset = 0;
+    this.container = document.querySelector('#app-edit_curve-container');
+    this.template = document.querySelector('#app-edit_curve-template').content;
   }
 
   //*************************************************************************
@@ -54,6 +56,10 @@ class EditCurve {
     this.offset = params.offset;
 
     let mdl = new MDLHelper('MODEL', {offset: this.offset});
+    let type = Device.MODEL.getItem('MIXER_UNITS_CURVE_TYPE', {offset: this.offset});
+    let points = getCurvePoints(type);
+
+    Utils.clearDynamicElements(this.container);
 
     mdl.setTextContent('#app-edit_curve-curve_type', 'MIXER_UNITS_CURVE_TYPE');
     mdl.setDataURL('#app-edit_curve-curve_type__edit',
@@ -63,22 +69,14 @@ class EditCurve {
     mdl.setDataURL('#app-edit_curve-curve_smoothing__edit',
       ['select_single', 'MODEL', 'MIXER_UNITS_CURVE_SMOOTHING', this.offset]);
 
-    let type = Device.MODEL.getItem('MIXER_UNITS_CURVE_TYPE', {offset: this.offset});
-    let points = getCurvePoints(type);
-    let sliderCount = 13;
+    for (let i = 0; i < points.length; i++) {
+      let options = {offset: this.offset, index: i};
+      let mdlSlider = new MDLHelper('MODEL', options);
+      let t = document.importNode(this.template, true);
 
-    console.log(type, points)
-
-    // FIXME: add curves by using a template
-
-    for (let i = 0; i < sliderCount; i++) {
-      Utils.setVisibility('#app-edit_curve-point' + (i + 1) + '__enable', (i < points.length));
-
-      if (i < points.length) {
-        let options = {offset: this.offset, index: i};
-        let mdlSlider = new MDLHelper('MODEL', options);
-        mdlSlider.setSlider('#app-edit_curve-point' + (i + 1), 'MIXER_UNITS_CURVE_POINTS');
-      }
+      mdlSlider.setTextContentRaw('.app-edit_curve-template--label', points[i], t);
+      mdlSlider.setSlider('input', 'MIXER_UNITS_CURVE_POINTS', t);
+      this.container.appendChild(t);
     }
 
     Utils.showPage('edit_curve');

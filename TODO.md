@@ -77,5 +77,4 @@
 
 - Curve editing:
     - Get number of sliders and their label from config for each curve type
-    - Build curve points sliders from a template
 

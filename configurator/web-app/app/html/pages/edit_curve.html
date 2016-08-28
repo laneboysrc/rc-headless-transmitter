@@ -26,7 +26,7 @@
         <div class="mdl-card__actions mdl-card--border">
 
           <table class="mixer-unit mdl-data-table mdl-js-data-table">
-          <tbody>
+          <tbody id="app-edit_curve-container">
             <tr>
               <td class="mdl-data-table__cell--non-numeric">
                 Curve type:
@@ -53,110 +53,14 @@
               </td>
             </tr>
 
-            <tr id="app-edit_curve-point1__enable">
-              <td id="app-edit_curve-point1__label" class="mdl-data-table__cell--non-numeric">
-                Point1:
-              </td>
+            <template id="app-edit_curve-template">
+            <tr class="can-delete">
+              <td class="mdl-data-table__cell--non-numeric app-edit_curve-template--label"></td>
               <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point1" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
+                <input class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
               </td>
             </tr>
-            <tr id="app-edit_curve-point2__enable">
-              <td id="app-edit_curve-point2__label" class="mdl-data-table__cell--non-numeric">
-                Point2:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point2" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point3__enable">
-              <td id="app-edit_curve-point3__label" class="mdl-data-table__cell--non-numeric">
-                Point3:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point3" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point4__enable">
-              <td id="app-edit_curve-point4__label" class="mdl-data-table__cell--non-numeric">
-                Point4:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point4" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point5__enable">
-              <td id="app-edit_curve-point5__label" class="mdl-data-table__cell--non-numeric">
-                Point5:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point5" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point6__enable">
-              <td id="app-edit_curve-point6__label" class="mdl-data-table__cell--non-numeric">
-                Point6:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point6" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point7__enable">
-              <td id="app-edit_curve-point7__label" class="mdl-data-table__cell--non-numeric">
-                Point7:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point7" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point8__enable">
-              <td id="app-edit_curve-point8__label" class="mdl-data-table__cell--non-numeric">
-                Point8:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point8" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point9__enable">
-              <td id="app-edit_curve-point9__label" class="mdl-data-table__cell--non-numeric">
-                Point9:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point9" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point10__enable">
-              <td id="app-edit_curve-point10__label" class="mdl-data-table__cell--non-numeric">
-                Point10:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point10" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point11__enable">
-              <td id="app-edit_curve-point11__label" class="mdl-data-table__cell--non-numeric">
-                Point11:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point11" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point12__enable">
-              <td id="app-edit_curve-point12__label" class="mdl-data-table__cell--non-numeric">
-                Point12:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point12" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
-            <tr id="app-edit_curve-point13__enable">
-              <td id="app-edit_curve-point13__label" class="mdl-data-table__cell--non-numeric">
-                Point13:
-              </td>
-              <td class="mdl-data-table__cell--non-numeric" colspan="2">
-                <input id="app-edit_curve-point13" class="mdl-slider mdl-js-slider" type="range" min="-100" max="100">
-              </td>
-            </tr>
+            </template>
 
           </tbody>
           </table>

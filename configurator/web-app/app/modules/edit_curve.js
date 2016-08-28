@@ -10,7 +10,7 @@ class EditCurve {
   }
 
   //*************************************************************************
-  ini (params) {
+  init (params) {
     this.offset = params.offset;
 
     let mdl = new MDLHelper('MODEL', {offset: this.offset});

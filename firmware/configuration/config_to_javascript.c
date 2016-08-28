@@ -174,12 +174,12 @@ void CONFIG_dump_javascript_information(void)
         sizeof(logical_input_t),
         membersizeof(tx_t, logical_inputs) / sizeof(logical_input_t));
 
-    sync_printf(m, "LOGICAL_INPUTS_TYPE", "input_type_t", "Input type",
+    sync_printf(h, "LOGICAL_INPUTS_TYPE", "input_type_t", "Input type",
         offsetof(tx_t, logical_inputs[0].type),
         membersizeof(tx_t, logical_inputs[0].type),
         1);
 
-    sync_printf(m, "LOGICAL_INPUTS_SUB_TYPE", "input_sub_type_t", "Push-button behavior",
+    sync_printf(h, "LOGICAL_INPUTS_SUB_TYPE", "input_sub_type_t", "Push-button behavior",
         offsetof(tx_t, logical_inputs[0].sub_type),
         membersizeof(tx_t, logical_inputs[0].sub_type),
         1);
@@ -189,12 +189,12 @@ void CONFIG_dump_javascript_information(void)
         membersizeof(tx_t, logical_inputs[0].position_count),
         1);
 
-    sync_printf(m, "LOGICAL_INPUTS_HARDWARE_INPUTS", "u", "Hardware inputs",
+    sync_printf(h, "LOGICAL_INPUTS_HARDWARE_INPUTS", "u", "Hardware inputs",
         offsetof(tx_t, logical_inputs[0].hardware_inputs),
         sizeof(port_t),
         membersizeof(tx_t, logical_inputs[0].hardware_inputs) / sizeof(port_t));
 
-    sync_printf(m, "LOGICAL_INPUTS_LABELS", "input_label_t", "Input labels",
+    sync_printf(h, "LOGICAL_INPUTS_LABELS", "input_label_t", "Input labels",
         offsetof(tx_t, logical_inputs[0].labels),
         sizeof(input_label_t),
         membersizeof(tx_t, logical_inputs[0].labels) / sizeof(input_label_t));
@@ -791,8 +791,18 @@ void CONFIG_dump_javascript_information(void)
 int main(void)
 {
     rcc_clock_setup_in_hse_8mhz_out_24mhz();
+    rcc_periph_clock_enable(RCC_GPIOA);
+    rcc_periph_clock_enable(RCC_GPIOB);
+    rcc_periph_clock_enable(RCC_GPIOC);
+    rcc_periph_clock_enable(RCC_AFIO);
 
     UART_init();
+    CONFIG_init();
+
+    // There must be a printf before the dump functoins start working.
+    // Unclear why.
+    printf("\n");
+
     CONFIG_dump_javascript_information();
 
     while (1) {

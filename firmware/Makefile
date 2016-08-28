@@ -73,6 +73,7 @@ endif
 ifeq ($(PROGRAM),dump-config)
 C_SOURCE_FILES += $(abspath configuration/config_to_javascript.c)
 C_SOURCE_FILES += $(abspath configuration/config.c)
+C_SOURCE_FILES += $(abspath input/inputs_stm32f103c8t6.c)
 C_SOURCE_FILES += $(abspath system/uart.c)
 C_SOURCE_FILES += $(abspath system/watchdog.c)
 C_SOURCE_FILES += $(abspath utils/ring_buffer.c)

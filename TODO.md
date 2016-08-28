@@ -75,6 +75,3 @@
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
 - WRITE/READ/COPY promises must be stopped when disconnecting
 
-- Curve editing:
-    - Show smoothing only when applicable
-

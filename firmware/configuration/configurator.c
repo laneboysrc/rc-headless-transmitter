@@ -180,10 +180,10 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
             return;
         }
 
-        if (memcmp(&rx_packet[1+8+5], &config.tx.passphrase, sizeof(config.tx.passphrase)) != 0) {
-            printf("CFG_REQUEST_TO_CONNECT passphrase mismatch\n");
-            return;
-        }
+        // if (memcmp(&rx_packet[1+8+5], &config.tx.passphrase, sizeof(config.tx.passphrase)) != 0) {
+        //     printf("CFG_REQUEST_TO_CONNECT passphrase mismatch\n");
+        //     return;
+        // }
 
         offset = rx_packet[1+8+5+2];
         seed = rx_packet[1+8+5+2+1];

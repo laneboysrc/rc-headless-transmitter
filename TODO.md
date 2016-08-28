@@ -66,7 +66,8 @@
 
 
 
-
+- Propagate nRF connection lost back via bridges
+  - Especially important since the other protocols are considered reliable
 - Use input event on slider as it is active during sliding.
 - Stick calibration
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry

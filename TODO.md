@@ -74,4 +74,5 @@
 - Stick calibration
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
 - WRITE/READ/COPY promises must be stopped when disconnecting
+- 2 beep sound when momentary button down disconnects configurator?
 

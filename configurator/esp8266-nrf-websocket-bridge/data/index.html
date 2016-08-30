@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Websocket Test</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+      body {
+        margin:0;
+        padding:0;
+        font-family: sans-serif
+      }
+
+      #transmit {
+        width: 100%%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <input id="transmit" type="text">
+    </div>
+    <div id="messages"></div>
+
+    <script type="text/javascript">
+      'use strict';
+      var transmit = document.querySelector('#transmit');
+      var messages = document.querySelector('#messages');
+
+      function log_message(received_message) {
+        var msg = document.createElement('div');
+        msg.textContent = received_message;
+        messages.appendChild(msg);
+      }
+
+      function start_websocket() {
+        var ws = null;
+
+        transmit.onkeydown = function (event) {
+          if (event.keyCode === 13  &&  transmit.value !== "") {
+            ws.send(transmit.value);
+            transmit.value = "";
+          }
+        }
+
+        ws = new WebSocket('ws://' + document.location.host + ':9807', ['Configurator']);
+
+        ws.onopen = function(e){
+          log_message("[ws] connected");
+        };
+
+        ws.onclose = function(e){
+          log_message("[ws] disconnected");
+        };
+
+        ws.onerror = function(e){
+          console.log(e);
+          log_message("[ws] error");
+        };
+
+        ws.onmessage = function(ws_message) {
+          if (ws_message.data instanceof ArrayBuffer) {
+            log_message('[ws] Binary messages are not supported');
+
+          } else {
+            log_message(ws_message.data);
+          }
+        };
+      }
+
+      start_websocket();
+    </script>
+  </body>
+</html>

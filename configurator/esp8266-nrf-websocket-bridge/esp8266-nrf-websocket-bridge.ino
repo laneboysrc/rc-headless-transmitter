@@ -22,11 +22,16 @@ ESPAsyncCaptiveDNS dns_server;
 void wsHandler(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
     if (type == WS_EVT_CONNECT) {
         os_printf("ws[%s][%u] connect\n", server->url(), client->id());
+
+        Serial1.printf("ws[%s][%u] connect\n", server->url(), client->id());
+
         client->printf("Hello Client %u :)", client->id());
         client->ping();
     }
     else if (type == WS_EVT_DISCONNECT) {
-        os_printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id());
+        os_printf("ws[%s] disconnect: %u\n", server->url(), client->id());
+
+        Serial1.printf("ws[%s] disconnect: %u\n", server->url(), client->id());
     }
     else if (type == WS_EVT_ERROR) {
         os_printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t*)arg), (char*)data);
@@ -50,8 +55,9 @@ void wsHandler(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
                 client->text("I got your text message");
             }
             else {
-                char buff[3];
+                char buff[4];
                 for(size_t i = 0; i < info->len; i++) {
+
                     sprintf(buff, "%02x ", (uint8_t)data[i]);
                     msg += buff ;
                 }
@@ -75,7 +81,8 @@ void wsHandler(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
                 }
             }
             else {
-                char buff[3];
+                char buff[4];
+
                 for(size_t i=0; i < info->len; i++) {
                     sprintf(buff, "%02x ", (uint8_t)data[i]);
                     msg += buff ;
@@ -147,16 +154,27 @@ void notFoundHandler(AsyncWebServerRequest *request) {
 }
 
 
+String IPAddress2String(const IPAddress& ipAddress)
+{
+    String result = String(ipAddress[0]) + "." + String(ipAddress[1]) + "." +
+        String(ipAddress[2]) + "." + String(ipAddress[3]);
+
+    return result;
+}
+
+
 void setup() {
     Serial.begin(115200);
-    Serial.setDebugOutput(true);
+    Serial.swap();
+
+    Serial1.begin(115200);
+    Serial1.setDebugOutput(true);
 
     WiFi.mode(WIFI_AP);
     // WiFi.softAP(ssid, password);
 
     IPAddress apIP = WiFi.softAPIP();
-    Serial.print("\nAP IP address: ");
-    Serial.println(apIP);
+    os_printf("\nAP IP address: %s\n", IPAddress2String(apIP).c_str());
 
     SPIFFS.begin();
 

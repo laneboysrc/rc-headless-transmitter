@@ -36,10 +36,18 @@ SPIFFS_BLOCK = 8192
 SPIFFS_DIR := ./data/
 SPIFFS_IMAGE := $(BUILD_DIR)/spiffs.image
 
+
 spiffs:
 	$(MKSPIFFS_PATH)/mkspiffs -c $(SPIFFS_DIR) -p $(SPIFFS_PAGE) -b $(SPIFFS_BLOCK) -s $(SPIFFS_SIZE) $(SPIFFS_IMAGE)
 	$(ESPTOOL_PATH)/esptool -cd $(UPLOAD_RESET) -cb $(UPLOAD_SPEED) -cp $(UPLOAD_PORT) -ca $(SPIFFS_START) -cf $(SPIFFS_IMAGE)
 .PHONY: spiffs
+
+spiffs-webapp: SPIFFS_DIR := ./data.web-app/
+spiffs-webapp: SPIFFS_IMAGE := $(BUILD_DIR)/spiffs-webapp.image
+spiffs-webapp:
+	$(MKSPIFFS_PATH)/mkspiffs -c $(SPIFFS_DIR) -p $(SPIFFS_PAGE) -b $(SPIFFS_BLOCK) -s $(SPIFFS_SIZE) $(SPIFFS_IMAGE)
+	$(ESPTOOL_PATH)/esptool -cd $(UPLOAD_RESET) -cb $(UPLOAD_SPEED) -cp $(UPLOAD_PORT) -ca $(SPIFFS_START) -cf $(SPIFFS_IMAGE)
+.PHONY: spiffs-webapp
 
 terminal:
 	miniterm.py -p $(UPLOAD_PORT) -b 115200 -e

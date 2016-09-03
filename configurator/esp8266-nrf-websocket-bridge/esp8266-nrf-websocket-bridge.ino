@@ -5,15 +5,18 @@
 #include <Hash.h>
 
 
-AsyncWebServer http_server(80);
-AsyncWebServer ws_server(9807);
-AsyncWebSocket ws("/");
-ESPAsyncCaptiveDNS dns_server;
-
+#define HTTP_PORT 80
+#define WEBSOCKET_PORT 9706
 
 const char *ssid = "ESP8266-WLA";
 const char *password = "12345678";
-const char *domain = "configurator.local";
+const char *domain = "configurator";
+
+
+AsyncWebServer http_server(HTTP_PORT);
+AsyncWebServer ws_server(WEBSOCKET_PORT);
+AsyncWebSocket ws("/");
+ESPAsyncCaptiveDNS dns_server;
 
 
 void wsHandler(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){

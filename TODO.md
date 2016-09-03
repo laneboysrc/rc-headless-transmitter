@@ -68,6 +68,7 @@
   - Maybe make a custom element that limits upper and lower?
 
 
+- Can we make a quick-loading splash screen when the configurator loads
 
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
@@ -76,3 +77,5 @@
 - WRITE/READ/COPY promises must be stopped when disconnecting
 - 2 beep sound when momentary button down disconnects configurator?
 
+- ESP bridge: use ESPAsyncUDP module for DNS
+- ESP bridge: need a way to setup Wi-Fi, plus a default

@@ -14,7 +14,7 @@ CPP_EXTRA = -DDEBUG
 
 DUMMY := $(shell rm -f $(BUILD_DIR)/buildinfo.cpp)
 
-include ~/scratchpad/makeEspArduino/makeEspArduino.mk
+include ./makeEspArduino/makeEspArduino.mk
 
 
 MKSPIFFS_PATH := $(lastword $(wildcard $(ARDUINO_DIR)/tools/mkspiffs/*))

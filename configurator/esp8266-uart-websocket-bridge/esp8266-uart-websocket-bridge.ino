@@ -4,9 +4,14 @@
 #include <ESPAsyncCaptiveDNS.h>
 #include <Hash.h>
 
+#include <bridge.h>
+
 
 #define HTTP_PORT 80
 #define WEBSOCKET_PORT 9706
+
+#define MAX_PACKET_SIZE 32
+
 
 const char *ssid = "ESP8266-WLA";
 const char *password = "12345678";
@@ -17,91 +22,73 @@ AsyncWebServer http_server(HTTP_PORT);
 AsyncWebServer ws_server(WEBSOCKET_PORT);
 AsyncWebSocket ws("/");
 ESPAsyncCaptiveDNS dns_server;
+Bridge bridge;
 
 
-void wsHandler(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+uint32_t ws_client_id;
+bool ws_connected = false;
+
+
+void wsHandler(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void * arg, uint8_t *data, size_t len){
     if (type == WS_EVT_CONNECT) {
         os_printf("ws[%s][%u] connect\n", server->url(), client->id());
 
-        Serial1.printf("ws[%s][%u] connect\n", server->url(), client->id());
+        if (ws_connected) {
+            os_printf("ws[%s][%u] Already connected, rejecting.\n", server->url(), client->id());
+            client->close();
+            return;
+        }
 
-        client->printf("Hello Client %u :)", client->id());
-        client->ping();
+        ws_client_id = client->id();
+        ws_connected = true;
+        bridge.ws_connected(server, ws_client_id);
     }
+
     else if (type == WS_EVT_DISCONNECT) {
         os_printf("ws[%s] disconnect: %u\n", server->url(), client->id());
 
-        Serial1.printf("ws[%s] disconnect: %u\n", server->url(), client->id());
+        if (client->id() == ws_client_id) {
+            bridge.ws_disconnected();
+            ws_connected = false;
+        }
     }
+
     else if (type == WS_EVT_ERROR) {
         os_printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t*)arg), (char*)data);
     }
-    else if (type == WS_EVT_PONG) {
-        os_printf("ws[%s][%u] pong[%u]: %s\n", server->url(), client->id(), len, (len) ? (char*)data : "");
-    }
+
     else if (type == WS_EVT_DATA) {
-        AwsFrameInfo * info = (AwsFrameInfo*)arg;
-        String msg = "";
+        // Shortcut: since the configuration is only sending messages that are
+        // less than 127 bytes long, they always fit in a single frame.
+        // We therefore don't have to assemble frames into a message.
+
+        uint8_t packet[MAX_PACKET_SIZE];
+        uint8_t packet_length;
+
+        AwsFrameInfo *info = (AwsFrameInfo*)arg;
 
         if (info->final  &&  info->index == 0  &&  info->len == len) {
             // The whole message is in a single frame and we got all of it's data
-            os_printf("ws[%s][%u] %s-message[%llu]: ", server->url(), client->id(), (info->opcode == WS_TEXT) ? "text":"binary", info->len);
+            os_printf("ws[%s][%u] %s-message[%llu]\n", server->url(), client->id(), (info->opcode == WS_TEXT) ? "text":"binary", info->len);
 
             if (info->opcode == WS_TEXT) {
-                for (size_t i = 0; i < info->len; i++) {
-                    msg += (char)data[i];
-                }
-                os_printf("%s\n", msg.c_str());
-                client->text("I got your text message");
+                os_printf("ws[%s][%u] Received TEXT, ignored.\n", server->url(), client->id());
+                return;
             }
-            else {
-                char buff[4];
-                for(size_t i = 0; i < info->len; i++) {
 
-                    sprintf(buff, "%02x ", (uint8_t)data[i]);
-                    msg += buff ;
-                }
-                os_printf("%s\n", msg.c_str());
-                client->text("I got your binary message");
+            if (info->len > MAX_PACKET_SIZE) {
+                os_printf("ws[%s][%u] Packet too long, ignored.\n", server->url(), client->id());
+                return;
             }
+
+            packet_length = info->len;
+            memcpy(packet, data, info->len);
+
+            bridge.websocket_received(packet, packet_length);
         }
         else {
             //message is comprised of multiple frames or the frame is split into multiple packets
-            if (info->index == 0) {
-                if (info->num == 0)
-                    os_printf("ws[%s][%u] %s-message start\n", server->url(), client->id(), (info->message_opcode == WS_TEXT) ? "text" : "binary");
-                os_printf("ws[%s][%u] frame[%u] start[%llu]\n", server->url(), client->id(), info->num, info->len);
-            }
-
-            os_printf("ws[%s][%u] frame[%u] %s[%llu - %llu]: ", server->url(), client->id(), info->num, (info->message_opcode == WS_TEXT) ? "text" : "binary", info->index, info->index + len);
-
-            if (info->opcode == WS_TEXT) {
-                for(size_t i=0; i < info->len; i++) {
-                    msg += (char)data[i];
-                }
-            }
-            else {
-                char buff[4];
-
-                for(size_t i=0; i < info->len; i++) {
-                    sprintf(buff, "%02x ", (uint8_t)data[i]);
-                    msg += buff ;
-                }
-            }
-            os_printf("%s\n", msg.c_str());
-
-            if ((info->index + len) == info->len){
-                os_printf("ws[%s][%u] frame[%u] end[%llu]\n", server->url(), client->id(), info->num, info->len);
-                if (info->final) {
-                    os_printf("ws[%s][%u] %s-message end\n", server->url(), client->id(), (info->message_opcode == WS_TEXT)?"text":"binary");
-                    if (info->message_opcode == WS_TEXT) {
-                        client->text("I got your text message");
-                    }
-                    else {
-                        client->text("I got your binary message");
-                    }
-                }
-            }
+            os_printf("ws[%s][%u] ERROR: Messages spanning multiple frames is not implemented\n", server->url(), client->id());
         }
     }
 }
@@ -193,5 +180,7 @@ void setup() {
 
 
 void loop() {
-    // Nothing to do, everything is asynchonous based on callbacks
+    while (Serial.available()) {
+        bridge.uart_received(Serial.read());
+    }
 }

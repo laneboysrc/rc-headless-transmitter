@@ -53,7 +53,7 @@
 			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"name": "nrf51-uart-bridge make",
 			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
-			"working_dir": "${project_path}/configurator/nrf51-uart-bridge/firmware"
+			"working_dir": "${project_path}/configurator/nrf51-nrf-uart-bridge/firmware"
 		},
 		{
 			"cmd":
@@ -63,7 +63,7 @@
 			],
 			"name": "nrf51-uart-bridge make clean",
 			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
-			"working_dir": "${project_path}/configurator/nrf51-uart-bridge/firmware"
+			"working_dir": "${project_path}/configurator/nrf51-nrf-uart-bridge/firmware"
 		},
 		{
 			"cmd":
@@ -74,7 +74,7 @@
 			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"name": "nrf51-uart-bridge make program",
 			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
-			"working_dir": "${project_path}/configurator/nrf51-uart-bridge/firmware"
+			"working_dir": "${project_path}/configurator/nrf51-nrf-uart-bridge/firmware"
 		},
 		{
 			"cmd":
@@ -87,7 +87,7 @@
 				"make terminal"
 			],
 			"name": "nrf51-uart-bridge make terminal",
-			"working_dir": "${project_path}/configurator/nrf51-uart-bridge/firmware"
+			"working_dir": "${project_path}/configurator/nrf51-nrf-uart-bridge/firmware"
 		},
 		{
 			"cmd":

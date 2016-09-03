@@ -214,8 +214,8 @@ static configurator_action_t send_configurator_packet(uint8_t current_hop_index,
     NRF24_write_register(NRF24_EN_AA, 0x01);
 
     NRF24_set_bitrate(2);
-    // NRF24_set_power(NRF24_POWER_0dBm);
-    NRF24_set_power(NRF24_POWER_n18dBm);
+    NRF24_set_power(NRF24_POWER_0dBm);
+    // NRF24_set_power(NRF24_POWER_n18dBm);
     NRF24_write_register(NRF24_RF_CH, p->channel);
     NRF24_write_multi_byte_register(NRF24_TX_ADDR, p->address, sizeof(p->address));
     NRF24_write_multi_byte_register(NRF24_RX_ADDR_P0, p->address, sizeof(p->address));

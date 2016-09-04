@@ -148,6 +148,8 @@ void Bridge::uart_received(uint8_t byte)
 
 void Bridge::uart_send(const uint8_t *packet, uint8_t packet_length)
 {
+    log_packet("ws->nrf", packet, packet_length);
+
     uint8_t buffer[32 * 2 + 2];
     size_t length = SLIP_encode(packet, packet_length, buffer);
     Serial.write(buffer, length);
@@ -156,6 +158,5 @@ void Bridge::uart_send(const uint8_t *packet, uint8_t packet_length)
 
 void Bridge::websocket_received(const uint8_t *packet, uint8_t packet_length)
 {
-    log_packet("ws->nrf", packet, packet_length);
     uart_send(packet, packet_length);
 }

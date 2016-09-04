@@ -43,6 +43,15 @@ class TransmitterDetails {
   back() {
     history.back();
   }
+
+  //*************************************************************************
+  delete(event) {
+    Utils.cancelBubble(event);
+
+    TransmitterList.deleteTransmitter(Device.TX);
+    Device.TX = undefined;
+    history.back();
+  }
 }
 
 window['TransmitterDetails'] = new TransmitterDetails();

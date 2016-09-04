@@ -62,8 +62,6 @@
 
 - LogicalInputs: Scroll to created logical input after performing 'add'
 
-- Delete transmitter
-
 - Make ranges (limits, endpoints) not be able to go past each-other
   - Maybe make a custom element that limits upper and lower?
 
@@ -78,21 +76,20 @@
 
 
 - Can we make a quick-loading splash screen when the configurator loads
+- Wi-Fi configuration through web interface
+  - Need a sensible default, i.e. detect what the factory setting is
+- YouTube and blog don't work when connected to the ESP
+- Can configurator detect when phone goes to sleep and terminate connection?
 
 - ESP bridge: use ESPAsyncUDP module for DNS
-- ESP bridge: need a way to setup Wi-Fi, plus a default
 - Configurator frequencies should avoid Wi-Fi frequency
 
 - Fix issue with pending promises when interrupting model loading
 
 - nudemcu does not start up when connected ot uart on nRF51
-- Wi-Fi configuration through web interface
-- YouTube and blog don't work when connected to the ESP
-- Can configurator detect when phone goes to sleep and terminate connection?
-- Diagnostics ESP output (insread od ws[/] binary message[2])
 - Refactor nRF to use second UART for SLIP, and main UART for console
 - Sometimes we get "READ packet length is not 4" in TX
-- Sometimes when reading tx/model info the webapp tstops reading and show  "looking for transmitter" while the Tx stays properly connected
+- Sometimes when reading tx/model info the webapp stops reading and show  "looking for transmitter" while the Tx stays properly connected
 
 - Sometimes loading model or tx does not finish, despit TX looks like everything has been transmitted
   - The problem is between the nodeMCU and the nRF: the nodeMCU shows data sent, unclear if nRF received, need to add logging

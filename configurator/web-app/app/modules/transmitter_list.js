@@ -11,6 +11,8 @@ class TransmitterList {
     this.noTransmitter = document.querySelector('#app-transmitter_list-no_transmitter');
     this.container = document.querySelector('#app-transmitter_list-list__container');
     this.template = document.querySelector('#app-transmitter_list-list__template').content;
+    this.snackbar = document.querySelector('#app-transmitter_list-snackbar');
+
     this.transmitters = [];
   }
 
@@ -41,6 +43,20 @@ class TransmitterList {
       Device.TX = new DatabaseObject(data);
       location.hash = Utils.buildURL(['transmitter_details']);
     });
+  }
+
+  //*************************************************************************
+  deleteTransmitter(transmitter) {
+    Device.UNDO = transmitter;
+    Database.deleteEntry(transmitter);
+
+    let data = {
+      message: 'Transmitter deleted.',
+      timeout: 5000,
+      actionHandler: this._undoDeleteTransmitter.bind(this),
+      actionText: 'Undo'
+    };
+    this.snackbar.MaterialSnackbar.showSnackbar(data);
   }
 
   //*************************************************************************
@@ -82,6 +98,22 @@ class TransmitterList {
 
     Utils.setVisibility(this.list, this.transmitters.length !==  0);
     Utils.setVisibility(this.noTransmitter, this.transmitters.length ===  0);
+  }
+
+
+  //*************************************************************************
+  _undoDeleteTransmitter() {
+    if (!Device.UNDO) {
+      return;
+    }
+
+    Device.TX = Device.UNDO;
+    Database.setEntry(Device.TX);
+
+    let mdl = new MDLHelper();
+    mdl.cancelSnackbar(this.snackbar);
+
+    location.hash = Utils.buildURL(['transmitter_details']);
   }
 }
 

@@ -83,6 +83,8 @@ nrf_esb_payload_t *packet_queued;
 nrf_esb_payload_t *packet_in_transit;
 nrf_esb_payload_t *completed_packet;
 
+nrf_esb_payload_t received_packet;
+
 
 // ****************************************************************************
 void PACKET_FIFO_init(FIFO_T *ring, nrf_esb_payload_t *buf, uint8_t size)
@@ -555,7 +557,6 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
 // ****************************************************************************
 static void rf_event_handler(nrf_esb_evt_t const *event)
 {
-    nrf_esb_payload_t payload;
 
     switch (event->evt_id) {
         case NRF_ESB_EVENT_TX_SUCCESS:
@@ -569,86 +570,86 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
 
         case NRF_ESB_EVENT_RX_RECEIVED:
             last_successful_transmission_ms = milliseconds;
-            if (nrf_esb_read_rx_payload(&payload) == NRF_SUCCESS) {
-                // int i;
+            if (nrf_esb_read_rx_payload(&received_packet) == NRF_SUCCESS) {
+                // // int i;
 
-                // printf("%lu RX (%d) ", milliseconds, payload.length);
-                // for  (i = 0; i < payload.length; i++) {
-                //     printf("%02X ", payload.data[i]);
+                // // printf("%lu RX (%d) ", milliseconds, received_packet.length);
+                // // for  (i = 0; i < received_packet.length; i++) {
+                // //     printf("%02X ", received_packet.data[i]);
+                // // }
+                // // printf("\n");
+
+                // if (slip_active) {
+                //     slip_reply(received_packet.data, received_packet.length);
                 // }
-                // printf("\n");
 
-                if (slip_active) {
-                    slip_reply(payload.data, payload.length);
-                }
+                // if (connected) {
+                //     session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
+                //     set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
 
-                if (connected) {
-                    session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
-                    set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
+                //     app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 7500, NULL);
 
-                    app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 7500, NULL);
+                //     parse_command_connected(received_packet.data, received_packet.length);
+                // }
+                // else {
+                //     parse_command_not_connected(received_packet.data, received_packet.length);
+                // }
 
-                    parse_command_connected(payload.data, payload.length);
-                }
-                else {
-                    parse_command_not_connected(payload.data, payload.length);
-                }
+                // completed_packet = packet_in_transit;
+                // packet_in_transit = packet_queued;
 
-                completed_packet = packet_in_transit;
-                packet_in_transit = packet_queued;
+                // if (connected  &&  completed_packet->length) {
+                //     bool match = false;
 
-                if (connected  &&  completed_packet->length) {
-                    bool match = false;
+                //     switch (completed_packet->data[0]) {
+                //         case CFG_READ:
+                //             if (received_packet.data[0] == TX_REQUESTED_DATA) {
+                //                 match = true;
+                //             }
+                //             break;
 
-                    switch (completed_packet->data[0]) {
-                        case CFG_READ:
-                            if (payload.data[0] == TX_REQUESTED_DATA) {
-                                match = true;
-                            }
-                            break;
+                //         case CFG_WRITE:
+                //             if (received_packet.data[0] == TX_WRITE_SUCCESSFUL) {
+                //                 match = true;
+                //             }
+                //             break;
 
-                        case CFG_WRITE:
-                            if (payload.data[0] == TX_WRITE_SUCCESSFUL) {
-                                match = true;
-                            }
-                            break;
+                //         case CFG_COPY:
+                //             if (received_packet.data[0] == TX_COPY_SUCCESSFUL) {
+                //                 match = true;
+                //             }
+                //             break;
 
-                        case CFG_COPY:
-                            if (payload.data[0] == TX_COPY_SUCCESSFUL) {
-                                match = true;
-                            }
-                            break;
+                //         default:
+                //             match = true;
+                //             break;
+                //     }
 
-                        default:
-                            match = true;
-                            break;
-                    }
+                //     packet_queued = completed_packet;
+                //     if (match) {
 
-                    packet_queued = completed_packet;
-                    if (match) {
+                //         if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
+                //             send_packet(packet_queued);
+                //         }
+                //         else {
+                //             packet_queued->length = 0;
+                //         }
+                //     }
+                //     else {
+                //         // Resend failed packet
+                //         send_packet(packet_queued);
+                //     }
+                // }
+                // else {
+                //     packet_queued = completed_packet;
 
-                        if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
-                            send_packet(packet_queued);
-                        }
-                        else {
-                            packet_queued->length = 0;
-                        }
-                    }
-                    else {
-                        // Resend failed packet
-                        send_packet(packet_queued);
-                    }
-                }
-                else {
-                    packet_queued = completed_packet;
-
-                    if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
-                        send_packet(packet_queued);
-                    }
-                    else {
-                        packet_queued->length = 0;
-                    }
-                }
+                //     if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
+                //         send_packet(packet_queued);
+                //     }
+                //     else {
+                //         packet_queued->length = 0;
+                //     }
+                // }
 
             }
             break;
@@ -735,6 +736,97 @@ static void read_UART() {
 }
 
 
+static void handle_received_packet(void)
+{
+    if (received_packet.length == 0) {
+        return;
+    }
+
+    // int i;
+
+    // printf("%lu RX (%d) ", milliseconds, received_packet.length);
+    // for  (i = 0; i < received_packet.length; i++) {
+    //     printf("%02X ", received_packet.data[i]);
+    // }
+    // printf("\n");
+
+    if (slip_active) {
+        slip_reply(received_packet.data, received_packet.length);
+    }
+
+    if (connected) {
+        session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
+        set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
+
+        app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 7500, NULL);
+
+        parse_command_connected(received_packet.data, received_packet.length);
+    }
+    else {
+        parse_command_not_connected(received_packet.data, received_packet.length);
+    }
+
+    completed_packet = packet_in_transit;
+    packet_in_transit = packet_queued;
+
+    if (connected  &&  completed_packet->length) {
+        bool match = false;
+
+        switch (completed_packet->data[0]) {
+            case CFG_READ:
+                if (received_packet.data[0] == TX_REQUESTED_DATA) {
+                    match = true;
+                }
+                break;
+
+            case CFG_WRITE:
+                if (received_packet.data[0] == TX_WRITE_SUCCESSFUL) {
+                    match = true;
+                }
+                break;
+
+            case CFG_COPY:
+                if (received_packet.data[0] == TX_COPY_SUCCESSFUL) {
+                    match = true;
+                }
+                break;
+
+            default:
+                match = true;
+                break;
+        }
+
+        packet_queued = completed_packet;
+        if (match) {
+
+            if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
+                send_packet(packet_queued);
+            }
+            else {
+                packet_queued->length = 0;
+            }
+        }
+        else {
+            // Resend failed packet
+            send_packet(packet_queued);
+        }
+    }
+    else {
+        packet_queued = completed_packet;
+
+        if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
+            send_packet(packet_queued);
+        }
+        else {
+            packet_queued->length = 0;
+        }
+    }
+
+
+
+    received_packet.length = 0;
+}
+
 
 // ****************************************************************************
 void RF_service(void)
@@ -742,7 +834,12 @@ void RF_service(void)
     static app_state_t state = APP_NOT_CONNECTED;
     static uint32_t timer;
 
+
+
+
     read_UART();
+
+    handle_received_packet();
 
     if (connected) {
         if (milliseconds > (last_successful_transmission_ms + CONNECTION_TIMEOUT_MS)) {
@@ -826,12 +923,16 @@ uint32_t RF_init(void)
 
     PACKET_FIFO_init(&packet_fifo, packet_fifo_buffer, PACKET_FIFO_SIZE);
 
+
     helper_packets[0].length = 0;
     helper_packets[1].length = 0;
     helper_packets[2].length = 0;
+    received_packet.length = 0;
+
     packet_queued = &helper_packets[0];
     packet_in_transit = &helper_packets[1];
     completed_packet = &helper_packets[2];
+
 
     slip.buffer = slip_buffer;
     slip.buffer_size = sizeof(slip_buffer);

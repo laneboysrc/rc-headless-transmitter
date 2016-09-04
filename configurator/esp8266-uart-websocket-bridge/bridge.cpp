@@ -7,6 +7,7 @@ extern "C" {
 }
 
 
+#define MSG_DEBUG 0x00
 #define TX_FREE_TO_CONNECT 0x30
 #define CFG_REQUEST_TO_CONNECT 0x31
 #define CFG_READ 0x72
@@ -17,7 +18,6 @@ extern "C" {
 #define TX_REQUESTED_DATA 0x52
 #define TX_WRITE_SUCCESSFUL 0x57
 #define TX_COPY_SUCCESSFUL 0x43
-
 
 void log_packet(const char *msg, const uint8_t *packet, uint8_t packet_length)
 {
@@ -37,6 +37,10 @@ void log_packet(const char *msg, const uint8_t *packet, uint8_t packet_length)
     os_printf("%s ", msg);
 
     switch (packet[0]) {
+        case MSG_DEBUG:
+            os_printf("%d %s\n", packet_length, &packet[1]);
+            break;
+
         case TX_FREE_TO_CONNECT:
             os_printf("TX_FREE_TO_CONNECT\n");
             break;
@@ -114,7 +118,7 @@ Bridge::Bridge()
 
 void Bridge::ws_connected(AsyncWebSocket *ws, uint32_t client_id)
 {
-    const char WS_MAX_PACKETS_IN_TRANSIT[] = {0x42, 8};
+    const char WS_MAX_PACKETS_IN_TRANSIT[] = {0x42, 2};
 
     _ws = ws;
     _ws_client_id = client_id;
@@ -136,7 +140,10 @@ void Bridge::ws_disconnected(void)
 void Bridge::uart_received(uint8_t byte)
 {
     if (SLIP_decode(&_slip, byte)) {
-        if (_connected) {
+        if (_slip.message_size && _slip.buffer[0] == MSG_DEBUG) {
+            log_packet("NRF LOG", _slip.buffer, _slip.message_size);
+        }
+        else if (_connected) {
             log_packet("nrf->ws", _slip.buffer, _slip.message_size);
             _ws->binary(_ws_client_id, _slip.buffer, _slip.message_size);
         }

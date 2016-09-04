@@ -151,7 +151,7 @@ String IPAddress2String(const IPAddress& ipAddress)
 
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(57600);
     Serial.swap();
 
     Serial1.begin(115200);

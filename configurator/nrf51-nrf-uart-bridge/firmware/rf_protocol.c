@@ -23,6 +23,7 @@ extern volatile uint32_t milliseconds;
 
 #define CONNECTION_TIMEOUT_MS 600
 
+#define MSG_DEBUG 0x00
 #define TX_FREE_TO_CONNECT 0x30
 #define CFG_REQUEST_TO_CONNECT 0x31
 #define CFG_READ 0x72
@@ -96,12 +97,15 @@ void PACKET_FIFO_init(FIFO_T *ring, nrf_esb_payload_t *buf, uint8_t size)
 // ****************************************************************************
 uint8_t PACKET_FIFO_write(FIFO_T *ring, nrf_esb_payload_t *data)
 {
+    __disable_irq();
     if (((ring->end + 1) % ring->size) != ring->begin) {
         memcpy(&ring->data[ring->end], data, sizeof(nrf_esb_payload_t));
         ring->end = (ring->end + 1) % ring->size;
+        __enable_irq();
         return 1;
     }
 
+    __enable_irq();
     return 0;
 }
 
@@ -114,12 +118,15 @@ uint8_t PACKET_FIFO_write_buffer(FIFO_T *ring, const uint8_t *buffer, uint8_t le
     data.length = length;
     memcpy(data.data, buffer, length);
 
+    __disable_irq();
     if (((ring->end + 1) % ring->size) != ring->begin) {
         memcpy(&ring->data[ring->end], &data, sizeof(nrf_esb_payload_t));
         ring->end = (ring->end + 1) % ring->size;
+        __enable_irq();
         return 1;
     }
 
+    __enable_irq();
     return 0;
 }
 
@@ -146,19 +153,42 @@ bool PACKET_FIFO_is_empty(FIFO_T *ring)
 }
 
 
+// ****************************************************************************
+static void slip_reply(const uint8_t *data, uint8_t length)
+{
+    // While we are waiting for a connection, we are listening for special
+    // TX_FREE_TO_CONNECT packets with size == 1. These are NRF protocol
+    // specific and we don't want to send them up the chain.
+    if (length == 1   &&  data[0] == TX_FREE_TO_CONNECT) {
+        return;
+    }
+
+    SLIP_encode(data, length, putchar);
+}
+
 
 // ****************************************************************************
-static void debug_printf(const char * format, ...)
+void debug_printf(const char * format, ...)
 {
   va_list args;
 
   if (slip_active) {
+    static char buffer[32];
+
+    memset(buffer, 'x', sizeof(buffer));
+
+    buffer[0] = MSG_DEBUG;
+    va_start(args, format);
+    vsnprintf(&buffer[1], 32-1, format, args);
+    va_end(args);
+    buffer[31] = '\0';
+    slip_reply((uint8_t *)buffer, strlen(&buffer[1]) + 2);
     return;
   }
 
-  va_start (args, format);
-  vprintf (format, args);
-  va_end (args);
+  va_start(args, format);
+  vprintf(format, args);
+  va_end(args);
 }
 
 
@@ -259,29 +289,29 @@ static void calculate_hop_sequence(uint8_t offset, uint8_t seed)
         // Note: this loop runs worst-case 7 times
     }
 
-    debug_printf("Session hop channels: ");
-    for (i = 0; i < CONFIGURATOR_NUMBER_OF_HOP_CHANNELS; i++) {
-        debug_printf("%d ", session_hop_channels[i]);
-    }
-    debug_printf("\n");
+    // debug_printf("Session hop channels: ");
+    // for (i = 0; i < CONFIGURATOR_NUMBER_OF_HOP_CHANNELS; i++) {
+    //     debug_printf("%d ", session_hop_channels[i]);
+    // }
+    // debug_printf("\n");
 }
 
 
 // ****************************************************************************
 void set_session_address(const uint8_t address[CONFIGURATOR_ADDRESS_SIZE])
 {
-    int i;
+    // int i;
 
     memcpy(session_address, address, CONFIGURATOR_ADDRESS_SIZE);
 
-    debug_printf("Session address: ");
-    for (i = 0; i < CONFIGURATOR_ADDRESS_SIZE; i++) {
-        if (i) {
-            debug_printf(":");
-        }
-        debug_printf("%02x", session_address[i]);
-    }
-    debug_printf("\n");
+    // debug_printf("Session address: ");
+    // for (i = 0; i < CONFIGURATOR_ADDRESS_SIZE; i++) {
+    //     if (i) {
+    //         debug_printf(":");
+    //     }
+    //     debug_printf("%02x", session_address[i]);
+    // }
+    // debug_printf("\n");
 }
 
 
@@ -333,19 +363,6 @@ static void send_packet(const nrf_esb_payload_t *data)
     nrf_esb_write_payload(&tx);
 }
 
-
-// ****************************************************************************
-static void slip_reply(const uint8_t *data, uint8_t length)
-{
-    // While we are waiting for a connection, we are listening for special
-    // TX_FREE_TO_CONNECT packets with size == 1. These are NRF protocol
-    // specific and we don't want to send them up the chain.
-    if (length == 1   &&  data[0] == TX_FREE_TO_CONNECT) {
-        return;
-    }
-
-    SLIP_encode(data, length, putchar);
-}
 
 
 // ****************************************************************************
@@ -482,52 +499,52 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length)
     }
 
     if (rx_packet[0] == TX_REQUESTED_DATA) {
-        uint16_t offset;
-        uint8_t count;
+        // uint16_t offset;
+        // uint8_t count;
 
         if (length < 4) {
             debug_printf("%lu TX_REQUESTED_DATA length is less than 4\n", milliseconds);
             return;
         }
 
-        offset = (rx_packet[2] << 8) + rx_packet[1];
-        count = length - 3;
+        // offset = (rx_packet[2] << 8) + rx_packet[1];
+        // count = length - 3;
 
-        debug_printf("%lu TX_REQUESTED_DATA o=%u, c=%d \"%s\"\n", milliseconds, offset, count, &rx_packet[3]);
+        // debug_printf("%lu TX_REQUESTED_DATA o=%u, c=%d \"%s\"\n", milliseconds, offset, count, &rx_packet[3]);
         return;
     }
 
     if (rx_packet[0] == TX_WRITE_SUCCESSFUL) {
-        uint16_t offset;
-        uint8_t count;
+        // uint16_t offset;
+        // uint8_t count;
 
         if (length != 4) {
             debug_printf("%lu TX_WRITE_SUCCESSFUL length is not 4\n", milliseconds);
             return;
         }
 
-        offset = (rx_packet[2] << 8) + rx_packet[1];
-        count = rx_packet[3];
+        // offset = (rx_packet[2] << 8) + rx_packet[1];
+        // count = rx_packet[3];
 
-        debug_printf("%lu TX_WRITE_SUCCESSFUL o=%u, c=%d\n", milliseconds, offset, count);
+        // debug_printf("%lu TX_WRITE_SUCCESSFUL o=%u, c=%d\n", milliseconds, offset, count);
         return;
     }
 
     if (rx_packet[0] == TX_COPY_SUCCESSFUL) {
-        uint16_t src;
-        uint16_t dst;
-        uint16_t count;
+        // uint16_t src;
+        // uint16_t dst;
+        // uint16_t count;
 
         if (length != 7) {
             debug_printf("%lu TX_COPY_SUCCESSFUL length is not 7\n", milliseconds);
             return;
         }
 
-        src = (rx_packet[2] << 8) + rx_packet[1];
-        dst = (rx_packet[4] << 8) + rx_packet[3];
-        count = (rx_packet[6] << 8) + rx_packet[5];
+        // src = (rx_packet[2] << 8) + rx_packet[1];
+        // dst = (rx_packet[4] << 8) + rx_packet[3];
+        // count = (rx_packet[6] << 8) + rx_packet[5];
 
-        debug_printf("%lu TX_COPY_SUCCESSFUL src=%u, dst=%u, c=%d\n", milliseconds, src, dst, count);
+        // debug_printf("%lu TX_COPY_SUCCESSFUL src=%u, dst=%u, c=%d\n", milliseconds, src, dst, count);
         return;
     }
 
@@ -542,11 +559,11 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
 
     switch (event->evt_id) {
         case NRF_ESB_EVENT_TX_SUCCESS:
-            debug_printf("%lu TX SUCCESS\n", milliseconds);
+            // debug_printf("%lu TX SUCCESS\n", milliseconds);
             break;
 
         case NRF_ESB_EVENT_TX_FAILED:
-            debug_printf("%lu TX FAILED\n", milliseconds);
+            // debug_printf("%lu TX FAILED\n", milliseconds);
             nrf_esb_flush_tx();
             break;
 
@@ -654,6 +671,24 @@ static void read_UART() {
             mode_auto = false;
 
             PACKET_FIFO_write_buffer(&packet_fifo, slip.buffer, slip.message_size);
+
+            if (slip.buffer[0] == CFG_READ) {
+
+                if (slip.message_size != 4) {
+                    debug_printf("CFG_READ length is not 4\n");
+                }
+                else {
+                    // uint16_t offset;
+                    // uint8_t count;
+
+                    // offset = (slip.buffer[2] << 8) + slip.buffer[1];
+                    // count = slip.buffer[3];
+
+                    // debug_printf("CFG_READ o=%u, c=%d\n", offset, count);
+                }
+
+            }
+
 
             // if (slip.buffer[0] == CFG_WRITE) {
             //     slip.buffer[0] = TX_WRITE_SUCCESSFUL;

@@ -20,11 +20,17 @@ static void rtc_callback(nrf_drv_rtc_int_type_t int_type)
     milliseconds += 1000 / RTC0_CONFIG_FREQUENCY;
 }
 
+void debug_printf(const char * format, ...);
 
 // ****************************************************************************
 static void uart_error_handler(app_uart_evt_t * p_app_uart_event)
 {
-    // Nothing to do
+    if (p_app_uart_event->evt_type == APP_UART_COMMUNICATION_ERROR) {
+        debug_printf("\nUART_COMM_ERR %08x\n", p_app_uart_event->data.error_communication);
+    }
+    else if (p_app_uart_event->evt_type == APP_UART_FIFO_ERROR) {
+        debug_printf("UART_FIFO_ERROR");
+    }
 }
 
 

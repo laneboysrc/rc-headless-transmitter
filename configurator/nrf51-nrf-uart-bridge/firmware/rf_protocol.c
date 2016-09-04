@@ -72,7 +72,7 @@ static bool slip_active = true;
 static slip_t slip;
 static uint8_t slip_buffer[128];
 
-#define PACKET_FIFO_SIZE 5
+#define PACKET_FIFO_SIZE 10
 nrf_esb_payload_t packet_fifo_buffer[PACKET_FIFO_SIZE];
 FIFO_T packet_fifo;
 

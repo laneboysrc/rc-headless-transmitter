@@ -69,7 +69,7 @@ void wsHandler(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 
         if (info->final  &&  info->index == 0  &&  info->len == len) {
             // The whole message is in a single frame and we got all of it's data
-            os_printf("ws[%s][%u] %s-message[%llu]\n", server->url(), client->id(), (info->opcode == WS_TEXT) ? "text":"binary", info->len);
+            // os_printf("ws[%s][%u] %s-message[%llu]\n", server->url(), client->id(), (info->opcode == WS_TEXT) ? "text":"binary", info->len);
 
             if (info->opcode == WS_TEXT) {
                 os_printf("ws[%s][%u] Received TEXT, ignored.\n", server->url(), client->id());

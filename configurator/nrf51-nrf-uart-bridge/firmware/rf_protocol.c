@@ -42,6 +42,13 @@ typedef enum {
     APP_CONNECTED
 } app_state_t;
 
+typedef struct  {
+    uint32_t begin;
+    uint32_t end;
+    uint8_t size;
+    nrf_esb_payload_t *data;
+} FIFO_T;
+
 
 static const uint8_t configurator_address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 static bool connected = false;
@@ -64,6 +71,80 @@ static bool slip_active = true;
 
 static slip_t slip;
 static uint8_t slip_buffer[128];
+
+#define PACKET_FIFO_SIZE 5
+nrf_esb_payload_t packet_fifo_buffer[PACKET_FIFO_SIZE];
+FIFO_T packet_fifo;
+
+
+nrf_esb_payload_t helper_packets[3];
+nrf_esb_payload_t *packet_queued;
+nrf_esb_payload_t *packet_in_transit;
+nrf_esb_payload_t *completed_packet;
+
+
+// ****************************************************************************
+void PACKET_FIFO_init(FIFO_T *ring, nrf_esb_payload_t *buf, uint8_t size)
+{
+    ring->data = buf;
+    ring->size = size;
+    ring->begin = 0;
+    ring->end = 0;
+}
+
+
+// ****************************************************************************
+uint8_t PACKET_FIFO_write(FIFO_T *ring, nrf_esb_payload_t *data)
+{
+    if (((ring->end + 1) % ring->size) != ring->begin) {
+        memcpy(&ring->data[ring->end], data, sizeof(nrf_esb_payload_t));
+        ring->end = (ring->end + 1) % ring->size;
+        return 1;
+    }
+
+    return 0;
+}
+
+
+// ****************************************************************************
+uint8_t PACKET_FIFO_write_buffer(FIFO_T *ring, const uint8_t *buffer, uint8_t length)
+{
+    nrf_esb_payload_t data;
+
+    data.length = length;
+    memcpy(data.data, buffer, length);
+
+    if (((ring->end + 1) % ring->size) != ring->begin) {
+        memcpy(&ring->data[ring->end], &data, sizeof(nrf_esb_payload_t));
+        ring->end = (ring->end + 1) % ring->size;
+        return 1;
+    }
+
+    return 0;
+}
+
+
+// ****************************************************************************
+uint8_t PACKET_FIFO_read(FIFO_T *ring, nrf_esb_payload_t *data)
+{
+    if (data != NULL) {
+        if (ring->begin != ring->end) {
+            memcpy(data, &ring->data[ring->begin], sizeof(nrf_esb_payload_t));
+            ring->begin = (ring->begin + 1) % ring->size;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+
+// ****************************************************************************
+bool PACKET_FIFO_is_empty(FIFO_T *ring)
+{
+    return (ring->begin == ring->end);
+}
+
 
 
 // ****************************************************************************
@@ -217,14 +298,14 @@ void timer_handler(void * context)
 
 
 // ****************************************************************************
-static void send_packet(const uint8_t *data, uint8_t length)
+static void send_packet(const nrf_esb_payload_t *data)
 {
     nrf_esb_payload_t tx = {
         .pipe = 0,
-        .length = length
+        .length = data->length
     };
 
-    memcpy(tx.data, data, length);
+    memcpy(tx.data, data->data, data->length);
 
     switch (tx.data[0]) {
         case CFG_DISCONNECT:
@@ -232,7 +313,7 @@ static void send_packet(const uint8_t *data, uint8_t length)
             break;
 
         case CFG_REQUEST_TO_CONNECT:
-            if (length == 18) {
+            if (data->length == 18) {
                 set_address_and_channel(&tx.data[1], CONFIGURATOR_CHANNEL);
                 set_session_address(&tx.data[9]);
                 calculate_hop_sequence(tx.data[16], tx.data[17]);
@@ -296,7 +377,7 @@ static void send_request_to_connect()
     packet[16] = lfsr_offset;
     packet[17] = lfsr_seed;
 
-    send_packet(packet, sizeof(packet));
+    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
 }
 
 
@@ -305,7 +386,7 @@ static void send_disconnect()
 {
     const uint8_t packet[] = {CFG_DISCONNECT};
 
-    send_packet(packet, sizeof(packet));
+    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
 }
 
 
@@ -314,7 +395,7 @@ static void send_read_test_request()
 {
     const uint8_t packet[] = {CFG_READ, 12, 0, 16};
 
-    send_packet(packet, sizeof(packet));
+    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
 }
 
 
@@ -323,7 +404,7 @@ static void send_write_test_request()
 {
     const uint8_t packet[] = {CFG_WRITE, 12, 0, 'X', 'Y', 'Z'};
 
-    send_packet(packet, sizeof(packet));
+    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
 }
 
 
@@ -332,7 +413,7 @@ static void send_copy_test_request()
 {
     const uint8_t packet[] = {CFG_COPY, 12, 0, 14, 0, 3, 0};
 
-    send_packet(packet, sizeof(packet));
+    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
 }
 
 
@@ -495,6 +576,63 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
                 else {
                     parse_command_not_connected(payload.data, payload.length);
                 }
+
+                completed_packet = packet_in_transit;
+                packet_in_transit = packet_queued;
+
+                if (connected  &&  completed_packet->length) {
+                    bool match = false;
+
+                    switch (completed_packet->data[0]) {
+                        case CFG_READ:
+                            if (payload.data[0] == TX_REQUESTED_DATA) {
+                                match = true;
+                            }
+                            break;
+
+                        case CFG_WRITE:
+                            if (payload.data[0] == TX_WRITE_SUCCESSFUL) {
+                                match = true;
+                            }
+                            break;
+
+                        case CFG_COPY:
+                            if (payload.data[0] == TX_COPY_SUCCESSFUL) {
+                                match = true;
+                            }
+                            break;
+
+                        default:
+                            match = true;
+                            break;
+                    }
+
+                    packet_queued = completed_packet;
+                    if (match) {
+
+                        if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
+                            send_packet(packet_queued);
+                        }
+                        else {
+                            packet_queued->length = 0;
+                        }
+                    }
+                    else {
+                        // Resend failed packet
+                        send_packet(packet_queued);
+                    }
+                }
+                else {
+                    packet_queued = completed_packet;
+
+                    if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
+                        send_packet(packet_queued);
+                    }
+                    else {
+                        packet_queued->length = 0;
+                    }
+                }
+
             }
             break;
     }
@@ -515,7 +653,7 @@ static void read_UART() {
             slip_active = true;
             mode_auto = false;
 
-            send_packet(slip.buffer, slip.message_size);
+            PACKET_FIFO_write_buffer(&packet_fifo, slip.buffer, slip.message_size);
 
             // if (slip.buffer[0] == CFG_WRITE) {
             //     slip.buffer[0] = TX_WRITE_SUCCESSFUL;
@@ -650,6 +788,15 @@ uint32_t RF_init(void)
     nrf_esb_config.event_handler            = rf_event_handler;
     nrf_esb_config.selective_auto_ack       = false;
 
+
+    PACKET_FIFO_init(&packet_fifo, packet_fifo_buffer, PACKET_FIFO_SIZE);
+
+    helper_packets[0].length = 0;
+    helper_packets[1].length = 0;
+    helper_packets[2].length = 0;
+    packet_queued = &helper_packets[0];
+    packet_in_transit = &helper_packets[1];
+    completed_packet = &helper_packets[2];
 
     slip.buffer = slip_buffer;
     slip.buffer_size = sizeof(slip_buffer);

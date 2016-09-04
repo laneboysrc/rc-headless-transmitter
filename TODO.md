@@ -79,3 +79,11 @@
 
 - ESP bridge: use ESPAsyncUDP module for DNS
 - ESP bridge: need a way to setup Wi-Fi, plus a default
+- Configurator frequencies should avoid Wi-Fi frequency
+- Fix issue when interrupting mpdel loading
+- nudemcu does not start up when connected ot uart on nRF51
+- Wi-Fi configuration through web interface
+- YouTube and blog don't work when connected to the ESP
+- Configurator loading should show spash screen and progress indicator
+- Can configurator detect when phone goes to sleep and terminate connection?
+

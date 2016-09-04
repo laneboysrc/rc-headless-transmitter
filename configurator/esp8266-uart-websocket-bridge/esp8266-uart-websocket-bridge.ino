@@ -159,6 +159,9 @@ void setup() {
 
     WiFi.mode(WIFI_AP);
     // WiFi.softAP(ssid, password);
+    // WiFi.softAP(ssid, password, channel, hidden);
+    // WiFi.softAP(ssid, password, 13);
+    // WiFi.softAPConfig(local_ip, gateway, subnet);
 
     IPAddress apIP = WiFi.softAPIP();
     os_printf("\nAP IP address: %s\n", IPAddress2String(apIP).c_str());

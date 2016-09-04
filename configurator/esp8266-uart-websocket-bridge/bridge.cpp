@@ -29,14 +29,20 @@ Bridge::Bridge()
 
 void Bridge::ws_connected(AsyncWebSocket *ws, uint32_t client_id)
 {
+    const char WS_MAX_PACKETS_IN_TRANSIT[] = {0x42, 5};
+
     _ws = ws;
     _ws_client_id = client_id;
     _connected = true;
+
+    _ws->binary(_ws_client_id, WS_MAX_PACKETS_IN_TRANSIT, sizeof(WS_MAX_PACKETS_IN_TRANSIT));
 }
 
 
 void Bridge::ws_disconnected(void)
 {
+
+
     uint8_t packet[] = {CFG_DISCONNECT};
     uart_send(packet, sizeof(packet));
 

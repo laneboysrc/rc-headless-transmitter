@@ -68,7 +68,6 @@
   - Maybe make a custom element that limits upper and lower?
 
 
-- Can we make a quick-loading splash screen when the configurator loads
 
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
@@ -77,6 +76,8 @@
 - WRITE/READ/COPY promises must be stopped when disconnecting
 - 2 beep sound when momentary button down disconnects configurator?
 
+
+- Can we make a quick-loading splash screen when the configurator loads
 - ESP bridge: use ESPAsyncUDP module for DNS
 - ESP bridge: need a way to setup Wi-Fi, plus a default
 - Configurator frequencies should avoid Wi-Fi frequency
@@ -84,6 +85,13 @@
 - nudemcu does not start up when connected ot uart on nRF51
 - Wi-Fi configuration through web interface
 - YouTube and blog don't work when connected to the ESP
-- Configurator loading should show spash screen and progress indicator
 - Can configurator detect when phone goes to sleep and terminate connection?
+- Diagnostics ESP output (insread od ws[/] binary message[2])
+- Refactor nRF to use second UART for SLIP, and main UART for console
+- Sometimes we get "READ packet length is not 4" in TX
+- Sometimes when reading tx/model info the webapp tstops reading and show  "looking for transmitter" while the Tx stays properly connected
+- Sometimes loading model or tx does not finish, despit TX looks like everything has been transmitted
+
+- When loading transmitter, at first all messages are visible, then it reduces to "load transmitter"
+
 

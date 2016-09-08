@@ -10,3 +10,6 @@
 [submodule "configurator/esp8266-uart-websocket-bridge/ESPAsyncWebServer"]
 	path = configurator/esp8266-uart-websocket-bridge/ESPAsyncWebServer
 	url = https://github.com/me-no-dev/ESPAsyncWebServer.git
+[submodule "configurator/esp8266-uart-websocket-bridge/ESPAsyncUDP"]
+	path = configurator/esp8266-uart-websocket-bridge/ESPAsyncUDP
+	url = https://github.com/me-no-dev/ESPAsyncUDP/

@@ -16,8 +16,8 @@ class LogicalInputs {
 
     this.UNDO = undefined;
     this.snackbar = document.querySelector('#app-logical_inputs-snackbar');
-    this.snackbarMessage = document.querySelector('#app-logical_inputs-template__message').content;
-    this.snackbarActionText = document.querySelector('#app-logical_inputs-template__action_text').content;
+    this.snackbarMessage = document.querySelector('#app-logical_inputs-template__message').content.textContent;
+    this.snackbarActionText = document.querySelector('#app-logical_inputs-template__action_text').content.textContent;
   }
 
   //*************************************************************************

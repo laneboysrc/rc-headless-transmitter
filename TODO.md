@@ -54,8 +54,6 @@
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
-- Toast and Snackbar text needs to move into HTML for translation
-
 - Make help page for logical inputs to explain valid combinations
 
 - ModelList needs a loading indicator while populating the available models

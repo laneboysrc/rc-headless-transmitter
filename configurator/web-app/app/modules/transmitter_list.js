@@ -12,6 +12,8 @@ class TransmitterList {
     this.container = document.querySelector('#app-transmitter_list-list__container');
     this.template = document.querySelector('#app-transmitter_list-list__template').content;
     this.snackbar = document.querySelector('#app-transmitter_list-snackbar');
+    this.snackbarMessage = document.querySelector('#app-transmitter_list-snackbar__message').content.textContent;
+    this.snackbarActionText = document.querySelector('#app-transmitter_list-snackbar__action_text').content.textContent;
 
     this.transmitters = [];
   }
@@ -51,10 +53,10 @@ class TransmitterList {
     Database.deleteEntry(transmitter);
 
     let data = {
-      message: 'Transmitter deleted.',
+      message: this.snackbarMessage,
       timeout: 5000,
       actionHandler: this._undoDeleteTransmitter.bind(this),
-      actionText: 'Undo'
+      actionText: this.snackbarActionText
     };
     this.snackbar.MaterialSnackbar.showSnackbar(data);
   }

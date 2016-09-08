@@ -296,10 +296,11 @@ class DeviceList {
     }
     this.showToast = false;
 
-    // FIXME: the 'toast; should be one element for the whole app!
     let toast = document.querySelector('#app-device_list-toast');
+    let text = document.querySelector('#app-device_list-toast__message').content.textContent;
+
     const message = {
-      message: 'Connection lost',
+      message: text,
       timeout: 5000
     };
     toast.MaterialSnackbar.showSnackbar(message);

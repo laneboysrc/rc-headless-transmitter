@@ -18,6 +18,8 @@ class Mixer {
 
     this.UNDO = undefined;
     this.snackbar = document.querySelector('#app-mixer-snackbar');
+    this.snackbarMessage = document.querySelector('#app-mixer-snackbar__message').content.textContent;
+    this.snackbarActionText = document.querySelector('#app-mixer-snackbar__action_text').content.textContent;
   }
 
   //*************************************************************************
@@ -86,10 +88,10 @@ class Mixer {
     Device.MODEL.setItem('MIXER_UNITS', new Uint8Array(size), {index: this.mixerUnitMaxCount - 1});
 
     let data = {
-      message: 'Mixer unit deleted.',
+      message: this.snackbarMessage,
       timeout: 5000,
       actionHandler: this._undoDeleteMixerUnit.bind(this),
-      actionText: 'Undo'
+      actionText: this.snackbarActionText
     };
     this.snackbar.MaterialSnackbar.showSnackbar(data);
   }

@@ -14,6 +14,8 @@ class ModelList {
     this.name = document.querySelector('#app-model_list-loading_model__name');
     this.progress = document.querySelector('#app-model_list-loading_model__progress');
     this.snackbar = document.querySelector('#app-model_list-snackbar');
+    this.snackbarMessage = document.querySelector('#app-model_list-snackbar__message').content.textContent;
+    this.snackbarActionText = document.querySelector('#app-model_list-snackbar__action_text').content.textContent;
 
     this.tx = undefined;
     this.models = [];
@@ -138,10 +140,10 @@ class ModelList {
     Database.deleteEntry(model);
 
     let data = {
-      message: 'Model deleted.',
+      message: this.snackbarMessage,
       timeout: 5000,
       actionHandler: this._undoDeleteModel.bind(this),
-      actionText: 'Undo'
+      actionText: this.snackbarActionText
     };
     this.snackbar.MaterialSnackbar.showSnackbar(data);
   }

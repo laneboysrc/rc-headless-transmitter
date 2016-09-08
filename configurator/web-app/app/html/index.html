@@ -25,6 +25,7 @@
     {% block head %}{% endblock %}
   </head>
   <body>
+    <h1>BEGIN</h1>
     {% block content %}
       {% for p in ["main", "about", "device_list", "edit_curve", "edit_switch", "limits", "mixer", "mixer_unit", "model_details", "model_list", "rf_protocol", "select_multiple", "select_icon", "select_single", "transmitter_details", "transmitter_list", "hardware_inputs", "logical_inputs", "hardware_inputs_order"] %}
         <div id="page_{{ p }}" class="app-page hidden">

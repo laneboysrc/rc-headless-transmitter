@@ -77,6 +77,7 @@
 - Wi-Fi configuration through web interface
   - Need a sensible default, i.e. detect what the factory setting is
 - YouTube and blog don't work when connected to the ESP
+  - Build ESP configurator detector by checking if we can retrieve info from a random URL
 - Can configurator detect when phone goes to sleep and terminate connection?
   - Alternatively detect when no interaction for a long time?
 

@@ -81,19 +81,12 @@
 - YouTube and blog don't work when connected to the ESP
 - Can configurator detect when phone goes to sleep and terminate connection?
 
-- ESP bridge: use ESPAsyncUDP module for DNS
 - Configurator frequencies should avoid Wi-Fi frequency
 
 - Fix issue with pending promises when interrupting model loading
 
 - nudemcu does not start up when connected ot uart on nRF51
-- Refactor nRF to use second UART for SLIP, and main UART for console
-- Sometimes we get "READ packet length is not 4" in TX
 - Sometimes when reading tx/model info the webapp stops reading and show  "looking for transmitter" while the Tx stays properly connected
 
-- Sometimes loading model or tx does not finish, despit TX looks like everything has been transmitted
-  - The problem is between the nodeMCU and the nRF: the nodeMCU shows data sent, unclear if nRF received, need to add logging
-
-- When loading transmitter, at first all messages are visible, then it reduces to "load transmitter"
 
 

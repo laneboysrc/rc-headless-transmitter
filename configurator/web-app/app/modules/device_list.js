@@ -55,9 +55,12 @@ class DeviceList {
 
     Utils.hide(this.list);
     Utils.show(this.txLoading);
+
+    // Show the "connecting" message, hide "loading model" and "loading transmitter"
     Utils.show(this.txConnecting);
-    Utils.show(this.txModel);
-    Utils.show(this.txTransmitter);
+    Utils.hide(this.txModel);
+    Utils.hide(this.txTransmitter);
+
     this.txProgress.classList.add('mdl-progress--indeterminate');
 
     this.load(tx.uuid);

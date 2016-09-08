@@ -67,19 +67,20 @@
 
 
 
-- Propagate nRF connection lost back via bridges
-  - Especially important since the other protocols are considered reliable
-- Stick calibration
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
 - WRITE/READ/COPY promises must be stopped when disconnecting
 - 2 beep sound when momentary button down disconnects configurator?
 
+- Propagate nRF connection lost back via bridges
+  - Especially important since the other protocols are considered reliable
+- Stick calibration
 
 - Can we make a quick-loading splash screen when the configurator loads
 - Wi-Fi configuration through web interface
   - Need a sensible default, i.e. detect what the factory setting is
 - YouTube and blog don't work when connected to the ESP
 - Can configurator detect when phone goes to sleep and terminate connection?
+  - Alternatively detect when no interaction for a long time?
 
 - Configurator frequencies should avoid Wi-Fi frequency
 
@@ -88,5 +89,6 @@
 - nudemcu does not start up when connected ot uart on nRF51
 - Sometimes when reading tx/model info the webapp stops reading and show  "looking for transmitter" while the Tx stays properly connected
 
-
+- Need to be able to download transmitter configuration after firmware update
+- Need to backup the database
 

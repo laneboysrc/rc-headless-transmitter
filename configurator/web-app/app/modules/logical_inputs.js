@@ -16,6 +16,8 @@ class LogicalInputs {
 
     this.UNDO = undefined;
     this.snackbar = document.querySelector('#app-logical_inputs-snackbar');
+    this.snackbarMessage = document.querySelector('#app-logical_inputs-template__message').content;
+    this.snackbarActionText = document.querySelector('#app-logical_inputs-template__action_text').content;
   }
 
   //*************************************************************************
@@ -140,10 +142,10 @@ class LogicalInputs {
     this._populateLogicalInputsList();
 
     let data = {
-      message: 'Logical input deleted.',
+      message: this.snackbarMessage,
       timeout: 5000,
       actionHandler: this._undoDelete.bind(this),
-      actionText: 'Undo'
+      actionText: this.snackbarActionText
     };
     this.snackbar.MaterialSnackbar.showSnackbar(data);
   }

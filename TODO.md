@@ -48,7 +48,7 @@
     such as battery voltage.
 
 
-- checkout beforeinstallprompt in manifest.json
+- Configurator frequencies should avoid Wi-Fi frequency
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
@@ -62,6 +62,13 @@
 - Make ranges (limits, endpoints) not be able to go past each-other
   - Maybe make a custom element that limits upper and lower?
 
+- YouTube and blog don't work when connected to the ESP
+  - Build ESP configurator detector by checking if we can retrieve info from a random URL
+  - Set time on ESP from connected browser?!
+
+- Fix issue with pending promises when interrupting model loading
+
+- Need to be able to download transmitter configuration after firmware update
 
 
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
@@ -75,18 +82,11 @@
 
 - Wi-Fi configuration through web interface
   - Need a sensible default, i.e. detect what the factory setting is
-- YouTube and blog don't work when connected to the ESP
-  - Build ESP configurator detector by checking if we can retrieve info from a random URL
-- Can configurator detect when phone goes to sleep and terminate connection?
-  - Alternatively detect when no interaction for a long time?
 
-- Configurator frequencies should avoid Wi-Fi frequency
 
-- Fix issue with pending promises when interrupting model loading
+
 
 - nudemcu does not start up when connected ot uart on nRF51
 - Sometimes when reading tx/model info the webapp stops reading and show  "looking for transmitter" while the Tx stays properly connected
 
-- Need to be able to download transmitter configuration after firmware update
-- Need to backup the database
 

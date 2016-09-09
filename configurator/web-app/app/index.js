@@ -6,6 +6,7 @@ require('./stylesheets/material.deep_orange-blue.min.css');
 require('./stylesheets/dialog-polyfill.css');
 require('./fonts/materialicons.css');
 require('./javascripts/material.min.js');
+window['saveAs'] = require('./javascripts/FileSaver.min.js');
 
 // Pull in our custom stylesheet
 require('./stylesheets/styles.css');

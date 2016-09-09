@@ -174,7 +174,11 @@ void setup() {
 
     // Serve the configurator app from the SPIFFS file system, but only
     // if the HOST matches our (fake) domain.
-    http_server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html").setFilter(filterHost);;
+    http_server.serveStatic("/", SPIFFS, "/")
+        .setCacheControl("max-age=86400")
+        .setDefaultFile("index.html")
+        .setFilter(filterHost);
+
     http_server.onNotFound(notFoundHandler);
     http_server.begin();
 

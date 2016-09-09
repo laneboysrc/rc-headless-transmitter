@@ -70,6 +70,7 @@
 
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
+
 - Stick calibration
 
 - Wi-Fi configuration through web interface

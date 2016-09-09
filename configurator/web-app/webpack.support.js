@@ -123,9 +123,9 @@ exports.embedFonts = function (paths, exclude) {
     module: {
       loaders: [
         {
-            test: /\.(eot|ttf|woff|woff2)$/,
-            loader: 'url',
-            include: paths,
+          test: /\.(eot|ttf|woff|woff2)$/,
+          loader: 'url',
+          include: paths,
           exclude: exclude
         }
       ]

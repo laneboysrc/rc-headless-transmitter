@@ -290,6 +290,20 @@ export function isValidUUID(uuid) {
 }
 
 
+// Source: http://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+export function randomString(len, charSet) {
+  let randomString = '';
+
+  charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (let i = 0; i < len; i++) {
+    let randomPoz = Math.floor(Math.random() * charSet.length);
+    randomString += charSet.substring(randomPoz, randomPoz + 1);
+  }
+
+  return randomString;
+}
+
 
 class PubSub_ {
   constructor () {

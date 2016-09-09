@@ -14,7 +14,7 @@ const PATHS = {
   build:  path.join(__dirname, '_build'),
 };
 
-const indexHTML = path.join(PATHS.app, 'html', 'index.html');
+const appHTML = path.join(PATHS.app, 'html', 'app.html');
 const specialImages = /\W(((apple-touch-icon|android-chrome-192x192|favicon-16x16|favicon-32x32|mstile-150x150)\.png)|((safari-pinned-tab)\.svg))$/;
 
 
@@ -35,7 +35,7 @@ const common = {
         loaders: ['file?name=[name].[ext]'],
         include: PATHS.app
       },
-      // Alsays store some special images, like the ones referenced in the
+      // Always store some special images, like the ones referenced in the
       // manifest.json, as separate files; do not in-line (data-url encode)
       // them.
       {
@@ -55,10 +55,16 @@ const common = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      // Process the index.html page, which is a nunjucks template. Then pass
+      // Process the app.html page, which is a nunjucks template. Then pass
       // it through the HTML loader, which extracts all `img` and `link` tags
       // for further processing
-      template: 'html?attrs[]=img:src&attrs[]=link:href!nunjucks-html!' + indexHTML
+      filename: 'app.html',
+      template: 'html?attrs[]=img:src&attrs[]=link:href!nunjucks-html!' + appHTML
+    }),
+    new HtmlWebpackPlugin({  // Also generate a test.html
+      filename: 'index.html',
+      inject: false,
+      template:  path.join(PATHS.app, 'html', 'index.html')
     })
   ],
 };

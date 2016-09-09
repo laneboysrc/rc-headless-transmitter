@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}Headless RC Transmitter configuration tool{% endblock %}</title>
+    <meta name="description" content="A tool to configure the headless radio control transmitters designed by LANE Boys RC">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- Generated using http://realfavicongenerator.net/ -->
+    <link rel="manifest" href="../static/manifest.json">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="../images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../images/favicon-16x16.png" sizes="16x16">
+    <link rel="mask-icon" href="../images/safari-pinned-tab.svg" color="#5bbad5">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Headless TX">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="application-name" content="Headless TX">
+    <meta name="theme-color" content="#ff5722">
+    <meta name="msapplication-navbutton-color" content="#ff5722">
+
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    {% block content %}
+      {% for p in ["main", "about", "device_list", "edit_curve", "edit_switch", "limits", "mixer", "mixer_unit", "model_details", "model_list", "rf_protocol", "select_multiple", "select_icon", "select_single", "transmitter_details", "transmitter_list", "hardware_inputs", "logical_inputs", "hardware_inputs_order"] %}
+        <div id="page_{{ p }}" class="app-page hidden">
+        {% set pg= "app/html/pages/" + p + ".html" %}
+        {% include pg %}
+        </div>
+      {% endfor %}
+    {% endblock %}
+
+    {% include "app/html/pages/dialogs.html" %}
+
+    {% block javascript %}
+    {% endblock %}
+  </body>
+</html>

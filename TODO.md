@@ -72,9 +72,6 @@
   - Especially important since the other protocols are considered reliable
 - Stick calibration
 
-- Splash screen
-- Can we make a quick-loading splash screen when the configurator loads
-
 - Wi-Fi configuration through web interface
   - Need a sensible default, i.e. detect what the factory setting is
 - YouTube and blog don't work when connected to the ESP

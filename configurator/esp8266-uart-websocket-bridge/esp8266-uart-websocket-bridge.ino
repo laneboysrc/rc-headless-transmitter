@@ -15,7 +15,7 @@
 
 const char *ssid = "LANE Boys RC";
 const char *password = "12345678";
-const int channel = 11;
+const int channel = 13;
 
 const char *domain = "configurator";
 

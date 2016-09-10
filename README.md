@@ -51,7 +51,4 @@ Open Source ARM cortex m microcontroller library.
 
 
 
-Not used ...
-### https://github.com/Pithikos/python-websocket-server
-### https://github.com/vigetlabs/gulp-starter
-### Jekyll
+

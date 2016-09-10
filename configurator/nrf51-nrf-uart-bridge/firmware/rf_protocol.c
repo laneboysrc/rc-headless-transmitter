@@ -5,7 +5,6 @@
 #include <stdarg.h>
 
 #include <sdk_common.h>
-#include <nrf_drv_rng.h>
 #include <nrf_esb.h>
 #include <app_uart.h>
 #include <app_simple_timer.h>
@@ -35,13 +34,8 @@ extern volatile uint32_t milliseconds;
 #define TX_WRITE_SUCCESSFUL 0x57
 #define TX_COPY_SUCCESSFUL 0x43
 
+#define PACKET_FIFO_SIZE 10
 
-typedef enum {
-    APP_NOT_CONNECTED = 0,
-    APP_GOT_UUID,
-    APP_CONNECT,
-    APP_CONNECTED
-} app_state_t;
 
 typedef struct  {
     uint32_t begin;
@@ -54,36 +48,27 @@ typedef struct  {
 static const uint8_t configurator_address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 static bool connected = false;
 
-static uint8_t uuid[8];
-static bool uuid_received = false;
-
 static uint8_t session_address[CONFIGURATOR_ADDRESS_SIZE];
 static uint8_t session_hop_channels[CONFIGURATOR_NUMBER_OF_HOP_CHANNELS];
 static uint8_t session_hop_index;
 
 static uint32_t last_successful_transmission_ms;
 
-
 static bool waiting_for_disconnect = false;
 static bool waiting_for_connection = false;
-static bool mode_auto = false;
-static bool slip_active = true;
-
 
 static slip_t slip;
 static uint8_t slip_buffer[128];
 
-#define PACKET_FIFO_SIZE 10
-nrf_esb_payload_t packet_fifo_buffer[PACKET_FIFO_SIZE];
+nrf_esb_payload_t received_packet;
 FIFO_T packet_fifo;
-
+nrf_esb_payload_t packet_fifo_buffer[PACKET_FIFO_SIZE];
 
 nrf_esb_payload_t helper_packets[3];
 nrf_esb_payload_t *packet_queued;
 nrf_esb_payload_t *packet_in_transit;
 nrf_esb_payload_t *completed_packet;
 
-nrf_esb_payload_t received_packet;
 
 
 // ****************************************************************************
@@ -172,9 +157,7 @@ static void slip_reply(const uint8_t *data, uint8_t length)
 // ****************************************************************************
 void debug_printf(const char * format, ...)
 {
-  va_list args;
-
-  if (slip_active) {
+    va_list args;
     static char buffer[32];
 
     memset(buffer, 'x', sizeof(buffer));
@@ -185,25 +168,6 @@ void debug_printf(const char * format, ...)
     va_end(args);
     buffer[31] = '\0';
     slip_reply((uint8_t *)buffer, strlen(&buffer[1]) + 2);
-    return;
-  }
-
-  va_start(args, format);
-  vprintf(format, args);
-  va_end(args);
-}
-
-
-// ****************************************************************************
-void rand(uint8_t * buffer, uint8_t length) {
-    uint8_t bytes_available;
-
-    do {
-        __WFE();
-        nrf_drv_rng_bytes_available(&bytes_available);
-    } while (length > bytes_available);
-
-    nrf_drv_rng_rand(buffer, length);
 }
 
 
@@ -366,77 +330,6 @@ static void send_packet(const nrf_esb_payload_t *data)
 }
 
 
-
-// ****************************************************************************
-static void send_request_to_connect()
-{
-    uint8_t packet[18];
-    uint8_t address[CONFIGURATOR_ADDRESS_SIZE];
-    uint8_t lfsr_offset = 0;
-    uint8_t lfsr_seed = 1;
-
-
-    // Generate random session_address
-    rand(address, CONFIGURATOR_ADDRESS_SIZE);
-
-    // Generate random offset 0..255
-    rand(&lfsr_offset, 1);
-
-    // Generate seed offset 1..127
-    do {
-        rand(&lfsr_seed, 1);
-        lfsr_seed %= 127;
-    } while (lfsr_seed < 1);
-
-
-    packet[0] = CFG_REQUEST_TO_CONNECT;
-    memcpy(&packet[1], uuid, sizeof(uuid));
-    memcpy(&packet[9], address, CONFIGURATOR_ADDRESS_SIZE);
-    *(uint16_t *)(packet + 14) = 1234;
-    packet[16] = lfsr_offset;
-    packet[17] = lfsr_seed;
-
-    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
-}
-
-
-// ****************************************************************************
-static void send_disconnect()
-{
-    const uint8_t packet[] = {CFG_DISCONNECT};
-
-    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
-}
-
-
-// ****************************************************************************
-static void send_read_test_request()
-{
-    const uint8_t packet[] = {CFG_READ, 12, 0, 16};
-
-    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
-}
-
-
-// ****************************************************************************
-static void send_write_test_request()
-{
-    const uint8_t packet[] = {CFG_WRITE, 12, 0, 'X', 'Y', 'Z'};
-
-    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
-}
-
-
-// ****************************************************************************
-static void send_copy_test_request()
-{
-    const uint8_t packet[] = {CFG_COPY, 12, 0, 14, 0, 3, 0};
-
-    PACKET_FIFO_write_buffer(&packet_fifo, packet, sizeof(packet));
-}
-
-
-
 // ****************************************************************************
 static void configurator_connected()
 {
@@ -476,8 +369,6 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
             return;
         }
 
-        memcpy(uuid, &rx_packet[1], sizeof(uuid));
-        uuid_received = true;
         return;
     }
 
@@ -570,88 +461,9 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
 
         case NRF_ESB_EVENT_RX_RECEIVED:
             last_successful_transmission_ms = milliseconds;
-            if (nrf_esb_read_rx_payload(&received_packet) == NRF_SUCCESS) {
-                // // int i;
 
-                // // printf("%lu RX (%d) ", milliseconds, received_packet.length);
-                // // for  (i = 0; i < received_packet.length; i++) {
-                // //     printf("%02X ", received_packet.data[i]);
-                // // }
-                // // printf("\n");
-
-                // if (slip_active) {
-                //     slip_reply(received_packet.data, received_packet.length);
-                // }
-
-                // if (connected) {
-                //     session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
-                //     set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
-
-                //     app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 7500, NULL);
-
-                //     parse_command_connected(received_packet.data, received_packet.length);
-                // }
-                // else {
-                //     parse_command_not_connected(received_packet.data, received_packet.length);
-                // }
-
-                // completed_packet = packet_in_transit;
-                // packet_in_transit = packet_queued;
-
-                // if (connected  &&  completed_packet->length) {
-                //     bool match = false;
-
-                //     switch (completed_packet->data[0]) {
-                //         case CFG_READ:
-                //             if (received_packet.data[0] == TX_REQUESTED_DATA) {
-                //                 match = true;
-                //             }
-                //             break;
-
-                //         case CFG_WRITE:
-                //             if (received_packet.data[0] == TX_WRITE_SUCCESSFUL) {
-                //                 match = true;
-                //             }
-                //             break;
-
-                //         case CFG_COPY:
-                //             if (received_packet.data[0] == TX_COPY_SUCCESSFUL) {
-                //                 match = true;
-                //             }
-                //             break;
-
-                //         default:
-                //             match = true;
-                //             break;
-                //     }
-
-                //     packet_queued = completed_packet;
-                //     if (match) {
-
-                //         if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
-                //             send_packet(packet_queued);
-                //         }
-                //         else {
-                //             packet_queued->length = 0;
-                //         }
-                //     }
-                //     else {
-                //         // Resend failed packet
-                //         send_packet(packet_queued);
-                //     }
-                // }
-                // else {
-                //     packet_queued = completed_packet;
-
-                //     if (PACKET_FIFO_read(&packet_fifo, packet_queued)) {
-                //         send_packet(packet_queued);
-                //     }
-                //     else {
-                //         packet_queued->length = 0;
-                //     }
-                // }
-
-            }
+            // Read the packet, which is then processed in the mainloop
+            nrf_esb_read_rx_payload(&received_packet);
             break;
     }
 }
@@ -661,76 +473,11 @@ static void rf_event_handler(nrf_esb_evt_t const *event)
 #define BUFFER_SIZE 80
 static void read_UART() {
     uint8_t byte;
-    uint8_t msg[BUFFER_SIZE];
-    int count = 0;
-
-    memset(msg, 0, BUFFER_SIZE);
 
     while (app_uart_get(&byte) == NRF_SUCCESS) {
         if (SLIP_decode(&slip, byte)) {
-            slip_active = true;
-            mode_auto = false;
-
             PACKET_FIFO_write_buffer(&packet_fifo, slip.buffer, slip.message_size);
-
-            if (slip.buffer[0] == CFG_READ) {
-
-                if (slip.message_size != 4) {
-                    debug_printf("CFG_READ length is not 4\n");
-                }
-                else {
-                    // uint16_t offset;
-                    // uint8_t count;
-
-                    // offset = (slip.buffer[2] << 8) + slip.buffer[1];
-                    // count = slip.buffer[3];
-
-                    // debug_printf("CFG_READ o=%u, c=%d\n", offset, count);
-                }
-
-            }
-
-
-            // if (slip.buffer[0] == CFG_WRITE) {
-            //     slip.buffer[0] = TX_WRITE_SUCCESSFUL;
-            //     slip.buffer[3] = slip.message_size - 3;
-            //     slip_reply(slip.buffer, 4);
-            // }
-
-
             SLIP_init(&slip);
-        }
-
-        msg[count] = byte;
-        ++count;
-        if (count >= (BUFFER_SIZE - 1)) {
-            break;
-        }
-    }
-
-
-    if (!slip_active  &&  count) {
-        debug_printf("UART RX: %s\n", msg);
-
-        if (msg[0] == 'c') {
-            mode_auto = false;
-            send_request_to_connect();
-        }
-        else if (msg[0] == 'd') {
-            mode_auto = false;
-            send_disconnect();
-        }
-        else if (msg[0] == 'a') {
-            mode_auto = true;
-        }
-        else if (msg[0] == 'r') {
-            send_read_test_request();
-        }
-        else if (msg[0] == 'w') {
-            send_write_test_request();
-        }
-        else if (msg[0] == 'p') {
-            send_copy_test_request();
         }
     }
 }
@@ -750,9 +497,7 @@ static void handle_received_packet(void)
     // }
     // printf("\n");
 
-    if (slip_active) {
-        slip_reply(received_packet.data, received_packet.length);
-    }
+    slip_reply(received_packet.data, received_packet.length);
 
     if (connected) {
         session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
@@ -822,8 +567,6 @@ static void handle_received_packet(void)
         }
     }
 
-
-
     received_packet.length = 0;
 }
 
@@ -831,20 +574,11 @@ static void handle_received_packet(void)
 // ****************************************************************************
 void RF_service(void)
 {
-    static app_state_t state = APP_NOT_CONNECTED;
-    static uint32_t timer;
-
-
-
-
     read_UART();
-
     handle_received_packet();
 
     if (connected) {
         if (milliseconds > (last_successful_transmission_ms + CONNECTION_TIMEOUT_MS)) {
-            uuid_received = false;
-            state = APP_NOT_CONNECTED;
             debug_printf("%lu !!!!! DISCONNECTED DUE TO TIMEOUT\n", milliseconds);
 
             configurator_disconnected();
@@ -856,54 +590,6 @@ void RF_service(void)
             debug_printf("%lu !!!!! DISCONNECTED DURING CONNECTION PHASE DUE TO TIMEOUT\n", milliseconds);
             configurator_disconnected();
         }
-    }
-
-
-
-    if (!mode_auto) {
-        state = APP_NOT_CONNECTED;
-        return;
-    }
-
-    switch (state) {
-        case APP_NOT_CONNECTED:
-            if (uuid_received) {
-                debug_printf("%lu APP got UUID\n", milliseconds);
-                state = APP_GOT_UUID;
-                timer = milliseconds;
-            }
-            break;
-
-        case APP_GOT_UUID:
-            if (milliseconds > timer + 1000) {
-                if (!connected) {
-
-                debug_printf("%lu APP Connecting\n", milliseconds);
-                send_request_to_connect();
-                }
-                state = APP_CONNECTED;
-                timer = milliseconds;
-            }
-            break;
-
-        case APP_CONNECTED:
-            if (milliseconds > timer + 5000) {
-                if (connected) {
-
-                debug_printf("%lu APP Disconnecting\n", milliseconds);
-                send_disconnect();
-                }
-
-
-                uuid_received = false;
-                state = APP_NOT_CONNECTED;
-            }
-            break;
-
-        default:
-            uuid_received = false;
-            state = APP_NOT_CONNECTED;
-            break;
     }
 }
 
@@ -940,10 +626,6 @@ uint32_t RF_init(void)
 
 
     app_simple_timer_init();
-
-
-    err_code = nrf_drv_rng_init(NULL);
-    VERIFY_SUCCESS(err_code);
 
 
     err_code = nrf_esb_init(&nrf_esb_config);

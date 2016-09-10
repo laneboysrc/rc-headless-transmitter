@@ -85,4 +85,4 @@
 - GPL where necessary
 - APACHE 2 license where necessary
 
-- Remove test code from nRF51
+- Make nodejs-uart bridges aware of MSG_DEBUG for nRF51

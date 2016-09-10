@@ -153,7 +153,7 @@ String IPAddress2String(const IPAddress& ipAddress)
 
 
 void setup() {
-    Serial.begin(57600);
+    Serial.begin(115200);
     Serial.swap();
 
     Serial1.begin(115200);
@@ -176,7 +176,7 @@ void setup() {
     // Serve the configurator app from the SPIFFS file system, but only
     // if the HOST matches our (fake) domain.
     http_server.serveStatic("/", SPIFFS, "/")
-        .setCacheControl("max-age=86400")
+        // .setCacheControl("max-age=86400")
         .setDefaultFile("index.html")
         .setFilter(filterHost);
 

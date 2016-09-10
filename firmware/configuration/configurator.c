@@ -107,7 +107,7 @@ static configurator_packet_t * make_info_packet(void)
 
         case 1:
             frame_count = 0;
-            start_adc_channel = 4;
+            start_adc_channel = 5;
             break;
     }
 

@@ -13,8 +13,10 @@
 #define MAX_PACKET_SIZE 32
 
 
-const char *ssid = "ESP8266-WLA";
+const char *ssid = "LANE Boys RC";
 const char *password = "12345678";
+const int channel = 11;
+
 const char *domain = "configurator";
 
 
@@ -158,9 +160,8 @@ void setup() {
     Serial1.setDebugOutput(true);
 
     WiFi.mode(WIFI_AP);
-    // WiFi.softAP(ssid, password);
+    WiFi.softAP(ssid, password, channel);
     // WiFi.softAP(ssid, password, channel, hidden);
-    // WiFi.softAP(ssid, password, 13);
     // WiFi.softAPConfig(local_ip, gateway, subnet);
 
     IPAddress apIP = WiFi.softAPIP();

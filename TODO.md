@@ -68,11 +68,11 @@
 
 - Fix issue with pending promises when interrupting model loading
 
-- Need to be able to download transmitter configuration after firmware update
-
-
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
+
+- Need to be able to download transmitter configuration after firmware update
+  - Easiest way for now
 
 
 - Wi-Fi configuration through web interface

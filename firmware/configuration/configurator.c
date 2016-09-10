@@ -89,13 +89,44 @@ static configurator_packet_t * make_connect_response_packet(void)
 // ****************************************************************************
 static configurator_packet_t * make_info_packet(void)
 {
+    static uint8_t frame_count = 0;
+    uint8_t i;
+    uint8_t start_adc_channel;
+
     memcpy(packet.address, session_address, CONFIGURATOR_ADDRESS_SIZE);
     packet.channel = session_hop_channels[session_hop_index];
     packet.payload[0] = TX_INFO;
 
-    // FIXME: build actual info packet
+    // FIXME: send all items that are in use by the transmitter
+    switch (frame_count) {
+        case 0:
+        default:
+            frame_count = 1;
+            start_adc_channel = 1;
+            break;
 
-    packet.payload_size = 1;
+        case 1:
+            frame_count = 0;
+            start_adc_channel = 4;
+            break;
+    }
+
+    for (i = 0; i < 4; i++) {
+        uint16_t label = ADC0_RAW + start_adc_channel + i;
+        int32_t value = INPUTS_get_raw_adc_value(start_adc_channel + i);
+        uint8_t offset = 1 + (i * 6);
+
+        packet.payload[offset + 0] = label >> 0;
+        packet.payload[offset + 1] = label >> 8;
+
+        packet.payload[offset + 2] = value >> 0;
+        packet.payload[offset + 3] = value >> 8;
+        packet.payload[offset + 4] = value >> 16;
+        packet.payload[offset + 5] = value >> 24;
+    }
+
+    packet.payload_size = 25;
+
     packet.send_without_ack = false;
     packet.send_another_packet = false;
 

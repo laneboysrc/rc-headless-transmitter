@@ -30,15 +30,30 @@ class HardwareInputs {
         continue;
       }
 
+      let hardwareInputType = tx.getItemNumber('HARDWARE_INPUTS_TYPE', {offset: offset});
+
       let t = document.importNode(this.template, true);
       mdl.offset = offset;
 
       mdl.setTextContent('.mdl-card__title-text', 'HARDWARE_INPUTS_PCB_INPUT_PIN_NAME', t);
-      mdl.setTextContent('button', 'HARDWARE_INPUTS_TYPE', t);
-      mdl.setAttribute('button', 'data-index', i, t);
+      mdl.setTextContent('.app-hardware_inputs-type', 'HARDWARE_INPUTS_TYPE', t);
+      mdl.setAttribute('.app-hardware_inputs-type', 'data-index', i, t);
 
       Utils.setVisibility('.app-hardware_inputs__analog', pcbInputType === 1, t);
       Utils.setVisibility('.app-hardware_inputs__digital', pcbInputType === 2, t);
+
+
+      let isAnalog = (hardwareInputType >= 1  &&  hardwareInputType <= 4);
+      let isAnalogWithCenter = (hardwareInputType >= 1  &&  hardwareInputType <= 2);
+      let canCalibrate = Device.MODEL && isAnalog;
+
+      Utils.setVisibility('.app-hardware_inputs-calibrate', canCalibrate, t);
+      Utils.setVisibility('.app-hardware_inputs-calibrate__left', isAnalog, t);
+      Utils.setVisibility('.app-hardware_inputs-calibrate__center', isAnalogWithCenter, t);
+      Utils.setVisibility('.app-hardware_inputs-calibrate__right', isAnalog, t);
+      mdl.setAttribute('.app-hardware_inputs-calibrate__left', 'data-index', i, t);
+      mdl.setAttribute('.app-hardware_inputs-calibrate__center', 'data-index', i, t);
+      mdl.setAttribute('.app-hardware_inputs-calibrate__right', 'data-index', i, t);
 
       this.list.appendChild(t);
     }
@@ -80,6 +95,43 @@ class HardwareInputs {
     let hardwareInputs = Device.TX.getSchema()['HARDWARE_INPUTS'];
     let offset = hardwareInputIndex * hardwareInputs.s;
     location.hash = Utils.buildURL(['select_single', 'TX', 'HARDWARE_INPUTS_TYPE', offset]);
+  }
+
+  //*************************************************************************
+  calibrate(event, button, position) {
+    Utils.cancelBubble(event);
+    let hardwareInputIndex = parseInt(button.getAttribute('data-index'));
+
+    console.log('HardwareInputs.calibrate()', hardwareInputIndex, position)
+
+    switch (position) {
+      case 'left':
+        position = 0;
+        break;
+
+      case 'center':
+        position = 1;
+        break;
+
+      case 'right':
+        position = 2;
+        break;
+
+      default:
+        console.log('HardwareInputs.calibrate(): unknown position value', position);
+        break;
+    }
+
+    let hardwareInputs = Device.TX.getSchema()['HARDWARE_INPUTS'];
+    let offset = hardwareInputIndex * hardwareInputs.s;
+    let adcChannel = Device.TX.getItem('HARDWARE_INPUTS_PCB_INPUT_ADC_CHANNEL', {offset: offset});
+
+    // Set current raw stick value as calibration
+    let value = Device.getLiveValue(`ADC${adcChannel} (raw)`);
+    if (value !== null) {
+      let options = {offset: offset, index: position};
+      Device.TX.setItem('HARDWARE_INPUTS_CALIBRATION', value, options);
+    }
   }
 }
 

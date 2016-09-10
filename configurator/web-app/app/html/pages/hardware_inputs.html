@@ -24,9 +24,16 @@
           <span class="app-hardware_inputs__digital">This is a <strong>digital</strong> input.</span>
         </div>
         <div class="mdl-card__actions mdl-card--border">
-          <button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="HardwareInputs.selectType(event, this);">
-            ANALOG WITH CENTER
-          </button>
+          <div>
+            <button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect app-hardware_inputs-type" onclick="HardwareInputs.selectType(event, this);"></button>
+          </div>
+          <div class="app-hardware_inputs-calibrate">Calibration:
+            <div>
+              <button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect app-hardware_inputs-calibrate__left" onclick="HardwareInputs.calibrate(event, this, 'left');">left</button>
+              <button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect app-hardware_inputs-calibrate__center" onclick="HardwareInputs.calibrate(event, this, 'center');">center</button>
+              <button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect app-hardware_inputs-calibrate__right" onclick="HardwareInputs.calibrate(event, this, 'right');">right</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

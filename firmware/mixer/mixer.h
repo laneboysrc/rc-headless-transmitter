@@ -24,6 +24,11 @@
 //
 // To ensure uniqueness of names, all items are prefixed with "IN_" for
 // input_label_t and "CH_" for channel_label_t items.
+//
+// IMPORTANT:
+// ==========
+// If you modify this list, update live_t in configurator.h to match!
+//
 typedef enum {
     SRC_NONE = 0,
 

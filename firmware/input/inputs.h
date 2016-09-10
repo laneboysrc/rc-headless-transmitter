@@ -182,6 +182,7 @@ void INPUTS_init(void);
 int32_t INPUTS_get_value(input_label_t input);
 uint8_t INPUTS_get_switch_value(input_label_t input);
 int32_t INPUTS_get_trim(input_label_t input);
+int32_t INPUTS_get_raw_adc_value(uint8_t adc_channel);
 void INPUTS_filter_and_normalize(void);
 void INPUTS_dump_adc(void);
 uint32_t INPUTS_get_battery_voltage(void);

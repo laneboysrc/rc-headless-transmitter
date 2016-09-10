@@ -1011,6 +1011,15 @@ int32_t INPUTS_get_value(input_label_t input)
 
 
 // ****************************************************************************
+int32_t INPUTS_get_raw_adc_value(uint8_t adc_channel)
+{
+    uint8_t adc_index = adc_channel_to_index(adc_channel);
+
+    return adc_array_raw[adc_index];
+}
+
+
+// ****************************************************************************
 uint8_t INPUTS_get_switch_value(input_label_t input)
 {
     for (unsigned i = 0; i < MAX_LOGICAL_INPUTS; i++) {

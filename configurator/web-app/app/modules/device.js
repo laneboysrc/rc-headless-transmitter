@@ -42,6 +42,7 @@ class Device {
     this.UNDO = undefined;
     this.connected = false;
     this.wsOpen = false;
+    this.live = {};
 
     this.TX_FREE_TO_CONNECT = 0x30;
     this.CFG_REQUEST_TO_CONNECT = 0x31;
@@ -56,6 +57,7 @@ class Device {
     this.WS_MAX_PACKETS_IN_TRANSIT = 0x42;
 
     document.addEventListener('ws-close', this.onclose.bind(this));
+    document.addEventListener('ws-message', this.onLiveMessage.bind(this));
   }
 
   //*************************************************************************
@@ -86,6 +88,7 @@ class Device {
     connectPacket.set(Utils.newRandomAddress(), 1 + 8);
     Utils.setUint16(connectPacket, passphrase, 1 + 8 + 5);
     connectPacket.set(Utils.newHopChannelLFSR(), 1 + 8 + 5 + 2);
+    this.live = {};
 
     let self = this;
 
@@ -147,6 +150,7 @@ class Device {
       }
 
       function onclose(event) {
+        self.connected = false;
         document.removeEventListener('ws-message', onmessage);
         document.removeEventListener('ws-close', onclose);
         reject(new Error('Connection closed'));
@@ -282,10 +286,10 @@ class Device {
 }
 
   //*************************************************************************
-  // Receives Websocket events
   onclose(event, data) {
     // console.log('Device ws: ', event, event.detail);
     this.connected = false;
+    this.live = {};
     if (this.wsOpen) {
       Utils.sendCustomEvent('dev-connectionlost');
 
@@ -570,6 +574,36 @@ class Device {
     }
 
     return validHardwareTypes.includes(type);
+  }
+
+
+  onLiveMessage(event) {
+    let packet = event.detail;
+
+    if (this.TX  &&  packet.length > 1  &&  packet[0] === this.TX_INFO) {
+      let offset = 1;
+      const config = this.TX.getConfig();
+      const type = config.TYPES['live_t'];
+
+      while ((offset + 6) <= packet.length) {
+        let id = Utils.getUint16(packet, offset);
+        let value = Utils.getInt32(packet, offset+2);
+
+        let name = this.TX.typeLookupByNumber(type, id);
+        this.live[name] = value;
+
+        offset += 6;
+      }
+    }
+  }
+
+
+  getLiveValue(item) {
+    if (this.live.hasOwnProperty(item)) {
+      return this.live[item];
+    }
+
+    return null;
   }
 }
 

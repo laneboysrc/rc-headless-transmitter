@@ -413,7 +413,7 @@ All data is in little endian format, i.e. the least significant byte is transmit
     i0, i1: Identifier for the mixer inputs. Corresponds to the enumeration called `live_t` in the firmware
     d0..3: Current value of the input. Signed 32 bit integer.
 
-    In total a single packet can contain info of up to 4 mixer inputs.
+    In total a single packet can contain info of up to 4 live_t values.
 
 
 * `TX_REQUESTED_DATA`

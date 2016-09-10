@@ -93,6 +93,7 @@ class WebsocketProtocol {
 
       // console.log('WS: sendCustomEventing ' + dumpUint8Array(request.packet));
       this.ws.send(request.packet);
+
     }
   }
 
@@ -140,7 +141,6 @@ class WebsocketProtocol {
 
   //*************************************************************************
   _resolvePromises(data) {
-
     // Handle special Websocket only command that indicates the maximum number
     // of bytes that can be in transit (= packet buffer size in the bridge)
     if (data[0] === Device.WS_MAX_PACKETS_IN_TRANSIT) {
@@ -155,7 +155,7 @@ class WebsocketProtocol {
       let request = this.inTransit[i];
 
       // Remove packets where we don't expect a particular response
-      if (request.packet[0] !== Device.CFG_WRITE  &&  request.packet[0] !== Device.CFG_READ) {
+      if (request.packet[0] !== Device.CFG_WRITE  &&  request.packet[0] !== Device.CFG_READ  &&  request.packet[0] !== Device.CFG_COPY) {
         request.promise.resolve(data);
         this.inTransit.splice(i, 1);
         --i;
@@ -166,21 +166,23 @@ class WebsocketProtocol {
       if (this._packetsMatch(request, data)) {
           request.promise.resolve(data);
           this.inTransit.splice(i, 1);
-          --i;
+          // --i;
+          // After the first packet matches, stop looking for further ones
+          return;
       }
     }
 
     // Also go through pending packets, in case duplicate requests are
     // in the queue
-    for (let i = 0; i < this.pending.length; i++) {
-      let request = this.pending[i];
+    // for (let i = 0; i < this.pending.length; i++) {
+    //   let request = this.pending[i];
 
-      if (this._packetsMatch(request, data)) {
-          request.promise.resolve(data);
-          this.pending.splice(i, 1);
-          --i;
-      }
-    }
+    //   if (this._packetsMatch(request, data)) {
+    //       request.promise.resolve(data);
+    //       this.pending.splice(i, 1);
+    //       --i;
+    //   }
+    // }
   }
 
   //*************************************************************************
@@ -203,9 +205,10 @@ class WebsocketProtocol {
 
       // console.log(Utils.byte2string(data[0]))
 
+      if (data[0] !== Device.TX_INFO) {
+        this._resolvePromises(data);
+      }
       this._sendCfgPacket();
-      this._resolvePromises(data);
-
       Utils.sendCustomEvent('ws-message', data);
     }.bind(this));
 
@@ -217,14 +220,26 @@ class WebsocketProtocol {
     // FIXME: what kind of error may we receive here, and how do we communicate
     // that to pending requests?
     Utils.sendCustomEvent('ws-error', e);
+    console.log('Websocket error: ', e)
   }
 
   //*************************************************************************
   _onclose() {
     this.ws = undefined;
 
-    // FIXME: got through this.pending[] and this.inTransit[] and reject all promises
-    this.pending = [];
+    // Go through this.pending[] and this.inTransit[] and reject all promises
+
+    let request = this.inTransit.shift();
+    while (request) {
+      request.promise.reject('Websocket closed');
+      request = this.inTransit.shift();
+    }
+
+    request = this.pending.shift();
+    while (request) {
+      request.promise.reject('Websocket closed');
+      request = this.pending.shift();
+    }
 
     Utils.sendCustomEvent('ws-close');
   }

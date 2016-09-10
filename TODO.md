@@ -86,3 +86,5 @@
 - APACHE 2 license where necessary
 
 - Make nodejs-uart bridges aware of MSG_DEBUG for nRF51
+
+- Don't send TX_INFO over websocket too often

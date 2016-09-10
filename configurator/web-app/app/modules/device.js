@@ -580,20 +580,30 @@ class Device {
   onLiveMessage(event) {
     let packet = event.detail;
 
-    if (this.TX  &&  packet.length > 1  &&  packet[0] === this.TX_INFO) {
-      let offset = 1;
-      const config = this.TX.getConfig();
-      const type = config.TYPES['live_t'];
+    if (!this.TX) {
+      return;
+    }
 
-      while ((offset + 6) <= packet.length) {
-        let id = Utils.getUint16(packet, offset);
-        let value = Utils.getInt32(packet, offset+2);
+    if (packet[0] !== this.TX_INFO) {
+      return;
+    }
 
-        let name = this.TX.typeLookupByNumber(type, id);
-        this.live[name] = value;
+    if (packet.length <= 1) {
+      return;
+    }
 
-        offset += 6;
-      }
+    let offset = 1;
+    const config = this.TX.getConfig();
+    const type = config.TYPES['live_t'];
+
+    while ((offset + 6) <= packet.length) {
+      let id = Utils.getUint16(packet, offset);
+      let value = Utils.getInt32(packet, offset+2);
+
+      let name = this.TX.typeLookupByNumber(type, id);
+      this.live[name] = value;
+
+      offset += 6;
     }
   }
 

@@ -1,4 +1,3 @@
-- APACHE 2 license where necessary
 
 - Add sensible failsafe configuration
 
@@ -30,6 +29,8 @@
 
 - Run-time adaptation to `hardware_inputs` and `logical_inputs` changes
 
+- Bug: 2 beep sound when momentary button down disconnects configurator?
+
 
 ## Configurator
 - Offline mode
@@ -44,8 +45,6 @@
 
 - Live stick/switch/output view
   - Add more elements like normalized ADC values, switch values, etc to live_t.
-
-- Configurator frequencies should avoid Wi-Fi frequency
 
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
@@ -64,23 +63,26 @@
   - Set time on ESP from connected browser?!
 
 - Fix issue with pending promises when interrupting model loading
+ - WRITE/READ/COPY promises must be stopped when disconnecting
 
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
 
 - Need to be able to download transmitter configuration after firmware update
-  - Easiest way for now
+  - Easiest way for now is to build a tool that makes a .c file out of the backup JSON file
 
 - Wi-Fi configuration through web interface
   - Need a sensible default, i.e. detect what the factory setting is
-
-- 2 beep sound when momentary button down disconnects configurator?
+- Configurator frequencies should avoid Wi-Fi frequency
 
 - Sometimes when reading tx/model info the webapp stops reading and show  "looking for transmitter" while the Tx stays properly connected
 
-- WRITE/READ/COPY promises must be stopped when disconnecting
 
 
 
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
 
+- GPL where necessary
+- APACHE 2 license where necessary
+
+- Remove test code from nRF51

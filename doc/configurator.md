@@ -410,7 +410,7 @@ All data is in little endian format, i.e. the least significant byte is transmit
 
     Sent when there is no pending request from the *Configurator*. Contains the current value of selected mixer inputs. See below for more information.
 
-    i0, i1: Identifier for the mixer inputs. Corresponds to the enumeration called `src_label_t` in the firmware
+    i0, i1: Identifier for the mixer inputs. Corresponds to the enumeration called `live_t` in the firmware
     d0..3: Current value of the input. Signed 32 bit integer.
 
     In total a single packet can contain info of up to 4 mixer inputs.
@@ -428,18 +428,16 @@ All data is in little endian format, i.e. the least significant byte is transmit
 
 * `TX_WRITE_SUCCESSFUL`
 
-    `0x57 i0 i1 d0 d1 d2 d3 ...`
+    `0x57 i0 i1`
 
     Sent in the next packet after receiving a `CFG_WRITE` request.
-    The parameters are the same as described in `TX_INFO`.
 
 
 * `TX_COPY_SUCCESSFUL`
 
-    `0x43 i0 i1 d0 d1 d2 d3 ...`
+    `0x43 i0 i1`
 
     Sent in the next packet after receiving a `CFG_WRITE` request.
-    The parameters are the same as described in `TX_INFO`.
 
 
 ## Bandwidth estimation

@@ -82,5 +82,3 @@
 
 - GPL where necessary
 - APACHE 2 license where necessary
-
-- Mixer unit is missing scalar and offset sliders (+/- 100%)

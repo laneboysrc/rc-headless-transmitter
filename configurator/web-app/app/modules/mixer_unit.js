@@ -35,6 +35,10 @@ class MixerUnit {
     mdl.setDataURL('#app-mixer_unit-op__edit',
       ['select_single', 'MODEL', 'MIXER_UNITS_OP', this.offset]);
 
+    mdl.setSlider('#app-mixer_unit-scalar', 'MIXER_UNITS_SCALAR');
+    mdl.setSlider('#app-mixer_unit-offset', 'MIXER_UNITS_OFFSET');
+
+
     Utils.showPage('mixer_unit');
   }
 

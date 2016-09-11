@@ -288,7 +288,7 @@ void timer_handler(void * context)
         session_hop_index = (session_hop_index + 1) % CONFIGURATOR_NUMBER_OF_HOP_CHANNELS;
         set_address_and_channel(session_address, session_hop_channels[session_hop_index]);
         app_simple_timer_start(APP_SIMPLE_TIMER_MODE_SINGLE_SHOT, timer_handler, 5000, NULL);
-        debug_printf("%lu HOP TIMER\n", milliseconds);
+        // debug_printf("%lu HOP TIMER\n", milliseconds);
     }
 }
 

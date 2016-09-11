@@ -94,10 +94,10 @@ class ModelList {
 
     // If the same model as the currently loaded one is selected then ignore
     // the request and return to model_details
-    if (Device.MODEL  &&  Device.MODEL.uuid === this.models[index].uuid) {
-      history.back();
-      return;
-    }
+    // if (Device.MODEL  &&  Device.MODEL.uuid === this.models[index].uuid) {
+    //   history.back();
+    //   return;
+    // }
 
     // Show loading indicator
     Utils.hide(this.list);

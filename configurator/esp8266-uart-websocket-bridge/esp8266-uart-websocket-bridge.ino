@@ -35,7 +35,7 @@ void flash_led(void)
 {
     // Just a brief message on the serial port to make the LED flash
     // '~' has been chosen as it contains a lot of 1 bits
-    os_printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+    os_printf("~~~~~~~~~~~~~~~\n");
 }
 
 

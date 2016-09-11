@@ -241,7 +241,7 @@ static void parse_command_not_connected(const uint8_t * rx_packet, uint8_t lengt
         session_hop_index = 0;
 
         connected = true;
-        // MUSIC_play(&song_connecting);
+        MUSIC_play(&song_connecting);
         configuration_changed = false;
         return;
     }
@@ -372,7 +372,7 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
             return;
         }
 
-        // MUSIC_play(&song_disconnecting);
+        MUSIC_play(&song_disconnecting);
         connected = false;
         printf("CFG_DISCONNECT\n");
 
@@ -450,7 +450,7 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
             if (connected) {
                 printf("TIMEOUT \n");
                 if (milliseconds > last_successful_transmission_ms + CONNECTION_TIMEOUT_MS) {
-                    // MUSIC_play(&song_disconnecting);
+                    MUSIC_play(&song_disconnecting);
                     connected = false;
                     printf("%lu !!!!! DISCONNECTED DUE TO TIMEOUT\n", milliseconds);
                 }

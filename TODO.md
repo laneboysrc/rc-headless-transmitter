@@ -83,7 +83,4 @@
 - GPL where necessary
 - APACHE 2 license where necessary
 
-- When downloading a new model, first set the RF address to an weird value
-  - This way the current model immediately gets disconnected and the new model gets only connected when the data has downloaded
-
 - Mixer unit is missing scalar and offset sliders (+/- 100%)

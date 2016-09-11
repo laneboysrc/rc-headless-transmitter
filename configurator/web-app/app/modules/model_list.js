@@ -108,6 +108,16 @@ class ModelList {
     this.progress.classList.add('mdl-progress--indeterminate');
     this.name.textContent = this.models[index].name;
 
+
+    // Set a new random address so that while we are downloading the new
+    // model data, the current model does not see all the values which may
+    // cause it to run off or misbehave otherwise.
+    // Since the address is last in the model configuration, this temporary
+    // address gets overwritten once we downloaded all model data
+    let address = Utils.newRandomAddress();
+    Device.MODEL.setItem('RF_PROTOCOL_HK310_ADDRESS', address, {preview: true});
+
+
     let uuid = this.models[index].uuid;
     let newModel;
 

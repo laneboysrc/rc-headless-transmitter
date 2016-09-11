@@ -187,10 +187,19 @@ void setup() {
 
     // Serve the configurator app from the SPIFFS file system, but only
     // if the HOST matches our (fake) domain.
-    http_server.serveStatic("/", SPIFFS, "/")
-        .setCacheControl("max-age=86400")
-        .setDefaultFile("index.html")
-        .setFilter(filterHost);
+    AsyncStaticWebHandler* staticHandler = &http_server.serveStatic("/", SPIFFS, "/");
+    staticHandler->setDefaultFile("index.html");
+    staticHandler->setFilter(filterHost);
+
+    // Take the HTTP-date stored in the file 'last-modified' in SPIFFS and
+    // use it as Last-Modified HTTP header to ensure the clients always
+    // have the latest content.
+    File f = SPIFFS.open("/last-modified", "r");
+    if (f) {
+        String s = f.readStringUntil('\n');
+        os_printf("SPIFFS last-modified: '%s'\n", s.c_str());
+        staticHandler->setLastModified(s.c_str());
+    }
 
     http_server.onNotFound(notFoundHandler);
     http_server.begin();
@@ -213,6 +222,4 @@ void loop() {
     while (Serial.available()) {
         bridge.uart_received(Serial.read());
     }
-
-
 }

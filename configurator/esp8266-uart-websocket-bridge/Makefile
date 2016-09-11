@@ -46,6 +46,7 @@ spiffs:
 spiffs-webapp: SPIFFS_DIR := ./data.web-app/
 spiffs-webapp: SPIFFS_IMAGE := $(BUILD_DIR)/spiffs-webapp.image
 spiffs-webapp:
+	date -u "+%a, %d %b %Y %T GMT" >$(SPIFFS_DIR)last-modified
 	$(MKSPIFFS_PATH)/mkspiffs -c $(SPIFFS_DIR) -p $(SPIFFS_PAGE) -b $(SPIFFS_BLOCK) -s $(SPIFFS_SIZE) $(SPIFFS_IMAGE)
 	$(ESPTOOL_PATH)/esptool -cd $(UPLOAD_RESET) -cb $(UPLOAD_SPEED) -cp $(UPLOAD_PORT) -ca $(SPIFFS_START) -cf $(SPIFFS_IMAGE)
 .PHONY: spiffs-webapp

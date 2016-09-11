@@ -74,6 +74,8 @@
 
 - Make nodejs-uart bridges aware of MSG_DEBUG for nRF51
 
+- Parse and save manually entered RF address and channels
+
 
 
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
@@ -81,4 +83,7 @@
 - GPL where necessary
 - APACHE 2 license where necessary
 
+- When downloading a new model, first set the RF address to an weird value
+  - This way the current model immediately gets disconnected and the new model gets only connected when the data has downloaded
 
+- Mixer unit is missing scalar and offset sliders (+/- 100%)

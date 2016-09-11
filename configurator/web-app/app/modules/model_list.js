@@ -56,22 +56,25 @@ class ModelList {
     let limitCount = newModel.getSchema().LIMITS.c;
     let limitSize = newModel.getSchema().LIMITS.s;
     for (let i = 0; i < limitCount; i++) {
-      newModel.setItem('LIMITS_EP_L', -100000, {offset: i * limitSize});
-      newModel.setItem('LIMITS_EP_H', 100000, {offset: i * limitSize});
-      newModel.setItem('LIMITS_LIMIT_L', -150000, {offset: i * limitSize});
-      newModel.setItem('LIMITS_LIMIT_H', 150000, {offset: i * limitSize});
+      newModel.setItem('LIMITS_EP_L', -10000, {offset: i * limitSize});
+      newModel.setItem('LIMITS_EP_H', 10000, {offset: i * limitSize});
+      newModel.setItem('LIMITS_LIMIT_L', -15000, {offset: i * limitSize});
+      newModel.setItem('LIMITS_LIMIT_H', 15000, {offset: i * limitSize});
     }
 
     // Load a basic mixer (car with steering and throttle)
     let mixerUnitSize = newModel.getSchema().MIXER_UNITS.s;
     newModel.setItem('MIXER_UNITS_SRC', 'ST', {offset: 0 * mixerUnitSize});
     newModel.setItem('MIXER_UNITS_DST', 'CH1', {offset: 0 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: 0 * mixerUnitSize});
     newModel.setItem('MIXER_UNITS_APPLY_TRIM', '1', {offset: 0 * mixerUnitSize});
     newModel.setItem('MIXER_UNITS_SRC', 'TH', {offset: 1 * mixerUnitSize});
     newModel.setItem('MIXER_UNITS_DST', 'CH2', {offset: 1 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: 1 * mixerUnitSize});
     newModel.setItem('MIXER_UNITS_APPLY_TRIM', '1', {offset: 1 * mixerUnitSize});
     newModel.setItem('MIXER_UNITS_SRC', 'AUX', {offset: 2 * mixerUnitSize});
     newModel.setItem('MIXER_UNITS_DST', 'CH3', {offset: 2 * mixerUnitSize});
+    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: 1 * mixerUnitSize});
 
     Device.MODEL = newModel;
     location.hash = Utils.buildURL(['model_details']);

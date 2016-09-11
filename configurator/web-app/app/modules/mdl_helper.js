@@ -221,7 +221,7 @@ class MDLHelper {
     }
 
     if (this.timer === null) {
-      this.timer = setTimeout(timerExpired, 50);
+      this.timer = setTimeout(timerExpired, 100);
     }
   }
 

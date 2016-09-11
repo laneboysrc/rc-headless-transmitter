@@ -62,9 +62,6 @@
   - Build ESP configurator detector by checking if we can retrieve info from a random URL
   - Set time on ESP from connected browser?!
 
-- Fix issue with pending promises when interrupting model loading
- - WRITE/READ/COPY promises must be stopped when disconnecting
-
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
 
@@ -74,8 +71,6 @@
 - Wi-Fi configuration through web interface
   - Need a sensible default, i.e. detect what the factory setting is
 - Configurator frequencies should avoid Wi-Fi frequency
-
-- Sometimes when reading tx/model info the webapp stops reading and show  "looking for transmitter" while the Tx stays properly connected
 
 - Make nodejs-uart bridges aware of MSG_DEBUG for nRF51
 

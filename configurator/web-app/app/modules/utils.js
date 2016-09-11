@@ -194,7 +194,8 @@ export function buildURL(list) {
 
   url_fragments = url_fragments.concat(list);
 
-  // FIXME: document why we need this...
+  // We append the model and tx UUID (if set) to the URL so that when the page
+  // is reloaded we can fetch the entry from the database
   if (Device.MODEL && Device.MODEL.uuid) {
     url_fragments.push('m');
     url_fragments.push(Device.MODEL.uuid);

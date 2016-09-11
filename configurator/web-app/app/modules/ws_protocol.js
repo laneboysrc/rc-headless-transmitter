@@ -42,6 +42,45 @@ class WebsocketProtocol {
     }
 
     return new Promise((resolve, reject) => {
+      // Check if a write packet with exactly the same offset and length
+      // exists in pending[]. If yes remove (and resolve) the earlier write
+      // requests before adding the new write packet.
+      //
+      // This optimization improves performance on slow clients like
+      // Smartphones.
+      if (packet[0] === Device.CFG_WRITE) {
+        for (let i = 0; i < this.pending.length; i++) {
+          let request = this.pending[i];
+
+          if (request.packet[0] !== Device.CFG_WRITE) {
+            continue;
+          }
+
+          // Check length
+          if (request.packet.length !== packet.length) {
+            continue;
+          }
+
+          // Check offset
+          if (request.packet[1] !== packet[1]) {
+            continue;
+          }
+
+          if (request.packet[2] !== packet[2]) {
+            continue;
+          }
+
+          // CFG_WRITE offset and length match, resolve the old request and
+          // remove it from the list of pending requests
+          let data = [Device.TX_WRITE_SUCCESSFUL, request.packet[1],
+            request.packet[2], request.packet.length - 3];
+          request.promise.resolve(data);
+
+          this.pending.splice(i, 1);
+          --i;
+        }
+      }
+
       this.pending.push({
         packet: packet,
         promise: {resolve: resolve, reject: reject}
@@ -166,23 +205,10 @@ class WebsocketProtocol {
       if (this._packetsMatch(request, data)) {
           request.promise.resolve(data);
           this.inTransit.splice(i, 1);
-          // --i;
           // After the first packet matches, stop looking for further ones
           return;
       }
     }
-
-    // Also go through pending packets, in case duplicate requests are
-    // in the queue
-    // for (let i = 0; i < this.pending.length; i++) {
-    //   let request = this.pending[i];
-
-    //   if (this._packetsMatch(request, data)) {
-    //       request.promise.resolve(data);
-    //       this.pending.splice(i, 1);
-    //       --i;
-    //   }
-    // }
   }
 
   //*************************************************************************

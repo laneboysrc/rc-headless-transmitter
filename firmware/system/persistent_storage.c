@@ -54,7 +54,13 @@ void PERSISTENT_STORAGE_save_hardware_input_values(void)
 
 
 // ****************************************************************************
-// FIXME: describe algorithm that writes the first word last
+// This function copies the content of config (RAM) to config_flash (FLASH).
+//
+// The function writes the first word of the configuration as last item. The
+// first word represents the config_version. Since we erasing immediately when
+// we write the flash, it stays 0xffffffff until we write it at the end,
+// having written all the other bytes. We can therefore use the config_versoin
+// as indication that a write was interrupted, e.g. because of power loss.
 void PERSISTENT_STORAGE_background_flash_write(void)
 {
     if (!store_config.active) {

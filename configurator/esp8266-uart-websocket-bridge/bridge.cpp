@@ -27,6 +27,8 @@ extern "C" {
 uint32_t tx_info_cache[TX_INFO_CACHE_SIZE];
 bool first_tx_info;
 
+extern void flash_led(void);
+
 
 void log_packet(const char *msg, const uint8_t *packet, uint8_t packet_length)
 {
@@ -36,10 +38,12 @@ void log_packet(const char *msg, const uint8_t *packet, uint8_t packet_length)
     uint16_t count;
 
     if (packet[0] == TX_INFO) {
+        flash_led();
         return;
     }
 
     if (packet[0] == TX_FREE_TO_CONNECT) {
+        flash_led();
         return;
     }
 

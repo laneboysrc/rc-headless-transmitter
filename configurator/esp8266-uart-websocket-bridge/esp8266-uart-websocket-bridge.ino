@@ -31,6 +31,14 @@ uint32_t ws_client_id;
 bool ws_connected = false;
 
 
+void flash_led(void)
+{
+    // Just a brief message on the serial port to make the LED flash
+    // '~' has been chosen as it contains a lot of 1 bits
+    os_printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+}
+
+
 void wsHandler(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void * arg, uint8_t *data, size_t len){
     if (type == WS_EVT_CONNECT) {
         os_printf("ws[%s][%u] connect\n", server->url(), client->id());
@@ -188,7 +196,19 @@ void setup() {
 
 
 void loop() {
+    static unsigned long last_message_ms;
+    unsigned long now_ms;
+
+    // Every second show a brief message to let the LED flash
+    now_ms = millis();
+    if (now_ms > (last_message_ms + 1000)) {
+        last_message_ms = now_ms;
+        flash_led();
+    }
+
     while (Serial.available()) {
         bridge.uart_received(Serial.read());
     }
+
+
 }

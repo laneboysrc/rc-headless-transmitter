@@ -3,7 +3,7 @@
 var Utils = require('./utils');
 var DatabaseObject = require('./database_object');
 
-const TIMEOUT_MS = 600;
+const TIMEOUT_MS = 600 * 2;
 
 //*************************************************************************
 // Split up the requested read/write block into small chunks since a single
@@ -118,6 +118,9 @@ class Device {
       }
 
       function ontimeout() {
+        let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
+        WebsocketProtocol.send(disconnectPacket);
+
         cleanup();
         reject(new Error('Connection timeout'));
       }

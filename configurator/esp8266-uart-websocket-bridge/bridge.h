@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include <ESPAsyncWebServer.h>
 extern "C" {
@@ -17,6 +18,7 @@ class Bridge
     void uart_received(uint8_t byte);
     void uart_send(const uint8_t *packet, uint8_t packet_length);
     void websocket_received(const uint8_t *packet, uint8_t packet_length);
+    bool isCached(uint8_t *packet, uint8_t *packet_length);
 
   private:
     AsyncWebSocket *_ws;

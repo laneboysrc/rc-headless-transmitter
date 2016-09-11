@@ -46,6 +46,8 @@ class WebsocketProtocol {
         packet: packet,
         promise: {resolve: resolve, reject: reject}
       });
+
+      this._sendCfgPacket();
     });
   }
 
@@ -91,9 +93,7 @@ class WebsocketProtocol {
       let request = this.pending.shift();
       this.inTransit.push(request);
 
-      // console.log('WS: sendCustomEventing ' + dumpUint8Array(request.packet));
       this.ws.send(request.packet);
-
     }
   }
 

@@ -77,6 +77,7 @@
 
 - Sometimes when reading tx/model info the webapp stops reading and show  "looking for transmitter" while the Tx stays properly connected
 
+- Make nodejs-uart bridges aware of MSG_DEBUG for nRF51
 
 
 
@@ -85,6 +86,4 @@
 - GPL where necessary
 - APACHE 2 license where necessary
 
-- Make nodejs-uart bridges aware of MSG_DEBUG for nRF51
 
-- Don't send TX_INFO over websocket too often

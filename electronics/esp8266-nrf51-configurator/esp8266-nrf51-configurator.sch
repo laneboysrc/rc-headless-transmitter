@@ -32,6 +32,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:esp8266-nrf51-configurator-cache
 EELAYER 27 0
 EELAYER END
 $Descr A4 11693 8268
@@ -324,7 +325,7 @@ Wire Wire Line
 Wire Wire Line
 	3900 3200 5100 3200
 Text Notes 3350 2050 0    60   ~ 0
-From 3.3V regulator\non the ESP8266 R2 PCB
+Tapped off the  3.3V regulator\non the ESP8266 R2 PCB
 Text Notes 5200 3600 0    60   ~ 0
 Debug log messages\nUART 115200
 Text Notes 5200 2100 0    60   ~ 0

@@ -162,7 +162,11 @@ String IPAddress2String(const IPAddress& ipAddress)
 
 void setup() {
     Serial.begin(115200);
-    Serial.swap();
+
+    // If you want to use the alternate RX/TX pins to connect the nRF51 board
+    // uncomment the following line. Note that you still need to disconnect
+    // the lines during firmware update via UART.
+    // Serial.swap();
 
     Serial1.begin(115200);
     Serial1.setDebugOutput(true);

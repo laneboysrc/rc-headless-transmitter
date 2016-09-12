@@ -11,7 +11,7 @@ pcb_bottom = [51, 55, 2];
 usb = [8, 6, 3];
 usb_pos = [pcb_board.x - 19 - usb.x, -1.2, 1];    // Position from left-front of the PCB
 switch = [8, 6, 3.5];
-switch_pos = [16.2, -2, 0];
+switch_pos = [16.2, -2, 0.5];
 
 pcb_offset_z = 2;
 
@@ -29,20 +29,20 @@ lid_dim = [outer.x, 2.5, outer.z];
 //    color("brown")  
 //        pcb();
 
-//translate([0, 0, 0])
+translate([0, 0, 0])
 //    color("green", 0.5) 
-//        case();
+        case();
 
-//translate([0, -2.5, 0])
+translate([0, -2.5, 0])
 //    color("yellow", 0.5) 
-//        lid();
+        lid();
 
 
 //##############################################################
 // For printing
-rotate([-90, 0, 0])
-    translate([0, -outer.y, 0])
-        case();
+//rotate([-90, 0, 0])
+//    translate([0, -outer.y, 0])
+//        case();
 
 //rotate([-90, 0, 0])
 //    translate([0, -lid_dim.y, 0])
@@ -136,11 +136,11 @@ module lid()
 
         translate([lid_dim.x/2, -eps, lid_dim.z/2])
             rotate([-90, 0, 0])
-                cylinder(d1=6, d2=3, h=lid_dim.y+eps2);
+                cylinder(d1=6.5, d2=3, h=lid_dim.y+eps2);
 
         translate([-lid_dim.x/2, -eps, lid_dim.z/2])
             rotate([-90, 0, 0])
-                cylinder(d1=6, d2=3, h=lid_dim.y+eps2);
+                cylinder(d1=6.5, d2=3, h=lid_dim.y+eps2);
 
         translate([-pcb_board.x/2, 0, pcb_board.z+pcb_bottom.z+pcb_offset_z]) {
             translate(usb_pos - [0.5, 0, 0.5])

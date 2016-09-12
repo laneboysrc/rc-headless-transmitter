@@ -66,22 +66,14 @@ const config_t config_flash = {
             {.type = TRANSMITTER_INPUT_NOT_USED},           // 13: PB7
             {.type = TRANSMITTER_INPUT_NOT_USED},           // 14: PB8
             {.type = TRANSMITTER_INPUT_NOT_USED},           // 15: PB9
-            {.type = MOMENTARY_ON_OFF},                     // 16: PB10
-            {.type = MOMENTARY_ON_OFF}                      // 17: PB11
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 16: PB10
+            {.type = TRANSMITTER_INPUT_NOT_USED}            // 17: PB11
         },
         .logical_inputs = {
             {.type = ANALOG, .hardware_inputs = {0}, .labels = {AIL}},
             {.type = ANALOG, .hardware_inputs = {1}, .labels = {ELE}},
             {.type = ANALOG, .hardware_inputs = {2}, .labels = {THR, TH}},
             {.type = ANALOG, .hardware_inputs = {3}, .labels = {RUD, ST}},
-
-            // {.type = SWITCH, .hardware_inputs = {17, 16}, .labels = {SW1},
-            //  .position_count = 3}
-            {.type = SWITCH, .hardware_inputs = {17, 16}, .labels = {SW1},
-             .sub_type = UP_DOWN_BUTTONS, .position_count = 3}
-
-            // {.type = TRIM, .hardware_inputs = {17, 16}, .labels = {AIL}},
-            // {.type = TRIM, .hardware_inputs = {0}, .labels = {RUD, ST}},
         },
         .trim_range = PERCENT_TO_CHANNEL(30),
         .trim_step_size = PERCENT_TO_CHANNEL(1),
@@ -182,7 +174,6 @@ const config_t config_flash = {
         .rf = {
             .protocol_hk310 = {
                 .hop_channels = {41, 21, 16, 66, 38, 33, 23, 32, 48, 37, 30, 54, 1, 12, 34, 19, 59, 17, 53, 49},
-                // .hop_channels = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39},
                 .address = {0xab, 0x22, 0x08, 0x97, 0x45}
             }
         }

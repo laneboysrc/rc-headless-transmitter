@@ -43,6 +43,8 @@
 
 - How do we get a description of the elements in the configuration?
 
+- Implement passphrase UI
+
 - Live stick/switch/output view
   - Add more elements like normalized ADC values, switch values, etc to live_t.
 
@@ -82,3 +84,5 @@
 
 - GPL where necessary
 - APACHE 2 license where necessary
+
+- Test virgin transmitter

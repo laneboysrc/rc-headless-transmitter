@@ -30,7 +30,7 @@ class SelectSingle {
     let name = device.getHumanFriendlyText(this.item);
     mdl.setTextContentRaw('#app-select_single-name', name);
     // FIXME: need to get item description
-    mdl.setTextContentRaw('#app-select_single-description', 'FIXME');
+    mdl.setTextContentRaw('#app-select_single-description', '');
 
     // If we are connected to a transmitter we can show the user available items.
     // For example, when selecting mixer source we can highlight the logical

@@ -44,7 +44,7 @@ class SelectMultiple {
     mdl.setTextContentRaw('#app-select_multiple-name', name);
     mdl.setTextContentRaw('#app-select_multiple-count', this.maxNumberOfChoices);
     // FIXME: need to get item description
-    mdl.setTextContentRaw('#app-select_multiple-description', 'FIXME');
+    mdl.setTextContentRaw('#app-select_multiple-description', '');
 
     // If we are connected to a transmitter we can show the user available items.
     // For example, when selecting mixer source we can highlight the logical

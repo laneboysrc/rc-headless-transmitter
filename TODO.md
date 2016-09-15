@@ -31,6 +31,10 @@
 
 - Bug: 2 beep sound when momentary button down disconnects configurator?
 
+- Every *Switch* or *Trim* that uses a Momentary type *Hardware input* must remember their state across power cycles
+
+- Test lots of active mixer units, check how long calculation takes
+
 
 ## Configurator
 - Offline mode

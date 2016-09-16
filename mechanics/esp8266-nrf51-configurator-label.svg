@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 1">
+   sodipodi:docname="esp8266-nrf51-configurator-label.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,18 +25,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="190.71347"
-     inkscape:cy="938.9424"
+     inkscape:zoom="1.4"
+     inkscape:cx="162.52535"
+     inkscape:cy="868.72725"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
      units="mm"
-     inkscape:window-width="1920"
-     inkscape:window-height="1151"
+     inkscape:window-width="1278"
+     inkscape:window-height="750"
      inkscape:window-x="0"
      inkscape:window-y="25"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="true">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -56,7 +57,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -66,72 +67,103 @@
      id="layer1"
      transform="translate(0,-2.5390623e-6)">
     <rect
-       style="fill:none;fill-opacity:1;stroke:#b3b3b3;stroke-width:1.25078738000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:none;stroke:#b3b3b3;stroke-width:1.65581334;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect2987"
-       width="141.73228"
-       height="124.01575"
-       x="70.866142"
-       y="60.236198"
-       transform="translate(0,2.5390623e-6)" />
+       width="175.50954"
+       height="175.50954"
+       x="142.5602"
+       y="96.497177" />
     <text
        sodipodi:linespacing="125%"
        id="text2993"
-       y="59.307327"
-       x="79.613472"
+       y="106.5078"
+       x="195.7052"
        style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:FreeSans;-inkscape-font-specification:FreeSans"
        xml:space="preserve"><tspan
          style="font-size:10px;font-style:italic;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="59.307327"
-         x="79.613472"
+         y="106.5078"
+         x="195.7052"
          id="tspan2995"
          sodipodi:role="line" /><tspan
-         style="font-size:15px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="77.432327"
-         x="79.613472"
+         style="font-size:18px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
+         y="126.5078"
+         x="195.7052"
          sodipodi:role="line"
-         id="tspan3009">         RC car LiPo </tspan><tspan
-         style="font-size:15px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="97.432327"
-         x="79.613472"
+         id="tspan3026">Headless TX</tspan><tspan
+         style="font-size:18px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
+         y="149.0078"
+         x="195.7052"
          sodipodi:role="line"
-         id="tspan3026">         Powerbank</tspan><tspan
-         style="font-size:10px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="111.80733"
-         x="79.613472"
-         sodipodi:role="line"
-         id="tspan2997"> </tspan><tspan
-         style="font-size:10px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="124.30733"
-         x="79.613472"
-         sodipodi:role="line"
-         id="tspan2999">IN:      6..12V (2-3S)</tspan><tspan
-         style="font-size:10px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="136.80733"
-         x="79.613472"
-         sodipodi:role="line"
-         id="tspan3001">OUT:  5V 2A</tspan><tspan
-         style="font-size:10px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="149.30733"
-         x="79.613472"
-         sodipodi:role="line"
-         id="tspan3003"> </tspan><tspan
-         style="font-size:9px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="160.86983"
-         x="79.613472"
-         sodipodi:role="line"
-         id="tspan3007">Use a LiPo alarm to protect </tspan><tspan
-         style="font-size:9px;font-weight:600;-inkscape-font-specification:FreeSans Semi-Bold"
-         y="172.11983"
-         x="79.613472"
-         sodipodi:role="line"
-         rotate="0 0 0 0 0 0 0 0 0 0 0 0 0 0"
-         id="tspan3013">your battery!</tspan></text>
+         rotate="0 0 0 0 0 0 0 0 0 0 0 0 0"
+         id="tspan3013">Configurator</tspan></text>
     <image
-       y="65.77951"
-       x="76.409454"
+       y="112.76041"
+       x="154.07422"
        id="image3023"
        xlink:href="file:///home/laneboysrc/Documents/Logo/laneboysrc-logo-256.jpg"
-       height="35.433067"
-       width="35.433067" />
+       height="36.058472"
+       width="36.058472" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3000"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:FreeSans;font-style:normal;font-weight:normal;font-size:8px;line-height:125%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:FreeSans;font-stretch:normal;font-variant:normal;text-anchor:middle;text-align:center"><flowRegion
+         id="flowRegion3002"><rect
+           id="rect3004"
+           width="73.214287"
+           height="86.785713"
+           x="140"
+           y="81.290764" /></flowRegion><flowPara
+         id="flowPara3006"></flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3008"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:FreeSans;font-style:normal;font-weight:normal;font-size:8px;line-height:125%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:FreeSans;font-stretch:normal;font-variant:normal;text-anchor:middle;text-align:center"><flowRegion
+         id="flowRegion3010"><rect
+           id="rect3012"
+           width="106.42857"
+           height="49.642857"
+           x="132.5"
+           y="97.36219" /></flowRegion><flowPara
+         id="flowPara3014"></flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:FreeSans;-inkscape-font-specification:FreeSans"
+       x="195.50729"
+       y="261.57932"
+       id="text3036"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3038"
+         x="195.50729"
+         y="261.57932"><tspan
+           style="font-weight:bold"
+           id="tspan3042">ON →</tspan></tspan></text>
+    <image
+       y="166.53542"
+       x="194.88188"
+       id="image3063"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAABGxJREFU
+eJzt3cGK4zoUQMHkMf//y5ntW4wOOEiW3F21TicO6YPgIsvvz+fzeQH/9N/uC4CTCQSCQCAIBIJA
+IAgEgkAgCASCQCAIBIJAIAgEwp9v/uj9fs++jiWu7sOc9b1W7/8cXefoc1d/r5/6//B6WUEgCQSC
+QCAIBIJAIHw1xRrZdffu1SnKrqnOrinQrt/lKf8PxQoCQSAQBAJBIBAEAmHqFGvktD1Os6ZPV99/
+1/WMXP1ddn3uyB1TMisIBIFAEAgEgUAQCIRbplinmbVXatcdi1fff/UU7iezgkAQCASBQBAIBIFA
++JVTrNV3Aq6eGq2+Y3H1HrAnsYJAEAgEgUAQCASBQLhlinXa9GPXVGf1uViz7hD8qed0fcMKAkEg
+EAQCQSAQBAJh6hTrKc+qGzltL9NTTo8fefr/w+tlBYEkEAgCgSAQCAKB8NUU60l7af7ltGnPU65n
+1uufxAoCQSAQBAJBIBAEAuH9+WIEcdp0ZfUz707bU3TaMw13nTN2x/ldVhAIAoEgEAgCgSAQCF9N
+sYZvtvhOt9XTmFlW7036bVPEq2ZOt6wgEAQCQSAQBAJBIBCmTrFWe/r0aWT1qeyn/cRPuc7XywoC
+SSAQBAJBIBAEAuGWvVgjT58azfKU6zntc91RCJsJBIJAIAgEgkAgTH1G4ciuZ+2N3mf1swhnuTqN
+OXEKNMPO67SCQBAIBIFAEAgEgUD4aoo1a6qw61l4q6cis6ZPs15/1Wnnbl3lXCy4iUAgCASCQCAI
+BMLWc7FWnwc1631Oe8bfyGl73kZOOw2+WEEgCASCQCAIBIJAIHw1xTptyrH6zrur7zNy2jP+du25
+Gtn1OxYrCASBQBAIBIFAEAiEqVOsp5+Cvmsv1shp52Ltev2IvViwmUAgCASCQCAIBMLU091Pm1rM
+2mt02qnyVz93tVnneq0+dd+5WDCZQCAIBIJAIAgEwtQp1uopza5nAp52ntUsu77vau4ohJsIBIJA
+IAgEgkAgTJ1ijTz9zr6r73Pa951l1x1/u07jf72sIJAEAkEgEAQCQSAQbplirXbas/xOu55de6h2
+7UlzRyHcRCAQBAJBIBAEAuGr092f7il36o3s2qt22l64q0yxYDKBQBAIBIFAEAiEr/ZinXYO0sjV
+qcXq6dPTz9Ea2XVHpGcUwmYCgSAQCAKBIBAIt5zuvtrq85p27ZXaNSW7avX5VztZQSAIBIJAIAgE
+gkAg3HIu1qwpylPumLv6ubNePzJrCvfb9nq9XlYQSAKBIBAIAoEgEAg/4nT3XXadc7XrFPfTpnxX
+38e5WDCZQCAIBIJAIAgEginW/1ydfuw6xX3W66867Ty0O/ZoWUEgCASCQCAIBIJAINwyxTrxvKMZ
+Trvjb9czBFfvGdt5mr0VBIJAIAgEgkAgCATC1CnWaXt1Vlu9t2rWHrCrdu0ZW7237RtWEAgCgSAQ
+CAKBIBAI789P3SgFE1hBIAgEgkAgCASCQCAIBIJAIAgEgkAgCASCQCAIBMJf4e4/m93kmdoAAAAA
+SUVORK5CYII=
+"
+       height="70.86615"
+       width="70.86615" />
   </g>
 </svg>

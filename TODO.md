@@ -83,7 +83,4 @@
 - Parse and save manually entered RF address and channels
 
 
-
-- Add BOM for hardware
-
 - Test virgin transmitter

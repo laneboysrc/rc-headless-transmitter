@@ -1,0 +1,29 @@
+BT1        BATTERY   Li-Ion 3.7V 800mAh
+C1         1u
+C2         100nF
+K1         CONN_3    0.1" pin header
+K2         CONN_3    0.1" pin header
+K3         CONN_3    0.1" pin header
+K4         CONN_3    0.1" pin header
+K5         CONN_3    0.1" pin header
+K6         CONN_3    0.1" pin header
+K7         CONN_3    0.1" pin header
+K8         CONN_3    0.1" pin header
+K9         CONN_3    0.1" pin header
+K10        CONN_3    0.1" pin header
+K11        CONN_3    0.1" pin header
+P1         Charge    0.1" pin header
+P2         LED       0.1" pin header
+P3         CONN_2    0.1" pin header
+P4         CONN_2    0.1" pin header
+P5         CONN_4    0.1" pin header
+Q1         BC548
+R1         1k
+R2         22k
+R3         33k
+R4         1k
+SP1        Passive Piezo buzzer         https://www.aliexpress.com/item/Black-Plastic-14-x-7mm-2-Pins-Passive-Piezo-Buzzer-AC1-3V-Piezo-Transducer-with-Flying/32723376720.html
+SW1        ON/OFF switch
+U1         LIPO_CHARGER_+_PROTECTION    https://www.aliexpress.com/item/New-2Pcs-lot-5V-1A-Micro-USB-18650-Lithium-Battery-Charging-Board-Charger-Module-Protection-Dual/32230225249.html
+U2         STM32F103C8T6_DEV_BOARD      https://www.aliexpress.com/item/1pcs-STM32F103C8T6-ARM-STM32-Minimum-System-Development-Board-Module-For-arduino/32478120209.html
+U3         NRF24L01P                    https://www.aliexpress.com/item/1100-Meter-Long-Distance-NRF24L01-PA-LNA-NRF24L01P-Wireless-Transceiver-Communication-Module-with-antenna-DC-3/32597272885.html

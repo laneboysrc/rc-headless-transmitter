@@ -85,14 +85,12 @@
 - Parse and save manually entered RF address and channels
 
 
+- Add binary files and instructions
 
 - Finish README (add picture of transmitter, configurator and phone)
 
 - Test virgin transmitter
 
-- Add git clone --recursive instructions
-
-- Add binary files and instructions
 
 
 

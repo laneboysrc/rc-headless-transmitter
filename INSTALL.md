@@ -8,3 +8,13 @@ The web interface and associated dev tools are built in JavaScript using NodeJS,
 
 Don't be discouraged though: One can learn *anything* with the help of the Internet today. It is only up to *you* to invest the time. **A day where you learn something new is a good day.**
 
+**IMPORTANT**
+This project makes use of Git submodules. Please clone it by running:
+
+    git clone --recursive https://github.com/laneboysrc/rc-headless-transmitter.git
+
+Alternatively, after cloning the project run the following commands in the project root:
+
+    git submodule init
+    git submodule update
+

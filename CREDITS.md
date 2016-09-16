@@ -24,70 +24,131 @@ Open Source ARM Cortex M microcontroller library. Light-weight, easy to use, not
 
 ### Material Design Lite
 
+https://getmdl.io/
+
 MDL allowed us to get a reasonable modern UI with little skills required. No complicated tool chain, just JS and CSS required.
 
 
 ### Google fonts
 
+https://fonts.google.com/specimen/Roboto
+https://design.google.com/icons/
+
 The icon font was especially helpful to get consistent looking icons. Super!
-
-
-### JSHint
-
-Great to see mistakes before you find them in the console log of your browser.
 
 
 ### Gnu GCC
 
-Fantastic compiler with so many backends. Just works.
+https://launchpad.net/gcc-arm-embedded
+
+Fantastic compiler. Any platform. Just works.
 
 
-### MDN
+### OpenOCD
 
-The MDN was extremely helpful to brush up on the latest web technologies. The articles are concise and link to references.
+http://openocd.org/
 
-
-### Can I Use.com
-
-Extremely useful website to make decisions which of the hot new technologies make sense to use.
-
-
-### StackOverflow
-
-Have a programming-related problem? This excellent community sure has it solved already, providing great solutions.
-
-### DuckDuckGo
-
-Just like Google was in the beginning.
+Powerful debugger and programmer. Excellent out-of-the-box experience and soooo configurable.
 
 
 ### STM
+
+http://www.st.com/
 
 Excellent value for money micro-controllers. Their ST-Link debugger comes on inexpensive Nucleo boards and works great even for programming the Nordic MCU.
 
 
 ### Nordic
 
+http://nordicsemi.com/
+
 Great 2.4 GHz Radio, decent software stack, fair price. Thanks for opening up your SDK and documentation in the recent years!
 
 
-### Arduino / ESP8266
+### Node.js and npm
 
-### node-js and npm
+https://nodejs.org/en/
+https://www.npmjs.com/
 
-Normally we use Python for scripts and self-made development tools. But since NodeJS was needed for using Webpack anyway, we used it instead. Worked great thanks to the library support at npm.
-
-
-### Webpack and http://survivejs.com/webpack/developing-with-webpack
-
-Web front-end development has become surprisingly complicated tool-wise in the last yeards. Thanks due to the guide at survivejs we were able get it going without having to spend too much time on learning tools.
+Normally we use Python for scripts and utilities. But since Node.js was needed for using Webpack anyway, we used it instead. Worked great thanks to the library support at npm.
 
 
-### https://github.com/mtrpcic/pathjs/blob/master/path.js
+### Webpack and "Developing with Webpack"
 
-Old-skool router so that we could use a simple web server on the ESP8266. Surely considered outdated, but just right for our needs.
+http://webpack.github.io/
+http://survivejs.com/webpack/developing-with-webpack
+
+Web front-end development has become surprisingly complicated -- tool-wise -- in the last years. Thanks due to the guide at survivejs we were able get Webpack do what we needed without having to spend a lot of time.
 
 
-### http://realfavicongenerator.net/
+### JSHint
+
+http://jshint.com/
+
+Great to find mistakes in the editor before you see them in the console log of your browser.
+
+
+### Arduino / ESP8266 / makeEspArduino
+
+http://arduino.cc/
+https://github.com/esp8266/Arduino
+https://github.com/plerup/makeEspArduino
+
+Thanks to the onderful work of the ESP8622.com community, it is easy to get the module up-and running in the  Arduino environment. Using the fantastic makeEspArduino allowed us to use our favorite editor and only compile what has changed.
+
+
+### ESPAsyncTCP / ESPAsyncWebServer
+
+https://github.com/me-no-dev/ESPAsyncWebServer
+https://github.com/me-no-dev/ESPAsyncTCP
+
+Sweet asynchronous web server for the ESP8622. Beautiful code!
+
+
+### PathJS
+
+https://github.com/mtrpcic/pathjs/blob/master/path.js
+
+Old-skool client-side routing library that allowed us to make a single page web-app for the tiny server on the ESP8266. Surely considered outdated, but just right for our needs.
+
+
+### Favicon Generator
+
+http://realfavicongenerator.net/
 
 Great on-line tool to make all the different flavors of icons needed to get a modern web-app integrated on various platforms.
+
+
+### Mozilla Developer Network MDN
+
+https://developer.mozilla.org/en-US/
+
+The MDN was extremely helpful to brush up on the latest web technologies. The articles are concise and link to references.
+
+
+### StackOverflow
+
+http://stackoverflow.com/
+
+Have a programming-related problem? This excellent community sure has it solved already.
+
+
+### DuckDuckGo
+
+https://duckduckgo.com/
+
+Just like Google was in the beginning.
+
+
+### Can I Use.com
+
+http://caniuse.com/
+
+Extremely useful website to decide which of the hot new web technologies can be actually used.
+
+
+### OpenSCAD
+
+http://www.openscad.org/
+
+The Programmers Solid 3D CAD Modeller. What a pleasure to use!

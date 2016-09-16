@@ -1,14 +1,9 @@
 # Headless TX  |  STM32F1 NRF24L01+ Headless Transmitter Architecture
 
-## System overview
-
-'''
-    FIXME: Add overall system view with transmitter, configurator, and explain terms
-'''
 
 ## Model vs Transmitter hardware configuration
 
-* Ideally we are able to drive the same car with different transmitter hardware, with the system automatically adapting to the transmitter hardware
+* Ideally we are able to drive the same car (airplane, boat ...) with different transmitter hardware, with the system automatically adapting to the transmitter hardware
 * This implies that inputs are tagged (e.g. Aileron, Rudder, Elevator, Steering, Throttle, Gear, ST-Trim, ST-DR, TH-Hold ...) so that the mixer can read from the right values
 * An input may have multiple tags (Steering, Rudder) but each tag must only be assigned once
 * Inputs may have 0..100 on one transmitter, and -100..0..100 on another one, i.e. they may be with or without center point!
@@ -199,4 +194,13 @@ After all mixers have been processed, each output channel has a value that needs
 * LED lights up when powered
 * LED blinks when battery is low
 * Regular beep when battery is low, changing to a more alarming sound when the battery is nearly depleted
+
+
+
+## Configurator architecture
+
+The ESP8266 based *Configurator* comprises of an ESP8266 ESP-12-F module. The real-time handling of the *nRF protocol* is handled by a CORE51822 (B) module with the Nordic 51822 2.4 GHz transciever. The modules are interconnected using a UART running at 115200 BAUD.
+
+The module is powered from a 800 mAh Li-Ion battery. The ESP8266 board has a 3.3V voltage regulator, where we also take the power for the CORE51822 from.
+
 

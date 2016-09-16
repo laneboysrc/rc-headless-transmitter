@@ -30,6 +30,7 @@
 - Run-time adaptation to `hardware_inputs` and `logical_inputs` changes
 
 - Bug: 2 beep sound when momentary button down disconnects configurator?
+  - Maybe has to do with persistent storage taking too long, therefore losing sync?
 
 - Every *Switch* or *Trim* that uses a Momentary type *Hardware input* must remember their state across power cycles
 
@@ -73,6 +74,7 @@
 
 - Need to be able to download transmitter configuration after firmware update
   - Easiest way for now is to build a tool that makes a .c file out of the backup JSON file
+  - The backup JSON file should be human readable, right now it is just binary data wrapped in JSON
 
 - Wi-Fi configuration through web interface
   - Need a sensible default, i.e. detect what the factory setting is
@@ -83,4 +85,8 @@
 - Parse and save manually entered RF address and channels
 
 
+
+- Finish README (add picture of transmitter, configurator and phone)
+
 - Test virgin transmitter
+

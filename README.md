@@ -1,6 +1,6 @@
 # STM32F103 and NRF24L01+ based headless transmitter
 
-This project implements a 2.4 GHz RC transmitter using the NRF24L01+ wireless module and the STM32F103C8T6 micro-controller. It runs of a 1S Li-Ion battery.
+This project implements a 2.4 GHz RC transmitter using the NRF24L01+ wireless module and the STM32F103C8T6 micro-controller. It runs off a 1S Li-Ion battery.
 
 The transmitter is currently compatible with HobbyKing HKR3000 and HKR3100 receivers, as well as the [LANE Boys RC nrf24le01-rc](https://github.com/laneboysrc/nrf24l01-rc) DIY receivers.
 
@@ -8,7 +8,7 @@ The term *headless* comes from the IT industry, where a headless system is one t
 
 The motivation for this project was to upgrade old AM/FM RC transmitter hardware, and to turn a cheap RC simulator into a fully operational transmitter that supports multiple models.
 
-By keeping the user interface for configuration out of the transmitter, we don't need to perform complicated mechanical modifications to add a display and buttons. Instead we replace the old electronics with a modern 32 bit ARM micro-controller and a reliable 2.4 GHz transceiver.
+By keeping the user interface for configuration out of the transmitter, we don't need to perform complicated mechanical modifications to add a display and buttons. We only replace the old electronics with a modern 32 bit ARM micro-controller and a reliable 2.4 GHz transceiver wired on a prototyping board.
 
 
 ## How it works
@@ -25,11 +25,11 @@ When you want to configure your *headless transmitter*, you turn on the *configu
 
 The Smartphone also has a large amount of storage capacity. This allows us to store and upload configurations for multiple models. When we want to change to another model, we simply download its configuration into the *headless transmitter*. This only takes a few seconds.
 
-
-## Power and cost
 The power consumption of the transmitter is low: A single 800 mAh Li-Ion battery keeps the transmitter running for approximately 15 hours.
 
-Cost is low too: When sourcing the modules from China, a transmitter can be modified for less than USD 10. The *configurator* hardware cost is less than USD 15. You only need one *configurator*, regardless of how many *headless transmitters* you have.
+## Cost
+
+When sourcing the modules from China, a transmitter can be modified for less than USD 10. The *configurator* hardware cost is less than USD 15. You only need one *configurator*, regardless of how many *headless transmitters* you have.
 
 
 ## WORK IN PROGRESS

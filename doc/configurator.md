@@ -63,7 +63,7 @@ The *Headless TX* offers the following transports natively:
 
 * UART protocol
 
-    The UART (serial port) protocol is available by connecting to the UART provided by the microcontroller. The UART protocol is currently not implemented.
+    The UART (serial port) protocol is available by connecting to the UART provided by the microcontroller. The UART protocol is currently not implemented on the *Headless TX*, but used internally in the *nrF-to-Websocket bridge* described below.
 
 
 The design goal is to keep the protocol running over the different transports the same, so that the transports appear transparent to the *Configurator*.
@@ -426,7 +426,7 @@ The *Websocket protocol* implements the same commands as described above.
 
 One major difference is that the *Websocket protocol* does not provide real-time transfer of data. As such, a *Configurator* talking to a bridge using the *Websocket protocol* can not rely that the next received packet is the answer to the previous sent command, as it is with the *nRF protocol*.
 
-Since the command structure is designed in such a way that every command has a definite response, the *Configurator* has to wait until the appropriate answer arrives.
+Since the command structure is designed in such a way that every command has a definite response, the *Configurator* has to wait until the appropriate answer arrives before it can send the next command.
 
 The down-side of this approach is that this significantly reduces the achievable through-put, as the *Configurator* would have to wait for the answer to the previous request before it can send the next request. Especially on mobile devices this is an issue, as they seem to queue data and transmit infrequently to preserve power.
 
@@ -440,6 +440,7 @@ To overcome this issue, a bridge can implement a packet buffer. A bridge impleme
 
 By default, the *Configurator* assumes that the buffer has only a size of 1 packet. Only after receiving the above command it can send multiple packets to the bridge. Currently we are using a buffer of 5 packets.
 
+The Websocket protocol is a reliable protocol, as it builds on TCP/IP. As such the implementer does not have to be concerned with wireless issues described in the *nRF protocol*.
 
 
 ## UART protocol
@@ -453,6 +454,7 @@ The commands are exactly the same as for the *nRF protocol*.
 
 Like the *Websocket protocol*, the *UART protocol* does not provide real-time transfer of data as underlying implementations usually have a buffer between the serial port and the application. As such the same algorithms as described for the *Websocket protocol* apply.
 
+The *UART protocol* is considered reliable and therefore does not require special handling for lost or corrupted information.
 
 
 ## APPENDIX: nRF protocol bandwidth estimation

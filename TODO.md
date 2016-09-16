@@ -84,8 +84,6 @@
 
 
 
-- Websocket and UART protocol considered w/o error, NRF protocol auto-retry
-
 - Add BOM for hardware
 
 - Test virgin transmitter

@@ -92,8 +92,6 @@
 
 - Add git clone --recursive instructions
 
-- Make png graphics from ODG files
-
 - Add binary files and instructions
 
 - Remove our stlink UUID from make

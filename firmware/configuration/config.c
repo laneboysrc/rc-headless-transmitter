@@ -20,7 +20,7 @@ static const config_t config_failsafe = {
         .rf_protocol_type = RF_PROTOCOL_HK310,
         .rf = {
             .protocol_hk310 = {
-                .hop_channels = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39},
+                .hop_channels = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19},
                 .address = {0x0d, 0x0e, 0x0a, 0x0d, 0x00}
             }
         }
@@ -37,8 +37,9 @@ const config_t config_flash = {
     .version = CONFIG_VERSION,
 
     .tx = {
-        .name = "E Sky 0905A",
-        .uuid = {0x43, 0x53, 0x8f, 0xe8, 0x44, 0xc9, 0x11, 0xe6},
+        .name = "Unconfigured TX",
+        // .name = "E Sky 0905A",
+        // .uuid = {0x43, 0x53, 0x8f, 0xe8, 0x44, 0xc9, 0x11, 0xe6},
         .passphrase = 1234,                                 // What else :)
         .hardware_inputs = {
             {.type = ANALOG_WITH_CENTER_AUTO_RETURN,        // 0: PA1/ADC1 Ailerons
@@ -83,8 +84,9 @@ const config_t config_flash = {
     },
 
     .model = {
-        .name = "HK Mini DLG",
-        .uuid = {0xc9, 0x1c, 0xab, 0xaa, 0x44, 0xc9, 0x11, 0xe6},
+        .name = "Unconfigured",
+        // .name = "HK Mini DLG",
+        // .uuid = {0xc9, 0x1c, 0xab, 0xaa, 0x44, 0xc9, 0x11, 0xe6},
         .mixer_units = {
             {
                 .src = IN_AIL,
@@ -171,12 +173,12 @@ const config_t config_flash = {
         },
 
         .rf_protocol_type = RF_PROTOCOL_HK310,
-        .rf = {
-            .protocol_hk310 = {
-                .hop_channels = {41, 21, 16, 66, 38, 33, 23, 32, 48, 37, 30, 54, 1, 12, 34, 19, 59, 17, 53, 49},
-                .address = {0xab, 0x22, 0x08, 0x97, 0x45}
-            }
-        }
+        // .rf = {
+        //     .protocol_hk310 = {
+        //         .hop_channels = {41, 21, 16, 66, 38, 33, 23, 32, 48, 37, 30, 54, 1, 12, 34, 19, 59, 17, 53, 49},
+        //         .address = {0xab, 0x22, 0x08, 0x97, 0x45}
+        //     }
+        // }
     }
 };
 

@@ -86,7 +86,6 @@
 
 - Websocket and UART protocol considered w/o error, NRF protocol auto-retry
 
-- GPL where necessary
-- APACHE 2 license where necessary
+- Add BOM for hardware
 
 - Test virgin transmitter

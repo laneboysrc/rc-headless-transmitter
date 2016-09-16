@@ -26,8 +26,8 @@ OBJCOPY          	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
 SIZE             	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
 
 OPENOCD          	:= /opt/openocd/bin/openocd
-# OPENOCD_FLAGS       := --debug=0 -f interface/stlink-v2.cfg -f target/nrf51.cfg
-OPENOCD_FLAGS       := --debug=0 -f ./discovery-st-link-serial.cfg -f target/nrf51.cfg
+OPENOCD_FLAGS       := --debug=0 -f interface/stlink-v2.cfg -f target/nrf51.cfg
+# OPENOCD_FLAGS       := --debug=0 -f ./discovery-st-link-serial.cfg -f target/nrf51.cfg
 
 MK 				 	:= mkdir -p
 RM 					:= rm -rf

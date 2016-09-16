@@ -94,8 +94,6 @@
 
 - Add binary files and instructions
 
-- Remove our stlink UUID from make
-
 
 
 

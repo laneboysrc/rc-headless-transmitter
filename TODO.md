@@ -87,8 +87,6 @@
 
 - Add binary files and instructions
 
-- Finish README (add picture of transmitter, configurator and phone)
-
 - Test virgin transmitter
 
 

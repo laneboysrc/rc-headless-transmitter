@@ -6,6 +6,8 @@ The transmitter is currently compatible with HobbyKing HKR3000 and HKR3100 recei
 
 The term *headless* comes from the IT industry, where a headless system is one that does not provide a user interface itself but is configured remotely. Within this project, *headless* means that the transmitter does not have a display or buttons for configuration, but rather relies on remote configuration through a web-browser on a Smartphone, Tablet or computer.
 
+![transmitter, configurator and web-app](doc/transmitter-configurator-phone.jpg)
+
 The motivation for this project was to upgrade old AM/FM RC transmitter hardware, and to turn a cheap RC simulator into a fully operational transmitter that supports multiple models.
 
 By keeping the user interface for configuration out of the transmitter, we don't need to perform complicated mechanical modifications to add a display and buttons. We only replace the old electronics with a modern 32 bit ARM micro-controller and a reliable 2.4 GHz transceiver wired on a prototyping board.

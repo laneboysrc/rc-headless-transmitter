@@ -84,6 +84,8 @@
 
 - Parse and save manually entered RF address and channels
 
+- LoadDevice should be in Device, not in device_list
+
 
 - Add binary files and instructions
 

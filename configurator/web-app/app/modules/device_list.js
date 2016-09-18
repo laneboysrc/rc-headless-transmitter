@@ -194,8 +194,7 @@ class DeviceList {
         // console.log('UUID', newDev.uuid);
         if (!Utils.isValidUUID(newDev.uuid)) {
           newDev.uuid = Utils.newUUID();
-          return Device.write(schema.o + schema['UUID'].o, schema['UUID'].s,
-            Utils.string2uuid(newDev.uuid));
+          return Device.write(schema.o + schema['UUID'].o, Utils.string2uuid(newDev.uuid));
         }
         return Promise.resolve();
       }).then(() => {

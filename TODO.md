@@ -89,8 +89,6 @@
 
 - Add binary files and instructions
 
-- Test virgin transmitter
-
 
 
 

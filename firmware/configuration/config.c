@@ -37,7 +37,9 @@ const config_t config_flash = {
     .version = CONFIG_VERSION,
 
     .tx = {
+        // UUID for unconfigured transmitter
         .name = "Unconfigured TX",
+        .uuid = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
         // .name = "E Sky 0905A",
         // .uuid = {0x43, 0x53, 0x8f, 0xe8, 0x44, 0xc9, 0x11, 0xe6},
         .passphrase = 1234,                                 // What else :)
@@ -84,7 +86,9 @@ const config_t config_flash = {
     },
 
     .model = {
+        // UUID for unconfigured models
         .name = "Unconfigured",
+        .uuid = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
         // .name = "HK Mini DLG",
         // .uuid = {0xc9, 0x1c, 0xab, 0xaa, 0x44, 0xc9, 0x11, 0xe6},
         .mixer_units = {

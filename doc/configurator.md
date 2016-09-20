@@ -214,7 +214,7 @@ The *Headless TX* sends a `TX_FREE_TO_CONNECT` packet whenever the transmission 
 Since there may be multiple *Headless TX* on the air, the `TX_FREE_TO_CONNECT` packet contains the 8-byte UUID of the transmitter as well as a human-readable transmitter name so that we can differentiate between transmitters.
 
 The *Configurator* listens for `TX_FREE_TO_CONNECT` and shows the user a list of all transmitters in the neighborhood. When the user chooses a transmitter, the *Configurator* replies with `CFG_REQUEST_TO_CONNECT` and changes its state to `CONNECTED`.
-The `CFG_REQUEST_TO_CONNECT` packet contains the UUID of the transmitter to connecto to, the pass-phrase, a unique 5-byte address and hop channel information.
+The `CFG_REQUEST_TO_CONNECT` packet contains the UUID of the transmitter to connect to, the pass-phrase, a unique 5-byte address and hop channel information.
 
 When the *Headless TX* receives a `CFG_REQUEST_TO_CONNECT` request with a matching UUID and pass-
 phrase, it changes its state to `CONNECTED`.

@@ -1,6 +1,6 @@
 # Headless TX simulator using the Websocket protocol
 
-This tool simulates a *Headless TX*, connected to a bridge that implements the
+This tool simulates a *headless transmitter*, connected to a bridge that implements the
 Websocket interface.
 
 This tool allows testing *configurator* implementations that use the Websocket

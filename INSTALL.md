@@ -22,3 +22,13 @@ Alternatively, run the following commands in the project root:
     git submodule init
     git submodule update
 
+
+# First time use
+
+Power up the *headless transmitter*. You should hear a short beep and the LED should be on. The transmitter is now operational, with a simple default configuration.
+
+Turn on the *configurator*. The LED on the ESP-12 module flashes a few times. Connect your computer or Smartphone via Wi-Fi to the *configurator* using the SSID `LANE Boys RC`. The passphrase is `12345678`. You should see first an anmiated loading spinner, and after a short time the web-app should show up.
+After pressing the `Connect` button on the web-app, the list of transmitters should show `Unconfigured Tx`. Click on the `Edit` icon next to the name. The transmitter should beep and after a few seconds the web-app will show the settings of the transmitter. You can now proceed with configuring it.
+
+After connecting to a transmitter for the first time, you should give it a unique name and assign a new RF protocol address and hop sequence.
+

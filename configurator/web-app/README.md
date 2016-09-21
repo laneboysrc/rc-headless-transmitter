@@ -1,6 +1,6 @@
 # *Configurator* web-app implemention
 
-This web-app implements a *configurator* that can setup a *Headless TX* via a bridge that implements the Websocket protocol.
+This web-app implements a *configurator* that can setup a *headless transmitter* via a bridge that implements the Websocket protocol.
 
 Please refer to the [configurator](../../doc/configurator.md) documentation for more information.
 

@@ -1,7 +1,7 @@
 # UART to Websocket bridge protocol
 
-This tool can be connected to a *Headless TX* via the UART. It exposes
-the *Headless TX* to a *configurator* using the Websocket protocol.
+This tool can be connected to a *headless transmitter* via the UART. It exposes
+the *headless transmitter* to a *configurator* using the Websocket protocol.
 
 Please refer to the [configurator](../../doc/configurator.md) documentation for
 more information.

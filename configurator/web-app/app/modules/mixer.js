@@ -50,6 +50,7 @@ class Mixer {
     let typeValues = Device.MODEL.getTypeMembers(type);
     Device.MODEL.setItem('MIXER_UNITS_SRC', typeValues[0], {offset: offset});
     Device.MODEL.setItem('MIXER_UNITS_SCALAR', 100, {offset: offset});
+    Device.MODEL.setItem('MIXER_UNITS_APPLY_TRIM', 1, {offset: offset});
     location.hash = Utils.buildURL(['mixer_unit', this.mixerUnitCount]);
   }
 

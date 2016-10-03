@@ -64,17 +64,21 @@ class ModelList {
 
     // Load a basic mixer (car with steering and throttle)
     let mixerUnitSize = newModel.getSchema().MIXER_UNITS.s;
-    newModel.setItem('MIXER_UNITS_SRC', 'ST', {offset: 0 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_DST', 'CH1', {offset: 0 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: 0 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_APPLY_TRIM', '1', {offset: 0 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_SRC', 'TH', {offset: 1 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_DST', 'CH2', {offset: 1 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: 1 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_APPLY_TRIM', '1', {offset: 1 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_SRC', 'AUX', {offset: 2 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_DST', 'CH3', {offset: 2 * mixerUnitSize});
-    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: 1 * mixerUnitSize});
+    let offset = 0;
+    newModel.setItem('MIXER_UNITS_SRC', 'ST', {offset: offset});
+    newModel.setItem('MIXER_UNITS_DST', 'CH1', {offset: offset});
+    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: offset});
+    newModel.setItem('MIXER_UNITS_APPLY_TRIM', 1, {offset: offset});
+    offset += mixerUnitSize;
+    newModel.setItem('MIXER_UNITS_SRC', 'TH', {offset: offset});
+    newModel.setItem('MIXER_UNITS_DST', 'CH2', {offset: offset});
+    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: offset});
+    newModel.setItem('MIXER_UNITS_APPLY_TRIM', 1, {offset: offset});
+    offset += mixerUnitSize;
+    newModel.setItem('MIXER_UNITS_SRC', 'AUX', {offset: offset});
+    newModel.setItem('MIXER_UNITS_DST', 'CH3', {offset: offset});
+    newModel.setItem('MIXER_UNITS_SCALAR', 100, {offset: offset});
+    newModel.setItem('MIXER_UNITS_APPLY_TRIM', 1, {offset: offset});
 
     Device.MODEL = newModel;
     location.hash = Utils.buildURL(['model_details']);

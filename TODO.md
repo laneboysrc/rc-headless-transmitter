@@ -46,6 +46,8 @@
     - Custom REST protocol?
   - Look into Redis
 
+- Base on web components
+
 - How do we get a description of the elements in the configuration?
 
 - Implement passphrase UI

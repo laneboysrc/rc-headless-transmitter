@@ -2,11 +2,18 @@
 
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
+var CurveView = require('./curve_view');
 
 
 class MixerUnit {
   constructor() {
     this.offset = 0;
+
+    this.curveViewSVG = document.querySelector('#app-mixer_unit-curve_view');
+    this.curveView = new CurveView(this.curveViewSVG, true);
+
+    document.querySelector('#app-mixer_unit-offset').addEventListener('input', this._offsetChanged.bind(this));
+    document.querySelector('#app-mixer_unit-scalar').addEventListener('input', this._scalarChanged.bind(this));
   }
 
   //*************************************************************************
@@ -39,6 +46,15 @@ class MixerUnit {
     mdl.setSlider('#app-mixer_unit-offset', 'MIXER_UNITS_OFFSET');
 
 
+    // Set the curve view display to the curve settings
+    this.curveView.type = Device.MODEL.getItem('MIXER_UNITS_CURVE_TYPE', {offset: this.offset});;
+    this.curveView.smoothing = Device.MODEL.getItemNumber('MIXER_UNITS_CURVE_SMOOTHING', {offset: this.offset});
+    this.curveView.points = Device.MODEL.getItemNumber('MIXER_UNITS_CURVE_POINTS', {offset: this.offset});
+    this._offsetChanged();
+    this._scalarChanged();
+
+    console.log(this.curveView)
+
     Utils.showPage('mixer_unit');
   }
 
@@ -53,6 +69,16 @@ class MixerUnit {
 
     Mixer.deleteMixerUnit(this.index);
     history.back();
+  }
+
+  //*************************************************************************
+  _offsetChanged() {
+    this.curveView.offset = parseInt(document.querySelector('#app-mixer_unit-offset').value);
+  }
+
+  //*************************************************************************
+  _scalarChanged() {
+    this.curveView.scalar = parseInt(document.querySelector('#app-mixer_unit-scalar').value);
   }
 }
 

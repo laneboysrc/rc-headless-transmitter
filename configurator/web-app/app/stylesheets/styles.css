@@ -369,6 +369,6 @@ span.mdl-list__item-primary-content label {
   fill: red;
 }
 
-#app-edit_curve-curve_view {
+#app-edit_curve-curve_view, #app-mixer_unit-curve_view {
   display: block;
 }

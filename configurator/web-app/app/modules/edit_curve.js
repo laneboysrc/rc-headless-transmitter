@@ -2,6 +2,7 @@
 
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
+var CurveView = require('./curve_view');
 
 function getCurvePoints(curveType)
 {
@@ -21,6 +22,9 @@ class EditCurve {
     this.offset = 0;
     this.container = document.querySelector('#app-edit_curve-container');
     this.template = document.querySelector('#app-edit_curve-template').content;
+
+    this.curveViewSVG = document.querySelector('#app-edit_curve-curve_view');
+    this.curveView = new CurveView(this.curveViewSVG);
   }
 
   //*************************************************************************
@@ -49,6 +53,11 @@ class EditCurve {
 
       mdlSlider.setTextContentRaw('.app-edit_curve-template--label', points[i], t);
       mdlSlider.setSlider('input', 'MIXER_UNITS_CURVE_POINTS', t);
+
+
+      t.querySelector('input').addEventListener('input', this.sliderChanged.bind(this));
+
+
       this.container.appendChild(t);
     }
 
@@ -56,7 +65,21 @@ class EditCurve {
     // (as the smoothing applies to 3-point an up only)
     Utils.setVisibility("#app-edit_curve-curve_smoothing__enable", points.length > 2);
 
+    this.curveView.type = type;
+    this.curveView.smoothing = Device.MODEL.getItemNumber('MIXER_UNITS_CURVE_SMOOTHING', {offset: this.offset});
+    this.sliderChanged();
+
     Utils.showPage('edit_curve');
+  }
+
+  //*************************************************************************
+  sliderChanged() {
+    const sliders = this.container.querySelectorAll('.can-delete input[type="range"]');
+
+    let points = [];
+    Array.from(sliders).forEach(s => points.push(parseInt(s.value)));
+
+    this.curveView.points = points;
   }
 
   //*************************************************************************

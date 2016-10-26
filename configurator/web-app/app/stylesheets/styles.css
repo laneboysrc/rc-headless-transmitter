@@ -337,3 +337,38 @@ span.mdl-list__item-primary-content label {
   font-size: 0.75rem;
   vertical-align: bottom;
 }
+
+
+/* Mixer curve display */
+.mixer-curve {
+  stroke-linecap: square;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.mixer-curve--background {
+  fill: black;
+}
+
+.mixer-curve--grid-major {
+  stroke: #fff;
+  stroke-width: 3;
+}
+
+.mixer-curve--grid-minor {
+  stroke: #aaa;
+  stroke-width: 1;
+}
+
+.mixer-curve--curve {
+  stroke: #f8fc00;
+  stroke-width: 3;
+}
+
+.mixer-curve--position {
+  fill: red;
+}
+
+#app-edit_curve-curve_view {
+  display: block;
+}

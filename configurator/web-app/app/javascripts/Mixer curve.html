@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Mixer curve</title>
+  <meta charset="utf-8">
+
+  <style>
+    .mixer-curve {
+      stroke-linecap: square;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .mixer-curve--background {
+      fill: black;
+    }
+
+    .mixer-curve--grid-major {
+      stroke: #fff;
+      stroke-width: 3;
+    }
+
+    .mixer-curve--grid-minor {
+      stroke: #aaa;
+      stroke-width: 1;
+    }
+
+    .mixer-curve--curve {
+      stroke: #f8fc00;
+      stroke-width: 3;
+    }
+
+    .mixer-curve--curve2 {
+      stroke: #ff0000;
+      stroke-width: 3;
+    }
+
+    input[type="range"] {
+      display: block;
+      width: 100%;
+      margin: 10px auto;
+    }
+
+    body > div {
+      display: inline-block;
+      width: 50%;
+    }
+
+    body > svg {
+      vertical-align: top;
+      margin-right: 30px;
+    }
+
+
+  </style>
+
+</head>
+<body>
+
+  <svg class="mixer-curve" width="200" height="250" viewBox="0 0 200 250">
+    <rect width="100%" height="100%" class="mixer-curve--background"></rect>
+
+    <line x1="0" x2="100%" y1="25" y2="25" class="mixer-curve--grid-minor"></line>
+    <line x1="0" x2="100%" y1="50" y2="50" class="mixer-curve--grid-minor"></line>
+    <line x1="0" x2="100%" y1="75" y2="75" class="mixer-curve--grid-minor"></line>
+    <line x1="0" x2="100%" y1="100" y2="100" class="mixer-curve--grid-minor"></line>
+    <line x1="0" x2="100%" y1="125" y2="125" class="mixer-curve--grid-major"></line>
+    <line x1="0" x2="100%" y1="150" y2="150" class="mixer-curve--grid-minor"></line>
+    <line x1="0" x2="100%" y1="175" y2="175" class="mixer-curve--grid-minor"></line>
+    <line x1="0" x2="100%" y1="200" y2="200" class="mixer-curve--grid-minor"></line>
+    <line x1="0" x2="100%" y1="225" y2="225" class="mixer-curve--grid-minor"></line>
+
+    <line x1="25" x2="25" y1="0%" y2="100%" class="mixer-curve--grid-minor"></line>
+    <line x1="50" x2="50" y1="0%" y2="100%" class="mixer-curve--grid-minor"></line>
+    <line x1="75" x2="75" y1="0%" y2="100%" class="mixer-curve--grid-minor"></line>
+    <line x1="100" x2="100" y1="0%" y2="100%" class="mixer-curve--grid-major"></line>
+    <line x1="125" x2="125" y1="0%" y2="100%" class="mixer-curve--grid-minor"></line>
+    <line x1="150" x2="150" y1="0%" y2="100%" class="mixer-curve--grid-minor"></line>
+    <line x1="175" x2="175" y1="0%" y2="100%" class="mixer-curve--grid-minor"></line>
+
+    <path d="M 0 225 L 2 223 L 4 221 L 6 219 L 8 217 L 10 215 L 12 213 L 14 211 L 16 209 L 18 207 L 20 205 L 22 203 L 24 201 L 26 199 L 28 197 L 30 195 L 32 193 L 34 191 L 36 189 L 38 187 L 40 185 L 42 183 L 44 181 L 46 179 L 48 177 L 50 175 L 52 173 L 54 171 L 56 169 L 58 167 L 60 165 L 62 163 L 64 161 L 66 159 L 68 157 L 70 155 L 72 153 L 74 151 L 76 149 L 78 147 L 80 145 L 82 143 L 84 141 L 86 139 L 88 137 L 90 135 L 92 133 L 94 131 L 96 129 L 98 127 L 100 125 L 102 125 L 104 124 L 106 123 L 108 122 L 110 121 L 112 120 L 114 119 L 116 118 L 118 117 L 120 116 L 122 115 L 124 113 L 126 112 L 128 111 L 130 110 L 132 109 L 134 107 L 136 106 L 138 105 L 140 103 L 142 102 L 144 100 L 146 99 L 148 97 L 150 95 L 152 94 L 154 92 L 156 90 L 158 88 L 160 86 L 162 84 L 164 82 L 166 79 L 168 77 L 170 74 L 172 72 L 174 69 L 176 67 L 178 64 L 180 61 L 182 58 L 184 55 L 186 51 L 188 48 L 190 45 L 192 41 L 194 37 L 196 33 L 198 30 L 200 25 " class="mixer-curve--curve"></path>
+    <path d="M 0 225 L 2 223 L 4 221 L 6 219 L 8 217 L 10 215 L 12 213 L 14 211 L 16 209 L 18 207 L 20 205 L 22 203 L 24 201 L 26 199 L 28 197 L 30 195 L 32 193 L 34 191 L 36 189 L 38 187 L 40 185 L 42 183 L 44 181 L 46 179 L 48 177 L 50 175 L 52 173 L 54 171 L 56 169 L 58 167 L 60 165 L 62 163 L 64 161 L 66 159 L 68 157 L 70 155 L 72 153 L 74 151 L 76 149 L 78 147 L 80 145 L 82 143 L 84 141 L 86 139 L 88 137 L 90 135 L 92 133 L 94 131 L 96 129 L 98 127 L 100 125 L 102 125 L 104 125 L 106 124 L 108 123 L 110 123 L 112 122 L 114 121 L 116 119 L 118 118 L 120 117 L 122 116 L 124 114 L 126 113 L 128 111 L 130 110 L 132 108 L 134 106 L 136 105 L 138 103 L 140 101 L 142 99 L 144 97 L 146 95 L 148 93 L 150 91 L 152 89 L 154 87 L 156 84 L 158 82 L 160 80 L 162 77 L 164 75 L 166 73 L 168 70 L 170 68 L 172 65 L 174 62 L 176 60 L 178 57 L 180 54 L 182 52 L 184 49 L 186 46 L 188 43 L 190 40 L 192 37 L 194 35 L 196 32 L 198 29 L 200 25 " class="mixer-curve--curve2"></path>
+  </svg>
+
+  <div>
+    <select id="type">
+      <option value="none">Linear</option>
+      <option value="fixed">Fixed</option>
+      <option value="expo" selected="selected">Expo</option>
+      <option value="min-max">Min/Max</option>
+      <option value="zero-max">0/Max</option>
+      <option value="gt-zero">&gt; 0</option>
+      <option value="lt-zero">&lt; 0</option>
+      <option value="absval">Absolute</option>
+      <option value="deadband">Deadband</option>
+      <option value="3point">3-point</option>
+      <option value="5point">5-point</option>
+      <option value="7point">7-point</option>
+      <option value="9point">9-point</option>
+      <option value="11point">11-point</option>
+      <option value="13point">13-point</option>
+    </select>
+
+    <input id="smoothing" type="checkbox"><label for="smoothing">Smoothing</label>
+
+    <input min="-100" max="100" value="53" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+    <input min="-100" max="100" value="0" class="points" type="range">
+  </div>
+
+  <script>
+    const CHANNEL_100_PERCENT = 10000;
+    const CHANNEL_CENTER = 0;
+    const CHANNEL_N100_PERCENT = -10000;
+    const MMULT = 1024;
+
+
+    const path = document.querySelector('.mixer-curve--curve');
+    const path2 = document.querySelector('.mixer-curve--curve2');
+    const sliders = document.querySelectorAll('.points');
+    const type = document.querySelector('#type');
+    const smoothing = document.querySelector('#smoothing');
+
+    const CURVE_FIXED = "fixed";
+    const CURVE_MIN_MAX = "min-max";
+    const CURVE_ZERO_MAX = "zero-max";
+    const CURVE_GT_ZERO = "gt-zero";
+    const CURVE_LT_ZERO = "lt-zero";
+    const CURVE_ABSVAL = "absval";
+    const CURVE_EXPO = "expo";
+    const CURVE_DEADBAND = "deadband";
+    const CURVE_3POINT = "3point";
+    const CURVE_5POINT = "5point";
+    const CURVE_7POINT = "7point";
+    const CURVE_9POINT = "9point";
+    const CURVE_11POINT = "11point";
+    const CURVE_13POINT = "13point";
+    const CURVE_NONE = "none";
+
+
+
+
+
+    // ****************************************************************************
+    function channel2percent(x) {
+      return Math.floor(x / 100);
+    }
+
+
+    // ****************************************************************************
+    function percent2channel(x) {
+      return  Math.floor(x * 100);
+    }
+
+    // ****************************************************************************
+    function CURVE_get_number_of_points(curve)
+    {
+        switch (curve.type) {
+            case CURVE_FIXED:
+            case CURVE_MIN_MAX:
+            case CURVE_ZERO_MAX:
+            case CURVE_GT_ZERO:
+            case CURVE_LT_ZERO:
+            case CURVE_ABSVAL:
+                return 1;
+
+            case CURVE_EXPO:
+            case CURVE_DEADBAND:
+                 return 2;
+
+            case CURVE_3POINT:
+                 return 3;
+
+            case CURVE_5POINT:
+                 return 5;
+
+            case CURVE_7POINT:
+                 return 7;
+
+            case CURVE_9POINT:
+                 return 9;
+
+            case CURVE_11POINT:
+                 return 11;
+
+            case CURVE_13POINT:
+                 return 13;
+
+            case CURVE_NONE:
+            default:
+                 return 0;
+        }
+    }
+
+
+    // ****************************************************************************
+    // This came from er9x/th9x
+    // expo-function:
+    // ---------------
+    // kmplot
+    // f(x,k)=exp(ln(x)*k/10) ;P[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+    // f(x,k)=x*x*x*k/10 + x*(1-k/10) ;P[0,1,2,3,4,5,6,7,8,9,10]
+    // f(x,k)=x*x*k/10 + x*(1-k/10) ;P[0,1,2,3,4,5,6,7,8,9,10]
+    // f(x,k)=1+(x-1)*(x-1)*(x-1)*k/10 + (x-1)*(1-k/10) ;P[0,1,2,3,4,5,6,7,8,9,10]
+    //
+    function expou(x, k, flag) {
+      // k*x*x*x + (1-k)*x
+      // 0 <= k <= 100
+      const KMAX = 100;
+
+      let val = (x * x / CHANNEL_100_PERCENT * x / CHANNEL_100_PERCENT * k + (KMAX - k) * x + KMAX / 2) / KMAX;
+
+      let w = Math.exp(Math.log(x / CHANNEL_100_PERCENT) * (1 + k/KMAX));
+      w *= CHANNEL_100_PERCENT;
+
+      // console.log(Math.floor(val), Math.floor(w));
+
+      if (flag)
+        return Math.floor(w);
+
+
+      return Math.floor(val);
+    }
+
+
+    // ****************************************************************************
+    function expo(curve, value, flag) {
+      let y;
+      let k;
+      let neg = (value < 0);
+
+      k = neg ? curve.points[1] : curve.points[0];
+      if (k === 0) {
+        return value;
+      }
+
+      if (neg) {
+          value = -value; // absval
+      }
+
+      if (k < 0) {
+          y = CHANNEL_100_PERCENT - expou(CHANNEL_100_PERCENT - value, -k, flag);
+      }
+      else {
+          y = expou(value, k, flag);
+      }
+      return neg ? -y : y;
+    }
+
+
+    // ****************************************************************************
+    function interpolate(curve, value) {
+        const num_points = CURVE_get_number_of_points(curve);
+        const step = 2 * CHANNEL_100_PERCENT / (num_points - 1);
+
+        for (let i = 0; i < num_points - 1; i++) {
+            const x = CHANNEL_N100_PERCENT + i * step;
+            const pos1 = percent2channel(x / 100);
+            const pos2 = percent2channel((x + step) / 100);
+            if (value >= pos1 && value <= pos2) {
+                const tmp = (value - pos1) * (curve.points[i + 1] - curve.points[i]) / (pos2 - pos1) + curve.points[i];
+                return percent2channel(tmp);
+            }
+        }
+        return percent2channel(curve.points[num_points - 1]);
+    }
+
+    // ****************************************************************************
+    function compute_tangent(curve, num_points, i) {
+        let m;
+        const delta = 2 * 100 / (num_points - 1);
+
+        if (i == 0) {
+            // Linear interpolation between the first two points
+            // Keep 3 decimal-places for m
+            m = (MMULT * (curve.points[i + 1] - curve.points[i])) / delta;
+        }
+        else if (i == num_points - 1) {
+            // Linear interpolation between the last two points
+            // Keep 3 decimal-places for m
+            m = (MMULT * (curve.points[i] - curve.points[i - 1])) / delta;
+        }
+        else {
+            // Apply monotone rules from
+            // http://en.wikipedia.org/wiki/Monotone_cubic_interpolation
+
+            // 1) Compute slopes of secant lines
+            let d0 = (MMULT * (curve.points[i] - curve.points[i - 1])) / delta;
+            let d1 = (MMULT * (curve.points[i + 1] - curve.points[i])) / delta;
+
+            // 2) Compute initial average tangent
+            m = (d0 + d1) / 2;
+
+            // 3) Check for horizontal lines
+            if (d0 == 0 || d1 == 0 || (d0 > 0 && d1 < 0) || (d0 < 0 && d1 > 0)) {
+                m = 0;
+            }
+            else {
+                if (MMULT * m / d0 >  3 * MMULT) {
+                    m = 3 * d0;
+                }
+                else if (MMULT * m / d1 > 3 * MMULT) {
+                    m = 3 * d1;
+                }
+            }
+        }
+
+        return m;
+    }
+
+    // ****************************************************************************
+    // The following is a hermite cubic spline.
+    // The basis functions can be found here:
+    // http://en.wikipedia.org/wiki/Cubic_Hermite_spline
+    // The tangents are computed via the 'cubic monotone' rules (allowing for local-maxima)
+    //
+    function hermite_spline(curve, value)
+    {
+        const num_points = CURVE_get_number_of_points(curve);
+        const step = percent2channel(2 * 100) / (num_points - 1) ;
+
+        for (let i = 0; i < num_points -1; i++) {
+            const x = CHANNEL_N100_PERCENT + i * step;
+            let p0x = x;
+            let p3x;
+
+            //If there are rounding errors, we need to deal with them here
+            if (i == num_points - 2) {
+                p3x = CHANNEL_100_PERCENT;
+            }
+            else {
+                p3x = x + step;
+            }
+
+            if (value >= p0x  &&  value <= p3x) {
+                let y;
+
+                const p0y = percent2channel(curve.points[i]);
+                const p3y = percent2channel(curve.points[i+1]);
+                const m0 = compute_tangent(curve, num_points, i);
+                const m3 = compute_tangent(curve, num_points, i+1);
+                const h = p3x - p0x;
+                const t = (MMULT * (value - p0x)) / h;
+                const t2 = t * t / MMULT;
+                const t3 = t2 * t / MMULT;
+                const h00 = 2*t3 - 3*t2 + MMULT;
+                const h10 = t3 - 2*t2 + t;
+                const h01 = -2*t3 + 3*t2;
+                const h11 = t3 - t2;
+                y = p0y * h00 + h * (m0 * h10 / MMULT) + p3y * h01 + h * (m3 * h11 / MMULT);
+                y /= MMULT;
+                return y;
+            }
+        }
+        return 0;
+    }
+
+    // ****************************************************************************
+    function gt_zero(curve, value) {
+        let divisor;
+
+        divisor = CHANNEL_100_PERCENT - percent2channel(curve.points[0]);
+        if (divisor <= 0) {
+            return 0;
+        }
+
+        if (value < percent2channel(curve.points[0])) {
+           return 0;
+        }
+
+        return CHANNEL_100_PERCENT * (value - percent2channel(curve.points[0])) / divisor;
+    }
+
+
+    // ****************************************************************************
+    function lt_zero(curve, value) {
+        let divisor;
+
+        divisor = (CHANNEL_N100_PERCENT - percent2channel(curve.points[0]));
+        if (divisor >= 0) {
+            return 0;
+        }
+
+        if (value > percent2channel(curve.points[0])) {
+           return 0;
+        }
+        return CHANNEL_N100_PERCENT * (value - percent2channel(curve.points[0])) / divisor;
+    }
+
+
+    // ****************************************************************************
+    function deadband(curve, value) {
+        temp_curve = {};
+        temp_curve.points = [0];
+
+        if (value < 0) {
+            temp_curve.points[0] = curve.points[0];
+            return lt_zero(temp_curve, value);
+        }
+        else {
+            temp_curve.points[0] = curve.points[1];
+            return gt_zero(temp_curve, value);
+        }
+    }
+
+
+    // ****************************************************************************
+    function absval(curve, value) {
+        let divisor;
+
+        if (value < percent2channel(curve.points[0])) {
+           divisor = (percent2channel(-100) - percent2channel(curve.points[0]));
+           if (divisor >= 0) {
+               return 0;
+           }
+           return percent2channel(100) * (value - percent2channel(curve.points[0])) / divisor;
+        }
+        else {
+            divisor = (percent2channel(100) - percent2channel(curve.points[0]));
+            if (divisor <= 0) {
+                return 0;
+            }
+            return percent2channel(100) * (value - percent2channel(curve.points[0])) / divisor;
+        }
+    }
+
+    // ****************************************************************************
+    function min_max(curve, value) {
+        if (value < percent2channel(curve.points[0])) {
+            return CHANNEL_N100_PERCENT;
+        }
+        else {
+            return CHANNEL_100_PERCENT;
+        }
+    }
+
+
+    // ****************************************************************************
+    function zero_max(curve, value) {
+        if (value < percent2channel(curve.points[0])) {
+            return 0;
+        }
+        else {
+            return CHANNEL_100_PERCENT;
+        }
+    }
+
+
+    // ****************************************************************************
+    function curveFunction(curve, value, flag) {
+
+      switch (curve.type) {
+        case CURVE_NONE:
+          return value;
+
+        case CURVE_EXPO:
+          return expo(curve, value, flag);
+
+        case CURVE_3POINT:
+        case CURVE_5POINT:
+        case CURVE_7POINT:
+        case CURVE_9POINT:
+        case CURVE_11POINT:
+        case CURVE_13POINT:
+          if (curve.smoothing) {
+            return hermite_spline(curve, value);
+          }
+          return interpolate(curve, value);
+
+        case CURVE_FIXED:
+          return percent2channel(curve.points[0]);
+
+        case CURVE_MIN_MAX:
+            return min_max(curve, value);
+
+        case CURVE_ZERO_MAX:
+            return zero_max(curve, value);
+
+        case CURVE_GT_ZERO:
+            return gt_zero(curve, value);
+
+        case CURVE_LT_ZERO:
+            return lt_zero(curve, value);
+
+        case CURVE_ABSVAL:
+            return absval(curve, value);
+
+        case CURVE_DEADBAND:
+            return deadband(curve, value);
+
+        case CURVE_MIN_MAX:
+        case CURVE_ZERO_MAX:
+        case CURVE_GT_ZERO:
+        case CURVE_LT_ZERO:
+        case CURVE_ABSVAL:
+        case CURVE_DEADBAND:
+
+
+        default:
+          return value;
+      }
+    }
+
+
+
+    // ****************************************************************************
+    function showCurve(curve) {
+      let path_d = "";
+      let command = "M";
+      for (let v = -100; v <= 100; v += 2) {
+        const y = 125 - channel2percent(curveFunction(curve, percent2channel(v)));
+        const x = 100 + v;
+
+        path_d += `${command} ${x} ${y} `;
+        command = "L";
+      }
+
+      path.setAttribute("d", path_d);
+
+
+      path_d = "";
+      command = "M";
+      if (curve.type == "expo") {
+        for (let v = -100; v <= 100; v += 2) {
+          const y = 125 - channel2percent(curveFunction(curve, percent2channel(v), true));
+          const x = 100 + v;
+
+          path_d += `${command} ${x} ${y} `;
+          command = "L";
+        }
+      }
+      path2.setAttribute("d", path_d);
+    }
+
+
+    // ****************************************************************************
+    function onSliderChanged() {
+      let curve = {};
+      curve.smoothing = smoothing.checked;
+      curve.type = type.value;
+      curve.points = [];
+
+      for (s of sliders) {
+        curve.points.push(parseInt(s.value));
+      }
+
+      showCurve(curve);
+    }
+
+
+    // ****************************************************************************
+    function init() {
+      for (s of sliders) {
+        s.addEventListener("input", onSliderChanged);
+      }
+      type.addEventListener("change", onSliderChanged);
+      smoothing.addEventListener("change", onSliderChanged);
+      onSliderChanged();
+    }
+
+    init();
+
+  </script>
+
+
+</body></html>

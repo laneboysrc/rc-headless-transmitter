@@ -351,7 +351,7 @@ span.mdl-list__item-primary-content label {
 }
 
 .mixer-curve--grid-major {
-  stroke: #fff;
+  stroke: #ccc;
   stroke-width: 3;
 }
 
@@ -361,12 +361,12 @@ span.mdl-list__item-primary-content label {
 }
 
 .mixer-curve--curve {
-  stroke: #f8fc00;
+  stroke: rgb(255,87,34);;
   stroke-width: 3;
 }
 
 .mixer-curve--position {
-  fill: red;
+  fill: rgb(68,138,255);
 }
 
 #app-edit_curve-curve_view, #app-mixer_unit-curve_view {

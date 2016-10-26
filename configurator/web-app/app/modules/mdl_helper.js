@@ -1,6 +1,8 @@
 'use strict';
 
 var Utils = require('./utils');
+var dialogPolyfill = require('dialog-polyfill');
+
 
 class MDLHelper {
   constructor(devName, options) {
@@ -31,7 +33,20 @@ class MDLHelper {
     // function, so we need to bind this object to it.
     this.onChangeHandler = this._onchange.bind(this);
     this.onInputHandler = this._oninput.bind(this);
+
+    this.sliderDialog = document.querySelector('#app-slider-fine-adjustment_dialog');
+    this.sliderDialogElements = {};
+    this.sliderDialogElements.done = this.sliderDialog.querySelector('.mdl-dialog__actions button');
+    this.sliderDialogElements.number = this.sliderDialog.querySelector('.mdl-dialog__content input');
+    this.sliderDialogElements.decrement = this.sliderDialog.querySelector('.mdl-dialog__content button');
+    this.sliderDialogElements.increment = this.sliderDialog.querySelector('.mdl-dialog__content button:nth-child(3)');
+
+    if (! this.sliderDialog.showModal) {
+      dialogPolyfill.registerDialog(this.sliderDialog);
+    }
+
   }
+
 
   createSpan(text, classes) {
     let span = document.createElement('span');
@@ -109,6 +124,17 @@ class MDLHelper {
     element.MaterialSlider.change(value);
     this.setChangeHandler(element, item);
     element.oninput = this.onInputHandler;
+
+    // If the slider is in a table row, then we set the double-click handler
+    // of the row to trigger fine-selection and numerical entry of the slider
+    if (element.parentNode  &&
+        element.parentNode.parentNode  &&
+        element.parentNode.parentNode.parentNode) {
+      let left = element.parentNode.parentNode.parentNode;
+      if (left.tagName === 'TR') {
+        left.ondblclick = this._ondblclick.bind(this, element);
+      }
+    }
   }
 
   setTextfield(selector, item, root) {
@@ -224,6 +250,71 @@ class MDLHelper {
       this.timer = setTimeout(timerExpired, 100);
     }
   }
+
+  _ondblclick(element, event) {
+    Utils.cancelBubble(event);
+
+    this.sliderDialogElements.slider = element;
+    this.sliderDialogElements.number.value = element.value;
+    this.sliderDialogElements.number.onchange = this._onNumberChange.bind(this);
+    this.sliderDialogElements.decrement.onclick = this._onDecrement.bind(this);
+    this.sliderDialogElements.increment.onclick = this._onIncrement.bind(this);
+    this.sliderDialogElements.done.onclick = this._sliderDialogOk.bind(this);
+
+    this.sliderDialog.showModal();
+  }
+
+  _onDecrement() {
+    const e = this.sliderDialogElements;
+    e.slider.MaterialSlider.change(parseInt(e.slider.value) - 1);
+    e.number.value = e.slider.value;
+
+    var newEvent = new Event('input', {
+      target: e.slider
+    });
+
+    e.slider.dispatchEvent(newEvent);
+  }
+
+  _onIncrement() {
+    const e = this.sliderDialogElements;
+    e.slider.MaterialSlider.change(parseInt(e.slider.value) + 1);
+    e.number.value = e.slider.value;
+
+    var newEvent = new Event('input', {
+      target: e.slider
+    });
+
+    e.slider.dispatchEvent(newEvent);
+  }
+
+  _onNumberChange() {
+    const e = this.sliderDialogElements;
+    e.slider.MaterialSlider.change(parseInt(e.number.value));
+    e.number.value = e.slider.value;
+
+    // this._onchange({"target": e.slider});
+
+    var newEvent = new Event('input', {
+      target: e.slider
+    });
+
+    e.slider.dispatchEvent(newEvent);
+  }
+
+  _sliderDialogOk(event) {
+    Utils.cancelBubble(event);
+    this.sliderDialog.close();
+
+    const e = this.sliderDialogElements;
+
+    var newEvent = new Event('change', {
+      target: e.slider
+    });
+
+    e.slider.dispatchEvent(newEvent);
+  }
+
 
 }
 module.exports = MDLHelper;

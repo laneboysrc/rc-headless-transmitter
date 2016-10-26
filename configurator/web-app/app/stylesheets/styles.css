@@ -372,3 +372,26 @@ span.mdl-list__item-primary-content label {
 #app-edit_curve-curve_view, #app-mixer_unit-curve_view {
   display: block;
 }
+
+/* Slider fine adjustment dialog */
+#app-slider-fine-adjustment_dialog .mdl-dialog__content {
+  text-align: center;
+}
+
+#app-slider-fine-adjustment_dialog .mdl-dialog__content button {
+  display: inline-block;
+}
+
+#app-slider-fine-adjustment_dialog .mdl-dialog__content input {
+  text-align: center;
+}
+
+#app-slider-fine-adjustment_dialog .mdl-dialog__content .mdl-textfield {
+  width: 50px;
+  padding: 0;
+  margin: 0 auto;
+}
+
+#app-slider-fine-adjustment_dialog .mdl-dialog__actions {
+  margin-top: 10px;
+}

@@ -53,8 +53,6 @@ class MixerUnit {
     this._offsetChanged();
     this._scalarChanged();
 
-    console.log(this.curveView)
-
     Utils.showPage('mixer_unit');
   }
 

@@ -3,11 +3,11 @@ BUILD_DIR = _build
 
 SINGLE_THREAD = 1
 
-BOARD_TAG = nodemcuv2
-FLASH_DEF = 4M1M
-UPLOAD_PORT = /dev/ttyUSB3
-UPLOAD_SPEED = 460800
-UPLOAD_RESET = nodemcu
+BOARD_TAG ?= nodemcuv2
+FLASH_DEF ?= 4M1M
+UPLOAD_PORT ?= /dev/ttyUSB3
+UPLOAD_SPEED ?= 460800
+UPLOAD_RESET ?= nodemcu
 
 # Enable logging
 CPP_EXTRA = -DDEBUG

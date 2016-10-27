@@ -257,11 +257,18 @@ class MDLHelper {
     this.sliderDialogElements.slider = element;
     this.sliderDialogElements.number.value = element.value;
     this.sliderDialogElements.number.onchange = this._onNumberChange.bind(this);
+    this.sliderDialogElements.number.onkeypress = this._onKeypress.bind(this);
     this.sliderDialogElements.decrement.onclick = this._onDecrement.bind(this);
     this.sliderDialogElements.increment.onclick = this._onIncrement.bind(this);
     this.sliderDialogElements.done.onclick = this._sliderDialogOk.bind(this);
 
     this.sliderDialog.showModal();
+  }
+
+  _onKeypress(event) {
+    if (event.key === "Enter") {
+      this._sliderDialogOk(event);
+    }
   }
 
   _onDecrement() {

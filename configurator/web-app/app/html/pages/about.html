@@ -94,8 +94,9 @@
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__actions mdl-card--border">
           <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="About.backup(event);">Backup database</button>
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="document.querySelector('#about-restore__input').click();">Restore database</button>
+            <input type="file" id="about-restore__input" onchange="About.restore(this)" style="display: none">
           <div id="about-restore">
-            <label for="about-restore__input">Restore database:</label> <input type="file" id="about-restore__input" onchange="About.restore(this)">
           </div>
         </div>
       </div>

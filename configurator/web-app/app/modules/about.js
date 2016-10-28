@@ -39,6 +39,50 @@ class About {
 
     Database.listEntries(collect);
   }
+
+  //*************************************************************************
+  restore(input) {
+    if (input.files.length < 1) {
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function (e) {
+        let data = JSON.parse(e.target.result);
+        data.forEach(entry => {
+            if ('configVersion' in entry  &&
+                'schemaName' in entry  &&
+                'data' in entry  &&
+                'lastChanged' in entry  &&
+                'uuid' in entry ) {
+
+              Database.getEntry(entry.uuid, existingEntry => {
+                if (existingEntry  &&  existingEntry.lastChanged > entry.lastChanged) {
+                  console.log(`Existing entry for ${entry.uuid} is newer, not overwriting`);
+                }
+                else {
+                  console.log(`Adding ${entry.uuid} to database`);
+
+                  // Convert the "object" into a Uint8Array
+                  let temp = [];
+                  let i = 0;
+                  while (entry.data.hasOwnProperty(i)) {
+                    temp.push(entry.data[i]);
+                    ++i;
+                  }
+                  entry.data = Uint8Array.from(temp);
+
+                  Database.setEntry(entry);
+                }
+              });
+
+            }
+        });
+    };
+
+    reader.readAsText(input.files[0]);
+  }
 }
 
 window['About'] = new About();

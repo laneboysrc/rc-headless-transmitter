@@ -17,6 +17,9 @@ const char *ssid = "LANE Boys RC";
 const char *password = "12345678";
 const int channel = 13;
 
+const IPAddress local_ip(192,168,4,1);
+const IPAddress netmask(255,255,255,0);
+
 const char *domain = "configurator";
 
 
@@ -173,8 +176,7 @@ void setup() {
 
     WiFi.mode(WIFI_AP);
     WiFi.softAP(ssid, password, channel);
-    // WiFi.softAP(ssid, password, channel, hidden);
-    // WiFi.softAPConfig(local_ip, gateway, subnet);
+    WiFi.softAPConfig(local_ip, local_ip, netmask);
 
     IPAddress apIP = WiFi.softAPIP();
     os_printf("\nAP IP address: %s\n", IPAddress2String(apIP).c_str());

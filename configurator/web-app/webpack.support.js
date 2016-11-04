@@ -93,7 +93,7 @@ exports.setupImages = function (paths, exclude) {
       loaders: [
         {
           test: /\.(svg|png|jpg)$/,
-          loaders: ['file'],
+          loader: 'file?name=[name].[ext]',
           include: paths,
           exclude: exclude
         }

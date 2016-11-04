@@ -69,7 +69,7 @@ const common = {
       template:  path.join(PATHS.app, 'html', 'index.html')
     }),
     new swprecachePlugin({
-      cacheId: 'configurator-v1',
+      cacheId: 'configurator',
       filename: 'service-worker.js',
       maximumFileSizeToCacheInBytes: 4194304
     })
@@ -88,8 +88,10 @@ switch(process.env.npm_lifecycle_event) {
       parts.clean(PATHS.build),
       parts.minify(),
       parts.extractCSS(PATHS.app),
-      parts.embedImages(PATHS.app, specialImages),
-      parts.embedFonts(PATHS.app)
+      parts.setupImages(PATHS.app),
+      parts.setupFonts(PATHS.app)
+      // parts.embedImages(PATHS.app, specialImages),
+      // parts.embedFonts(PATHS.app)
     );
     break;
 

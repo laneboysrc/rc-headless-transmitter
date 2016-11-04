@@ -94,9 +94,7 @@
 - Off-line mode
   - Use github.io to distribute the app
     - Move _build to /docs, add README to /docs
-  - Clean up caching strategy e.g. for manifest
-    - Make manifest related files in a separate directory
-    - Look at the Polymer project starter-kit as a recent manifest reference
+  - Look at the Polymer project starter-kit as a recent manifest reference
   - Remove the webpage and captive DNS from the configurator, just do the Websocket
   - Change connecting screen to indicate when we found the configurator, and prompt user
 

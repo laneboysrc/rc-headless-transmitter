@@ -71,6 +71,11 @@ const common = {
     new swprecachePlugin({
       cacheId: 'configurator',
       filename: 'service-worker.js',
+      staticFileGlobsIgnorePatterns: [
+        specialImages,
+        /\Wbrowserconfig\.xml$/,
+        /\Wmanifest\.json$/
+      ],
       maximumFileSizeToCacheInBytes: 4194304
     })
   ],

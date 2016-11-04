@@ -4,7 +4,7 @@ This project implements a 2.4 GHz RC transmitter using the NRF24L01+ wireless mo
 
 The term *headless* comes from the IT industry, where a headless system is one that does not provide a user interface itself, but is rather configured remotely. Within this project, *headless* means that the transmitter does not have a display or buttons for configuration. It relies on remote configuration through a web-browser running on a Smartphone, Tablet or computer.
 
-![transmitter, configurator and web-app](doc/transmitter-configurator-phone.jpg)
+![transmitter, configurator and web-app](documents/transmitter-configurator-phone.jpg)
 
 The motivation for this project was to upgrade old AM/FM RC transmitter hardware, and to turn a cheap RC simulator into a fully operational transmitter that supports multiple models.
 
@@ -39,7 +39,7 @@ When sourcing the modules from China, a transmitter can be modified for less tha
 
 Please consult the [INSTALL.md](INSTALL.md) file for instructions of how to set up your development environment.
 
-The [doc/](doc) folder contains various documents explaing details for the architecture.
+The [documents/](documents) folder contains various documents explaing details for the architecture.
 
 You can find schematics for the *headless transmitters* hardware in the [electronics/transmitter/](electronics/transmitter) folder. Likewise, the *configurator* schematics are in [electronics/esp8266-nrf51-configurato/r](electronics/esp8266-nrf51-configurator). Bill of Material (BOM) files are included.
 

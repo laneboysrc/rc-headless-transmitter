@@ -9,6 +9,9 @@ class WebsocketProtocol {
     this.maxPacketsInTransit = 1;
     this.pending = [];
     this.inTransit = [];
+    this.timeout = null;
+
+    this._initPotentialBridges();
   }
 
   //*************************************************************************
@@ -18,7 +21,7 @@ class WebsocketProtocol {
     }
 
     // Connect to the Websocket of the bridge
-    this.ws = new WebSocket('ws://' + location.hostname + ':9706/');
+    this.ws = new WebSocket(this._getNextPotentialBridge());
     this.maxPacketsInTransit = 1;
 
     // Set event handlers
@@ -26,6 +29,8 @@ class WebsocketProtocol {
     this.ws.onmessage = this._onmessage.bind(this);
     this.ws.onclose = this._onclose.bind(this);
     this.ws.onerror = this._onerror.bind(this);
+
+    this.timeout = window.setTimeout(this._ontimeout.bind(this), 1000);
   }
 
   //*************************************************************************
@@ -203,16 +208,35 @@ class WebsocketProtocol {
 
       // Match packets to a specifc response
       if (this._packetsMatch(request, data)) {
-          request.promise.resolve(data);
-          this.inTransit.splice(i, 1);
-          // After the first packet matches, stop looking for further ones
-          return;
+        request.promise.resolve(data);
+        this.inTransit.splice(i, 1);
+        // After the first packet matches, stop looking for further ones
+        return;
       }
     }
   }
 
   //*************************************************************************
+  _cancelTimeout() {
+    if (! this.timeout) {
+      return;
+    }
+
+    window.clearTimeout(this.timeout);
+    this.timeout = null;
+  }
+
+  //*************************************************************************
+  _ontimeout() {
+    console.log('Websocket timeout', this.ws.url);
+    this.timeout = null;
+    this.close();
+  }
+
+  //*************************************************************************
   _onopen() {
+    console.log('Websocket opened', this.ws.url);
+    this._cancelTimeout();
     Utils.sendCustomEvent('ws-open');
   }
 
@@ -226,7 +250,7 @@ class WebsocketProtocol {
 
     let reader = new FileReader();
 
-    reader.addEventListener("loadend", function () {
+    reader.addEventListener('loadend', function () {
       let data = new Uint8Array(reader.result);
 
       // console.log(Utils.byte2string(data[0]))
@@ -243,14 +267,18 @@ class WebsocketProtocol {
 
   //*************************************************************************
   _onerror(e) {
+    console.log('Websocket error', this.ws.url);
+
     // FIXME: what kind of error may we receive here, and how do we communicate
     // that to pending requests?
     Utils.sendCustomEvent('ws-error', e);
-    console.log('Websocket error: ', e)
   }
 
   //*************************************************************************
   _onclose() {
+    console.log('Websocket closed', this.ws.url);
+
+    this._cancelTimeout();
     this.ws = undefined;
 
     // Go through this.pending[] and this.inTransit[] and reject all promises
@@ -268,6 +296,51 @@ class WebsocketProtocol {
     }
 
     Utils.sendCustomEvent('ws-close');
+  }
+
+  //*************************************************************************
+  _initPotentialBridges() {
+
+    // We look for Websocket Bridges on the current host as well as on the
+    // fixed IP address 192.168.4.1 (which is the IP address of the ESP8622
+    // based configurator).
+    //
+    // This way we can either run a bridge on the development computer, or
+    // point our Wi-Fi to the ESP8622 configurator after loading the app.
+    // Note that the app could be pre-cached already on the device, in which
+    // case we can start it even if there is no access to the Internet.
+    //
+    //
+    // Note that we exclude .github.io as potential host, where we will
+    // ultimately host the configurator (it provides HTTPS so we can use
+    // a service worker for caching, giving us full off-line support).
+    //
+    // We do not foresee that we will run a configurator on Github, though
+    // that may change if we e.g. decide to run a simulator so that users
+    // can play around with the system.
+
+    this.bridges = {
+      locations: [],
+      index: 0,
+    };
+
+    let host = window.location.hostname;
+    if (! host.endsWith('.github.io')) {
+      this.bridges.locations.push(`ws://${host}:9706/`);
+    }
+
+    this.bridges.locations.push('ws://192.168.4.1:9706/');
+  }
+
+  //*************************************************************************
+  _getNextPotentialBridge() {
+    let b = this.bridges;
+    let current = b.index % b.locations.length;
+
+    b.index = (current + 1) % b.locations.length;
+
+    console.log(b.locations[current])
+    return b.locations[current];
   }
 }
 

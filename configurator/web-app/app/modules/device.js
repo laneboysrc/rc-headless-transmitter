@@ -190,7 +190,7 @@ class Device {
         // Check if the read data is one of the chunks we are looking
         // for. If yes, store the data at the appropriate offset
         // and remove the chunk from our request list.
-        const index = readChunks.findIndex((element, index, array) => {
+        const index = readChunks.findIndex((element) => {
           return element.o === o  &&  element.c === c;
         });
         if (index >= 0) {

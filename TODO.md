@@ -97,6 +97,7 @@
   - Look at the Polymer project starter-kit as a recent manifest reference
   - Remove the webpage and captive DNS from the configurator, just do the Websocket
   - Change connecting screen to indicate when we found the configurator, and prompt user
+  - Show toast to reload, and when offline has been established
 
 - Update credits
   - eslint, sw-precache

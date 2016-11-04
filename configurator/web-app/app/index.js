@@ -5,6 +5,9 @@ require('./fonts/materialicons.css');
 require('./javascripts/material.min.js');
 window['saveAs'] = require('./javascripts/FileSaver.min.js');
 
+// Pull in the service worker registration script
+require('./javascripts/service-worker-registration.js');
+
 // Pull in our custom stylesheet
 require('./stylesheets/styles.css');
 

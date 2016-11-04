@@ -38,8 +38,6 @@
 
 
 ## Configurator
-- Offline mode
-
 - Database syncing
   - Which protocol?
     - File storage using JSON?
@@ -91,4 +89,17 @@
 - Parse and save manually entered RF address and channels
 
 - LoadDevice should be in Device, not in device_list
+
+- Convert Uint8Array to Array before saving database backup
+
+- Remove Roboto font
+  - Use from web only, or just fall back to system font if not available?
+  - Can we also replace the icon font with SVG? See recent discussion on HN
+
+- Off-line mode
+  - sw-precache based
+  - We need HTTPS, so we should use github.io to distribute the app
+    - This means we need to hard-code the IP address of the configurator
+  - We can then remove the webpage from the configurator itself and just do the Websocket. This will simplify things
+
 

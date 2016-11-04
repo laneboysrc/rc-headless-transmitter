@@ -30,6 +30,8 @@
     "html-webpack-plugin": "^2.22.0",
     "nunjucks-html-loader": "^1.0.0",
     "style-loader": "^0.13.1",
+    "sw-precache": "^4.2.1",
+    "sw-precache-webpack-plugin": "^0.5.1",
     "test-data": "file:../common-modules/test-data",
     "url-loader": "^0.5.7",
     "webpack": "~1.13.1",

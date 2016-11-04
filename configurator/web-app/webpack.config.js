@@ -4,9 +4,11 @@
 
 const path              = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const swprecachePlugin  = require('sw-precache-webpack-plugin');
 const merge             = require('webpack-merge');
 const validate          = require('webpack-validator');
 const parts             = require('./webpack.support');
+
 
 
 const PATHS = {
@@ -61,10 +63,15 @@ const common = {
       filename: 'app.html',
       template: 'html?attrs[]=img:src&attrs[]=link:href!nunjucks-html!' + appHTML
     }),
-    new HtmlWebpackPlugin({  // Also generate a test.html
+    new HtmlWebpackPlugin({  // Also generate an index.html
       filename: 'index.html',
       inject: false,
       template:  path.join(PATHS.app, 'html', 'index.html')
+    }),
+    new swprecachePlugin({
+      cacheId: 'configurator-v1',
+      filename: 'service-worker.js',
+      maximumFileSizeToCacheInBytes: 4194304
     })
   ],
 };

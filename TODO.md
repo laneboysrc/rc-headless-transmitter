@@ -96,5 +96,6 @@
   - We need HTTPS, so we should use github.io to distribute the app
     - This means we need to hard-code the IP address of the configurator
   - We can then remove the webpage, and captive DNS, from the configurator itself and just do the Websocket. This will simplify things
+  - Once implemented, the start screen needs a sensible message in case people stuble upon it without knowing what this project is about
 
 

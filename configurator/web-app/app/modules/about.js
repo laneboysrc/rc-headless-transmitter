@@ -9,7 +9,7 @@ class About {
   }
 
   //*************************************************************************
-  init(params) {
+  init(params) {    // eslint-disable-line no-unused-vars
     Utils.showPage('about');
   }
 
@@ -26,14 +26,20 @@ class About {
 
     function collect(cursor) {
       if (cursor) {
-        entries.push(cursor.value);
+        let entry = cursor.value;
+
+        // Convert the Uint8Array into a regular array to prevent JSON from
+        // storing it as an object, which bloats the JSON
+        entry.data = Array.from(entry.data);
+
+        entries.push(entry);
         cursor.continue();
       }
       else {
         let json = JSON.stringify(entries, null, 2);
 
-        let blob = new Blob([json], {type: "application/json"});
-        window.saveAs.saveAs(blob, "headless-tx-backup.json");
+        let blob = new Blob([json], {type: 'application/json'});
+        window.saveAs.saveAs(blob, 'headless-tx-backup.json');
       }
     }
 
@@ -43,7 +49,7 @@ class About {
   //*************************************************************************
   restore(input) {
     if (input.files.length < 1) {
-        return;
+      return;
     }
 
     const reader = new FileReader();
@@ -69,14 +75,8 @@ class About {
               logEntry.textContent = `Adding ${entry.schemaName} ${entry.uuid} to database`;
               restoreLog.appendChild(logEntry);
 
-              // Convert the "object" into a Uint8Array
-              let temp = [];
-              let i = 0;
-              while (entry.data.hasOwnProperty(i)) {
-                temp.push(entry.data[i]);
-                ++i;
-              }
-              entry.data = Uint8Array.from(temp);
+              // Convert the regular array into an Uint8Array
+              entry.data = Uint8Array.from(entry.data);
 
               Database.setEntry(entry);
             }

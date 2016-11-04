@@ -43,6 +43,15 @@ i.icon--largeicon--large {
   margin-top: -5px;
 }
 
+/* Make the title in the banner on the main page be right-alingned over the image */
+.banner-title {
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 48px 20px;
+  color: rgba(0,0,0,.54);
+}
+
 /* Make the LANE Boys RC logo float left in the About card */
 .logo {
   float: left;

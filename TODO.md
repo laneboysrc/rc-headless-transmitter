@@ -100,3 +100,7 @@
   - Remove the webpage and captive DNS from the configurator, just do the Websocket
   - Start screen needs a sensible message in case people stuble upon it without knowing what this project is about
   - Change connecting screen to indicate when we found the configurator, and prompt user
+
+- Update credits
+  - eslint, sw-precache
+  - Credits on about page

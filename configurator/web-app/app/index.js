@@ -1,6 +1,3 @@
-// Pull in the Roboto font
-require('./fonts/roboto.css');
-
 // Pull in Material Design Lite files
 require('./stylesheets/material.deep_orange-blue.min.css');
 require('./stylesheets/dialog-polyfill.css');

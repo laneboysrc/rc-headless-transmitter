@@ -90,9 +90,7 @@
 
 - LoadDevice should be in Device, not in device_list
 
-- Remove Roboto font
-  - Use from web only, or just fall back to system font if not available?
-  - Can we also replace the icon font with SVG? See recent discussion on HN
+- Can we also replace the icon font with SVG? See recent discussion on HN
 
 - Off-line mode
   - sw-precache based

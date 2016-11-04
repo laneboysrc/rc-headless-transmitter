@@ -75,7 +75,6 @@
 - Need to be able to download transmitter configuration after firmware update
   - Easiest way for now is to build a tool that makes a .c file out of the backup JSON file
   - The backup JSON file should be human readable, right now it is just binary data wrapped in JSON
-  - The Uint8Array is stored as has in the JSON, instead of Array
 
 - User should be able to drag mixer units instead of using arrow keys
   - Use https://rubaxa.github.io/Sortable

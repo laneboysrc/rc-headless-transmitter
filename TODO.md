@@ -87,6 +87,8 @@
 
 - Parse and save manually entered RF address and channels
 
+- Check if all event listeners are attached in constructors rather than page init
+
 - Off-line mode
   - Use github.io to distribute the app
     - Issue: only works if configurator runs on HTTPS!

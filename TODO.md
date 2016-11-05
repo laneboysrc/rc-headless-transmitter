@@ -99,5 +99,3 @@
   - Change connecting screen to indicate when we found the configurator, and prompt user
   - Show toast to reload, and when offline has been established
   - Once everything works with Github, remove the webpage and captive DNS from the configurator, just do the Websocket
-
-- Update credits on about page

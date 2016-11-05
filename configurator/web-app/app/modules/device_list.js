@@ -8,7 +8,8 @@ var DatabaseObject = require('./database_object');
 class DeviceList {
   constructor() {
     this.loading = document.querySelector('#app-device_list-loading');
-    this.noWebsocket = document.querySelector('#app-device_list-loading__no-websocket');
+    this.msgBridge = document.querySelector('#app-device_list-loading__bridge');
+    this.msgScanning = document.querySelector('#app-device_list-loading__scanning');
     this.list = document.querySelector('#app-device_list-list');
     this.container = document.querySelector('#app-device_list-list__container');
     this.template = document.querySelector('#app-device_list-list__template').content;
@@ -23,6 +24,9 @@ class DeviceList {
     this.availableTransmitters = [];
 
     this.onmessageHandler = this._onmessage.bind(this);
+
+    document.addEventListener('dev-bridgeconnected', this._bridgeConnected.bind(this));
+    document.addEventListener('dev-connectionlost', this._connectionLost.bind(this));
   }
 
   //*************************************************************************
@@ -36,7 +40,6 @@ class DeviceList {
       Device.enableCommunication();
     }
 
-    document.addEventListener('dev-connectionlost', this._connectionLost.bind(this));
     Utils.showPage('device_list');
   }
 
@@ -103,7 +106,7 @@ class DeviceList {
       console.log('Connection failed', error);
       // FIXME: We arrive here when either the password was wrong, or some
       // connection error happened, e.g. because the transmitter is no longer
-      // on air. We need to pop-up a dialog where the user can enter another
+      // on air. We need to show a card or dialog where the user can enter another
       // passphrase, or cancel.
       this._resetPage();
     });
@@ -118,9 +121,10 @@ class DeviceList {
     Utils.clearDynamicElements(this.list);
 
     Utils.show(this.loading);
+    Utils.show(this.msgBridge);
+    Utils.hide(this.msgScanning);
     Utils.hide(this.list);
     Utils.hide(this.txLoading);
-    Utils.hide(this.noWebsocket);
   }
 
   //*************************************************************************
@@ -166,6 +170,13 @@ class DeviceList {
     this.showToast = true;
   }
 
+
+  //*************************************************************************
+  _bridgeConnected() {
+    Utils.hide(this.msgBridge);
+    Utils.show(this.msgScanning);
+  }
+
   //*************************************************************************
   _connectionLost() {
     if (Device.MODEL || Device.TX) {
@@ -177,7 +188,6 @@ class DeviceList {
 
     this._showConnectionLostMessage();
     this._resetPage();
-    Utils.show(this.noWebsocket);
   }
 
   //*************************************************************************

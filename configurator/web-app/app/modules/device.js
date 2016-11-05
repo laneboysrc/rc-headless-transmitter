@@ -56,6 +56,7 @@ class Device {
     this.TX_COPY_SUCCESSFUL = 0x43;
     this.WS_MAX_PACKETS_IN_TRANSIT = 0x42;
 
+    document.addEventListener('ws-open', this.onopen.bind(this));
     document.addEventListener('ws-close', this.onclose.bind(this));
     document.addEventListener('ws-message', this.onLiveMessage.bind(this));
   }
@@ -112,7 +113,7 @@ class Device {
         }
       }
 
-      function onclose(event) {
+      function onclose() {
         cleanup();
         reject(new Error('Connection closed'));
       }
@@ -286,10 +287,15 @@ class Device {
         reject(error);
       });
     });
-}
+  }
 
   //*************************************************************************
-  onclose(event, data) {
+  onopen() {
+    Utils.sendCustomEvent('dev-bridgeconnected');
+  }
+
+  //*************************************************************************
+  onclose() {
     // console.log('Device ws: ', event, event.detail);
     this.connected = false;
     this.live = {};

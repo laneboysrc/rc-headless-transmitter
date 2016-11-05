@@ -44,6 +44,7 @@
     - Custom REST protocol?
   - Look into Redis
 
+
 - Base on web components
 
 - How do we get a description of the elements in the configuration?
@@ -83,7 +84,7 @@
 
 - Parse and save manually entered RF address and channels
 
-- Check if all event listeners are attached in constructors rather than page init
+- Can we have only a single toast, triggered via Utils?
 
 - Off-line mode
   - Use github.io to distribute the app

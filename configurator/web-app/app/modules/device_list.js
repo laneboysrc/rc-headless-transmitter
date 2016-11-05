@@ -24,6 +24,7 @@ class DeviceList {
     this.availableTransmitters = [];
 
     this.onmessageHandler = this._onmessage.bind(this);
+    this.onmessageHandlerAttached = false;
 
     document.addEventListener('dev-bridgeconnected', this._bridgeConnected.bind(this));
     document.addEventListener('dev-connectionlost', this._connectionLost.bind(this));
@@ -51,6 +52,7 @@ class DeviceList {
   //*************************************************************************
   edit(index) {
     document.removeEventListener('ws-message', this.onmessageHandler);
+    this.onmessageHandlerAttached = false;
 
     let tx = this.availableTransmitters[index];
     let mdl = new MDLHelper();
@@ -114,7 +116,10 @@ class DeviceList {
 
   //*************************************************************************
   _resetPage() {
-    document.addEventListener('ws-message', this.onmessageHandler);
+    if (!this.onmessageHandlerAttached) {
+      document.addEventListener('ws-message', this.onmessageHandler);
+      this.onmessageHandlerAttached = true;
+    }
 
     // Empty the list of transmitters
     this.availableTransmitters = [];

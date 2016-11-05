@@ -89,8 +89,6 @@
 
 - LoadDevice should be in Device, not in device_list
 
-- Can we also replace the icon font with SVG? See recent discussion on HN
-
 - Off-line mode
   - Use github.io to distribute the app
     - Issue: only works if configurator runs on HTTPS!

@@ -3,7 +3,9 @@ require('./stylesheets/material.deep_orange-blue.min.css');
 require('./stylesheets/dialog-polyfill.css');
 require('./fonts/materialicons.css');
 require('./javascripts/material.min.js');
+
 window['saveAs'] = require('./javascripts/FileSaver.min.js');
+window['strftime'] = require('./javascripts/strftime.js');
 
 // Pull in the service worker registration script
 require('./javascripts/service-worker-registration.js');

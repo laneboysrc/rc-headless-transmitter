@@ -55,6 +55,7 @@ module.exports = {
         "TransmitterList": true,
 
         "componentHandler": true,
+        "strftime": true,
 
         "TEST_CONFIG_DATA": true,
         "CONFIG_VERSIONS": true

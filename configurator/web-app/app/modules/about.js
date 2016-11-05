@@ -39,7 +39,8 @@ class About {
         let json = JSON.stringify(entries, null, 2);
 
         let blob = new Blob([json], {type: 'application/json'});
-        window.saveAs.saveAs(blob, 'headless-tx-backup.json');
+        const now = strftime('%Y%m%dT%H%M');
+        window.saveAs.saveAs(blob, `headless-tx-backup-${now}.json`);
       }
     }
 

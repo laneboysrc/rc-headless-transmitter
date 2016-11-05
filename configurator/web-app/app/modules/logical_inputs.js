@@ -58,7 +58,7 @@ class LogicalInputs {
         }
         Device.TX.setItem('LOGICAL_INPUTS_LABELS', labels, {offset: offset});
 
-        this._populateLogicalInputsList();
+        this._populateLogicalInputsList(true);
         return;
       }
     }
@@ -176,7 +176,7 @@ class LogicalInputs {
   }
 
   //*************************************************************************
-  _populateLogicalInputsList() {
+  _populateLogicalInputsList(scrollToLast) {
     Utils.cancelSnackbar();
 
     let hardwareInputsSize = this.schema.HARDWARE_INPUTS.s;
@@ -325,6 +325,13 @@ class LogicalInputs {
     let showAddItems = (this.logicalInputsCount < this.logicalInputsMaxCount);
     Utils.setVisibility('#app-logical_inputs-add', showAddItems);
     Utils.setVisibility('#app-logical_inputs-menu', showAddItems);
+
+    if (scrollToLast) {
+      const inputList = this.list.querySelectorAll('.can-delete');
+      if (inputList.length > 0) {
+        inputList[inputList.length - 1].scrollIntoView();
+      }
+    }
   }
 
   //*************************************************************************

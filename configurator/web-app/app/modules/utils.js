@@ -322,7 +322,7 @@ export function cancelSnackbar() {
   const snackbar = document.querySelector('#app-toast');
 
   // Hack: we are accessing internal MaterialSnackbar stuff here
-  if (snackbar.MaterialSnackbar.active) {
+  if (snackbar.MaterialSnackbar  &&  snackbar.MaterialSnackbar.active) {
     snackbar.MaterialSnackbar.cleanup_();
   }
 }

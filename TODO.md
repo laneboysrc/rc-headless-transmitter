@@ -61,8 +61,6 @@
 
 - ModelList needs a loading indicator while populating the available models
 
-- LogicalInputs: Scroll to created logical input after performing 'add'
-
 - Make ranges (limits, endpoints) not be able to go past each-other
   - Maybe make a custom element that limits upper and lower?
 

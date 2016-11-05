@@ -313,6 +313,21 @@ export function showToast(message, timeout) {
   });
 }
 
+export function showSnackbar(data) {
+  const snackbar = document.querySelector('#app-toast');
+  snackbar.MaterialSnackbar.showSnackbar(data);
+}
+
+export function cancelSnackbar() {
+  const snackbar = document.querySelector('#app-toast');
+
+  // Hack: we are accessing internal MaterialSnackbar stuff here
+  if (snackbar.MaterialSnackbar.active) {
+    snackbar.MaterialSnackbar.cleanup_();
+  }
+}
+
+
 class PubSub_ {
   constructor () {
     this.topics = {};

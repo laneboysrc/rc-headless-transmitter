@@ -17,13 +17,12 @@ class Mixer {
     this.mixerUnitMaxCount = 0;
 
     this.UNDO = undefined;
-    this.snackbar = document.querySelector('#app-mixer-snackbar');
     this.snackbarMessage = document.querySelector('#app-mixer-snackbar__message').content.textContent;
     this.snackbarActionText = document.querySelector('#app-mixer-snackbar__action_text').content.textContent;
   }
 
   //*************************************************************************
-  init(params) {
+  init() {
     this._populateMixerUnitList();
 
     // Show/hide addMixderUnit card depending on available space
@@ -95,7 +94,7 @@ class Mixer {
       actionHandler: this._undoDeleteMixerUnit.bind(this),
       actionText: this.snackbarActionText
     };
-    this.snackbar.MaterialSnackbar.showSnackbar(data);
+    Utils.showSnackbar(data);
   }
 
   //*************************************************************************
@@ -206,8 +205,7 @@ class Mixer {
     // Put the deleted item back in place
     Device.MODEL.setItem('MIXER_UNITS', this.UNDO.data, {index: index});
 
-    let mdl = new MDLHelper();
-    mdl.cancelSnackbar(this.snackbar);
+    Utils.cancelSnackbar();
 
     location.hash = Utils.buildURL(['mixer_unit', this.UNDO.index]);
     this.UNDO = undefined;

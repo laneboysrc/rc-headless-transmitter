@@ -11,7 +11,6 @@ class TransmitterList {
     this.noTransmitter = document.querySelector('#app-transmitter_list-no_transmitter');
     this.container = document.querySelector('#app-transmitter_list-list__container');
     this.template = document.querySelector('#app-transmitter_list-list__template').content;
-    this.snackbar = document.querySelector('#app-transmitter_list-snackbar');
     this.snackbarMessage = document.querySelector('#app-transmitter_list-snackbar__message').content.textContent;
     this.snackbarActionText = document.querySelector('#app-transmitter_list-snackbar__action_text').content.textContent;
 
@@ -58,7 +57,7 @@ class TransmitterList {
       actionHandler: this._undoDeleteTransmitter.bind(this),
       actionText: this.snackbarActionText
     };
-    this.snackbar.MaterialSnackbar.showSnackbar(data);
+    Utils.showSnackbar(data);
   }
 
   //*************************************************************************
@@ -112,8 +111,7 @@ class TransmitterList {
     Device.TX = Device.UNDO;
     Database.setEntry(Device.TX);
 
-    let mdl = new MDLHelper();
-    mdl.cancelSnackbar(this.snackbar);
+    Utils.cancelSnackbar();
 
     location.hash = Utils.buildURL(['transmitter_details']);
   }

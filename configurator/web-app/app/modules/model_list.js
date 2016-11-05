@@ -13,7 +13,6 @@ class ModelList {
     this.loading = document.querySelector('#app-model_list-loading_model');
     this.name = document.querySelector('#app-model_list-loading_model__name');
     this.progress = document.querySelector('#app-model_list-loading_model__progress');
-    this.snackbar = document.querySelector('#app-model_list-snackbar');
     this.snackbarMessage = document.querySelector('#app-model_list-snackbar__message').content.textContent;
     this.snackbarActionText = document.querySelector('#app-model_list-snackbar__action_text').content.textContent;
 
@@ -162,7 +161,7 @@ class ModelList {
       actionHandler: this._undoDeleteModel.bind(this),
       actionText: this.snackbarActionText
     };
-    this.snackbar.MaterialSnackbar.showSnackbar(data);
+    Utils.showSnackbar(data);
   }
 
   //*************************************************************************
@@ -228,8 +227,7 @@ class ModelList {
     Device.MODEL = Device.UNDO;
     Database.setEntry(Device.MODEL);
 
-    let mdl = new MDLHelper();
-    mdl.cancelSnackbar(this.snackbar);
+    Utils.cancelSnackbar();
 
     location.hash = Utils.buildURL(['model_details']);
   }

@@ -15,13 +15,12 @@ class LogicalInputs {
     this.schema = undefined;
 
     this.UNDO = undefined;
-    this.snackbar = document.querySelector('#app-logical_inputs-snackbar');
     this.snackbarMessage = document.querySelector('#app-logical_inputs-template__message').content.textContent;
     this.snackbarActionText = document.querySelector('#app-logical_inputs-template__action_text').content.textContent;
   }
 
   //*************************************************************************
-  init(params) {
+  init() {
     this.schema = Device.TX.getSchema();
     this._populateLogicalInputsList();
 
@@ -147,7 +146,7 @@ class LogicalInputs {
       actionHandler: this._undoDelete.bind(this),
       actionText: this.snackbarActionText
     };
-    this.snackbar.MaterialSnackbar.showSnackbar(data);
+    Utils.showSnackbar(data);
   }
 
   //*************************************************************************
@@ -178,8 +177,7 @@ class LogicalInputs {
 
   //*************************************************************************
   _populateLogicalInputsList() {
-    let mdl = new MDLHelper();
-    mdl.cancelSnackbar(this.snackbar);
+    Utils.cancelSnackbar();
 
     let hardwareInputsSize = this.schema.HARDWARE_INPUTS.s;
     let logicalInputs = this.schema.LOGICAL_INPUTS;
@@ -330,7 +328,7 @@ class LogicalInputs {
   }
 
   //*************************************************************************
-  _onchange(index, event) {
+  _onchange() {
     this._populateLogicalInputsList();
   }
 

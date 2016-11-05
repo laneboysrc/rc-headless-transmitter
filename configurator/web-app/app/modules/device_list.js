@@ -100,8 +100,11 @@ class DeviceList {
     }).then(() => {
       location.hash = Utils.buildURL(['model_details']);
     }).catch(error => {
-      console.log(error);
-      // FIXME: we should let the user know that something went wrong
+      console.log('Connection failed', error);
+      // FIXME: We arrive here when either the password was wrong, or some
+      // connection error happened, e.g. because the transmitter is no longer
+      // on air. We need to pop-up a dialog where the user can enter another
+      // passphrase, or cancel.
       this._resetPage();
     });
   }

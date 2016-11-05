@@ -1,0 +1,38 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--no-drawer-button mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="Settings.back(event);">
+        <i class="material-icons">arrow_back</i>
+      </button>
+      <div class="mdl-layout-spacer"></div>
+      <span class="mdl-layout-title">Settings</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </header>
+
+  <main class="mdl-layout__content" >
+
+    <!-- Database backup Card -->
+    <section class="section--center mdl-grid">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Backup</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          Backup your transmitter and model datbase regularly.
+          <br>
+          When performing a backup, the data is stored in the download folder of your web
+          browser. To restore data, select a previoulsy saved backup file.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="Settings.backup(event);">Backup</button>
+          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="document.querySelector('#settings-restore__input').click();">Restore</button>
+            <input type="file" id="settings-restore__input" onchange="Settings.restore(this)" style="display: none">
+          <div id="settings-restore">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>

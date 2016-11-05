@@ -24,6 +24,7 @@ require('./rf_protocol');
 require('./select_icon');
 require('./select_multiple');
 require('./select_single');
+require('./settings');
 require('./transmitter_details');
 require('./transmitter_list');
 

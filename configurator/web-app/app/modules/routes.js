@@ -28,6 +28,7 @@ var routes = {
     '#/transmitter_details/m/:model/t/:tx': TransmitterDetails,
     '#/transmitter_details/t/:tx': TransmitterDetails,
     '#/transmitter_list': TransmitterList,
+    '#/settings': Settings,
 
     // We need two entries to be able to match the four combinations of
     // uuid availability (none, model, tx, model+tx)

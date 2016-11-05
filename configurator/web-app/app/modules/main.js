@@ -32,6 +32,13 @@ class Main {
   }
 
   //*************************************************************************
+  settings(event) {
+    Utils.cancelBubble(event);
+    location.hash = Utils.buildURL(['settings']);
+    this._closeDrawer();
+  }
+
+  //*************************************************************************
   models(event) {
     Utils.cancelBubble(event);
     location.hash = Utils.buildURL(['model_list']);

@@ -202,14 +202,8 @@ class DeviceList {
     }
     this.showToast = false;
 
-    let toast = document.querySelector('#app-device_list-toast');
-    let text = document.querySelector('#app-device_list-toast__message').content.textContent;
-
-    const message = {
-      message: text,
-      timeout: 5000
-    };
-    toast.MaterialSnackbar.showSnackbar(message);
+    const text = document.querySelector('#app-device_list-toast__message').content.textContent;
+    Utils.showToast(text, 5000);
   }
 
   //*************************************************************************

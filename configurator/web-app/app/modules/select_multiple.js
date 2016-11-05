@@ -137,12 +137,8 @@ class SelectMultiple {
 
   //*************************************************************************
   _showToast() {
-    let toast = document.querySelector('#app-select_multiple-toast');
-    const message = {
-      message: `Choose at most ${this.maxNumberOfChoices} items`,
-      timeout: 2000
-    };
-    toast.MaterialSnackbar.showSnackbar(message);
+    const text = `Choose at most ${this.maxNumberOfChoices} items`;
+    Utils.showToast(text, 2000);
   }
 }
 

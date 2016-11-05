@@ -304,6 +304,14 @@ export function randomString(len, charSet) {
   return randomString;
 }
 
+export function showToast(message, timeout) {
+  const toast = document.querySelector('#app-toast');
+
+  toast.MaterialSnackbar.showSnackbar({
+    message: message,
+    timeout: timeout
+  });
+}
 
 class PubSub_ {
   constructor () {

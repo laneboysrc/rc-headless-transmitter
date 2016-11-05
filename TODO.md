@@ -84,8 +84,6 @@
 
 - Parse and save manually entered RF address and channels
 
-- Can we have only a single toast, triggered via Utils?
-
 - Off-line mode
   - Use github.io to distribute the app
     - **Issue: only works if configurator runs on HTTPS!**

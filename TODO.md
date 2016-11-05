@@ -65,10 +65,6 @@
 - Make ranges (limits, endpoints) not be able to go past each-other
   - Maybe make a custom element that limits upper and lower?
 
-- YouTube and blog don't work when connected to the ESP
-  - Build ESP configurator detector by checking if we can retrieve info from a random URL
-  - Set time on ESP from connected browser?!
-
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
 

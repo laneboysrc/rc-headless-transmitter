@@ -26,7 +26,7 @@ class DeviceList {
   }
 
   //*************************************************************************
-  init(params) {
+  init() {
     this._resetPage();
 
     if (Device.connected) {
@@ -130,7 +130,7 @@ class DeviceList {
       battery: data[1 + 8 + 16] + (data[1 + 8 + 16 + 1] * 256)
     };
 
-    let index = this.availableTransmitters.findIndex((element, index, array) => {
+    let index = this.availableTransmitters.findIndex((element) => {
       return element.name === newTx.name;
     });
 
@@ -148,10 +148,15 @@ class DeviceList {
 
     let mdl = new MDLHelper();
     let t = document.importNode(this.template, true);
-    let voltage = parseFloat(newTx.battery/1000).toFixed(2);
+
     t.querySelector('button').setAttribute('data-index', index);
     mdl.setTextContentRaw('.app-device_list-list__template-name', newTx.name, t);
+
+    let voltage = parseFloat(newTx.battery/1000).toFixed(2);
     mdl.setTextContentRaw('.app-device_list-list__template-battery', '' + voltage + 'V', t);
+    if (voltage < 3.56) {
+      t.querySelector('.app-device_list-list__template-battery').classList.add('warning');
+    }
 
     this.container.appendChild(t);
 
@@ -275,7 +280,7 @@ class DeviceList {
   }
 
   //*************************************************************************
-  _connectionLost(event) {
+  _connectionLost() {
     if (Device.MODEL || Device.TX) {
       Device.MODEL = undefined;
       Device.TX = undefined;

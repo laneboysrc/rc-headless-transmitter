@@ -89,8 +89,6 @@
 
 - LoadDevice should be in Device, not in device_list
 
-- Show Tx battery status warning when getting low
-
 - Can we also replace the icon font with SVG? See recent discussion on HN
 
 - Off-line mode

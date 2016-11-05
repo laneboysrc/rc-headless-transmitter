@@ -92,8 +92,8 @@ class TransmitterList {
     let mdl = new MDLHelper('TX');
     for (let i = 0; i < this.transmitters.length; i++) {
       let t = document.importNode(this.template, true);
-      t.querySelector('button.app-tramsmitter_list--edit').setAttribute('data-index', i);
-      mdl.setTextContentRaw('.app-tramsmitter_list-list__template-name', this.transmitters[i].name, t);
+      t.querySelector('button.app-transmitter_list--edit').setAttribute('data-index', i);
+      mdl.setTextContentRaw('.app-transmitter_list-list__template-name', this.transmitters[i].name, t);
 
       this.container.appendChild(t);
     }

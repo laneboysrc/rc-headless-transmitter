@@ -13,7 +13,7 @@ const parts             = require('./webpack.support');
 
 const PATHS = {
   app:    path.join(__dirname, 'app'),
-  build:  path.join(__dirname, '_build'),
+  build:  path.join(__dirname, '../../docs'),
 };
 
 const appHTML = path.join(PATHS.app, 'html', 'app.html');
@@ -95,8 +95,6 @@ switch(process.env.npm_lifecycle_event) {
       parts.extractCSS(PATHS.app),
       parts.setupImages(PATHS.app),
       parts.setupFonts(PATHS.app)
-      // parts.embedImages(PATHS.app, specialImages),
-      // parts.embedFonts(PATHS.app)
     );
     break;
 

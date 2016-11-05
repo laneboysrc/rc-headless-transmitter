@@ -87,8 +87,6 @@
 
 - Parse and save manually entered RF address and channels
 
-- LoadDevice should be in Device, not in device_list
-
 - Off-line mode
   - Use github.io to distribute the app
     - Issue: only works if configurator runs on HTTPS!

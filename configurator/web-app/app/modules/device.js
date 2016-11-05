@@ -618,6 +618,123 @@ class Device {
 
     return null;
   }
+
+
+  //*************************************************************************
+  // load hw.[schemaName].UUID
+  // if hw.[schemaName].UUID is not set
+  //     generate new UUID
+  //     write UUID to hw.[schemaName]
+  //     write LAST_CHANGED to hw.[schemaName]
+  // if hw.[schemaName].UUID is in our database
+  //     load hw.[schemaName].LAST_CHANGED
+  //     if hw.[schemaName].LAST_CHANGED == database[UUID].LAST_CHANGED
+  //         load Device.[schemaName] from database
+  //     else if hw.[schemaName].LAST_CHANGED > database[UUID].LAST_CHANGED
+  //         load hw.[schemaName] into Device.[schemaName]
+  //         update Device.[schemaName] in database
+  //     else
+  //         load Device.[schemaName] from database
+  //         write Device.[schemaName] to hw.[schemaName]
+  // else
+  //     load hw.[schemaName] into Device.[schemaName]
+  //     add Device.[schemaName] to our database
+  load(configVersion, schemaName) {
+    // console.log(`DeviceList._loadDevice configVersion=${configVersion} schemaName=${schemaName}`)
+
+    const schema = CONFIG_VERSIONS[configVersion][schemaName];
+    var newDev = {};
+
+    newDev.configVersion = configVersion;
+    newDev.schemaName = schemaName;
+    newDev.data = new Uint8Array(schema.s);
+
+    return new Promise((resolve) => {
+      this.read(schema.o + schema['UUID'].o, schema['UUID'].c).then(data => {
+        // console.log('UUID bytes', data);
+        newDev.uuid = Utils.uuid2string(data);
+        // console.log('UUID', newDev.uuid);
+        if (!Utils.isValidUUID(newDev.uuid)) {
+          newDev.uuid = Utils.newUUID();
+          return this.write(schema.o + schema['UUID'].o, Utils.string2uuid(newDev.uuid));
+        }
+        return Promise.resolve();
+      }).then(() => {
+        return new Promise((resolve) => {
+          Database.getEntry(newDev.uuid, data => {
+            if (data) {
+              data = new DatabaseObject(data);
+            }
+            resolve(data);
+          });
+        });
+      }).then(dbEntry => {
+        // console.log('dbEntry', dbEntry)
+        if (dbEntry  &&  dbEntry.getItem('UUID') === newDev.uuid)  {
+          // console.log('Device is in the database already');
+          return new Promise((resolve) => {
+            this.read(schema.o + schema['LAST_CHANGED'].o, schema['LAST_CHANGED'].s).then(data => {
+              newDev.lastChanged = Utils.getUint32(data);
+
+              // console.log('LAST_CHANGED', newDev.lastChanged, dbEntry.lastChanged)
+
+              if (newDev.lastChanged === dbEntry.lastChanged) {
+                // console.log('device === db')
+                // console.log(dbEntry)
+                resolve(dbEntry);
+              }
+              else if (newDev.lastChanged > dbEntry.lastChanged) {
+                // console.log('device > db')
+                this._loadDeviceData(newDev).then(devdbentry => {
+                  resolve(devdbentry);
+                });
+              }
+              else {
+                // console.log('device < db')
+                this.write(schema.o, dbEntry.data).then(() => {
+                  resolve(dbEntry);
+                });
+              }
+            });
+          });
+        }
+        else {
+          return this._loadDeviceData(newDev);
+        }
+      }).then(dbobject => {
+        // console.log("RESOLVING read", schemaName)
+        this[newDev.schemaName] = dbobject;
+        resolve();
+      });
+    });
+  }
+
+  //*************************************************************************
+  // load hw.[newDev.schemaName] into newDev
+  // add newDev to our database
+  _loadDeviceData (newDev) {
+    const schema = CONFIG_VERSIONS[newDev.configVersion][newDev.schemaName];
+    return new Promise((resolve) => {
+      this.read(schema.o, schema.s).then(data => {
+        // console.log('_loadDeviceData read from device')
+        newDev.data = data;
+
+        var dbEntry = new DatabaseObject(newDev);
+        newDev.lastChanged = dbEntry.getItem('LAST_CHANGED');
+
+        return new Promise((resolve) => {
+          // console.log('setEntry', newDev)
+          Database.setEntry(newDev, () => {
+            // console.log('setEntry done')
+            resolve(dbEntry);
+          });
+        });
+      }).then(dbobject => {
+        // console.log('resolving outer promise', dbobject)
+        resolve(dbobject);
+      });
+    });
+  }
 }
 
 window['Device'] = new Device();

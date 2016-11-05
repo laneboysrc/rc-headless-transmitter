@@ -96,6 +96,13 @@ http://eslint.org/
 Great to find mistakes in the editor before you see them in the console log of your browser.
 
 
+### strftime for JavaScript
+
+https://github.com/samsonjs/strftime
+
+Pity that this functionality isn't in the Javascript Date library. Thanks for scratching an itch.
+
+
 ### Arduino / ESP8266 / makeEspArduino
 
 http://arduino.cc/

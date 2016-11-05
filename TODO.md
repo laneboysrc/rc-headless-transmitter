@@ -94,7 +94,6 @@
 - Off-line mode
   - Use github.io to distribute the app
     - Issue: only works if configurator runs on HTTPS!
-  - Update manifest according to http://developers.google.com/chrome/mobile/docs/installtohomescreen
   - Change connecting screen to indicate when we found the configurator, and prompt user
   - Show toast to reload, and when offline has been established
   - Once everything works with Github, remove the webpage and captive DNS from the configurator, just do the Websocket

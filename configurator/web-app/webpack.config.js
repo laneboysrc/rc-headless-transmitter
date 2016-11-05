@@ -13,11 +13,11 @@ const parts             = require('./webpack.support');
 
 const PATHS = {
   app:    path.join(__dirname, 'app'),
-  build:  path.join(__dirname, '../../docs'),
+  build:  path.join(__dirname, '../../docs')
 };
 
 const appHTML = path.join(PATHS.app, 'html', 'app.html');
-const specialImages = /\W(((apple-touch-icon|android-chrome-192x192|favicon-16x16|favicon-32x32|mstile-150x150)\.png)|((safari-pinned-tab)\.svg))$/;
+const specialImages = /\W(((laneboysrc-logo-144|laneboysrc-logo-180|laneboysrc-logo-192|favicon-16x16|favicon-32x32)\.png)|((safari-pinned-tab)\.svg))$/;
 
 
 // Common configuration that applies to all modes (development, build ...)
@@ -93,7 +93,7 @@ switch(process.env.npm_lifecycle_event) {
       parts.clean(PATHS.build),
       parts.minify(),
       parts.extractCSS(PATHS.app),
-      parts.setupImages(PATHS.app),
+      parts.setupImages(PATHS.app, specialImages),
       parts.setupFonts(PATHS.app)
     );
     break;

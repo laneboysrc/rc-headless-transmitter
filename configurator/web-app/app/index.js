@@ -12,10 +12,10 @@ require('./javascripts/service-worker-registration.js');
 require('./stylesheets/styles.css');
 
 // Pull in icons and other files that are needed for the various browsers
-require('./images/android-chrome-192x192.png');
-require('./images/mstile-150x150.png');
+// Those are not referenced in HTML so we need to drag them in manually.
 require('./images/favicon.ico');
-require('./static/browserconfig.xml');
+require('./images/laneboysrc-logo-144.png');
+require('./images/laneboysrc-logo-192.png');
 
 
 // Pull in all application modules

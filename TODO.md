@@ -99,6 +99,4 @@
   - Change connecting screen to indicate when we found the configurator, and prompt user
   - Show toast to reload, and when offline has been established
 
-- Update credits
-  - eslint, sw-precache
-  - Credits on about page
+- Update credits on about page

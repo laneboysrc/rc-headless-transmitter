@@ -37,6 +37,13 @@ https://design.google.com/icons/
 The icon font was especially helpful to get consistent looking icons. Super!
 
 
+### sw-precache
+
+https://github.com/GoogleChrome/sw-precache
+
+Need to make your web-app work offline? Unbelievably easy with this brilliant project!
+
+
 ### Gnu GCC
 
 https://launchpad.net/gcc-arm-embedded
@@ -81,9 +88,10 @@ http://survivejs.com/webpack/developing-with-webpack
 Web front-end development has become surprisingly complicated -- tool-wise -- in the last years. Thanks due to the guide at survivejs we were able get Webpack do what we needed without having to spend a lot of time.
 
 
-### JSHint
+### JSHint, ESLint
 
 http://jshint.com/
+http://eslint.org/
 
 Great to find mistakes in the editor before you see them in the console log of your browser.
 

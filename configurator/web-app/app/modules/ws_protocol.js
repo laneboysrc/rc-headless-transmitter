@@ -189,7 +189,12 @@ class WebsocketProtocol {
     // of bytes that can be in transit (= packet buffer size in the bridge)
     if (data[0] === Device.WS_MAX_PACKETS_IN_TRANSIT) {
       if (data[1] > 1) {
-        this.maxPacketsInTransit = data[1];
+        // this.maxPacketsInTransit = data[1];
+
+        // For now we limit to 2 packets in transit as there is an issue in the
+        // ESP WebSocket implementation when the client sends multiple
+        // WebSocket packets in a single TCP communication.
+        this.maxPacketsInTransit = 2;
       }
       return;
     }
@@ -237,6 +242,7 @@ class WebsocketProtocol {
   _onopen() {
     console.log('Websocket opened', this.ws.url);
     this._cancelTimeout();
+    this._bridgeConnected();
     Utils.sendCustomEvent('ws-open');
   }
 
@@ -320,7 +326,7 @@ class WebsocketProtocol {
     // can play around with the system.
 
     this.bridges = {
-      locations: [],
+      locations: ['ws://192.168.4.1:9706/'],
       index: 0,
     };
 
@@ -328,19 +334,29 @@ class WebsocketProtocol {
     if (! host.endsWith('.github.io')) {
       this.bridges.locations.push(`ws://${host}:9706/`);
     }
-
-    this.bridges.locations.push('ws://192.168.4.1:9706/');
   }
 
   //*************************************************************************
   _getNextPotentialBridge() {
-    let b = this.bridges;
-    let current = b.index % b.locations.length;
+    const b = this.bridges;
+    const current = b.index % b.locations.length;
 
     b.index = (current + 1) % b.locations.length;
 
-    console.log(b.locations[current])
     return b.locations[current];
+  }
+
+  //*************************************************************************
+  _bridgeConnected() {
+    // If we successfully connected to a bridge that set the index of
+    // bridge URLs so that next time we try that bridge first.
+    const b = this.bridges;
+    if (b.index > 0) {
+      b.index -= 1;
+    }
+    else {
+      b.index = b.locations.length - 1;
+    }
   }
 }
 

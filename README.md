@@ -1,4 +1,4 @@
-# STM32F103 and NRF24L01+ based headless transmitter
+# Smartphone / Web browser configurable RC transmitter
 
 This project implements a 2.4 GHz RC transmitter using the NRF24L01+ wireless module and the STM32F103C8T6 micro-controller.
 

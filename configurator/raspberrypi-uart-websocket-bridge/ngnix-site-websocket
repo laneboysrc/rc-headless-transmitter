@@ -1,0 +1,10 @@
+server {
+    listen 9707 ssl;
+    include snippets/snakeoil.conf
+    location / {
+        proxy_pass http://localost:9706;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}

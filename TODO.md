@@ -87,3 +87,5 @@
     - **Issue: only works if configurator runs on HTTPS!**
   - Show toast to reload, and when offline has been established
   - Once everything works with Github, remove the webpage and captive DNS from the configurator, just do the Websocket
+
+- Fix mixer curve going out of grid when using scale/offset

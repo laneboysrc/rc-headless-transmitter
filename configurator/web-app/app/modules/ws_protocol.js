@@ -189,12 +189,7 @@ class WebsocketProtocol {
     // of bytes that can be in transit (= packet buffer size in the bridge)
     if (data[0] === Device.WS_MAX_PACKETS_IN_TRANSIT) {
       if (data[1] > 1) {
-        // this.maxPacketsInTransit = data[1];
-
-        // For now we limit to 2 packets in transit as there is an issue in the
-        // ESP WebSocket implementation when the client sends multiple
-        // WebSocket packets in a single TCP communication.
-        this.maxPacketsInTransit = 2;
+        this.maxPacketsInTransit = data[1];
       }
       return;
     }

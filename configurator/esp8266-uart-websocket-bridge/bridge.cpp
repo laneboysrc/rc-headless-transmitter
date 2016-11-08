@@ -131,7 +131,10 @@ Bridge::Bridge()
 
 void Bridge::ws_connected(AsyncWebSocket *ws, uint32_t client_id)
 {
-    const char WS_MAX_PACKETS_IN_TRANSIT[] = {0x42, 5};
+    // For now we limit to 2 packets in transit as there is an issue in the
+    // ESP WebSocket implementation when the client sends multiple
+    // WebSocket packets in a single TCP communication.
+    const char WS_MAX_PACKETS_IN_TRANSIT[] = {0x42, 2};
 
     _ws = ws;
     _ws_client_id = client_id;

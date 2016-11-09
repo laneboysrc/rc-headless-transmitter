@@ -84,4 +84,3 @@
 
 - Test virgin Raspberry Pi configurator and improve instructions
 
-- Fix mixer curve going out of grid when using scale/offset

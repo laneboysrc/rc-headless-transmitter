@@ -2,21 +2,21 @@
 
 class CurveView {
   constructor(element, large=false) {
-    this.CURVE_LINEAR = "Linear";
-    this.CURVE_FIXED = "Fixed value";
-    this.CURVE_MIN_MAX = "Min/Max";
-    this.CURVE_ZERO_MAX = "0/Max";
-    this.CURVE_GT_ZERO = ">0";
-    this.CURVE_LT_ZERO = "<0";
-    this.CURVE_ABSVAL = "Absolute";
-    this.CURVE_EXPO = "Expo";
-    this.CURVE_DEADBAND = "Deadband";
-    this.CURVE_3POINT = "3-Point";
-    this.CURVE_5POINT = "5-Point";
-    this.CURVE_7POINT = "7-Point";
-    this.CURVE_9POINT = "9-Point";
-    this.CURVE_11POINT = "11-Point";
-    this.CURVE_13POINT = "13-Point";
+    this.CURVE_LINEAR = 'Linear';
+    this.CURVE_FIXED = 'Fixed value';
+    this.CURVE_MIN_MAX = 'Min/Max';
+    this.CURVE_ZERO_MAX = '0/Max';
+    this.CURVE_GT_ZERO = '>0';
+    this.CURVE_LT_ZERO = '<0';
+    this.CURVE_ABSVAL = 'Absolute';
+    this.CURVE_EXPO = 'Expo';
+    this.CURVE_DEADBAND = 'Deadband';
+    this.CURVE_3POINT = '3-Point';
+    this.CURVE_5POINT = '5-Point';
+    this.CURVE_7POINT = '7-Point';
+    this.CURVE_9POINT = '9-Point';
+    this.CURVE_11POINT = '11-Point';
+    this.CURVE_13POINT = '13-Point';
 
     this.P100 = 100;
     this.CHANNEL_CENTER = 0;
@@ -26,8 +26,12 @@ class CurveView {
     this.path = this.el.querySelector('.mixer-curve--curve');
     this.circle = this.el.querySelector('.mixer-curve--position');
 
+    this.min = -100;
+    this.max = 100;
     // The "large" curve has a vertical range of 125%
     if (large) {
+      this.min = -125;
+      this.max = 125;
       this.el.viewBox.baseVal.height = 125 * 2;
     }
 
@@ -62,6 +66,10 @@ class CurveView {
       let y = this.curveFunction(x) * this._scalar / this.P100 + this._offset;
       y *= -1;  // Flip on the horizontal axis as Y=0 is at the top
 
+      // Clamp the curve to stay within the boundary box
+      y = (y > this.max) ? this.max : y;
+      y = (y < this.min) ? this.min : y;
+
       path_d += `${command} ${x} ${y} `;
       command = 'L';
     }
@@ -94,68 +102,68 @@ class CurveView {
     this._type = newType;
 
     switch (this._type) {
-      case this.CURVE_FIXED:
-        this.curveFunction = this.fixed.bind(this);
-        break;
+    case this.CURVE_FIXED:
+      this.curveFunction = this.fixed.bind(this);
+      break;
 
-      case this.CURVE_LINEAR:
-        this.curveFunction = this.linear.bind(this);
-        break;
+    case this.CURVE_LINEAR:
+      this.curveFunction = this.linear.bind(this);
+      break;
 
-      case this.CURVE_MIN_MAX:
-        this.curveFunction = this.minMax.bind(this);
-        break;
+    case this.CURVE_MIN_MAX:
+      this.curveFunction = this.minMax.bind(this);
+      break;
 
-      case this.CURVE_ZERO_MAX:
-        this.curveFunction = this.zeroMax.bind(this);
-        break;
+    case this.CURVE_ZERO_MAX:
+      this.curveFunction = this.zeroMax.bind(this);
+      break;
 
-      case this.CURVE_GT_ZERO:
-        this.curveFunction = this.gtZero.bind(this);
-        break;
+    case this.CURVE_GT_ZERO:
+      this.curveFunction = this.gtZero.bind(this);
+      break;
 
-      case this.CURVE_LT_ZERO:
-        this.curveFunction = this.ltZero.bind(this);
-        break;
+    case this.CURVE_LT_ZERO:
+      this.curveFunction = this.ltZero.bind(this);
+      break;
 
-      case this.CURVE_ABSVAL:
-        this.curveFunction = this.absval.bind(this);
-        break;
+    case this.CURVE_ABSVAL:
+      this.curveFunction = this.absval.bind(this);
+      break;
 
-      case this.CURVE_EXPO:
-        this.curveFunction = this.expo.bind(this);
-        break;
+    case this.CURVE_EXPO:
+      this.curveFunction = this.expo.bind(this);
+      break;
 
-      case this.CURVE_DEADBAND:
-        this.curveFunction = this.deadband.bind(this);
-        break;
+    case this.CURVE_DEADBAND:
+      this.curveFunction = this.deadband.bind(this);
+      break;
 
-      case this.CURVE_3POINT:
-        this.curveFunction = this.nPoints.bind(this, 3);
-        break;
+    case this.CURVE_3POINT:
+      this.curveFunction = this.nPoints.bind(this, 3);
+      break;
 
-      case this.CURVE_5POINT:
-        this.curveFunction = this.nPoints.bind(this, 5);
-        break;
+    case this.CURVE_5POINT:
+      this.curveFunction = this.nPoints.bind(this, 5);
+      break;
 
-      case this.CURVE_7POINT:
-        this.curveFunction = this.nPoints.bind(this, 7);
-        break;
+    case this.CURVE_7POINT:
+      this.curveFunction = this.nPoints.bind(this, 7);
+      break;
 
-      case this.CURVE_9POINT:
-        this.curveFunction = this.nPoints.bind(this, 9);
-        break;
+    case this.CURVE_9POINT:
+      this.curveFunction = this.nPoints.bind(this, 9);
+      break;
 
-      case this.CURVE_11POINT:
-        this.curveFunction = this.nPoints.bind(this, 11);
-        break;
+    case this.CURVE_11POINT:
+      this.curveFunction = this.nPoints.bind(this, 11);
+      break;
 
-      case this.CURVE_13POINT:
-        this.curveFunction = this.nPoints.bind(this, 13);
-        break;
+    case this.CURVE_13POINT:
+      this.curveFunction = this.nPoints.bind(this, 13);
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
 
     this.update();
@@ -208,7 +216,7 @@ class CurveView {
   }
 
   // ****************************************************************************
-  fixed(value) {
+  fixed() {
     return this._points[0];
   }
 

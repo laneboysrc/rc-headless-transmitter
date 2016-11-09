@@ -58,7 +58,7 @@ if ('serviceWorker' in navigator) {
           else {
             // At this point, everything has been precached.
             // It's the perfect time to display a "Content is cached for offline use." message.
-            Utils.showToast('The configurator is now able to operate offline!', 2000);
+            Utils.showToast('The configurator is now able to operate offline!', 5000);
 
           }
           break;

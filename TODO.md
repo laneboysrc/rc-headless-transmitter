@@ -82,10 +82,6 @@
 
 - Parse and save manually entered RF address and channels
 
-- Off-line mode
-  - Use github.io to distribute the app
-    - **Issue: only works if configurator runs on HTTPS!**
-  - Show toast to reload, and when offline has been established
-  - Once everything works with Github, remove the webpage and captive DNS from the configurator, just do the Websocket
+- Test virgin Raspberry Pi configurator and improve instructions
 
 - Fix mixer curve going out of grid when using scale/offset

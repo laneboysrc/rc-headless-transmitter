@@ -1,4 +1,8 @@
 /**
+ * Modified by LANE Boys RC <laneboysrc@gmail.com>
+ *
+ * Original copyright notice:
+ *
  * Copyright 2015 Google Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +21,9 @@
 /* eslint-env browser */
 'use strict';
 
+var Utils = require('../modules/utils');
+
+
 if ('serviceWorker' in navigator) {
   // Your service-worker.js *must* be located at the top-level directory relative to your site.
   // It won't be able to control pages unless it's located at the same level or higher than them.
@@ -31,27 +38,38 @@ if ('serviceWorker' in navigator) {
 
       installingWorker.onstatechange = function() {
         switch (installingWorker.state) {
-          case 'installed':
-            if (navigator.serviceWorker.controller) {
-              // At this point, the old content will have been purged and the fresh content will
-              // have been added to the cache.
-              // It's the perfect time to display a "New content is available; please refresh."
-              // message in the page's interface.
-              console.log('New or updated content is available.');
-            } else {
-              // At this point, everything has been precached.
-              // It's the perfect time to display a "Content is cached for offline use." message.
-              console.log('Content is now available offline!');
-            }
-            break;
+        case 'installed':
+          if (navigator.serviceWorker.controller) {
+            // At this point, the old content will have been purged and the fresh content will
+            // have been added to the cache.
+            // It's the perfect time to display a "New content is available; please refresh."
+            // message in the page's interface.
+            // console.log('New or updated content is available.');
 
-          case 'redundant':
-            console.error('The installing service worker became redundant.');
-            break;
+            let data = {
+              message: 'A new configurator version is available',
+              timeout: 5000,
+              actionHandler: function () { window.location.reload(); },
+              actionText: 'Update'
+            };
+
+            Utils.showSnackbar(data);
+          }
+          else {
+            // At this point, everything has been precached.
+            // It's the perfect time to display a "Content is cached for offline use." message.
+            Utils.showToast('The configurator is now able to operate offline!', 2000);
+
+          }
+          break;
+
+        case 'redundant':
+          console.log('The installing service worker became redundant.');
+          break;
         }
       };
     };
   }).catch(function(e) {
-    console.error('Error during service worker registration:', e);
+    console.log('Error during service worker registration:', e);
   });
 }

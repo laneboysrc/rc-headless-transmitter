@@ -1,5 +1,0 @@
-#!/bin/sh
-
-echo "Headless TX configurator service executed by daemontools"
-exec ../nodejs-headlesstx-simulator-websocket/npm start
-# exec /my/program.py --arguments

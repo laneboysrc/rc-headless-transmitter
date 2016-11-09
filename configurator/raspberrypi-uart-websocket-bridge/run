@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Headless TX configurator service executed by daemontools
+
+cd ../nodejs-headlesstx-simulator-websocket/
+exec npm start

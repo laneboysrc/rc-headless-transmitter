@@ -304,7 +304,7 @@ class WebsocketProtocol {
 
     // We look for Websocket Bridges on the current host as well as on the
     // fixed IP address 192.168.4.1 (which is the IP address of the ESP8622
-    // based configurator).
+    // or Raspberry Pi based configurator).
     //
     // This way we can either run a bridge on the development computer, or
     // point our Wi-Fi to the ESP8622 configurator after loading the app.
@@ -319,15 +319,30 @@ class WebsocketProtocol {
     // We do not foresee that we will run a configurator on Github, though
     // that may change if we e.g. decide to run a simulator so that users
     // can play around with the system.
+    //
+    // We add secure (wss) versions in all cases, but insecure (ws) versions
+    // only when the page is not served via HTTPS. If we try to access ws://
+    // when the configurator runs over https:// get a security exception.
 
     this.bridges = {
-      locations: ['ws://192.168.4.1:9706/'],
+      locations: [],
       index: 0,
     };
 
+    const isHTTPS = (window.location.protocol === 'https:');
+    const loc = this.bridges.locations;
+
+    loc.push('wss://192.168.4.1:9707/');
+    if (!isHTTPS) {
+      loc.push('ws://192.168.4.1:9706/');
+    }
+
     let host = window.location.hostname;
     if (! host.endsWith('.github.io')) {
-      this.bridges.locations.push(`ws://${host}:9706/`);
+      loc.push(`wss://${host}:9707/`);
+      if (!isHTTPS) {
+        loc.push(`ws://${host}:9706/`);
+      }
     }
   }
 

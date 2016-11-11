@@ -67,8 +67,8 @@ class CurveView {
       y *= -1;  // Flip on the horizontal axis as Y=0 is at the top
 
       // Clamp the curve to stay within the boundary box
-      y = (y > this.max) ? this.max : y;
-      y = (y < this.min) ? this.min : y;
+      y = Math.min(y, this.max);
+      y = Math.max(y, this.min);
 
       path_d += `${command} ${x} ${y} `;
       command = 'L';

@@ -45,7 +45,9 @@
   - Look into Redis
 
 
+
 - Base on web components
+- Use a better app-shell architecture
 
 - How do we get a description of the elements in the configuration?
 
@@ -84,3 +86,5 @@
 
 - Test virgin Raspberry Pi configurator and improve instructions
 
+- Loop through all potential bridges quickly rather 2s per bridge
+- Check for certificate errors when connecting to Raspberry Pi bridge

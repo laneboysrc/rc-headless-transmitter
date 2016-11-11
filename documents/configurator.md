@@ -50,7 +50,6 @@ The API is very simple: Read parts of the configuration memory, write parts of t
 The advantage of this method is that the implementation in the *headless transmitter* is very simple. On the down-side, the *configurator* must know the precise memory layout of the all the elements within the configuration memory.
 
 
-
 ## Transports
 
 The *configurator* must be able to connect to a *headless transmitter* in order to perform operations on the API provided by the *headless transmitter*.
@@ -116,6 +115,29 @@ Since the pass-phrase is stored as part of the transmitter configuration, our ow
 Do note: a malicious user could sniff the pass-phrase while we connect to our transmitter, or obtain it from a sync'ed copy of our database. But then, a malicious user can also sniff our address and bind data and directly manipulate our model; or simply jam the 2.4 GHz band. We therefore consider the pass-phrase being sufficient.
 
 Following tradition, the default pass-phrase of a virgin transmitter is the same as we use on our luggage: '1234'.
+
+
+
+## Making the configurator an App-like experience
+
+Web technology has come a long way in the recent years. Today we can make *Apps* that have an almost native look-and-feel on Smartphones, yet work cross-platform beause they are technically web pages. Web apps can  store data on the device persistently, they can be installed to -- and launched from -- the home screen just like a native app, and they can even operate off-line thanks to the awesome *service worker* technology.
+
+This comes at a small price: in order to be able to utilize a *service worker*, a web-app has to be served from a secure (HTTPS) domain. This in turn implies that the *bridge* has to be running over HTTPS as well.
+
+Serving the web-app over HTTPS is quite easy as [Github](https://github.com) kindly provides projects to serve web pages via HTTPS for free.
+
+Accessing the *bridge* over HTTPS is unfortunately not possible on the ESP8266 at the moment, as this eco-system does not have decent HTTPS server support for now.
+
+Instead of using the ESP8266 we could use a Raspberry Pi. Being a Debian based Linux system, it is easy to setup a HTTPS server, and we can even run the node-js based tools we've built during development to implement the *bridge* functionality.
+
+The Raspberry Pi is not ideal though as it is a bulky and power hungry solution that is not very suited for battery operation. But it is certainly doable and works.
+
+Another compromise we have to make is the use of self-signed certificates, which trigger security warnings in all modern web browsers. The user will have to go through certain steps to allow this self-signed certificate before the *configurator web-app* can access it.
+
+
+The ESP8266 based *bridge* can still be utilized, albeit with drawbacks. The web-app has to be served from the bridge itself via (insecure) HTTP. This means we loose off-line functionality on Smartphones, and every time we update the *configurator web-app*, we have to flash the new version into the *bridge*.
+
+Hopefully in the future the ESP8266 will get HTTPS support, releaving us from this burden.
 
 
 

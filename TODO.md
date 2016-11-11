@@ -85,7 +85,6 @@
 - Parse and save manually entered RF address and channels
 
 - Test virgin Raspberry Pi configurator and improve instructions
-  - Add discussion ESP vs Raspi configurator to documentaiton
 
 - Loop through all potential bridges quickly rather 2s per bridge
 - Check for certificate errors when connecting to Raspberry Pi bridge

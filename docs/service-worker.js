@@ -37,7 +37,7 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
 'use strict';
 
-var precacheConfig = [["app.css","2ac5b27358a0b2c0bef42124dd6f4360"],["app.html","e4565790b1a5ce6e1c770a4d3b94b66e"],["app.js","74870349f8f7d97057c1dbfbbb426ddc"],["favicon.ico","c075db99de1539d3d1b88becc775aa00"],["index.html","15897467d2f6d7201c767d1f82d145df"],["laneboysrc-banner.png","c534a1c3b6932fff4cad06582f5c1b7b"],["laneboysrc-blog.jpg","16fc1061e7afa58c5edb20e40c9af5c7"],["laneboysrc-logo-128-t.png","bcd46ed93a63b404aaddca3c924548b4"],["laneboysrc-logo-128.jpg","34e3576f33de23f61c42570f5e8c8553"],["laneboysrc-yt.jpg","f8f9fd8209f5c841dc144ee39303cbfb"],["materialicons-v17.woff2","9fb20fb9a41e500a1a30ba2372fb5030"]];
+var precacheConfig = [["app.css","d9e9ed02effda8c2ceb2f41070482e69"],["app.html","c75e25a85fd6dcb982cf832ec95a3ef8"],["app.js","74870349f8f7d97057c1dbfbbb426ddc"],["favicon.ico","c075db99de1539d3d1b88becc775aa00"],["index.html","15897467d2f6d7201c767d1f82d145df"],["laneboysrc-banner.png","c534a1c3b6932fff4cad06582f5c1b7b"],["laneboysrc-blog.jpg","16fc1061e7afa58c5edb20e40c9af5c7"],["laneboysrc-logo-128-t.png","bcd46ed93a63b404aaddca3c924548b4"],["laneboysrc-logo-128.jpg","34e3576f33de23f61c42570f5e8c8553"],["laneboysrc-yt.jpg","f8f9fd8209f5c841dc144ee39303cbfb"],["materialicons-v17.woff2","9fb20fb9a41e500a1a30ba2372fb5030"]];
 var cacheName = 'sw-precache-v2-configurator-' + (self.registration ? self.registration.scope : '');
 
 

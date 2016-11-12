@@ -9,6 +9,11 @@ html, body {
   border-bottom: 1px solid #d50000;
 }
 
+.space-before {
+  padding-top: 1rem;
+}
+
+
 /* Limit the size of the single-colum cards on large screens */
 section.section--center {
     max-width: 600px;

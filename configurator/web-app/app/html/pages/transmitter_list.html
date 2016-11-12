@@ -12,6 +12,18 @@
 
   <main class="mdl-layout__content" >
 
+    <!-- Loading list of transmitters from database Card -->
+    <section class="section--center mdl-grid hidden" id="app-transmitter_list-loading_list">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text ">Loading transmitters …</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          <div class="mdl-progress mdl-js-progress mdl-progress--indeterminate"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- Transmitter list Card -->
     <section class="section--center mdl-grid" id="app-transmitter_list-list">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">

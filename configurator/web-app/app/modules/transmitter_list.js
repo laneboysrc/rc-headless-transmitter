@@ -8,6 +8,7 @@ var DatabaseObject = require('./database_object');
 class TransmitterList {
   constructor() {
     this.list = document.querySelector('#app-transmitter_list-list');
+    this.listLoading = document.querySelector('#app-transmitter_list-loading_list');
     this.noTransmitter = document.querySelector('#app-transmitter_list-no_transmitter');
     this.container = document.querySelector('#app-transmitter_list-list__container');
     this.template = document.querySelector('#app-transmitter_list-list__template').content;
@@ -23,6 +24,7 @@ class TransmitterList {
 
     Utils.hide(this.noTransmitter);
     Utils.hide(this.list);
+    Utils.show(this.listLoading);
     Utils.clearDynamicElements(this.list);
 
     Database.listEntries(this._databaseCallback.bind(this));
@@ -97,8 +99,11 @@ class TransmitterList {
       this.container.appendChild(t);
     }
 
-    Utils.setVisibility(this.list, this.transmitters.length !==  0);
-    Utils.setVisibility(this.noTransmitter, this.transmitters.length ===  0);
+    const noTransmitter = (this.transmitters.length === 0);
+
+    Utils.hide(this.listLoading);
+    Utils.setVisibility(this.list, !noTransmitter);
+    Utils.setVisibility(this.noTransmitter, noTransmitter);
   }
 
 

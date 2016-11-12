@@ -46,8 +46,10 @@
 
 
 
-- Base on web components
 - Use a better app-shell architecture
+- Base on web components
+  - Make ranges (limits, endpoints) not be able to go past each-other
+    - Maybe make a custom element that limits upper and lower?
 
 - How do we get a description of the elements in the configuration?
 
@@ -60,11 +62,6 @@
   - Prepare the database for multiple object stores
 
 - Make help page for logical inputs to explain valid combinations
-
-- ModelList needs a loading indicator while populating the available models
-
-- Make ranges (limits, endpoints) not be able to go past each-other
-  - Maybe make a custom element that limits upper and lower?
 
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
@@ -83,5 +80,4 @@
 
 - Test virgin Raspberry Pi configurator and improve instructions
 - Check for certificate errors when connecting to Raspberry Pi bridge
-
 

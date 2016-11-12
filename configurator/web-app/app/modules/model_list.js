@@ -8,9 +8,11 @@ var DatabaseObject = require('./database_object');
 class ModelList {
   constructor() {
     this.list = document.querySelector('#app-model_list-list');
+    this.add = document.querySelector('#app-model_list-add');
     this.container = document.querySelector('#app-model_list-list__container');
     this.template = document.querySelector('#app-model_list-list__template').content;
     this.loading = document.querySelector('#app-model_list-loading_model');
+    this.listLoading = document.querySelector('#app-model_list-loading_list');
     this.name = document.querySelector('#app-model_list-loading_model__name');
     this.progress = document.querySelector('#app-model_list-loading_model__progress');
     this.snackbarMessage = document.querySelector('#app-model_list-snackbar__message').content.textContent;
@@ -28,7 +30,9 @@ class ModelList {
     this.models = [];
 
     this._updateItemVisibility();
+    Utils.show(this.listLoading);
     Utils.hide(this.list);
+    Utils.hide(this.add);
     Utils.hide(this.loading);
     Utils.clearDynamicElements(this.list);
 
@@ -205,6 +209,8 @@ class ModelList {
       this.container.appendChild(t);
     }
 
+    Utils.hide(this.listLoading);
+    Utils.show(this.add);
     if (this.models.length !==  0) {
       Utils.show(this.list);
     }

@@ -18,6 +18,18 @@
 
   <main class="mdl-layout__content" >
 
+    <!-- Loading list of models from database Card -->
+    <section class="section--center mdl-grid hidden" id="app-model_list-loading_list">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text ">Loading models …</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-card--expand">
+          <div class="mdl-progress mdl-js-progress mdl-progress--indeterminate"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- List of available models Card -->
     <section class="section--center mdl-grid hidden" id="app-model_list-list">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
@@ -53,7 +65,7 @@
     </section>
 
     <!-- Create model Card -->
-    <section class="section--center mdl-grid app-model_list--edit" onclick="this.querySelector('button').click();">
+    <section class="section--center mdl-grid app-model_list--edit" id="app-model_list-add" onclick="this.querySelector('button').click();">
       <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
         <div class="mdl-card__title mdl-card--expand">
           <div class="mdl-list">

@@ -103,6 +103,13 @@ https://github.com/samsonjs/strftime
 Pity that this functionality isn't in the Javascript Date library. Thanks for scratching an itch.
 
 
+### Sortable
+
+http://rubaxa.github.io/Sortable/
+
+Brilliant library to enable interactive re-ordering of lists. Super-simple to use, yet powerful.
+
+
 ### Arduino / ESP8266 / makeEspArduino
 
 http://arduino.cc/

@@ -7,7 +7,7 @@ var MDLHelper = require('./mdl_helper');
 class Mixer {
   constructor() {
     this.template = document.querySelector('#app-mixer-template').content;
-    this.mixerList = document.querySelector('#app-mixer-list');
+    this.mixerList = document.querySelector('#app-mixer-sortable');
     this.cardAddMixerUnit = document.querySelector('#app-mixer-add');
     this.menuAddMixerUnit = document.querySelector('#app-mixer-menu');
 
@@ -15,6 +15,8 @@ class Mixer {
     this.mixerUnitCount = 0;
     // Maximum number of mixer units
     this.mixerUnitMaxCount = 0;
+
+    this.sortable = undefined;
 
     this.UNDO = undefined;
     this.snackbarMessage = document.querySelector('#app-mixer-snackbar__message').content.textContent;
@@ -98,34 +100,6 @@ class Mixer {
   }
 
   //*************************************************************************
-  up(event, button) {
-    Utils.cancelBubble(event);
-
-    let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
-
-    // Safety bail-out
-    if (mixerUnitIndex < 1) {
-      return;
-    }
-
-    this._swap(mixerUnitIndex, mixerUnitIndex - 1);
-  }
-
-  //*************************************************************************
-  down(event, button) {
-    Utils.cancelBubble(event);
-
-    let mixerUnitIndex = parseInt(button.getAttribute('data-index'));
-
-    // Safety bail-out
-    if (mixerUnitIndex >= (this.mixerUnitCount - 1)) {
-      return;
-    }
-
-    this._swap(mixerUnitIndex, mixerUnitIndex + 1);
-  }
-
-  //*************************************************************************
   _populateMixerUnitList() {
     let mdl = new MDLHelper('MODEL');
     let model = Device.MODEL;
@@ -133,6 +107,11 @@ class Mixer {
 
     this.mixerUnitMaxCount = mixer_units.c;
     this.mixerUnitSize = mixer_units.s;
+
+    if (this.sortable) {
+      this.sortable.destroy();
+      this.sortable = undefined;
+    }
 
     // Empty the list of mixers
     Utils.clearDynamicElements(this.mixerList);
@@ -159,13 +138,16 @@ class Mixer {
       mdl.setTextContentRaw('.app-mixer-template-mixer_unit', curve, t);
       mdl.setDataURL('.app-mixer-template-mixer_unit', ['mixer_unit', i], t);
       mdl.setDataURL('.app-mixer-template-dst', ['limits', dst], t);
-      mdl.setAttribute('.app-mixer-template-up', 'data-index', i, t);
-      mdl.setAttribute('.app-mixer-template-down', 'data-index', i, t);
 
-      this.mixerList.insertBefore(t, this.cardAddMixerUnit);
+      this.mixerList.appendChild(t, this.cardAddMixerUnit);
     }
 
     this._updateUpDownButtonVisibility();
+
+    this.sortable = new Sortable(this.mixerList, {
+      handle: '.sortable-handle',
+      onEnd: this._reordered.bind(this),
+    });
   }
 
   //*************************************************************************
@@ -212,19 +194,48 @@ class Mixer {
   }
 
   //*************************************************************************
-  _swap(index1, index2) {
-    let model = Device.MODEL;
+  _reordered(evt) {
+    const oldIndex = evt.oldIndex;
+    const newIndex = evt.newIndex;
 
-    let unit1 = model.getItem('MIXER_UNITS', {index: index1});
-    let unit2 = model.getItem('MIXER_UNITS', {index: index2});
+    if (oldIndex === newIndex) {
+      return;
+    }
 
-    model.setItem('MIXER_UNITS', unit2, {index: index1});
-    model.setItem('MIXER_UNITS', unit1, {index: index2});
+    console.log(`_reordered ${oldIndex}->${newIndex}`);
 
-    // Rebuild the list of mixer units
+    const model = Device.MODEL;
+    const schema = model.getSchema();
+    const offset = schema.MIXER_UNITS.o;
+    const size = schema.MIXER_UNITS.s;
+
+    const movedMixerUnit = model.getItem('MIXER_UNITS', {index: oldIndex});
+
+    if (oldIndex > newIndex) {
+      // Item moved up in the list: Move units betwen newIndex and oldIndex
+      // backwards by one
+      const index = newIndex;
+      const src = offset + (index * size);
+      const dst = offset + ((index + 1) * size);
+      const count = (oldIndex - newIndex) * size;
+      model.rawCopy(src, dst, count);
+    }
+    else {
+      // Item moved down in the list: Bring all mixer units between oldIndex
+      // and newIndex forward by one
+      const index = oldIndex;
+      const dst = offset + (index * size);
+      const src = offset + ((index + 1) * size);
+      const count = (newIndex - oldIndex) * size;
+      model.rawCopy(src, dst, count);
+    }
+
+    // Put the moved item into its new position
+    model.setItem('MIXER_UNITS', movedMixerUnit, {index: newIndex});
+
+    // Update the screen so that all data attributes match the new order
     this._populateMixerUnitList();
   }
-
 }
 
-  window['Mixer'] = new Mixer();
+window['Mixer'] = new Mixer();

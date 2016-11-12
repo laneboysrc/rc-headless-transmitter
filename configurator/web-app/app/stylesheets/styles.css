@@ -206,9 +206,14 @@ table.rf_protocol-hop_channels td:nth-child(2) {
 
 /* Mixer: Make the middle colum the widest so that it becomes most prominent
    and visually centered. */
-.app-mixer-mixer_unit td:nth-child(2) {
+.app-mixer-mixer_unit td:nth-child(3) {
   width: 80%;
   text-align: center;
+}
+
+/* Add a bit of margin to the channel selector on the right */
+.app-mixer-mixer_unit td:nth-child(4) {
+  padding-right: 10px !important;
 }
 
 .app-mixer-mixer_unit td.app-mixer-template-src {

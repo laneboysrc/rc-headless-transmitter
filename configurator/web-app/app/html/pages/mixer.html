@@ -26,9 +26,14 @@
         <div class="mdl-card__supporting-text">
           Configure how the transmitter sticks, potentiometers and switches
           are mixed to generate the output channels sent to the receiver.
+          <br>
+          Drag the <i class="material-icons" style="vertical-align: text-bottom;">reorder</i> icon to reorder the
+          mixer units.
         </div>
       </div>
     </section>
+
+    <div id="app-mixer-sortable"></div>
 
     <!-- Individual mixer unit Card, one for each mixer unit -->
     <template id="app-mixer-template">
@@ -38,16 +43,13 @@
           <table class="mdl-data-table mdl-js-data-table">
           <tbody>
             <tr>
+              <td class="mdl-data-table__cell--non-numeric sortable-handle"><i class="material-icons">reorder</i></td>
               <td class="mdl-data-table__cell--non-numeric app-mixer-template-src">ST</td>
               <td class="mdl-data-table__cell--non-numeric">
                 <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-mixer_unit" onclick="Mixer.editMixerUnit(event, this);">Linear =</button>
               </td>
               <td rclass="mdl-data-table__cell--non-numeric">
                 <button class="mdl-list__item-secondary-action mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-dst" onclick="Mixer.limits(event, this);">CH2</button>
-              </td>
-              <td class="mdl-data-table__cell--non-numeric app-mixer-mixer_unit_updown">
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-up" onclick="Mixer.up(event, this);"><i class="material-icons">keyboard_arrow_up</i></button>
-                <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect app-mixer-template-down" onclick="Mixer.down(event, this);"><i class="material-icons">keyboard_arrow_down</i></button>
               </td>
             </tr>
           </tbody>
@@ -77,9 +79,8 @@
         </div>
       </div>
     </section>
-
-    <template id="app-mixer-snackbar__message">Mixer unit deleted.</template>
-    <template id="app-mixer-snackbar__action_text">Undo</template>
-
   </main>
+
+  <template id="app-mixer-snackbar__message">Mixer unit deleted.</template>
+  <template id="app-mixer-snackbar__action_text">Undo</template>
 </div>

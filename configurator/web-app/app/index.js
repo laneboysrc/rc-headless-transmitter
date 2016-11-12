@@ -6,6 +6,7 @@ require('./javascripts/material.min.js');
 
 window['saveAs'] = require('./javascripts/FileSaver.min.js');
 window['strftime'] = require('./javascripts/strftime.js');
+window['Sortable'] = require('./javascripts/Sortable.js');
 
 // Pull in the service worker registration script
 require('./javascripts/service-worker-registration.js');

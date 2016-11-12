@@ -56,6 +56,7 @@ module.exports = {
 
         "componentHandler": true,
         "strftime": true,
+        "Sortable": true,
 
         "TEST_CONFIG_DATA": true,
         "CONFIG_VERSIONS": true

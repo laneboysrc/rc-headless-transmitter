@@ -73,9 +73,6 @@
   - Easiest way for now is to build a tool that makes a .c file out of the backup JSON file
   - The backup JSON file should be human readable, right now it is just binary data wrapped in JSON
 
-- User should be able to drag mixer units instead of using arrow keys
-  - Use https://rubaxa.github.io/Sortable
-
 - Wi-Fi configuration through web interface
   - Need a sensible default, i.e. detect what the factory setting is
 - Configurator frequencies should avoid Wi-Fi frequency

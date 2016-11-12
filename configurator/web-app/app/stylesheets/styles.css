@@ -9,10 +9,17 @@ html, body {
   border-bottom: 1px solid #d50000;
 }
 
+/* Paragraphs with white space before them */
 .space-before {
   padding-top: 1rem;
 }
 
+
+/* Sortable list: Give the user a visual clue that he can drag the item */
+.sortable-handle {
+  cursor: pointer;
+  cursor: hand;
+}
 
 /* Limit the size of the single-colum cards on large screens */
 section.section--center {

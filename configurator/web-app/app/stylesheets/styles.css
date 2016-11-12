@@ -430,3 +430,7 @@ span.mdl-list__item-primary-content label {
 #app-slider-fine-adjustment_dialog .mdl-dialog__actions {
   margin-top: 10px;
 }
+
+#settings-restore {
+  font-size: 1rem;
+}

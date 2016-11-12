@@ -5,11 +5,13 @@ var Utils = require('./utils');
 
 class Settings {
   constructor() {
-    // Nothing to do
+    this.restoreLog = document.querySelector('#settings-restore');
+    document.querySelector('#settings-restore__input').onchange = this.restore.bind(this);
   }
 
   //*************************************************************************
   init() {
+    Utils.removeChildren(this.restoreLog);
     Utils.showPage('settings');
   }
 
@@ -48,13 +50,15 @@ class Settings {
   }
 
   //*************************************************************************
-  restore(input) {
+  restore(event) {
+    const input = event.target;
     if (input.files.length < 1) {
       return;
     }
 
+    Utils.removeChildren(this.restoreLog);
+    const self = this;
     const reader = new FileReader();
-    const restoreLog = document.querySelector('#settings-restore');
 
     reader.onload = function (e) {
       let data = JSON.parse(e.target.result);
@@ -69,12 +73,12 @@ class Settings {
             if (existingEntry  &&  existingEntry.lastChanged > entry.lastChanged) {
               const logEntry = document.createElement('DIV');
               logEntry.textContent = `Existing entry for ${entry.schemaName} ${entry.uuid} is newer, not overwriting`;
-              restoreLog.appendChild(logEntry);
+              self.restoreLog.appendChild(logEntry);
             }
             else {
               const logEntry = document.createElement('DIV');
               logEntry.textContent = `Adding ${entry.schemaName} ${entry.uuid} to database`;
-              restoreLog.appendChild(logEntry);
+              self.restoreLog.appendChild(logEntry);
 
               // Convert the regular array into an Uint8Array
               entry.data = Uint8Array.from(entry.data);
@@ -89,6 +93,7 @@ class Settings {
 
     reader.readAsText(input.files[0]);
   }
+
 }
 
 window['Settings'] = new Settings();

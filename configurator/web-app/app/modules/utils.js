@@ -189,6 +189,12 @@ export function clearDynamicElements(element) {
   }
 }
 
+export function removeChildren(element) {
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+}
+
 export function buildURL(list) {
   let url_fragments = ['#'];
 

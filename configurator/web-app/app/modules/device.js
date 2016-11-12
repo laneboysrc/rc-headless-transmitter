@@ -43,6 +43,7 @@ class Device {
     this.connected = false;
     this.wsOpen = false;
     this.live = {};
+    this.retryTimer = undefined;
 
     this.TX_FREE_TO_CONNECT = 0x30;
     this.CFG_REQUEST_TO_CONNECT = 0x31;
@@ -56,27 +57,34 @@ class Device {
     this.TX_COPY_SUCCESSFUL = 0x43;
     this.WS_MAX_PACKETS_IN_TRANSIT = 0x42;
 
-    document.addEventListener('ws-open', this.onopen.bind(this));
-    document.addEventListener('ws-close', this.onclose.bind(this));
-    document.addEventListener('ws-message', this.onLiveMessage.bind(this));
+    document.addEventListener('ws-open', this._onOpen.bind(this));
+    document.addEventListener('ws-close', this._onClose.bind(this));
+    document.addEventListener('ws-message', this._onLiveMessage.bind(this));
   }
 
   //*************************************************************************
   enableCommunication() {
+    console.log('enableCommunication');
     this.wsOpen = true;
     WebsocketProtocol.open();
   }
 
   //*************************************************************************
   disableCommunication() {
+    console.log('disableCommunication');
     // stop WS, kill restart timer
-    this.wsOpen = false;
     WebsocketProtocol.close();
+    this.wsOpen = false;
+
+    if (this.retryTimer) {
+      clearTimeout(this.retryTimer);
+      this.retryTimer = undefined;
+    }
   }
 
   //*************************************************************************
   connect(uuid, passphrase) {
-    console.log(`Device.connect uuid=${uuid} passphrase=${passphrase}`)
+    console.log(`Device.connect uuid=${uuid} passphrase=${passphrase}`);
 
     let connectPacket = new Uint8Array([
       this.CFG_REQUEST_TO_CONNECT,
@@ -287,26 +295,6 @@ class Device {
         reject(error);
       });
     });
-  }
-
-  //*************************************************************************
-  onopen() {
-    Utils.sendCustomEvent('dev-bridgeconnected');
-  }
-
-  //*************************************************************************
-  onclose() {
-    // console.log('Device ws: ', event, event.detail);
-    this.connected = false;
-    this.live = {};
-    if (this.wsOpen) {
-      Utils.sendCustomEvent('dev-connectionlost');
-
-      // Retry in 2 seconds
-      setTimeout(function () {
-        WebsocketProtocol.open();
-      }, 2000);
-    }
   }
 
   //*************************************************************************
@@ -585,38 +573,6 @@ class Device {
     return validHardwareTypes.includes(type);
   }
 
-
-  onLiveMessage(event) {
-    let packet = event.detail;
-
-    if (!this.TX) {
-      return;
-    }
-
-    if (packet[0] !== this.TX_INFO) {
-      return;
-    }
-
-    if (packet.length <= 1) {
-      return;
-    }
-
-    let offset = 1;
-    const config = this.TX.getConfig();
-    const type = config.TYPES['live_t'];
-
-    while ((offset + 6) <= packet.length) {
-      let id = Utils.getUint16(packet, offset);
-      let value = Utils.getInt32(packet, offset+2);
-
-      let name = this.TX.typeLookupByNumber(type, id);
-      this.live[name] = value;
-
-      offset += 6;
-    }
-  }
-
-
   getLiveValue(item) {
     if (this.live.hasOwnProperty(item)) {
       return this.live[item];
@@ -740,6 +696,68 @@ class Device {
         resolve(dbobject);
       });
     });
+  }
+
+
+  //*************************************************************************
+  _onOpen() {
+    Utils.sendCustomEvent('dev-bridgeconnected');
+  }
+
+
+  //*************************************************************************
+  _onClose() {
+    // console.log('Device ws: ', event, event.detail);
+    this.connected = false;
+    this.live = {};
+    if (this.wsOpen) {
+      Utils.sendCustomEvent('dev-connectionlost');
+
+      // Retry in 2 seconds
+      this.retryTimer = setTimeout(this._onRetryTimeout.bind(this), 2000);
+    }
+  }
+
+
+  //*************************************************************************
+  _onRetryTimeout() {
+    this.retryTimer = undefined;
+
+    if (this.wsOpen) {
+      WebsocketProtocol.open();
+    }
+  }
+
+
+  //*************************************************************************
+  _onLiveMessage(event) {
+    let packet = event.detail;
+
+    if (!this.TX) {
+      return;
+    }
+
+    if (packet[0] !== this.TX_INFO) {
+      return;
+    }
+
+    if (packet.length <= 1) {
+      return;
+    }
+
+    let offset = 1;
+    const config = this.TX.getConfig();
+    const type = config.TYPES['live_t'];
+
+    while ((offset + 6) <= packet.length) {
+      let id = Utils.getUint16(packet, offset);
+      let value = Utils.getInt32(packet, offset+2);
+
+      let name = this.TX.typeLookupByNumber(type, id);
+      this.live[name] = value;
+
+      offset += 6;
+    }
   }
 }
 

@@ -10,6 +10,7 @@ class WebsocketProtocol {
     this.pending = [];
     this.inTransit = [];
     this.timeout = null;
+    this.opening = false;
 
     this._initPotentialBridges();
   }
@@ -20,8 +21,15 @@ class WebsocketProtocol {
       return;
     }
 
+    this.opening = true;
+    this.bridges.index = 0;
+    this._openURL(this.bridges.locations[this.bridges.index]);
+  }
+
+  //*************************************************************************
+  _openURL(url) {
     // Connect to the Websocket of the bridge
-    this.ws = new WebSocket(this._getNextPotentialBridge());
+    this.ws = new WebSocket(url);
     this.maxPacketsInTransit = 1;
 
     // Set event handlers
@@ -31,12 +39,19 @@ class WebsocketProtocol {
     this.ws.onerror = this._onerror.bind(this);
 
     this.timeout = window.setTimeout(this._ontimeout.bind(this), 1000);
+
+    console.log('Websocket open', this.ws.url);
   }
 
   //*************************************************************************
   close() {
+    this.opening = false;
     if (this.ws) {
+      console.log('Websocket close', this.ws.url);
       this.ws.close();
+    }
+    else {
+      console.log('Websocket close (this.ws is false)');
     }
   }
 
@@ -230,15 +245,56 @@ class WebsocketProtocol {
   _ontimeout() {
     console.log('Websocket timeout', this.ws.url);
     this.timeout = null;
-    this.close();
+    this.ws.close();
   }
 
   //*************************************************************************
   _onopen() {
     console.log('Websocket opened', this.ws.url);
+    this.opening = false;
     this._cancelTimeout();
-    this._bridgeConnected();
     Utils.sendCustomEvent('ws-open');
+  }
+
+  //*************************************************************************
+  _onerror(e) {
+    console.log('Websocket error', this.ws.url);
+
+    if (!this.opening) {
+      Utils.sendCustomEvent('ws-error', e);
+    }
+  }
+
+  //*************************************************************************
+  _onclose() {
+    console.log('Websocket closed', this.ws.url);
+
+    this._cancelTimeout();
+    this.ws = undefined;
+
+    // Go through this.pending[] and this.inTransit[] and reject all promises
+
+    let request = this.inTransit.shift();
+    while (request) {
+      request.promise.reject('Websocket closed');
+      request = this.inTransit.shift();
+    }
+
+    request = this.pending.shift();
+    while (request) {
+      request.promise.reject('Websocket closed');
+      request = this.pending.shift();
+    }
+
+
+    if (this.opening  &&  this.bridges.index < (this.bridges.locations.length - 1)) {
+      ++this.bridges.index;
+      this._openURL(this.bridges.locations[this.bridges.index]);
+    }
+    else {
+      this.opening = false;
+      Utils.sendCustomEvent('ws-close');
+    }
   }
 
   //*************************************************************************
@@ -264,39 +320,6 @@ class WebsocketProtocol {
     }.bind(this));
 
     reader.readAsArrayBuffer(e.data);
-  }
-
-  //*************************************************************************
-  _onerror(e) {
-    console.log('Websocket error', this.ws.url);
-
-    // FIXME: what kind of error may we receive here, and how do we communicate
-    // that to pending requests?
-    Utils.sendCustomEvent('ws-error', e);
-  }
-
-  //*************************************************************************
-  _onclose() {
-    console.log('Websocket closed', this.ws.url);
-
-    this._cancelTimeout();
-    this.ws = undefined;
-
-    // Go through this.pending[] and this.inTransit[] and reject all promises
-
-    let request = this.inTransit.shift();
-    while (request) {
-      request.promise.reject('Websocket closed');
-      request = this.inTransit.shift();
-    }
-
-    request = this.pending.shift();
-    while (request) {
-      request.promise.reject('Websocket closed');
-      request = this.pending.shift();
-    }
-
-    Utils.sendCustomEvent('ws-close');
   }
 
   //*************************************************************************
@@ -343,29 +366,6 @@ class WebsocketProtocol {
       if (!isHTTPS) {
         loc.push(`ws://${host}:9706/`);
       }
-    }
-  }
-
-  //*************************************************************************
-  _getNextPotentialBridge() {
-    const b = this.bridges;
-    const current = b.index % b.locations.length;
-
-    b.index = (current + 1) % b.locations.length;
-
-    return b.locations[current];
-  }
-
-  //*************************************************************************
-  _bridgeConnected() {
-    // If we successfully connected to a bridge that set the index of
-    // bridge URLs so that next time we try that bridge first.
-    const b = this.bridges;
-    if (b.index > 0) {
-      b.index -= 1;
-    }
-    else {
-      b.index = b.locations.length - 1;
     }
   }
 }

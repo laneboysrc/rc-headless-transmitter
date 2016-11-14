@@ -87,5 +87,3 @@
       - Passphrase: 64 bytes
       - Channel: 1 byte
 
-- Parse and save manually entered RF address and channels
-

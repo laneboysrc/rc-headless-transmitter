@@ -48,10 +48,13 @@
 
 - Use a better app-shell architecture
 - Base on web components
+  - Polymer? SkateJS?
   - Make ranges (limits, endpoints) not be able to go past each-other
     - Maybe make a custom element that limits upper and lower?
 
-- How do we get a description of the elements in the configuration?
+- Add help text
+  - How do we get a description of the elements in the configuration?
+  - Make help page for logical inputs to explain valid combinations
 
 - Implement passphrase UI
 
@@ -61,23 +64,28 @@
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
-- Make help page for logical inputs to explain valid combinations
-
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
 
 - Need to be able to download transmitter configuration after firmware update
-  - Easiest way for now is to build a tool that makes a .c file out of the backup JSON file
+  - Easiest way for now is to be able to enter the UUID when building the firmware. We could write a small tools that extracts basic info from a backup JSON that the user can utilize
   - The backup JSON file should be human readable, right now it is just binary data wrapped in JSON
-
-- Wi-Fi configuration through web interface
-  - Need a sensible default, i.e. detect what the factory setting is
-- Configurator frequencies should avoid Wi-Fi frequency
 
 - Make nodejs-uart bridges aware of MSG_DEBUG for nRF51
 
-- Parse and save manually entered RF address and channels
-
 - Test virgin Raspberry Pi configurator and improve instructions
 - Check for certificate errors when connecting to Raspberry Pi bridge
+
+- Wi-Fi configuration through web interface
+  - Need a sensible default, i.e. detect what the factory setting is
+    - Use the EEPROM: if not set, Wi-Fi uses the default settings
+  - Only allow configuration of SSID, channel and Wi-Fi passphrase, not the IP address
+    - Configurator frequencies should avoid Wi-Fi frequency
+    - Advanced users can change the source code if they want to change the IP
+    - Sizes:
+      - SSID: 32 bytes
+      - Passphrase: 64 bytes
+      - Channel: 1 byte
+
+- Parse and save manually entered RF address and channels
 

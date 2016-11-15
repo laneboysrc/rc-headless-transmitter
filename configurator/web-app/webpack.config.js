@@ -3,12 +3,12 @@
 // Based on http://survivejs.com/webpack/developing-with-webpack
 
 const path              = require('path');
+const fs                = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const swprecachePlugin  = require('sw-precache-webpack-plugin');
 const merge             = require('webpack-merge');
 const validate          = require('webpack-validator');
 const parts             = require('./webpack.support');
-
 
 
 const PATHS = {
@@ -17,6 +17,7 @@ const PATHS = {
 };
 
 const appHTML = path.join(PATHS.app, 'html', 'app.html');
+const serviceWorker = path.join(PATHS.build, 'service-worker.js');
 const specialImages = /\W(((laneboysrc-logo-144|laneboysrc-logo-180|laneboysrc-logo-192|favicon-16x16|favicon-32x32)\.png)|((safari-pinned-tab)\.svg))$/;
 
 
@@ -85,9 +86,12 @@ const common = {
 var config;
 
 // Detect how npm is run and branch based on that
-switch(process.env.npm_lifecycle_event) {
+switch (process.env.npm_lifecycle_event) {
   case 'build':
   case 'production':
+    // Remove the service worker to force an update
+    fs.unlinkSync(serviceWorker);
+
     config = merge(
       common,
       parts.clean(PATHS.build),

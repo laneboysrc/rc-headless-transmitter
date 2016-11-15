@@ -52,7 +52,7 @@ spiffs-webapp:
 .PHONY: spiffs-webapp
 
 terminal:
-	miniterm.py -p $(UPLOAD_PORT) -b 115200 -e
+	miniterm.py $(UPLOAD_PORT) 115200 -e
 .PHONY: terminal
 
 flash: upload

@@ -13,9 +13,9 @@
 #define MAX_PACKET_SIZE 32
 
 
-const char *ssid = "LANE Boys RC";
-const char *password = "12345678";
-const int channel = 13;
+// const char *ssid = "LANE Boys RC";
+// const char *password = "12345678";
+// const int channel = 13;
 
 const IPAddress local_ip(192,168,4,1);
 const IPAddress netmask(255,255,255,0);
@@ -75,12 +75,12 @@ void wsHandler(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
         // less than 127 bytes long, they always fit in a single frame.
         // We therefore don't have to assemble frames into a message.
 
-        uint8_t packet[MAX_PACKET_SIZE];
-        uint8_t packet_length;
-
         AwsFrameInfo *info = (AwsFrameInfo*)arg;
 
         if (info->final  &&  info->index == 0  &&  info->len == len) {
+            uint8_t packet[MAX_PACKET_SIZE];
+            uint8_t packet_length;
+
             // The whole message is in a single frame and we got all of it's data
             // os_printf("ws[%s][%u] %s-message[%llu]\n", server->url(), client->id(), (info->opcode == WS_TEXT) ? "text":"binary", info->len);
 
@@ -174,14 +174,32 @@ void setup() {
     Serial1.begin(115200);
     Serial1.setDebugOutput(true);
 
+    SPIFFS.begin();
+
     WiFi.mode(WIFI_AP);
-    WiFi.softAP(ssid, password, channel);
     WiFi.softAPConfig(local_ip, local_ip, netmask);
+
+    File wifi = SPIFFS.open("/wi-fi-config.txt", "r");
+    if (wifi) {
+        String ssid = wifi.readStringUntil('\n');
+        String password = wifi.readStringUntil('\n');
+        String channelString = wifi.readStringUntil('\n');
+        wifi.close();
+
+        ssid.trim();
+        password.trim();
+        channelString.trim();
+        int channel = channelString.toInt();
+
+        os_printf("ssid: '%s', password: '%s', channel: %d\n",
+            ssid.c_str(), password.c_str(), channel);
+
+        WiFi.softAP(ssid.c_str(), password.c_str(), channel);
+    }
 
     IPAddress apIP = WiFi.softAPIP();
     os_printf("\nAP IP address: %s\n", IPAddress2String(apIP).c_str());
 
-    SPIFFS.begin();
 
     ws.onEvent(wsHandler);
     ws_server.addHandler(&ws);
@@ -199,8 +217,10 @@ void setup() {
     File f = SPIFFS.open("/last-modified", "r");
     if (f) {
         String s = f.readStringUntil('\n');
+        s.trim();
         os_printf("SPIFFS last-modified: '%s'\n", s.c_str());
         staticHandler->setLastModified(s.c_str());
+        f.close();
     }
 
     http_server.onNotFound(notFoundHandler);

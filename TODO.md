@@ -76,14 +76,3 @@
 - Test virgin Raspberry Pi configurator and improve instructions
 - Check for certificate errors when connecting to Raspberry Pi bridge
 
-- Wi-Fi configuration through web interface
-  - Need a sensible default, i.e. detect what the factory setting is
-    - Use the EEPROM: if not set, Wi-Fi uses the default settings
-  - Only allow configuration of SSID, channel and Wi-Fi passphrase, not the IP address
-    - Configurator frequencies should avoid Wi-Fi frequency
-    - Advanced users can change the source code if they want to change the IP
-    - Sizes:
-      - SSID: 32 bytes
-      - Passphrase: 64 bytes
-      - Channel: 1 byte
-

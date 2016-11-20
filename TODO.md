@@ -29,11 +29,6 @@
 
 - Run-time adaptation to `hardware_inputs` and `logical_inputs` changes
 
-- Bug: 2 beep sound when momentary button down disconnects configurator?
-  - Maybe has to do with persistent storage taking too long, therefore losing sync?
-
-- Every *Switch* or *Trim* that uses a Momentary type *Hardware input* must remember their state across power cycles
-
 - Test lots of active mixer units, check how long calculation takes
 
 

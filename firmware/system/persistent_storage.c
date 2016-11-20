@@ -6,6 +6,7 @@
 #include <libopencm3/stm32/flash.h>
 
 #include <config.h>
+#include <configurator.h>
 #include <inputs.h>
 #include <persistent_storage.h>
 
@@ -64,6 +65,16 @@ void PERSISTENT_STORAGE_save_hardware_input_values(void)
 void PERSISTENT_STORAGE_background_flash_write(void)
 {
     if (!store_config.active) {
+        // If the configurator is active delay writing to the flash.
+        //
+        // This is necessary as writing to the flash takes a very long time
+        // and more or less halts the CPU. So we can't reliably send RF
+        // packets every 5 ms anymore, causing the configurator to loose
+        // the hop sequence and therefore the connection.
+        if (CONFIGURATOR_is_connected()) {
+            return;
+        }
+
         if (save_config) {
             save_config = false;
 

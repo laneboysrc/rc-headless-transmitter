@@ -33,13 +33,7 @@
 
 
 ## Configurator
-- Database syncing
-  - Which protocol?
-    - File storage using JSON?
-    - Custom REST protocol?
-  - Look into Redis
-
-
+- Database syncing using RemoteStorage.io
 
 - Use a better app-shell architecture
 - Base on web components

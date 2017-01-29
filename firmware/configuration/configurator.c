@@ -475,6 +475,13 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
 
 
 // ****************************************************************************
+bool CONFIGURATOR_is_connected(void)
+{
+    return connected;
+}
+
+
+// ****************************************************************************
 void CONFIGURATOR_init(void)
 {
 

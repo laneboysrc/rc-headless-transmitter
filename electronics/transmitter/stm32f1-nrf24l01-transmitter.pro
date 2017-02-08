@@ -1,6 +1,6 @@
-update=Sun 19 Jun 2016 07:39:03 PM SGT
+update=Wed 08 Feb 2017 09:15:05 AM SGT
 version=1
-last_client=eeschema
+last_client=kicad
 [pcbnew]
 version=1
 LastNetListRead=
@@ -49,12 +49,7 @@ NetIExt=net
 EquName1=devcms
 [eeschema]
 version=1
-LibDir=../../kicad-libraries
-NetFmtName=
-RptD_X=0
-RptD_Y=100
-RptLab=1
-LabSize=60
+LibDir=../../../kicad-libraries
 [eeschema/libraries]
 LibName1=WLA-STM32
 LibName2=WLA-nrf24

@@ -1,4 +1,4 @@
-update=Wed 08 Feb 2017 09:15:05 AM SGT
+update=Thu 09 Feb 2017 08:17:51 AM SGT
 version=1
 last_client=kicad
 [pcbnew]
@@ -51,14 +51,14 @@ EquName1=devcms
 version=1
 LibDir=../../../kicad-libraries
 [eeschema/libraries]
-LibName1=WLA-STM32
-LibName2=WLA-nrf24
-LibName3=WLA-power
-LibName4=power
-LibName5=device
-LibName6=conn
-LibName7=regul
-LibName8=special
+LibName1=stm32f1-nrf24l01-transmitter-rescue
+LibName2=WLA-STM32
+LibName3=WLA-nrf24
+LibName4=WLA-power
+LibName5=power
+LibName6=device
+LibName7=conn
+LibName8=regul
 LibName9=opto
 LibName10=contrib
 LibName11=analog_switches

@@ -1,4 +1,3 @@
 (fp_lib_table
   (lib (name WLA)(type KiCad)(uri $KIPRJMOD/../../../kicad-libraries/WLA.pretty)(options "")(descr ""))
-  (lib (name WLA-power)(type Legacy)(uri /home/laneboysrc/projects/kicad-libraries/WLA-power.mod)(options "")(descr ""))
 )

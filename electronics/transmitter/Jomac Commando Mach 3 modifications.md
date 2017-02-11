@@ -18,7 +18,7 @@ Isolate the LED and power:
 
 Isolate the power switch:
 - Disconnect one side of L1
-- Disconnect one side of C16 (could stay in place, but just to be safe as it is an old capacitor)
+- Disconnect one side of C15, C16 (could stay in place, but just to be safe as it is an old capacitor)
 - Disconnect one side of R19
 
 - Replace the LED with a high-brightness one (original LED is kept untouched, just removed from the housing and safely tucked away)

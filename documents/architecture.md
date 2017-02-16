@@ -67,6 +67,15 @@ The STM32F103C8T6 based hardware using the AliExpress board has the following *P
 * 9 digital inputs
 
 ### Hardware inputs
+
+In the old 27MHz AM car transmitters, the servo pulse decreases
+... when the steering is turned CCW (left)
+... when the throttle is pushed forward
+and increases
+... when the steering is turned CW (right)
+... when the throttle is pushed towards brake/reverse
+
+
 Some, or all, *PCB inputs* are connected to control devices such as sticks, pots or switches in a particular transmitter. We refer to those as *Hardware inputs*. There is a 1:1 relationship between a *Hardware inputs* and a *PCB inputs*. A *Hardware input* narrows down the *PCB input* type to one of the following:
 
 * Analog with center detent, spring-loaded auto-return to center: -100..0..100

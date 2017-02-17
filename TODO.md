@@ -37,7 +37,7 @@
 
 - Use a better app-shell architecture
 - Base on web components
-  - Polymer? SkateJS?
+  - Polymer? SkateJS? VUE.js?
   - Make ranges (limits, endpoints) not be able to go past each-other
     - Maybe make a custom element that limits upper and lower?
 
@@ -56,9 +56,7 @@
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
 
-- Need to be able to download transmitter configuration after firmware update
-  - Easiest way for now is to be able to enter the UUID when building the firmware. We could write a small tools that extracts basic info from a backup JSON that the user can utilize
-  - The backup JSON file should be human readable, right now it is just binary data wrapped in JSON
+- The backup JSON file should be human readable, right now it is just binary data wrapped in JSON
 
 - Make nodejs-uart bridges aware of MSG_DEBUG for nRF51
 

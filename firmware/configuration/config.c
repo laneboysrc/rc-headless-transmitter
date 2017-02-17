@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <libopencm3/cm3/common.h>
+#include <libopencm3/stm32/memorymap.h>
+
 #include <config.h>
 #include <inputs.h>
 #include <persistent_storage.h>
@@ -188,11 +191,18 @@ const config_t config_flash = {
 
 
 // ****************************************************************************
-// The configuration contains read-only value describing the hardware inputs.
+// The configuration contains read-only value describing the hardware inputs
+// as well as for the transmitter UUID (which is derived from the STM32
+// "Device Electronic Signature").
 // To ensure they are not accidentally overwritten this function sets the
 // values in the configuration to what was defined at compile time.
-static void load_pcb_inputs(void)
+static void restore_read_only_config(void)
 {
+    uint32_t *uuid = (uint32_t *) config.tx.uuid;
+
+    *uuid++ = DESIG_UNIQUE_ID0;
+    *uuid = DESIG_UNIQUE_ID1 + DESIG_UNIQUE_ID2;
+
     for (size_t i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
         pcb_input_t *dst = &config.tx.hardware_inputs[i].pcb_input;
         const pcb_input_t *src = &pcb_inputs[i];
@@ -205,7 +215,7 @@ static void load_pcb_inputs(void)
 // ****************************************************************************
 void CONFIG_save(void)
 {
-    load_pcb_inputs();
+    restore_read_only_config();
     PERSISTENT_STORAGE_save_config();
 }
 
@@ -221,7 +231,7 @@ void CONFIG_load(void)
         memcpy(&config, &config_failsafe, sizeof(config_t));
     }
 
-    load_pcb_inputs();
+    restore_read_only_config();
 }
 
 

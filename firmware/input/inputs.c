@@ -721,13 +721,43 @@ static void normalize_analog_input(hardware_input_t *t)
 {
     uint32_t raw;
     uint8_t adc_index;
+    uint16_t calibration[3];
+    bool reversed = false;
+
+    // The hardware input t->calibration[0..2] define the left/back, center and
+    // right/forward ADC values that correspond to the stick exertion. The
+    // center value is only applicable if the hardware has a center detent.
+    //
+    // Depending on how the potentiometer is wired up, left/back may have a
+    // higher or lower value than right/forward.
+    //
+    // To make calculation easy, we perform the following normalization steps.
+    // We make a copy of the calibration values and sort it so that
+    // calibration[0] is always smaller than calibration[2]. If we need to swap,
+    // we set a flag so that we can later check that we need to reverse the
+    // final output.
+    //
+    // We then normalize the read ADC value to make it span the whole ADC
+    // value range.
+    // Then we scale from the ADC value range to the CHANNEL_N100_PERCENT..CHANNEL_100_PERCENT
+    // range, taking into account whether the reversed flag is set or not.
+
+    calibration[0] = t->calibration[0];
+    calibration[1] = t->calibration[1];
+    calibration[2] = t->calibration[2];
+
+    if (t->calibration[0] > t->calibration[2]) {
+        calibration[0] = t->calibration[2];
+        calibration[2] = t->calibration[0];
+        reversed = true;
+    }
 
     adc_index = adc_channel_to_index(t->pcb_input.adc_channel);
     raw = adc_array_raw[adc_index];
-    if (raw < t->calibration[0]) {
+    if (raw < calibration[0]) {
         adc_array_calibrated[adc_index] = 0;
     }
-    else if (raw >= t->calibration[2]) {
+    else if (raw >= calibration[2]) {
         // Note: we are clamping to (ADC_VALUE_MAX + 1) because
         // the positive range is only 2047, while the negative is
         // -2048. This has the effect that after calibration the
@@ -739,21 +769,21 @@ static void normalize_analog_input(hardware_input_t *t)
         switch (t->type) {
             case ANALOG_NO_CENTER:
             case ANALOG_NO_CENTER_POSITIVE_ONLY:
-                adc_array_calibrated[adc_index] = (raw - t->calibration[0]) * (ADC_VALUE_MAX + 1) / (t->calibration[2] - t->calibration[0]);
+                adc_array_calibrated[adc_index] = (raw - calibration[0]) * (ADC_VALUE_MAX + 1) / (calibration[2] - calibration[0]);
                 break;
 
             case ANALOG_WITH_CENTER_AUTO_RETURN:
             case ANALOG_WITH_CENTER:
             default:
-                if (raw == t->calibration[1]) {
+                if (raw == calibration[1]) {
                     adc_array_calibrated[adc_index] = ADC_VALUE_HALF;
                 }
-                else if (raw > t->calibration[1]) {
+                else if (raw > calibration[1]) {
                     // Note: As above, clamp to (ADC_VALUE_MAX + 1)
-                    adc_array_calibrated[adc_index] = ADC_VALUE_HALF + (raw - t->calibration[1]) * (ADC_VALUE_HALF + 1) / (t->calibration[2] - t->calibration[1]);
+                    adc_array_calibrated[adc_index] = ADC_VALUE_HALF + (raw - calibration[1]) * (ADC_VALUE_HALF + 1) / (calibration[2] - calibration[1]);
                 }
                 else {
-                    adc_array_calibrated[adc_index] = (raw - t->calibration[0]) * ADC_VALUE_HALF / (t->calibration[1] - t->calibration[0]);
+                    adc_array_calibrated[adc_index] = (raw - calibration[0]) * ADC_VALUE_HALF / (calibration[1] - calibration[0]);
                 }
                 break;
         }
@@ -761,14 +791,24 @@ static void normalize_analog_input(hardware_input_t *t)
 
     switch (t->type) {
         case ANALOG_NO_CENTER_POSITIVE_ONLY:
-            normalized_inputs[adc_index] = adc_array_calibrated[adc_index] * CHANNEL_100_PERCENT / ADC_VALUE_MAX;
+            if (reversed) {
+                normalized_inputs[adc_index] = (ADC_VALUE_MAX - adc_array_calibrated[adc_index]) * CHANNEL_100_PERCENT / ADC_VALUE_MAX;
+            }
+            else {
+                normalized_inputs[adc_index] = adc_array_calibrated[adc_index] * CHANNEL_100_PERCENT / ADC_VALUE_MAX;
+            }
             break;
 
         case ANALOG_WITH_CENTER_AUTO_RETURN:
         case ANALOG_WITH_CENTER:
         case ANALOG_NO_CENTER:
         default:
-            normalized_inputs[adc_index] = (adc_array_calibrated[adc_index] - ADC_VALUE_HALF) * CHANNEL_100_PERCENT / ADC_VALUE_HALF;
+            if (reversed) {
+                normalized_inputs[adc_index] = (adc_array_calibrated[adc_index] - ADC_VALUE_HALF) * CHANNEL_N100_PERCENT / ADC_VALUE_HALF;
+            }
+            else {
+                normalized_inputs[adc_index] = (adc_array_calibrated[adc_index] - ADC_VALUE_HALF) * CHANNEL_100_PERCENT / ADC_VALUE_HALF;
+            }
             break;
     }
 }

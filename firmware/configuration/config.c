@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include <libopencm3/cm3/common.h>
-#include <libopencm3/stm32/memorymap.h>
+#include <libopencm3/stm32/desig.h>
 
 #include <config.h>
 #include <inputs.h>
@@ -199,9 +199,12 @@ const config_t config_flash = {
 static void restore_read_only_config(void)
 {
     uint32_t *uuid = (uint32_t *) config.tx.uuid;
+    uint32_t chip_id[3];
 
-    *uuid++ = DESIG_UNIQUE_ID0;
-    *uuid = DESIG_UNIQUE_ID1 + DESIG_UNIQUE_ID2;
+    desig_get_unique_id(chip_id);
+
+    *uuid++ = chip_id[2];
+    *uuid = chip_id[1] + chip_id[0];
 
     for (size_t i = 0; i < MAX_TRANSMITTER_INPUTS; i++) {
         pcb_input_t *dst = &config.tx.hardware_inputs[i].pcb_input;

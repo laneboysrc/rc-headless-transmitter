@@ -85,10 +85,10 @@ static void adc_init(void)
 
     adc_power_on(ADC1);
     adc_reset_calibration(ADC1);
-    adc_calibration(ADC1);
+    adc_calibrate(ADC1);
 
     // Enable the voltage reference and temperature sensor inputs
-    adc_enable_temperature_sensor(ADC1);
+    adc_enable_temperature_sensor();
 
     adc_set_conversion_sequence();
 

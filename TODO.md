@@ -67,3 +67,5 @@
 - Warning message for configuration that is only applicable after reset, i.e. port settings
 - Explain trim (logical inputs)
 - What do colors mean when selecting labels on logical inputs?
+
+- PWM output to drive old analog meter, relative to battery voltage

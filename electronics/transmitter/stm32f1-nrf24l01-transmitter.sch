@@ -1014,7 +1014,6 @@ F 3 "" H 5000 850 60  0000 C CNN
 $EndComp
 Wire Wire Line
 	5000 850  5000 950 
-NoConn ~ 5350 950 
 $Comp
 L Q_NPN_CBE Q1
 U 1 1 589EC521
@@ -1145,4 +1144,17 @@ F 3 "" H 1750 6150 60  0000 C CNN
 	1    1750 6150
 	1    0    0    -1  
 $EndComp
+$Comp
+L VCC #PWR?
+U 1 1 58D2422E
+P 5350 850
+F 0 "#PWR?" H 5350 950 30  0001 C CNN
+F 1 "VCC" H 5350 950 30  0000 C CNN
+F 2 "" H 5350 850 60  0000 C CNN
+F 3 "" H 5350 850 60  0000 C CNN
+	1    5350 850 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5350 850  5350 950 
 $EndSCHEMATC

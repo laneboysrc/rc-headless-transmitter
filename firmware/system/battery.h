@@ -1,3 +1,8 @@
 #pragma once
 
+#define BATTERY_FULL_LEVEL 4200
+#define BATTERY_LOW_LEVEL 3500
+#define BATTERY_VERY_LOW_LEVEL 3430
+#define BATTERY_DANGEROUSLY_LOW_LEVEL 3340
+
 void BATTERY_check_level(void);

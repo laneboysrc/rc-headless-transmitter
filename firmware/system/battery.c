@@ -1,6 +1,7 @@
 #include <battery.h>
 #include <inputs.h>
 #include <led.h>
+#include <meter.h>
 #include <music.h>
 #include <systick.h>
 
@@ -11,10 +12,6 @@ typedef enum {
     BATTERY_VERY_LOW,
     BATTERY_DANGEROUSLY_LOW
 } battery_state_t;
-
-#define BATTERY_LOW_LEVEL 3500
-#define BATTERY_VERY_LOW_LEVEL 3430
-#define BATTERY_DANGEROUSLY_LOW_LEVEL 3340
 
 static battery_state_t battery_state = BATTERY_OK;
 
@@ -38,6 +35,8 @@ void BATTERY_check_level(void)
     uint32_t battery_voltage;
 
     battery_voltage = INPUTS_get_battery_voltage();
+
+    METER_show_level(battery_voltage);
 
     switch (battery_state) {
         case BATTERY_OK:

@@ -11,6 +11,7 @@
 #include <configurator.h>
 #include <inputs.h>
 #include <led.h>
+#include <meter.h>
 #include <mixer.h>
 #include <music.h>
 #include <nrf24l01p.h>
@@ -77,6 +78,7 @@ int main(void)
     UART_init();
     SPI_init();
     SOUND_init();
+    METER_init();
     NRF24_init();
     WATCHDOG_start();
 

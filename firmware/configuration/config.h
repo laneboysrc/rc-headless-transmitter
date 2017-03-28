@@ -26,6 +26,7 @@ typedef struct {
     uint32_t double_click_timeout_ms;
     uint16_t passphrase;
     uint8_t led_pwm_percent;
+    uint8_t meter_pwm_percent;
 } tx_t;
 
 typedef struct {

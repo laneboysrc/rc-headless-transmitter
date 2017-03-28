@@ -22,6 +22,7 @@
 #include <libopencm3/stm32/timer.h>
 
 #include <battery.h>
+#include <config.h>
 #include <meter.h>
 
 
@@ -46,6 +47,10 @@ void METER_init(void)
     timer_set_prescaler(TIM4, METER_TIMER_PRESCALER - 1);
     meter_timer_frequency = rcc_apb1_frequency / METER_TIMER_PRESCALER;
 
+    // Setting the timer period to 6 MHz / 100 = 60kHz. This gives us a 1%
+    // resolution in duty cycle, using direct oc values of 0..100.
+    timer_set_period(TIM4, 100);
+
     timer_set_oc_mode(TIM4, TIM_OC1, TIM_OCM_PWM1);
     timer_enable_oc_preload(TIM4, TIM_OC1);
     timer_disable_oc_output(TIM4, TIM_OC1);
@@ -55,35 +60,38 @@ void METER_init(void)
 
 
 // ****************************************************************************
-void METER_show_level(uint32_t battery_voltage)
+void METER_show_level(uint32_t battery_voltage_mv)
 {
-    uint32_t period;
     uint32_t duty_cycle;
 
-    // dummy function, remove ...
-    period = battery_voltage;
-    duty_cycle = battery_voltage;
-
-    // if (config.scalefactor == 0) {
-    //     timer_disable_oc_output(TIM4, TIM_OC1);
-    //     timer_disable_counter(TIM4);
-    //     return;
-    // }
+    // Setting meter_pwm_percent to 0 means meter off; PWM output disabled
+    if (config.tx.meter_pwm_percent == 0) {
+        timer_disable_oc_output(TIM4, TIM_OC1);
+        timer_disable_counter(TIM4);
+        return;
+    }
 
     timer_enable_oc_output(TIM4, TIM_OC1);
     timer_enable_counter(TIM4);
 
-    // Map BATTERY_FULL_LEVEL .. BATTERY_LOW_LEVEL to PWM duty cycle 100% .. 50%.
-    // Scale by the config value 0..100% (0 means meter off; PWM output disabled)
+    if (battery_voltage_mv >= BATTERY_FULL_LEVEL) {
+        duty_cycle = 100;
+    }
+    else if (battery_voltage_mv >= BATTERY_LOW_LEVEL) {
+        // Map BATTERY_FULL_LEVEL..BATTERY_LOW_LEVEL to PWM duty cycle 100%..50%.
+        duty_cycle = 50 + (50 * ((battery_voltage_mv - BATTERY_LOW_LEVEL) * 100 / (BATTERY_FULL_LEVEL - BATTERY_LOW_LEVEL))) / 100;
+    }
+    else if (battery_voltage_mv >= BATTERY_VERY_LOW_LEVEL) {
+        // Map BATTERY_LOW_LEVEL..BATTERY_VERY_LOW_LEVEL to PWM duty cycle 50%..25%.
+        duty_cycle = 25 + (25 * ((battery_voltage_mv - BATTERY_VERY_LOW_LEVEL) * 100 / (BATTERY_LOW_LEVEL - BATTERY_VERY_LOW_LEVEL))) / 100;
+    }
+    else {
+        // At minimum we show 20% meter deflection
+        duty_cycle = 20;
+    }
 
-    // The Timer4 runs at 6 MHz, so we need to set the ARR to that figure
-    // divided by the frequency we are looking to generate.
-    // period = meter_timer_frequency / frequency;
+    // Scale by the config value 0..100%
+    duty_cycle = duty_cycle * config.tx.meter_pwm_percent / 100;
 
-    // Simple non-linear function to mimic a perceived linear volume level
-    // duty_cycle = (period / 2) * volume_factor / 100 * volume_factor / 100 * volume_factor / 100;
-
-
-    timer_set_period(TIM2, period);
     timer_set_oc_value(TIM2, TIM_OC1, duty_cycle);
 }

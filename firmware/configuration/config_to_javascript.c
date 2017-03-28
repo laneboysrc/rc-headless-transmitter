@@ -230,6 +230,11 @@ void CONFIG_dump_javascript_information(void)
         membersizeof(tx_t, led_pwm_percent),
         1);
 
+    sync_printf(m, "METER_SCALE_FACTOR", "u",
+        offsetof(tx_t, meter_scale_factor),
+        membersizeof(tx_t, meter_scale_factor),
+        1);
+
     sync_printf("        },\n\n");
 
     sync_printf("        MODEL: { o: %u, s: %u, c: 1, t: 'MODEL',\n",

@@ -69,8 +69,8 @@ static void disable_binding(void)
 // ****************************************************************************
 int main(void)
 {
-    uint32_t last_ms = 0;
-    uint32_t seconds = 0;
+    uint32_t last_battery_check_ms = 0;
+    uint32_t last_invalid_config_ms = 0;
 
     clock_init();
     LED_init();
@@ -106,17 +106,17 @@ int main(void)
     while (1) {
         WATCHDOG_reset();
 
-        if ((milliseconds - last_ms) > 1000) {
+        // Check the battery level and update the meter every 100 ms
+        if ((milliseconds - last_battery_check_ms) > 100) {
             BATTERY_check_level();
+        }
 
-            if ((seconds % 5) == 0) {
-                if (config.version != CONFIG_VERSION) {
-                    MUSIC_play(&song_config_invalid);
-                }
+        // If the configuration version is invalid play an error sound every
+        // 5 seconds
+        if ((milliseconds - last_invalid_config_ms) > 5000) {
+            if (config.version != CONFIG_VERSION) {
+                MUSIC_play(&song_config_invalid);
             }
-
-            last_ms = milliseconds;
-            ++seconds;
         }
 
         // INPUTS_dump_adc();

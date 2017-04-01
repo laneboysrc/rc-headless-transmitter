@@ -26,6 +26,7 @@ class TransmitterDetails {
     mdl.setTextfield('#app-transmitter_details-name', 'NAME');
     mdl.setSlider('#app-transmitter_details-trim_range', 'TRIM_RANGE');
     mdl.setSlider('#app-transmitter_details-trim_step_size', 'TRIM_STEP_SIZE');
+    mdl.setSlider('#app-transmitter_details-meter', 'METER_PWM_PERCENT');
 
     mdl.formatter = passphraseFormatter;
     mdl.setTextfield('#app-transmitter_details-passphrase', 'PASSPHRASE');

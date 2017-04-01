@@ -47,6 +47,7 @@ var CONFIG_VERSIONS = {
             DOUBLE_CLICK_TIMEOUT_MS: {t: 'u', o: 1580, s: 4, c: 1},
             PASSPHRASE: {t: 'u', o: 1584, s: 2, c: 1},
             LED_PWM_PERCENT: {t: 'u', o: 1586, s: 1, c: 1},
+            METER_PWM_PERCENT: {t: 'u', o: 1587, s: 1, c: 1},
         },
 
         MODEL: { o: 1592, s: 2884, c: 1, t: 'MODEL',

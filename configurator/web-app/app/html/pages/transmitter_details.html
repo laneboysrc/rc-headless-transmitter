@@ -139,5 +139,39 @@
       </div>
     </section>
 
+    <!-- Analog meter adjustment card -->
+    <section class="section--center mdl-grid"> <!-- style="display: none;"> -->
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <div class="mdl-card__title-text">Analog meter calibration</div>
+        </div>
+        <div class="mdl-card__supporting-text">
+          <div>
+            Configure the full scale output for an analog battery meter. Connect a 4.2 V source and adjust the slider until the meter shows
+            full deflection.
+            <br>
+            Set the slider to 0 to disable the analog battery meter output.
+          </div>
+          <div class="space-before">
+            Double-click on slider labels for fine adjustments.
+          </div>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <table class="limits mdl-data-table mdl-js-data-table">
+          <tbody>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric">
+                Full scale point:
+              </td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <input id="app-transmitter_details-meter" class="mdl-slider mdl-js-slider" type="range" min="0" max="100">
+              </td>
+            </tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>

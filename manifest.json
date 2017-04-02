@@ -1,0 +1,16 @@
+{
+  "name": "Headless RC Transmitter configuration tool",
+  "short_name": "Headless TX",
+  "description": "A tool to configure the headless radio control transmitters designed by LANE Boys RC",
+  "start_url": "index.html",
+  "display": "standalone",
+  "theme_color": "rgb(255,87,34)",
+  "background_color": "rgb(255,87,34)",
+  "icons": [
+    {
+      "src": "laneboysrc-logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

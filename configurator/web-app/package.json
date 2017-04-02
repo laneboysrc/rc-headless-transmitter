@@ -13,6 +13,7 @@
   "scripts": {
     "build": "webpack",
     "production": "webpack",
+    "dev": "webpack-dev-server",
     "development": "webpack-dev-server",
     "start": "webpack-dev-server"
   },

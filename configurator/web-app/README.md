@@ -2,7 +2,7 @@
 
 This web-app implements a *configurator* that can setup a *headless transmitter* via a bridge that implements the Websocket protocol.
 
-Please refer to the [configurator](../../documents/configurator.md) documentation for more information.
+Please refer to the [configurator](../../docs/configurator.md) documentation for more information.
 
 
 

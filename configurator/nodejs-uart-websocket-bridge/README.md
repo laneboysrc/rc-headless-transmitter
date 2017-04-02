@@ -3,7 +3,7 @@
 This tool can be connected to a *headless transmitter* via the UART. It exposes
 the *headless transmitter* to a *configurator* using the Websocket protocol.
 
-Please refer to the [configurator](../../documents/configurator.md) documentation for
+Please refer to the [configurator](../../docs/configurator.md) documentation for
 more information.
 
 

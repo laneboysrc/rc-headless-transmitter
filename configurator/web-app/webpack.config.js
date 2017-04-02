@@ -13,7 +13,7 @@ const parts             = require('./webpack.support');
 
 const PATHS = {
   app:    path.join(__dirname, 'app'),
-  build:  path.join(__dirname, '../../docs')
+  build:  path.join(__dirname, '../../gh-pages')
 };
 
 const appHTML = path.join(PATHS.app, 'html', 'app.html');
@@ -90,7 +90,7 @@ switch (process.env.npm_lifecycle_event) {
   case 'build':
   case 'production':
     // Remove the service worker to force an update
-    fs.unlinkSync(serviceWorker);
+    fs.unlink(serviceWorker, function () {});
 
     config = merge(
       common,

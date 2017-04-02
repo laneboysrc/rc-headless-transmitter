@@ -43,6 +43,11 @@ https://github.com/GoogleChrome/sw-precache
 
 Need to make your web-app work offline? Unbelievably easy with this brilliant project!
 
+### spinkit
+
+http://tobiasahlin.com/spinkit/
+
+A nice and easy to use library of CSS spinners.
 
 ### Gnu GCC
 

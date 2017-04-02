@@ -51,11 +51,9 @@ void METER_init(void)
     // resolution in duty cycle, using direct oc values of 0..100.
     timer_set_period(TIM4, 100);
 
-    timer_set_oc_mode(TIM4, TIM_OC1, TIM_OCM_PWM1);
-    timer_enable_oc_preload(TIM4, TIM_OC1);
-    timer_disable_oc_output(TIM4, TIM_OC1);
-
-    timer_set_oc_polarity_low(TIM4, TIM_OC1);
+    timer_set_oc_mode(TIM4, TIM_OC4, TIM_OCM_PWM1);
+    timer_enable_oc_preload(TIM4, TIM_OC4);
+    timer_disable_oc_output(TIM4, TIM_OC4);
 }
 
 
@@ -66,13 +64,10 @@ void METER_show_level(uint32_t battery_voltage_mv)
 
     // Setting meter_pwm_percent to 0 means meter off; PWM output disabled
     if (config.tx.meter_pwm_percent == 0) {
-        timer_disable_oc_output(TIM4, TIM_OC1);
+        timer_disable_oc_output(TIM4, TIM_OC4);
         timer_disable_counter(TIM4);
         return;
     }
-
-    timer_enable_oc_output(TIM4, TIM_OC1);
-    timer_enable_counter(TIM4);
 
     if (battery_voltage_mv >= BATTERY_FULL_LEVEL) {
         duty_cycle = 100;
@@ -82,16 +77,18 @@ void METER_show_level(uint32_t battery_voltage_mv)
         duty_cycle = 50 + (50 * ((battery_voltage_mv - BATTERY_LOW_LEVEL) * 100 / (BATTERY_FULL_LEVEL - BATTERY_LOW_LEVEL))) / 100;
     }
     else if (battery_voltage_mv >= BATTERY_VERY_LOW_LEVEL) {
-        // Map BATTERY_LOW_LEVEL..BATTERY_VERY_LOW_LEVEL to PWM duty cycle 50%..25%.
-        duty_cycle = 25 + (25 * ((battery_voltage_mv - BATTERY_VERY_LOW_LEVEL) * 100 / (BATTERY_LOW_LEVEL - BATTERY_VERY_LOW_LEVEL))) / 100;
+        // Map BATTERY_LOW_LEVEL..BATTERY_VERY_LOW_LEVEL to PWM duty cycle 50%..5%.
+        duty_cycle = 5 + (45 * ((battery_voltage_mv - BATTERY_VERY_LOW_LEVEL) * 100 / (BATTERY_LOW_LEVEL - BATTERY_VERY_LOW_LEVEL))) / 100;
     }
     else {
-        // At minimum we show 20% meter deflection
-        duty_cycle = 20;
+        // At minimum we show 5% meter deflection
+        duty_cycle = 5;
     }
 
     // Scale by the config value 0..100%
     duty_cycle = duty_cycle * config.tx.meter_pwm_percent / 100;
 
-    timer_set_oc_value(TIM2, TIM_OC1, duty_cycle);
+    timer_set_oc_value(TIM4, TIM_OC4, duty_cycle);
+    timer_enable_oc_output(TIM4, TIM_OC4);
+    timer_enable_counter(TIM4);
 }

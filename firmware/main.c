@@ -94,8 +94,6 @@ int main(void)
 
     LED_on();
     SOUND_play(C5, 100, NULL);
-    // MUSIC_play(&song_connecting);
-
 
     PROTOCOL_HK310_enable_binding();
     if (config.tx.bind_timeout_ms) {

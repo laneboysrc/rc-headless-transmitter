@@ -57,8 +57,9 @@ const pcb_input_t pcb_inputs[MAX_TRANSMITTER_INPUTS] = {
     {.type = DIGITAL, .gpioport = GPIOB, .gpio = GPIO8,
      .pin_name = "PB8"},
 
-    {.type = DIGITAL, .gpioport = GPIOB, .gpio = GPIO9,
-     .pin_name = "PB9"},
+    // NOTE: PB9 cannot be used as we reserve it for Analog battery meter output
+    // {.type = DIGITAL, .gpioport = GPIOB, .gpio = GPIO9,
+    //  .pin_name = "PB9"},
 
     {.type = DIGITAL, .gpioport = GPIOB, .gpio = GPIO10,
      .pin_name = "PB10"},

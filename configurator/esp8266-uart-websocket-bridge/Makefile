@@ -43,10 +43,15 @@ spiffs:
 	$(ESPTOOL_PATH)/esptool -cd $(UPLOAD_RESET) -cb $(UPLOAD_SPEED) -cp $(UPLOAD_PORT) -ca $(SPIFFS_START) -cf $(SPIFFS_IMAGE)
 .PHONY: spiffs
 
-spiffs-webapp: SPIFFS_DIR := ./data.web-app/
+spiffs-webapp: SPIFFS_SOURCE_DIR := ./data.web-app/
+spiffs-webapp: SPIFFS_DIR := $(BUILD_DIR)/spiffs-webapp/
 spiffs-webapp: SPIFFS_IMAGE := $(BUILD_DIR)/spiffs-webapp.image
 spiffs-webapp:
-	date -u "+%a, %d %b %Y %T GMT" >$(SPIFFS_DIR)last-modified
+	rm -rf $(SPIFFS_DIR)
+	mkdir -p $(SPIFFS_DIR)
+	date -u "+%a, %d %b %Y %T GMT" > $(SPIFFS_DIR)last-modified
+	cp wi-fi-config.txt $(SPIFFS_DIR)
+	cp $(SPIFFS_SOURCE_DIR)* $(SPIFFS_DIR)
 	$(MKSPIFFS_PATH)/mkspiffs -c $(SPIFFS_DIR) -p $(SPIFFS_PAGE) -b $(SPIFFS_BLOCK) -s $(SPIFFS_SIZE) $(SPIFFS_IMAGE)
 	$(ESPTOOL_PATH)/esptool -cd $(UPLOAD_RESET) -cb $(UPLOAD_SPEED) -cp $(UPLOAD_PORT) -ca $(SPIFFS_START) -cf $(SPIFFS_IMAGE)
 .PHONY: spiffs-webapp

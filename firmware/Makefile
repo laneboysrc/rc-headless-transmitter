@@ -18,17 +18,18 @@ endif
 
 ###############################################################################
 # Toolchain commands
-GNU_INSTALL_ROOT 	:= /opt/gcc-arm-none-eabi-5_2-2015q4
+GNU_INSTALL_ROOT 	?=
+# GNU_INSTALL_ROOT 	?= /opt/gcc-arm-none-eabi-5_2-2015q4/bin/
 GNU_PREFIX       	:= arm-none-eabi
-CC               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-gcc'
-AS               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-as'
-AR               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ar' -r
-LD               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ld'
-NM               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-nm'
-GDB               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-gdb'
-OBJDUMP          	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objdump'
-OBJCOPY          	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
-SIZE             	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
+CC               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-gcc'
+AS               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-as'
+AR               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-ar' -r
+LD               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-ld'
+NM               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-nm'
+GDB               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-gdb'
+OBJDUMP          	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-objdump'
+OBJCOPY          	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-objcopy'
+SIZE             	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-size'
 
 OPENOCD          	:= /opt/openocd/bin/openocd
 OPENOCD_FLAGS       := --debug=0 -f interface/stlink-v2.cfg -f target/stm32f1x.cfg

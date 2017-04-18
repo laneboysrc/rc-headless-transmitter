@@ -14,16 +14,17 @@ endif
 
 # Toolchain commands
 TEMPLATE_PATH    	:= $(NRF_SDK_PATH)/components/toolchain/gcc
-GNU_INSTALL_ROOT 	:= /opt/gcc-arm-none-eabi-5_2-2015q4
+GNU_INSTALL_ROOT 	?=
 GNU_PREFIX       	:= arm-none-eabi
-CC               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-gcc'
-AS               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-as'
-AR               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ar' -r
-LD               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-ld'
-NM               	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-nm'
-OBJDUMP          	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objdump'
-OBJCOPY          	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy'
-SIZE             	:= '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
+CC               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-gcc'
+AS               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-as'
+AR               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-ar' -r
+LD               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-ld'
+NM               	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-nm'
+OBJDUMP          	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-objdump'
+OBJCOPY          	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-objcopy'
+GDB             	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-gdb'
+SIZE             	:= '$(GNU_INSTALL_ROOT)$(GNU_PREFIX)-size'
 
 OPENOCD          	:= /opt/openocd/bin/openocd
 OPENOCD_FLAGS       := --debug=0 -f interface/stlink-v2.cfg -f target/nrf51.cfg
@@ -122,12 +123,26 @@ vpath %.s $(ASM_PATHS)
 OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 
 
+###############################################################################
+nrf51_sdk :
+	$(ECHO)if [ ! "`ls -A $(NRF_SDK_PATH)/components/device/nrf51.h`" ] ; then \
+		printf "\n"; \
+		printf "######## ERROR ########\n"; \
+		printf "The nRF51 SDK version nRF5_SDK_11.0.0_89a8197 is not accessible.\n"; \
+		printf "\n"; \
+		printf "Please download it from Nordic Semiconductors and create a:\n"; \
+		printf "symlink named $(NRF_SDK_PATH) to it.\n"; \
+		printf "\n\n"; \
+		exit 1;\
+		fi
+
+###############################################################################
 
 # Building all targets
 all: $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).hex echosize
 
 # Create build directories
-$(BUILD_DIRECTORIES):
+$(BUILD_DIRECTORIES): nrf51_sdk
 	@echo [MKDIR] $@
 	$(ECHO)$(MK) $@
 
@@ -174,7 +189,7 @@ terminal:
 	miniterm.py -p /dev/ttyUSB1 -b 115200
 
 
-.PHONY: clean program flash reset terminal echosize list all
+.PHONY: nrf51_sdk clean program flash reset terminal echosize list all
 
 
 ###############################################################################

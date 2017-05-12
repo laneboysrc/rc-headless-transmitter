@@ -23,9 +23,6 @@ class DeviceList {
     this.showToast = false;
     this.availableTransmitters = [];
 
-    this.onmessageHandler = this._onmessage.bind(this);
-    this.onmessageHandlerAttached = false;
-
     document.addEventListener('dev-bridgeconnected', this._bridgeConnected.bind(this));
     document.addEventListener('dev-connectionlost', this._connectionLost.bind(this));
   }
@@ -51,9 +48,6 @@ class DeviceList {
 
   //*************************************************************************
   edit(index) {
-    document.removeEventListener('ws-message', this.onmessageHandler);
-    this.onmessageHandlerAttached = false;
-
     let tx = this.availableTransmitters[index];
     let mdl = new MDLHelper();
     mdl.setTextContentRaw('#app-device_list-loading_transmitter__name', tx.name);
@@ -115,25 +109,7 @@ class DeviceList {
   }
 
   //*************************************************************************
-  _resetPage() {
-    if (!this.onmessageHandlerAttached) {
-      document.addEventListener('ws-message', this.onmessageHandler);
-      this.onmessageHandlerAttached = true;
-    }
-
-    // Empty the list of transmitters
-    this.availableTransmitters = [];
-    Utils.clearDynamicElements(this.list);
-
-    Utils.show(this.loading);
-    Utils.show(this.msgBridge);
-    Utils.hide(this.msgScanning);
-    Utils.hide(this.list);
-    Utils.hide(this.txLoading);
-  }
-
-  //*************************************************************************
-  _transmitterReadyForConnect(data) {
+  transmitterFreeToConnect(data) {
     this.showToast = true;
 
     let newTx = {
@@ -175,6 +151,18 @@ class DeviceList {
     this.showToast = true;
   }
 
+  //*************************************************************************
+  _resetPage() {
+    // Empty the list of transmitters
+    this.availableTransmitters = [];
+    Utils.clearDynamicElements(this.list);
+
+    Utils.show(this.loading);
+    Utils.show(this.msgBridge);
+    Utils.hide(this.msgScanning);
+    Utils.hide(this.list);
+    Utils.hide(this.txLoading);
+  }
 
   //*************************************************************************
   _bridgeConnected() {
@@ -204,21 +192,6 @@ class DeviceList {
 
     const text = document.querySelector('#app-device_list-toast__message').content.textContent;
     Utils.showToast(text, 5000);
-  }
-
-  //*************************************************************************
-  // Receives Websocket messages
-
-  // FIXME: instead of listening to events have ws_protocol call us directly
-  _onmessage(event) {
-    // console.log('DeviceList ws: ', event, data);
-    let data = event.detail;
-
-    // FIXME: handle situation when we return to that page while already
-    // connected to a transmitter
-    if (data[0] === Device.TX_FREE_TO_CONNECT) {
-      this._transmitterReadyForConnect(data);
-    }
   }
 }
 

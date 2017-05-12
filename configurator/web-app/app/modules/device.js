@@ -113,6 +113,8 @@ class Device {
       function onmessage(event) {
         let packet = event.detail;
 
+        // FIXME: how can we make it so that we have positive confirmation
+        // that we are connected? Note that the password may be wrong?!
         if (packet[0] === self.TX_INFO) {
           cleanup();
           self.connected = true;

@@ -318,7 +318,7 @@ class WebsocketProtocol {
         // Device.onLiveMessage(data);
       }
       else if (data[0] === Device.TX_FREE_TO_CONNECT) {
-        // DeviceList.TransmitterFreeToConnect(data);
+        DeviceList.transmitterFreeToConnect(data);
       }
       else {
         this._resolvePromises(data);

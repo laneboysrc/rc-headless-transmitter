@@ -32,6 +32,14 @@
 - Test lots of active mixer units, check how long calculation takes
 
 
+## nRF51 UART bridge
+
+- Hop timeout recover if multiple hops fail
+- Send `MAX_PACKETS_IN_TRANSIT` upwards
+- Implement a command to query the value for UART purpose, since there is no explicit connection on the UART as there is with websocket or other transports
+- When connection is lost due to timeout this needs to be properly reported up
+
+
 ## Configurator
 - Database syncing using RemoteStorage.io
 

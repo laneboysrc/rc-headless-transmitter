@@ -31,6 +31,7 @@
 
 - Test lots of active mixer units, check how long calculation takes
 
+- Add version date (based on Git) to all software
 
 ## nRF51 UART bridge
 

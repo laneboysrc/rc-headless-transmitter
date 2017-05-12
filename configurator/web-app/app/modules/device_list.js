@@ -143,7 +143,7 @@ class DeviceList {
     };
 
     let index = this.availableTransmitters.findIndex((element) => {
-      return element.name === newTx.name;
+      return element.uuid === newTx.uuid;
     });
 
     if (index >= 0) {

@@ -315,7 +315,7 @@ class WebsocketProtocol {
       // FIXME: filter out TX_INFO and TX_FREE_TO_CONNECT, which are sent
       // by the Tx without and request. Send those to
       if (data[0] === Device.TX_INFO) {
-        // Device.onLiveMessage(data);
+        Device.onLiveMessage(data);
       }
       else if (data[0] === Device.TX_FREE_TO_CONNECT) {
         DeviceList.transmitterFreeToConnect(data);

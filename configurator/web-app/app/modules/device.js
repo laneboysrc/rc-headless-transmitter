@@ -59,7 +59,6 @@ class Device {
 
     document.addEventListener('ws-open', this._onOpen.bind(this));
     document.addEventListener('ws-close', this._onClose.bind(this));
-    document.addEventListener('ws-message', this._onLiveMessage.bind(this));
   }
 
   //*************************************************************************
@@ -674,6 +673,32 @@ class Device {
   }
 
   //*************************************************************************
+  onLiveMessage(packet) {
+    if (!this.TX) {
+      return;
+    }
+
+    if (packet.length <= 1) {
+      return;
+    }
+
+    let offset = 1;
+    const config = this.TX.getConfig();
+    const type = config.TYPES['live_t'];
+
+    while ((offset + 6) <= packet.length) {
+      let id = Utils.getUint16(packet, offset);
+      let value = Utils.getInt32(packet, offset+2);
+
+      // FIXME: pre-compute this so we can directly access it
+      let name = this.TX.typeLookupByNumber(type, id);
+      this.live[name] = value;
+
+      offset += 6;
+    }
+  }
+
+  //*************************************************************************
   // load hw.[newDev.schemaName] into newDev
   // add newDev to our database
   _loadDeviceData (newDev) {
@@ -727,39 +752,6 @@ class Device {
 
     if (this.wsOpen) {
       WebsocketProtocol.open();
-    }
-  }
-
-
-  //*************************************************************************
-  // FIXME: instead of listening to events have ws_protocol call us directly
-  _onLiveMessage(event) {
-    let packet = event.detail;
-
-    if (!this.TX) {
-      return;
-    }
-
-    if (packet[0] !== this.TX_INFO) {
-      return;
-    }
-
-    if (packet.length <= 1) {
-      return;
-    }
-
-    let offset = 1;
-    const config = this.TX.getConfig();
-    const type = config.TYPES['live_t'];
-
-    while ((offset + 6) <= packet.length) {
-      let id = Utils.getUint16(packet, offset);
-      let value = Utils.getInt32(packet, offset+2);
-
-      let name = this.TX.typeLookupByNumber(type, id);
-      this.live[name] = value;
-
-      offset += 6;
     }
   }
 }

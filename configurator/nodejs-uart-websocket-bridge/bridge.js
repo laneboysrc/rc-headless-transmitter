@@ -29,7 +29,7 @@ var TX_REQUESTED_DATA = 0x52;
 var TX_WRITE_SUCCESSFUL = 0x57;
 var TX_COPY_SUCCESSFUL = 0x43;
 
-var MAX_PACKETS_IN_TRANSIT = 10;
+var MAX_PACKETS_IN_TRANSIT = 100;
 var packetCache = [];
 
 var packets = {

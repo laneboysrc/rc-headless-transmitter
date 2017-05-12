@@ -34,7 +34,7 @@ extern volatile uint32_t milliseconds;
 #define TX_WRITE_SUCCESSFUL 0x57
 #define TX_COPY_SUCCESSFUL 0x43
 
-#define PACKET_FIFO_SIZE 10
+#define PACKET_FIFO_SIZE 100
 
 
 typedef struct  {

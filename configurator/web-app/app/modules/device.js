@@ -57,6 +57,8 @@ class Device {
     this.TX_COPY_SUCCESSFUL = 0x43;
     this.WS_MAX_PACKETS_IN_TRANSIT = 0x42;
 
+    this.connectedCallback = null;
+
     document.addEventListener('ws-open', this._onOpen.bind(this));
     document.addEventListener('ws-close', this._onClose.bind(this));
   }
@@ -105,21 +107,14 @@ class Device {
 
       function cleanup() {
         clearTimeout(timer);
-        document.removeEventListener('ws-message', onmessage);
+        self.connectedCallback = null;
         document.removeEventListener('ws-close', onclose);
       }
 
-      function onmessage(event) {
-        let packet = event.detail;
-
-        // FIXME: how can we make it so that we have positive confirmation
-        // that we are connected? Note that the password may be wrong?!
-        if (packet[0] === self.TX_INFO) {
-          cleanup();
-          self.connected = true;
-          resolve();
-          return;
-        }
+      function onmessage() {
+        cleanup();
+        self.connected = true;
+        resolve();
       }
 
       function onclose() {
@@ -135,7 +130,7 @@ class Device {
         reject(new Error('Connection timeout'));
       }
 
-      document.addEventListener('ws-message', onmessage);
+      self.connectedCallback = onmessage;
       document.addEventListener('ws-close', onclose);
       timer = setTimeout(ontimeout, TIMEOUT_MS);
       WebsocketProtocol.send(connectPacket);
@@ -144,33 +139,17 @@ class Device {
 
   //*************************************************************************
   disconnect() {
-    if (!this.connected) {
-      return Promise.reject(new Error('Device.disconnect: not connected'));
-    }
-
     let self = this;
 
     return new Promise((resolve, reject) => {
-      function onmessage(event) {
-        let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
-
-        WebsocketProtocol.send(disconnectPacket);
-
-        self.connected = false;
-        document.removeEventListener('ws-message', onmessage);
-        document.removeEventListener('ws-close', onclose);
-        resolve();
+      if (!self.connected) {
+        reject(new Error('Device.disconnect: not connected'));
       }
 
-      function onclose(event) {
-        self.connected = false;
-        document.removeEventListener('ws-message', onmessage);
-        document.removeEventListener('ws-close', onclose);
-        reject(new Error('Connection closed'));
-      }
-
-      document.addEventListener('ws-message', onmessage);
-      document.addEventListener('ws-close', onclose);
+      let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
+      WebsocketProtocol.send(disconnectPacket);
+      self.connected = false;
+      resolve();
     });
   }
 
@@ -674,6 +653,10 @@ class Device {
 
   //*************************************************************************
   onLiveMessage(packet) {
+    if (this.connectedCallback) {
+      this.connectedCallback.call();
+    }
+
     if (!this.TX) {
       return;
     }

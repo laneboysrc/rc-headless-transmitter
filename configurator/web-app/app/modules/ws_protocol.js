@@ -312,8 +312,8 @@ class WebsocketProtocol {
 
       // console.log(Utils.byte2string(data[0]))
 
-      // FIXME: filter out TX_INFO and TX_FREE_TO_CONNECT, which are sent
-      // by the Tx without and request. Send those to
+      // Filter out TX_INFO and TX_FREE_TO_CONNECT, which are sent
+      // by the Tx without and request.
       if (data[0] === Device.TX_INFO) {
         Device.onLiveMessage(data);
       }
@@ -324,9 +324,6 @@ class WebsocketProtocol {
         this._resolvePromises(data);
       }
       this._sendCfgPacket();
-
-      // FIXME: discard event for messages, rather call functions directly
-      Utils.sendCustomEvent('ws-message', data);
     }.bind(this));
 
     reader.readAsArrayBuffer(e.data);

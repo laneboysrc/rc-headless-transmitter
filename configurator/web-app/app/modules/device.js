@@ -730,6 +730,7 @@ class Device {
 
 
   //*************************************************************************
+  // FIXME: instead of listening to events have ws_protocol call us directly
   _onLiveMessage(event) {
     let packet = event.detail;
 

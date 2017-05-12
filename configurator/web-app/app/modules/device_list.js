@@ -208,6 +208,8 @@ class DeviceList {
 
   //*************************************************************************
   // Receives Websocket messages
+
+  // FIXME: instead of listening to events have ws_protocol call us directly
   _onmessage(event) {
     // console.log('DeviceList ws: ', event, data);
     let data = event.detail;

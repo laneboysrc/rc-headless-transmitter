@@ -28,7 +28,7 @@ var TX_REQUESTED_DATA = 0x52;
 var TX_WRITE_SUCCESSFUL = 0x57;
 var TX_COPY_SUCCESSFUL = 0x43;
 
-var MAX_PACKETS_IN_TRANSIT = 5;
+var MAX_PACKETS_IN_TRANSIT = 10;
 var packetCache = [];
 
 var packets = {
@@ -98,7 +98,16 @@ function decode(packet) {
             return "TX_COPY_SUCCESSFUL";
 
         default:
-            return new Buffer(packet);
+            let msg = 'NRF LOG: ';
+
+            packet.forEach(function (c) {
+                if (c) {
+                    msg += String.fromCharCode(c);
+                }
+            });
+
+            return msg;
+            // return new Buffer(packet);
     }
 }
 
@@ -108,7 +117,7 @@ function onWebsocketConnected() {
     console.log('\nConfigurator connected');
 
     uart.write(slip.encode(packets.CFG_DISCONNECT));
-    // server.sendPacket(packets.WS_MAX_PACKETS_IN_TRANSIT);
+    server.sendPacket(packets.WS_MAX_PACKETS_IN_TRANSIT);
 }
 
 function onWebsocketDisconnected() {
@@ -159,7 +168,8 @@ function start() {
     console.log('=============================================');
     console.log('UART to websocket bridge');
     console.log('=============================================');
-        packets.WS_MAX_PACKETS_IN_TRANSIT[1] = MAX_PACKETS_IN_TRANSIT;
+
+    packets.WS_MAX_PACKETS_IN_TRANSIT[1] = MAX_PACKETS_IN_TRANSIT;
 
     slipDecoder = new slip.Decoder({
         onMessage: onSlipData,

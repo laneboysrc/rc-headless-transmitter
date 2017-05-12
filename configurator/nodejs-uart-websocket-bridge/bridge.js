@@ -17,6 +17,7 @@ var slipDecoder;
 var STATE = {NOT_CONNECTED: 'NOT_CONNECTED', CONNECTED: 'CONNECTED'};
 var state = STATE.NOT_CONNECTED;
 
+var MSG_DEBUG = 0x00;
 var TX_FREE_TO_CONNECT = 0x30;
 var CFG_REQUEST_TO_CONNECT = 0x31;
 var CFG_READ = 0x72;
@@ -97,8 +98,8 @@ function decode(packet) {
         case TX_COPY_SUCCESSFUL:
             return "TX_COPY_SUCCESSFUL";
 
-        default:
-            let msg = 'NRF LOG: ';
+        case MSG_DEBUG:
+            let msg = 'NRF DEBUG: ';
 
             packet.forEach(function (c) {
                 if (c) {
@@ -107,7 +108,9 @@ function decode(packet) {
             });
 
             return msg;
-            // return new Buffer(packet);
+
+        default:
+            return new Buffer(packet);
     }
 }
 

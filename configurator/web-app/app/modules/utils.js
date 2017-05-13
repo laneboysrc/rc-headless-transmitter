@@ -60,6 +60,27 @@ export function byte2string(byte) {
   return (s.length < 2) ? ('0' + s)  : s;
 }
 
+export function hexlify(bytes) {
+  let result = '';
+  for (let i = 0; i < bytes.length; i++) {
+    let digits = '0' + bytes[i].toString(16);
+    result += digits.slice(-2);
+  }
+
+  return result;
+}
+
+export function unhexlify(s) {
+  let arrayLength = s.length / 2;
+  let bytes = new Uint8ClampedArray(arrayLength);
+
+  for (let i = 0; i < arrayLength; i++) {
+    bytes[i] = parseInt(s.substr(i*2, 2), 16);
+  }
+
+  return bytes;
+}
+
 export function uuid2string(uuid_bytes) {
   let result = '';
 

@@ -45,7 +45,6 @@ function allocatePacket(command, size) {
     return packet;
 }
 
-
 function decode(packet) {
     var dv;
     var offset;
@@ -120,7 +119,7 @@ function onWebsocketConnected() {
     console.log('\nConfigurator connected');
 
     uart.write(slip.encode(packets.CFG_DISCONNECT));
-    server.sendPacket(packets.WS_MAX_PACKETS_IN_TRANSIT);
+    server.sendTextPacket(packets.WS_MAX_PACKETS_IN_TRANSIT);
 }
 
 function onWebsocketDisconnected() {
@@ -160,7 +159,7 @@ function onSlipData(data) {
         console.log('NRF -> WS           ', decode(data));
     }
 
-    server.sendPacket(data);
+    server.sendTextPacket(data);
 }
 
 function onSlipDecoderError(error) {

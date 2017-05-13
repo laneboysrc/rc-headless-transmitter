@@ -260,7 +260,7 @@ function onReceivedPacket(packet) {
 
 function onConnected() {
     console.log('\nConfigurator connected');
-    server.sendPacket(packets.WS_MAX_PACKETS_IN_TRANSIT);
+    server.sendTextPacket(packets.WS_MAX_PACKETS_IN_TRANSIT);
     timerId = setTimeout(communicate, PACKET_REPEAT_TIME_MS_NOT_CONNECTED);
 }
 
@@ -277,16 +277,16 @@ function onDisconnected() {
 function communicate() {
     if (nextPacket.length) {
         var packet = nextPacket.pop();
-        server.sendPacket(packet);
+        server.sendTextPacket(packet);
     }
     else {
         switch (state) {
             case STATE.NOT_CONNECTED:
-                server.sendPacket(packets.TX_FREE_TO_CONNECT);
+                server.sendTextPacket(packets.TX_FREE_TO_CONNECT);
                 break;
 
             case STATE.CONNECTED:
-                server.sendPacket(packets.TX_INFO);
+                server.sendTextPacket(packets.TX_INFO);
                 break;
         }
     }

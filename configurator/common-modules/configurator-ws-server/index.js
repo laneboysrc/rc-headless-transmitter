@@ -11,6 +11,27 @@ function log(message) {
     }
 }
 
+function hexlify(bytes) {
+  let result = '';
+  for (let i = 0; i < bytes.length; i++) {
+    let digits = '0' + bytes[i].toString(16);
+    result += digits.slice(-2);
+  }
+
+  return result;
+}
+
+function unhexlify(s) {
+  let arrayLength = s.length / 2;
+  let bytes = new Uint8ClampedArray(arrayLength);
+
+  for (let i = 0; i < arrayLength; i++) {
+    bytes[i] = parseInt(s.substr(i*2, 2), 16);
+  }
+
+  return bytes;
+}
+
 function startServer(port) {
     ws.createServer(function (con) {
         if (configuratorConnection) {
@@ -20,7 +41,12 @@ function startServer(port) {
         }
 
         con.on('text', function (str) {
-            log('Websocket: received TEXT "' + str + '", ignored');
+            log('Websocket: received TEXT "' + str + '"');
+            var data = unhexlify(str);
+            if (listeners.onpacket) {
+                log('Websocket: calling ', listeners.onpacket);
+                listeners.onpacket(data);
+            }
         });
 
         con.on('binary', function (inStream) {
@@ -74,6 +100,12 @@ function sendPacket(packet) {
     }
 }
 
+function sendTextPacket(packet) {
+    if (configuratorConnection) {
+        configuratorConnection.send(hexlify(packet));
+    }
+}
+
 function debug(on) {
     // If the on parameter is not given then set showLog to TRUE
     if (typeof on === 'undefined') {
@@ -87,5 +119,6 @@ module.exports = {
     setEventListener: setEventListener,
     isConnected: isConnected,
     sendPacket: sendPacket,
+    sendTextPacket: sendTextPacket,
     debug: debug,
 };

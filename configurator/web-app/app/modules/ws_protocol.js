@@ -151,8 +151,7 @@ class WebsocketProtocol {
     if (this.pending.length) {
       let request = this.pending.shift();
       this.inTransit.push(request);
-
-      this.ws.send(request.packet);
+      this.ws.send(Utils.hexlify(request.packet));
     }
   }
 
@@ -302,9 +301,27 @@ class WebsocketProtocol {
     // e.data contains received string
 
     if (!(e.data instanceof Blob)) {
-      throw new Error('WS: _onmessage: String received; should have been Blob');
+      let data = Utils.unhexlify(e.data);
+
+      // Filter out TX_INFO and TX_FREE_TO_CONNECT, which are sent
+      // by the Tx without and request.
+      if (data[0] === Device.TX_INFO) {
+        Device.onLiveMessage(data);
+      }
+      else if (data[0] === Device.TX_FREE_TO_CONNECT) {
+        DeviceList.transmitterFreeToConnect(data);
+      }
+      else {
+        this._resolvePromises(data);
+      }
+      this._sendCfgPacket();
+      return;
     }
 
+
+    // Parsing binary websocket data via FileReader is very slow on Chrome.
+    // We therefore switched to hex-encoded strings. The binary handling
+    // code is still left here for reference.
     let reader = new FileReader();
     let self = this;
 

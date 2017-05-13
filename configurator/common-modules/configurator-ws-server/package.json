@@ -1,10 +1,10 @@
 {
   "name": "configurator-ws-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Headless TX simulator using Websocket protocol",
   "repository": "https://github.com/laneboysrc/<FIXME>.git",
   "author": "LANE Boys RC",
   "dependencies": {
-    "nodejs-websocket": "~1.6.0"
+    "nodejs-websocket": "^1.7.1"
   }
 }

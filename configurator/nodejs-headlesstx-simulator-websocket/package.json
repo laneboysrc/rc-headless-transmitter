@@ -9,6 +9,7 @@
     "start": "./simulator.js"
   },
   "dependencies": {
-    "configurator-ws-server": "file:../common-modules/configurator-ws-server",
-    "test-data": "file:../common-modules/test-data"  }
+    "configurator-ws-server": "file:///home/laneboysrc/projects/rc-headless-transmitter/configurator/common-modules/configurator-ws-server",
+    "test-data": "file:../common-modules/test-data"
+  }
 }

@@ -4,7 +4,7 @@
   "description": "Power off if a GPIO is held low for more than 2 seconds",
   "main": "shutdown-on-button-press.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "./shutdown-on-button-press.js"
   },
   "repository": {
     "type": "git",

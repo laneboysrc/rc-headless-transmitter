@@ -39,7 +39,6 @@
 - Implement a command to query the value for UART purpose, since there is no explicit connection on the UART as there is with websocket or other transports
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
-- Cache TX_INFO packets, as per esp8266 implementation
 
 ## ESP8266 UART bridge
 

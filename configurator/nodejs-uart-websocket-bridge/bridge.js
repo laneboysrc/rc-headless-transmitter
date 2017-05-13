@@ -29,8 +29,15 @@ var TX_REQUESTED_DATA = 0x52;
 var TX_WRITE_SUCCESSFUL = 0x57;
 var TX_COPY_SUCCESSFUL = 0x43;
 
+var MAX_PACKET_SIZE = 32;
 var MAX_PACKETS_IN_TRANSIT = 100;
 var packetCache = [];
+
+var TX_INFO_CACHE_SIZE = 256;
+var TX_INFO_ELEMENT_SIZE = 6;
+var txInfoCache = [];
+var firstTxInfo = true;
+
 
 var packets = {
     CFG_DISCONNECT: allocatePacket(CFG_DISCONNECT, 1),
@@ -113,8 +120,80 @@ function decode(packet) {
     }
 }
 
+// Cache TX_INFO values to data sent to the client (phone)
+//
+// The transmitter sends a TX_INFO packet every 5 ms. Forwarding these packets
+// over the Websocket and having them processed by the configurator client
+// can cause quite some load, especially on Smartphones that are power
+// conscious.
+//
+// Within each TX_INFO packet there can be up to 4 info fields, each field
+// comprising of an item identifier (uint16_t) and a value (int32_t).
+//
+// In order to reduce the bandwidth, the bridge holds a cache of info fields.
+// If it sees an info field with the same value, it does not send it up via
+// the Websocket as it knows that the configurator client has received this
+// info already. This assumes that the configurator client caches the info
+// itself.
+//
+// In order to keep the business logic working, upon connection all cachable
+// items are initialized with 0xa5a5a5a5 (a value unlikely to appear), and the
+// first TX_INFO is always sent along even if it is cached.
+function cachePacket(packet) {
+    // Early exit on illegal packets
+    if (packet.length < 1  ||  packet.length > MAX_PACKET_SIZE) {
+        return packet;
+    }
+
+    if (packet[0] != TX_INFO) {
+        return packet;
+    }
+
+    var tweakedPacket = new Uint8Array(MAX_PACKET_SIZE);
+    var tweakedPacketLength = 1;
+    tweakedPacket[0] = TX_INFO;
+
+    var offset = 1;
+
+    while (packet.length >= offset + TX_INFO_ELEMENT_SIZE) {
+        var item = packet[offset] + (packet[offset + 1] * 256);
+
+        if (item < TX_INFO_CACHE_SIZE) {
+            var value  = packet[offset + 2];
+            value += packet[offset + 3] * 256;
+            value += packet[offset + 4] * 256 * 256;
+            value += packet[offset + 5] * 256 * 256 * 256;
+
+            if (txInfoCache[item] != value) {
+                txInfoCache[item] = value;
+
+                for (var i = 0; i < TX_INFO_ELEMENT_SIZE; i++) {
+                    tweakedPacket[tweakedPacketLength+i] = packet[offset+i];
+                }
+                tweakedPacketLength += TX_INFO_ELEMENT_SIZE;
+            }
+        }
+
+        offset += TX_INFO_ELEMENT_SIZE;
+    }
+
+    if (tweakedPacketLength > 1) {
+        firstTxInfo = false;
+        return tweakedPacket.subarray(0, tweakedPacketLength);
+    }
+
+    if (firstTxInfo) {
+        firstTxInfo = false;
+        return packet;
+    }
+
+    return null;
+}
+
 function onWebsocketConnected() {
     packetCache = [];
+    txInfoCache = [];
+    firstTxInfo = true;
     ws_connected = true;
     console.log('\nConfigurator connected');
 
@@ -155,11 +234,14 @@ function onSlipData(data) {
         console.log('NRF <-              ', decode(packet));
     }
 
-    if (data[0] !== TX_INFO) {
-        console.log('NRF -> WS           ', decode(data));
-    }
 
-    server.sendTextPacket(data);
+    data = cachePacket(data);
+    if (data) {
+        if (data[0] !== TX_INFO) {
+            console.log('NRF -> WS           ', decode(data));
+        }
+        server.sendTextPacket(data);
+    }
 }
 
 function onSlipDecoderError(error) {

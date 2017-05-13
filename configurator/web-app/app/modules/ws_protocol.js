@@ -306,6 +306,7 @@ class WebsocketProtocol {
     }
 
     let reader = new FileReader();
+    let self = this;
 
     reader.addEventListener('loadend', function () {
       let data = new Uint8Array(reader.result);
@@ -321,10 +322,10 @@ class WebsocketProtocol {
         DeviceList.transmitterFreeToConnect(data);
       }
       else {
-        this._resolvePromises(data);
+        self._resolvePromises(data);
       }
-      this._sendCfgPacket();
-    }.bind(this));
+      self._sendCfgPacket();
+    });
 
     reader.readAsArrayBuffer(e.data);
   }

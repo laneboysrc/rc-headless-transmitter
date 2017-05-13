@@ -37,16 +37,23 @@
 
 - Send `MAX_PACKETS_IN_TRANSIT` upwards
 - Implement a command to query the value for UART purpose, since there is no explicit connection on the UART as there is with websocket or other transports
-- When connection is lost due to timeout this needs to be properly reported up
+- Propagate nRF connection lost back via bridges
+  - Especially important since the other protocols are considered reliable
 - Cache TX_INFO packets, as per esp8266 implementation
 
 ## ESP8266 UART bridge
 
 - Convert websocket from binary to text
 
+## Orange Pi
 
-## Configurator
-- Database syncing using RemoteStorage.io
+- Power off button
+- LED indicator on/connected/transferring data
+- Automatic software update from github
+- Automatic nRF51 flashing
+
+## Configurator web-app
+- Database syncing with bridge, including history
 
 - Use a better app-shell architecture
 - Base on web components
@@ -66,19 +73,11 @@
 - Use https://github.com/jakearchibald/indexeddb-promised/blob/master/lib/idb.js
   - Prepare the database for multiple object stores
 
-- Propagate nRF connection lost back via bridges
-  - Especially important since the other protocols are considered reliable
-
 - The backup JSON file should be human readable, right now it is just binary data wrapped in JSON
-
-- Make nodejs-uart bridges aware of MSG_DEBUG for nRF51
-
-- Test virgin Raspberry Pi configurator and improve instructions
-- Check for certificate errors when connecting to Raspberry Pi bridge
 
 - Warning message if left/center/right in reverse order, or handle in SW automatically
 - Warning message for configuration that is only applicable after reset, i.e. port settings
 - Explain trim (logical inputs)
 - What do colors mean when selecting labels on logical inputs?
 
-- PWM output to drive old analog meter, relative to battery voltage
+- Sometimes "connection lost" message is shown when refreshing or going back and forth

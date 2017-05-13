@@ -1,7 +1,8 @@
+#!/usr/bin/env nodejs
 var Gpio = require('onoff').Gpio;
 var childProcess = require('child_process');
 
-const gpioNumber = 10;
+const gpioNumber = 6;
 
 var button = new Gpio(gpioNumber, 'in', 'both');
 var timer = null;

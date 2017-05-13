@@ -2,4 +2,4 @@
 
 echo "11" > /sys/class/gpio/export
 echo "12" > /sys/class/gpio/export
-openocd -f orangepizero-nrf51.cfg  -f target/nrf51.cfg -c "program ../../dist/nrf51-uart-bridge.hex reset exit"
+openocd -f orangepizero-nrf51.cfg  -f target/nrf51.cfg -c "program ../../../dist/nrf51-uart-bridge.hex reset exit"

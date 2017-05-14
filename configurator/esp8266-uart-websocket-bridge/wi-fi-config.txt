@@ -1,7 +1,0 @@
-LANE Boys RC
-12345678
-11
-
-# Line 1: SSID
-# Line 2: Wi-Fi passphrase (minimum 8 characters)
-# Line 3: Channel number 1..11 (13 for Europe)

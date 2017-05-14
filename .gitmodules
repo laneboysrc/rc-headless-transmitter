@@ -1,12 +1,3 @@
 [submodule "firmware/libs/libopencm3"]
 	path = firmware/libs/libopencm3
 	url = https://github.com/libopencm3/libopencm3
-[submodule "configurator/esp8266-uart-websocket-bridge/makeEspArduino"]
-	path = configurator/esp8266-uart-websocket-bridge/makeEspArduino
-	url = https://github.com/plerup/makeEspArduino.git
-[submodule "configurator/esp8266-uart-websocket-bridge/ESPAsyncTCP"]
-	path = configurator/esp8266-uart-websocket-bridge/ESPAsyncTCP
-	url = https://github.com/me-no-dev/ESPAsyncTCP.git
-[submodule "configurator/esp8266-uart-websocket-bridge/ESPAsyncWebServer"]
-	path = configurator/esp8266-uart-websocket-bridge/ESPAsyncWebServer
-	url = https://github.com/me-no-dev/ESPAsyncWebServer.git

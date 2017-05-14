@@ -9,7 +9,7 @@
 			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"name": "make all",
 			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
-			"working_dir": "${project_path}/firmware"
+			"working_dir": "${project_path}/transmitter/firmware"
 		},
 		{
 			"cmd":
@@ -20,7 +20,7 @@
 			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"name": "make program",
 			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
-			"working_dir": "${project_path}/firmware"
+			"working_dir": "${project_path}/transmitter/firmware"
 		},
 		{
 			"cmd":
@@ -30,7 +30,7 @@
 			],
 			"name": "make clean",
 			"syntax": "Packages/Makefile/Make Output.sublime-syntax",
-			"working_dir": "${project_path}/firmware"
+			"working_dir": "${project_path}/transmitter/firmware"
 		},
 		{
 			"cmd":
@@ -43,7 +43,7 @@
 				"make terminal"
 			],
 			"name": "make terminal",
-			"working_dir": "${project_path}/firmware"
+			"working_dir": "${project_path}/transmitter/firmware"
 		},
 		{
 			"cmd":
@@ -135,7 +135,7 @@
 				"*.a",
 				"*.d",
 			],
-			"path": "firmware"
+			"path": "transmitter"
 		},
 		{
 			"path": "configurator",

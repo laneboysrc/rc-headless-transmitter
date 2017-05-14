@@ -83,7 +83,7 @@ module case() {
                 cube([gap_around_pcb-0.5, rj45_dim.y+tol+2, rj45_top]);
 
             // Guide for Micro-USB plug
-            translate([pcb_dim.x-gap_around_pcb+1.5, 7-2-micro_usb_connector_dim.y/2, 0])
+            translate([pcb_dim.x-gap_around_pcb+2, 7-2-micro_usb_connector_dim.y/2, 0])
                 cube(micro_usb_connector_dim + [-6, 4, 3]);
         }
 
@@ -93,7 +93,7 @@ module case() {
         
         // LED cut-out
         led_apature_z = bottom_t + solder_clearance + pcb_dim.z;
-        translate([pcb_dim.x-pcb_r+gap_around_pcb, 34, led_apature_z]) 
+        translate([pcb_dim.x-pcb_r+gap_around_pcb, 30, led_apature_z]) 
             led_apature_right(h=wall_t);
         
         // Micro-USB connector cut-out
@@ -141,8 +141,8 @@ module lid() {
             difference() {
                 d = 10;
                 cylinder(d=d, h=wall_h);
-                translate([0, 0, -eps]) cylinder(d=d-1.5, h=wall_h+eps2);
-                translate([0, -d/4, -eps]) cube([d, d/2, wall_h+eps2]);
+                translate([0, 0, -eps]) cylinder(d=d-3, h=wall_h+eps2);
+                translate([0, -d/6, -eps]) cube([d, d/3, wall_h+eps2]);
             }
         }
     }

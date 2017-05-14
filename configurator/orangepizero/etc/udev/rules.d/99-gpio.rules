@@ -1,0 +1,3 @@
+SUBSYSTEM=="gpio", ACTION=="add", PROGRAM="/bin/sh -c 'chown -R root:gpio /sys/class/gpio && chmod -R g+w /sys/class/gpio'"
+SUBSYSTEM=="gpio", ACTION=="add", PROGRAM="/bin/sh -c 'chown -R root:gpio /sys/devices/virtual/gpio && chmod -R g+w /sys/devices/virtual/gpio'"
+SUBSYSTEM=="gpio", ACTION=="add", PROGRAM="/bin/sh -c 'chown -R root:gpio /sys/devices/platform/sunxi-pinctrl/gpio && chmod -R g+w /sys/devices/platform/sunxi-pinctrl/gpio'"

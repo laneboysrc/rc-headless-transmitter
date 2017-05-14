@@ -1,0 +1,36 @@
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+server {
+    listen 80 default_server;
+    server_name _;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name configurator;
+    ssl on;
+    include snippets/snakeoil.conf;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+
+server {
+    listen 9707 ssl;
+    ssl on;
+    include snippets/snakeoil.conf;
+
+    location / {
+        proxy_pass http://localhost:9706;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+    }
+}

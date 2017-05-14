@@ -2,4 +2,4 @@
 
 echo "18" > /sys/class/gpio/export
 echo "19" > /sys/class/gpio/export
-openocd -f orangepizero-stm32f1.cfg  -f target/stm32f1x.cfg -c "program ../../../dist/tx.hex reset exit"
+openocd -f orangepizero-stm32f1.cfg  -f target/stm32f1x.cfg -c "program ../../../bin/tx.hex reset exit"

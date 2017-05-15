@@ -69,12 +69,9 @@ In software we reference them as *pcb_inputs*.
 The STM32F103C8T6 based hardware using the AliExpress board has the following *PCB inputs*:
 * 9 analog/digital inputs
     * Can be configured as analog or digital inputs
-* 9 digital inputs
+* 8 digital inputs
 
 ### Hardware inputs
-
-
-
 
 Some, or all, *PCB inputs* are connected to control devices such as sticks, pots or switches in a particular transmitter. We refer to those as *Hardware inputs*. There is a 1:1 relationship between a *Hardware inputs* and a *PCB inputs*. A *Hardware input* narrows down the *PCB input* type to one of the following:
 
@@ -121,14 +118,14 @@ There are several types of *logical inputs* available
             * Transmitter beeps the current number?
         * Can have a two Momentary type *Hardware input* assigned
             * up/down
-        * n=2: can have a on/off switch *Hardware input* assigned
+        * n=2: can have a single on/off switch *Hardware input* assigned
         * n=3: can have a single 3-position switch *Hardware input* assigned
-        * n=4..12 can have n on/off switch *Hardware input* assigned
+        * n=4..12 can have n on/off switches *Hardware input* assigned
             * In theory we could do with n-1 digital inputs, using the state when all inputs are open as first position. However, this may cause issues that the first position is triggered when switching between the other positions, as contacts may temporarily open.
-            * Therefore it is better to use n inputs and treat "all inputs open"as well as "more than one input closed" as error condition.
-* BCD switch n=2..4
-    * Must have n on/off switch switch *Hardware input* assigned
-    * Output values are 0..(2^n-1)
+            * Therefore it is better to use n inputs and treat "all inputs open" as well as "more than one input closed" as error condition.
+    * BCD switch n=2..4
+        * Must have n on/off switches *Hardware input* assigned
+        * Output values are 0..(2^n-1)
 * Trims
     * Can have two Momentary type *Hardware inputs* assigned (up/down)
     * Can have a single Analog type *Hardware input* assigned (with or without detent, but must not be *Analog without center detent, positive only* or *Analog with auto return to center*)
@@ -203,13 +200,4 @@ After all mixers have been processed, each output channel has a value that needs
 * LED lights up when powered
 * LED blinks when battery is low
 * Regular beep when battery is low, changing to a more alarming sound when the battery is nearly depleted
-
-
-
-## Configurator architecture
-
-The ESP8266 based *Configurator* comprises of an ESP8266 ESP-12-F module. The real-time handling of the *nRF protocol* is handled by a CORE51822 (B) module with the Nordic 51822 2.4 GHz transciever. The modules are interconnected using a UART running at 115200 BAUD.
-
-The module is powered from a 800 mAh Li-Ion battery. The ESP8266 board has a 3.3V voltage regulator, where we also take the power for the CORE51822 from.
-
-
+* PWM output to drive an analog meter, configurable to adjust full-scale value

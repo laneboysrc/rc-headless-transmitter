@@ -15,7 +15,6 @@ When connected to a *headless transmitter*, the *configurator* can provide the f
 The *configurator* can also provide other functionality:
 
 * Maintain a database of models and transmitter configurations
-* Synchronize the model and transmitter database with other *configurators* (not implemented yet)
 
 
 The *configurator* functionality can be implemented in different ways:
@@ -24,22 +23,23 @@ The *configurator* functionality can be implemented in different ways:
 
     Dedicated embedded device with display and buttons. Similar to a programming box for an ESC.
 
-* Web app
+* Web-app
 
     An application that runs in a Web browser
 
 * Smartphone app
 
 
-Using the a *Web app* as *configurator*, which works in any modern browser, is the most attractive option as it can be used on a wide range of devices: PC, Smartphone, Tablet. Smartphones even allow web-apps to be installed as icon on the home screen and run full-screen, so we get a app-like user experience.
+Using the a *web-app* as *configurator*, which works in any modern browser, is the most attractive option as it can be used on a wide range of devices: PC, Smartphone, Tablet.
 
+Smartphones even allow web-apps to be installed as icon on the home screen and run full-screen. They can also pre-cache the whole web-app, so it can be even accessed when there is no Internet connection. This way we get an app-like user experience.
 
 
 ## Principle of operation
 
-The *headless transmitter* performs its operation based on a configuration that is stored in its persistent memory (Flash memory of the microcontroller). The configuration determines which inputs provides what functions, how the inputs are mixed to form output channels, etc. Please refere to the [architecture documentation](architecture.md) for details.
+The *headless transmitter* performs its operation based on a configuration that is stored in its persistent memory (Flash memory of the microcontroller). The configuration determines which inputs provides what functions, and how the inputs are mixed to form output channels. Please refere to the [architecture documentation](architecture.md) for details.
 
-The firmware is designed such that the configuration can be changed at run-time; the *headless transmitter* adapts to configurations dynamically.
+The firmware is designed such that the configuration can be changed at run-time; the *headless transmitter* firmware applies the configuration dynamically.
 
 The configuration comprises of settings that are *hardware specific*, and setting that are *model specific*. While the hardware and model specific settings are kept separate, they are stored in one area of consecutive memory.
 
@@ -62,7 +62,7 @@ The *headless transmitter* offers the following transports natively:
 
 * UART protocol
 
-    The UART (serial port) protocol is available by connecting to the UART provided by the microcontroller. The UART protocol is currently not implemented on the *headless transmitter*, but used internally in the *nrF-to-Websocket bridge* described below.
+    The UART (serial port) protocol is available by connecting to the UART provided by the microcontroller. The UART protocol is currently not implemented on the *headless transmitter*, but used internally in the *nrF-to-WebSocket bridge* described below.
 
 
 The design goal is to keep the protocol running over the different transports the same, so that the transports appear transparent to the *configurator*.
@@ -70,11 +70,11 @@ The design goal is to keep the protocol running over the different transports th
 
 ### Bridging
 
-Unfortunately a *Web app* is not able to utilize any of the transports provided by the *headless transmitter* directly.
+Unfortunately a *web-app* is not able to utilize any of the transports provided by the *headless transmitter* directly.
 
-To be able to make a *Configurator Web app*, we need a bridging mechanism that goes between the *headless transmitter* and the *configurator* running in the web browser.
+To be able to make a *Configurator web-app*, we need a bridging mechanism that goes between the *headless transmitter* and the *configurator* running in the web browser.
 
-On the web browser side, we have **HTTP** and **Websocket** protocols to our disposals.
+On the web browser side, we have **HTTP** and **WebSocket** protocols to our disposals.
 
 Another potential transport would be **BLE**. The *Web Bluetooth* protocol allows web apps to connect to BLE devices. However, *Web Bluetooth* is relatively new and not mature yet.
 
@@ -86,17 +86,23 @@ We are currently using a separate box as bridge, which can be used for multiple 
 
 Ideally the protocol that a *headless transmitter bridge* provides to the *configurator* is equivalent, or at least very similar, to the native transport protocols supported by the *headless transmitter*.
 
-### Websocket to nRF/UART bridge
 
-The cheapest way to build a bridge with a HTTP/Websocket interface is by using **ESP8266** modules. The older ESP8266 modules have only a UART interface and not a lot of memory, but newer versions provide access to an SPI port that would allow direct interfacing with a nRF24L01 module.
+### WebSocket to nRF/UART bridge
+
+The cheapest way to build a bridge with a HTTP/WebSocket interface is by using **ESP8266** modules. The older ESP8266 modules have only a UART interface and not a lot of memory, but newer versions provide access to an SPI port that would allow direct interfacing with a nRF24L01 module.
 
 In order to relief the ESP8266 firmware from the real-time requirements of dealing with the nRF24L01 module, the current bridge implementation uses a nRF51822 module with integrated ARM microcontroller to perform the real-time nRF protocol, sending and receiving information over UART to the ESP8266.
 
-The current *Websocket to nRF bridge* is powered from a single, small Li-Ion cell.
+Unfortunately the ESP8266 can not implement a HTTPS server using TLS encryption. TLS is required so that the web-app, which is required to be hosted via HTTPS to access off-line features like ServiceWorker, can access it via secure WebSocket.
+We therefore abandoned the ESP8266 implementation. An old, HTTP-based, version can still be found in the project's commit history.
+
+Luckily with the rise of single-board computers (SBC) like the Rasberry Pi, a more powerful alternative is at hand. We opted for the **Orange Pi Zero**. It costs only USD 7 plus shipping (256 MBytes RAM version, good enough for our purpose). It has built-in Wi-Fi that works just fine as Access Point.
+
+On the **Orange Pi Zero** we can install **Armbian**, an **Ubuntu-based OS**, use **NGINX** as web-server serving HTTPS with a self-signed certificate, and run a **NodeJS** program to interface with the nRF51822 module over UART.
 
 In order to minimize interference between Wi-Fi and the nRF protocol, we run Wi-Fi on Channel 11. the nRF protocol uses mostly the lower channels of the 2.4 GHz ISM band.
 
-The *Websocket to nRF bridge* can also easily be simulated using NodeJS. This allows development of the *Web app* without using actual hardware.
+The *WebSocket bridge* can also be simulated using NodeJS. This allows development of the *web-app* without using actual hardware.
 
 
 
@@ -117,28 +123,17 @@ Do note: a malicious user could sniff the pass-phrase while we connect to our tr
 Following tradition, the default pass-phrase of a virgin transmitter is the same as we use on our luggage: '1234'.
 
 
-
 ## Making the configurator an App-like experience
 
-Web technology has come a long way in the recent years. Today we can make *Apps* that have an almost native look-and-feel on Smartphones, yet work cross-platform beause they are technically web pages. Web apps can  store data on the device persistently, they can be installed to -- and launched from -- the home screen just like a native app, and they can even operate off-line thanks to the awesome *service worker* technology.
+Web technology has come a long way in the recent years. Today we can make *web-apps* that have an almost native look-and-feel on Smartphones, yet work cross-platform beause they are technically web pages. Web-apps can store data on the device persistently, they can be installed to -- and launched from -- the home screen just like a native app, and they can even operate off-line thanks to the awesome *service worker* technology.
 
-This comes at a small price: in order to be able to utilize a *service worker*, a web-app has to be served from a secure (HTTPS) domain. This in turn implies that the *bridge* has to be running over HTTPS as well.
+*Note: the current configurator web-app has only be tested on Chrome and Firefox, on Android. It is likely that it requires debugging to run on other platforms. Furthermore, only Chrome currently supports off-line web-apps.*
 
-Serving the web-app over HTTPS is quite easy as [Github](https://github.com) kindly provides projects to serve web pages via HTTPS for free.
+This comes at a small price: in order to be able to utilize a *service worker*, a web-app has to be served from a secure (HTTPS) domain. This, in turn, implies that the *bridge* has to be running over HTTPS as well.
 
-Accessing the *bridge* over HTTPS is unfortunately not possible on the ESP8266 at the moment, as this eco-system does not have decent HTTPS server support for now.
+Serving the web-app over HTTPS is quite easy as [Github](https://github.com) kindly provides projects to serve web pages via HTTPS for free ([Github Pages](https://pages.github.com)).
 
-Instead of using the ESP8266 we could use a Raspberry Pi. Being a Debian based Linux system, it is easy to setup a HTTPS server, and we can even run the node-js based tools we've built during development to implement the *bridge* functionality.
-
-The Raspberry Pi is not ideal though as it is a bulky and power hungry solution that is not very suited for battery operation. But it is certainly doable and works.
-
-Another compromise we have to make is the use of self-signed certificates, which trigger security warnings in all modern web browsers. The user will have to go through certain steps to allow this self-signed certificate before the *configurator web-app* can access it.
-
-
-The ESP8266 based *bridge* can still be utilized, albeit with drawbacks. The web-app has to be served from the bridge itself via (insecure) HTTP. This means we loose off-line functionality on Smartphones, and every time we update the *configurator web-app*, we have to flash the new version into the *bridge*.
-
-Hopefully in the future the ESP8266 will get HTTPS support, releaving us from this burden.
-
+Another compromise we have to make is the use of self-signed certificates on the *nRF-to-websocke* bridge, which trigger security warnings in all modern web browsers. The user will have to go through certain steps to allow this self-signed certificate before the *configurator web-app* can access it.
 
 
 ## nRF protocol details
@@ -440,19 +435,19 @@ All data is in little endian format, i.e. the least significant byte is transmit
 
 
 
-## Websocket protocol
+## WebSocket protocol
 
-The *Websocket protocol* runs on port **9706**.
+The *WebSocket protocol* runs on port **9707** using TLS encryption.
 
-The *Websocket protocol* implements the same commands as described above.
+The *WebSocket protocol* implements the same commands as described above.
 
-One major difference is that the *Websocket protocol* does not provide real-time transfer of data. As such, a *configurator* talking to a bridge using the *Websocket protocol* can not rely that the next received packet is the answer to the previous sent command, as it is with the *nRF protocol*.
+One major difference is that the *WebSocket protocol* does not provide real-time transfer of data. As such, a *configurator* talking to a bridge using the *WebSocket protocol* can not rely that the next received packet is the answer to the previous sent command, as it is with the *nRF protocol*.
 
 Since the command structure is designed in such a way that every command has a definite response, the *configurator* has to wait until the appropriate answer arrives before it can send the next command.
 
 The down-side of this approach is that this significantly reduces the achievable through-put, as the *configurator* would have to wait for the answer to the previous request before it can send the next request. Especially on mobile devices this is an issue, as they seem to queue data and transmit infrequently to preserve power.
 
-To overcome this issue, a bridge can implement a packet buffer. A bridge implementing such a buffer sends the following message to a *configurator* immediately upon a Websocket connection is established:
+To overcome this issue, a bridge can implement a packet buffer. A bridge implementing such a buffer sends the following message to a *configurator* immediately upon a WebSocket connection is established:
 
 * `WS_MAX_PACKETS_IN_TRANSIT`
 
@@ -460,9 +455,12 @@ To overcome this issue, a bridge can implement a packet buffer. A bridge impleme
 
     nn: maximum number of buffered requests
 
-By default, the *configurator* assumes that the buffer has only a size of 1 packet. Only after receiving the above command it can send multiple packets to the bridge. Currently we are using a buffer of 5 packets.
+By default, the *configurator* assumes that the buffer has only a size of 1 packet. Only after receiving the above command it can send multiple packets to the bridge.
 
-The Websocket protocol is a reliable protocol, as it builds on TCP/IP. As such the implementer does not have to be concerned with wireless issues described in the *nRF protocol*.
+The WebSocket protocol is a reliable protocol, as it builds on TCP/IP. As such the implementer does not have to be concerned with wireless issues described in the *nRF protocol*.
+
+WebSocket supports payloads in text format and binary format (BLOB). For the configurator we are using text format, where the binary data is Hex encoded (e.g. a value of 0xa2 is sent as string "A2").
+This is done as it turned out that the FileReader object in the Chrome browser, which is required to obtain data from BLOBs in JavaScript, is very slow and caused performance issues.
 
 
 ## UART protocol
@@ -474,7 +472,7 @@ We have chosen for the SLIP protocol, defined in
 
 The commands are exactly the same as for the *nRF protocol*.
 
-Like the *Websocket protocol*, the *UART protocol* does not provide real-time transfer of data as underlying implementations usually have a buffer between the serial port and the application. As such the same algorithms as described for the *Websocket protocol* apply.
+Like the *WebSocket protocol*, the *UART protocol* does not provide real-time transfer of data as underlying implementations usually have a buffer between the serial port and the application. As such the same algorithms as described for the *WebSocket protocol* apply.
 
 The *UART protocol* is considered reliable and therefore does not require special handling for lost or corrupted information.
 
@@ -529,11 +527,11 @@ There is a multitude of available options of how we could implement the *configu
     - PRO: Stand-alone device; Wireless; Single device
     - CON: High development effort; Potentially limited UI; Medium cost
 
-* Smartphone app, Websocket to UART bridge
+* Smartphone app, WebSocket to UART bridge
     - PRO: Great user experience; Low cost
     - CON: High development effort; Wired connection
 
-* Smartphone app, Websocket to nRF bridge
+* Smartphone app, WebSocket to nRF bridge
     - PRO: Great user experience; Wireless; Low cost
     - CON: High development effort
 
@@ -549,19 +547,19 @@ There is a multitude of available options of how we could implement the *configu
     - PRO: Great user experience; Low cost; Use existing SPP module
     - CON: High development effort; Wired connection; High power consumption?
 
-* Web app, Websocket to UART bridge
+* Web-app, WebSocket to UART bridge
     - PRO: Good user experience; Reasonable development effort; Low cost
     - CON: Wired
 
-* Web app, Websocket to nRF bridge
+* Web-app, WebSocket to nRF bridge
     - PRO: Good user experience; Reasonable development effort; Wireless; Low cost
     - CON:
 
-* Web app, BLE to UART bridge
+* Web-app, BLE to UART bridge
     - PRO: Good user experience; Reasonable development effort; Low cost
     - CON: Web Bluetooth not mature yet; Wired
 
-* Web app, BLE to nRF bridge
+* Web-app, BLE to nRF bridge
     - PRO: Good user experience; Reasonable development effort; Wireless; Low cost
     - CON: Web Bluetooth not mature yet; Custom BLE to nRF bridge
 
@@ -569,7 +567,7 @@ There is a multitude of available options of how we could implement the *configu
     - PRO: Good user experience; Reasonable development effort; Low cost
     - CON: Chrome browser on PC only; Wired;
 
-In addition to the list above, we can also consider building any of the Web app options as *Chrome app*. This may be as simple as adding a manifest file.
+In addition to the list above, we can also consider building any of the web-app options as *Chrome app*. This may be as simple as adding a manifest file.
 
 Some options were not considered:
 
@@ -579,5 +577,5 @@ Some options were not considered:
 
 * Chrome app, UART to nRF bridge
 
-    The main advantage of the Chrome app would be that it offers native serial port support. However, the UART to nRF bridge is non-standard and requires users to build one. This effort would be better directed to one of the *Web app* options, which are more universal. As stated above, the *Web app* may also be packaged as *Chrome app*. Further more, recently Google announced that they will depract *Chrome apps*.
+    The main advantage of the Chrome app would be that it offers native serial port support. However, the UART to nRF bridge is non-standard and requires users to build one. This effort would be better directed to one of the *web-app* options, which are more universal. As stated above, the *web-app* may also be packaged as *Chrome app*. Further more, recently Google announced that they will depract *Chrome apps*.
 

@@ -33,23 +33,22 @@
 
 - Add version date (based on Git) to all software
 
+- How to deal with switches and pots that are not present; or a function that was designed for a multi-pos pot but now is a switch?
+
 ## nRF51 UART bridge
 
 - Send `MAX_PACKETS_IN_TRANSIT` upwards
-- Implement a command to query the value for UART purpose, since there is no explicit connection on the UART as there is with websocket or other transports
+- Implement a command to query the `MAX_PACKETS_IN_TRANSIT` value for UART purpose, since there is no explicit connection on the UART as there is with websocket or other transports
 - Propagate nRF connection lost back via bridges
   - Especially important since the other protocols are considered reliable
 
-## ESP8266 UART bridge
-
-- Convert websocket from binary to text
 
 ## Orange Pi
 
-- Power off button
+- Describe hardware
+- Full installation documentation
 - LED indicator on/connected/transferring data
-- Automatic software update from github
-- Automatic nRF51 flashing
+
 
 ## Configurator web-app
 - Database syncing with bridge, including history
@@ -79,4 +78,4 @@
 - Explain trim (logical inputs)
 - What do colors mean when selecting labels on logical inputs?
 
-- Sometimes "connection lost" message is shown when refreshing or going back and forth
+- Sometimes "connection lost" message is shown when refreshing or going back and forth (too fast)

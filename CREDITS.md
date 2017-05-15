@@ -43,11 +43,13 @@ https://github.com/GoogleChrome/sw-precache
 
 Need to make your web-app work offline? Unbelievably easy with this brilliant project!
 
+
 ### spinkit
 
 http://tobiasahlin.com/spinkit/
 
 A nice and easy to use library of CSS spinners.
+
 
 ### Gnu GCC
 
@@ -75,6 +77,13 @@ Excellent value for money micro-controllers. Their ST-Link debugger comes on ine
 http://nordicsemi.com/
 
 Great 2.4 GHz Radio, decent software stack, fair price. Thanks for opening up your SDK and documentation in the recent years!
+
+
+### Armbian
+
+https://www.armbian.com/
+
+Makes cheap Orange Pi boards work!
 
 
 ### Node.js and npm
@@ -113,23 +122,6 @@ Pity that this functionality isn't in the Javascript Date library. Thanks for sc
 http://rubaxa.github.io/Sortable/
 
 Brilliant library to enable interactive re-ordering of lists. Super-simple to use, yet powerful.
-
-
-### Arduino / ESP8266 / makeEspArduino
-
-http://arduino.cc/
-https://github.com/esp8266/Arduino
-https://github.com/plerup/makeEspArduino
-
-Thanks to the onderful work of the ESP8622.com community, it is easy to get the module up-and running in the  Arduino environment. Using the fantastic makeEspArduino allowed us to use our favorite editor and only compile what has changed.
-
-
-### ESPAsyncTCP / ESPAsyncWebServer
-
-https://github.com/me-no-dev/ESPAsyncWebServer
-https://github.com/me-no-dev/ESPAsyncTCP
-
-Sweet asynchronous web server for the ESP8622. Beautiful code!
 
 
 ### PathJS

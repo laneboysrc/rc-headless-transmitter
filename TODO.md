@@ -48,6 +48,7 @@
 - Describe hardware
 - Full installation documentation
 - LED indicator on/connected/transferring data
+- Make a default web page to show instead of the nginx one
 
 
 ## Configurator web-app

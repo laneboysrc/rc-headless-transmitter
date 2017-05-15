@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sudo apt-get install dnsmasq iptables iptables-persistent nginx-light openssl ssl-cert
+
+echo "Note: you still need to install nodejs manually; follow the documentation!"

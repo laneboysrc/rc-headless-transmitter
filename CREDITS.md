@@ -22,6 +22,13 @@ http://libopencm3.org/
 Open Source ARM Cortex M microcontroller library. Light-weight, easy to use, not too much abstraction. Just works!
 
 
+### KiCAD
+
+http://kicad-pcb.org/
+
+Make truely open Schematics and Circuit Boards with this easy to use software.
+
+
 ### Material Design Lite
 
 https://getmdl.io/

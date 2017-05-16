@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Important: we manually export the used GPIO pins as doing so within openocd
+# fails. The failure is caused by openocd accessing the GPIO too quickly
+# after exporting, which does not give udev enough time to modify the
+# permissions.
+# We could run openocd as root, but that is not desireable
 echo "18" > /sys/class/gpio/export
 echo "19" > /sys/class/gpio/export
+
 openocd -f orangepizero-stm32f1.cfg  -f target/stm32f1x.cfg -c "program ../../../bin/tx.hex reset exit"

@@ -25,29 +25,31 @@ To be able to connect your Smartphone to the transmitter, we need to translate b
 
 When you want to configure your *headless transmitter*, you turn the *configurator* on, connect your phone to the Wi-Fi accesspoint the *configurator* provides, and lanch the configuration web-app to perform the configuration. When you are done, the changes are automatically saved in the transmitter and persist over power cycles.
 
-The Smartphone also has a large amount of persistent memory. This allows us to store configurations for multiple models. When we want to reconfigure the transmitter for another model, we simply download the model configuration configuration into the *headless transmitter*. This only takes a few seconds.
+The Smartphone has a large amount of persistent memory. This allows us to store configurations for multiple models. When we want to reconfigure the transmitter for another model, we simply download the model configuration configuration into the *headless transmitter*. This only takes a few seconds.
 
 The power consumption of the transmitter is low: A single 800 mAh Li-Ion battery keeps the transmitter running for approximately 15 hours.
 
 
 ## Cost
 
-When sourcing the modules from China, a transmitter can be modified for less than USD 10. The *configurator* hardware cost is less than USD 15. You only need one *configurator*, regardless of how many *headless transmitters* you have.
+When sourcing the modules from China, a transmitter can be built for less than USD 10. The *configurator* hardware cost is less than USD 15. You only need one *configurator*, regardless of how many *headless transmitters* you have.
 
 
 ## Getting started
 
-Please consult the [INSTALL.md](INSTALL.md) file for instructions of how to set up your development environment.
+Please consult the [INSTALL.md](INSTALL.md) file for detailed instructions.
 
 The [docs/](docs) folder contains various documents explaing details for the architecture.
 
-You can find schematics for the *headless transmitters* hardware in the [electronics/transmitter/](electronics/transmitter) folder. Likewise, the *configurator* schematics are in [electronics/esp8266-nrf51-configurato/r](electronics/esp8266-nrf51-configurator). Bill of Material (BOM) files are included.
+**FIXME** describe configurator and consolidate
 
-The *headless transmitters* firmware resides in the [firmware](firmware) directory.
 
-The *configurator* has two micro-contollers, hence two firmwares. The nRF51822 firmware is in [configurator/nrf51-nrf-uart-bridge/](configurator/nrf51-nrf-uart-bridge), the ESP8266 firmware in [configurator/esp8266-uart-websocket-bridge/](configurator/esp8266-uart-websocket-bridge).
-The web-app that provides the actual user interface (HTML, CSS and JavaScript) is stored in [configurator/web-app/](configurator/web-app). It gets stored as SPIFFS image on the ESP8266.
+You can find schematics for the *headless transmitters* hardware in the [transmitter/electronics/](transmitter/electronics/) folder.
 
+The *headless transmitters* firmware resides in the [transmitter/firmware/](transmitter/firmware/) folder.
+
+The *configurator* is based on the Orange Pi Zero. Its hardware documentation resides in
+[configurator/orangepizero/HARDWARE.md](configurator/orangepizero/HARDWARE.md).
 
 ## WORK IN PROGRESS
 

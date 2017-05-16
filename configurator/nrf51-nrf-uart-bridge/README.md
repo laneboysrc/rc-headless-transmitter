@@ -2,7 +2,8 @@ This directory contains the firmware that goes into the *configurator* of the [*
 
 It runs on the Nordic nRF51822 RF micro-controller.
 
-You need to download the [nRF5 SDK version 11.0](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF5-SDK) from Nordic.
+You need to download the [nRF5 SDK version 11.0](https://www.nordicsemi.com/eng/Products/Bluetooth-low-energy/nRF5-SDK) from Nordic. The SDK must reside in the `firmware/nrf51_sdk/` folder.
+*Note:* It is important that you use the exact version mentioned above as newer versions have ab incompatible API.
 
 The firmware is built using a [GNU Make](https://www.gnu.org/software/make/) makefile. The compiler is [ARM GCC toolchain](https://launchpad.net/gcc-arm-embedded), version 5.2.1. [OpenOCD](http://openocd.org/) is used to program the firmware into the micro-controller. You can use the ST-Link v2 to program the nRF51822.
 

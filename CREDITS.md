@@ -128,7 +128,7 @@ Brilliant library to enable interactive re-ordering of lists. Super-simple to us
 
 https://github.com/mtrpcic/pathjs/blob/master/path.js
 
-Old-skool client-side routing library that allowed us to make a single page web-app for the tiny server on the ESP8266. Surely considered outdated, but just right for our needs.
+Old-skool client-side routing library that allowed us to make a single page web-app. Surely considered outdated, but just right for our needs.
 
 
 ### Favicon Generator

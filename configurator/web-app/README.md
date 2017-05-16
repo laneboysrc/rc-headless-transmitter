@@ -1,6 +1,6 @@
 # *Configurator* web-app implemention
 
-This web-app implements a *configurator* that can setup a *headless transmitter* via a bridge that implements the Websocket protocol.
+This web-app implements a *configurator* that can setup a *headless transmitter* via a bridge that implements the WebSocket protocol.
 
 Please refer to the [configurator](../../docs/configurator.md) documentation for more information.
 
@@ -19,8 +19,7 @@ Note: there are also local modules taken from [../common-modules/](../common-mod
 
 You can then run `npm start` to start the continous build process and development web server. You can then access the build on `localhost:8080`.
 
-Use `npm production` to build the single-page web-app for deployment.
-
+Use `npm production` to build the single-page web-app for deployment. The files will be written to `../../gh-pages`
 
 
 ## More information
@@ -47,9 +46,7 @@ In developement mode, which is executed by `npm start` or `npm run development`,
 
 You can debug the web-app without hardware by using the [simulator tool](../nodejs-headlesstx-simulator-websocket).
 
-When run in production mode (`npm run build` or `npm run production`) then [webpack][] builds the project and gathers all required assets in the `_build` folder. In contrast to development mode, the assets are minimized, CSS is stored as a stand-alone file, fonts are embedded in the CSS, and most images are embedded in CSS and HTML using data-url. The files in the `_build` folder are ready to be deployed to a web server.
-
-To deploy the resulting web-app on the ESP8266, run `make spiffs-webapp` in the [ESP8266 directory](../esp8266-uart-websocket-bridge/).
+When run in production mode (`npm run build` or `npm run production`) then [webpack][] builds the project and gathers all required assets in the `../../gh-pages` folder. In contrast to development mode, the assets are minimized, CSS is stored as a stand-alone file, fonts are embedded in the CSS, and most images are embedded in CSS and HTML using data-url. The files in the `../../gh-pages`folder are ready to be deployed to a web server.
 
 
 [nunjucks]: https://mozilla.github.io/nunjucks/ "Nunjucks - A rich and powerful templating language for JavaScript"

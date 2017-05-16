@@ -1,9 +1,0 @@
-BT1        BATTERY   Li-Ion 3.7V 800mAh
-K1         ESP-PROG  0.1" pin header
-P1         LOG       0.1" pin header
-P2         nRF-UART  0.1" pin header
-P3         SWD       0.1" pin header
-SW1        On/Off switch
-U1         ESP8266_R2                   http://www.electrodragon.com/product/esp8266-smd-adapter-board/
-U2         LIPO_CHARGER_+_PROTECTION    https://www.aliexpress.com/item/New-2Pcs-lot-5V-1A-Micro-USB-18650-Lithium-Battery-Charging-Board-Charger-Module-Protection-Dual/32230225249.html
-U3         CORE51822B                   https://www.aliexpress.com/item/Core51822-B-BLE4-0-Bluetooth-2-4G-Wireless-Module-nRF51822-Onboard-Rev3-features-32kB-RAM-supports/32615939551.html

@@ -2,8 +2,8 @@
   "name": "uart-websocket-bridge",
   "version": "1.0.0",
   "description": "Bridge a Headless TX connected via a UART to a configuratior using the Websocket protocol",
-  "repository": "https://github.com/laneboysrc/<FIXME>.git",
-  "author": "LANE Boys RC",
+  "repository": "https://github.com/laneboysrc/rc-headless-transmitter.git",
+  "author": "laneboysrc@gmail.com",
   "license": "MIT",
   "scripts": {
     "start": "./bridge.js"

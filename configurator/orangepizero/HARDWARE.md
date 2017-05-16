@@ -1,8 +1,14 @@
-Beside the Orange Pi Zero, you need a nRF51822 module.
-This document describes the module named CORE51822B, which you can find on AliExpress.
+# Hardware parts
+Orange Pi Zero (256 MB):
+[https://www.aliexpress.com/store/product/New-Orange-Pi-Zero-H2-Quad-Core-Open-source-development-board-beyond-Raspberry-Pi/1553371_32760774493.html](https://www.aliexpress.com/store/product/New-Orange-Pi-Zero-H2-Quad-Core-Open-source-development-board-beyond-Raspberry-Pi/1553371_32760774493.html)
 
-NOTE: other nRF51822 modules have different pin-outs, use the pin names instead as reference!
+CORE51822 (B):
+[https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20170515221607&SearchText=core51822+b](https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20170515221607&SearchText=core51822+b)
 
+NOTE: other nRF51822 based modules may work as well, but have different pin-outs. You must ensure to match the pin names instead of the module pin numbers!
+
+
+# Connections
 
 The CORE51822B modules gets connected to the Orange Pi Zero 26-pin header as follows:
 
@@ -29,6 +35,33 @@ For this purpose the configurator can monitor a push-button on GPIO6 of the Oran
     7  GPIO6                          power-off button
 
 The power-off button switch to GND (Orange Pi Zero pin 6) and must have a 1..100k Ohm pull-up resistor to 3V3 (Orange Pi Zero pin 1).
+
+                               +
+                               | 3V3
+                               |
+                               |
+                               |
+                             +---+
+                             |   |
+                             |   | 1..100kOhm
+                             |   | value not critical
+                             |   |
+                             +---+
+                               |
+                               +----------------+  GPIO6
+                               |
+                               |
+                           X   +
+                       +   XXX
+                       +----+XX     push-button
+                       +      XX
+                               X
+                               |
+                               |
+                               |
+                               |
+                               |    GND
+                              +-+
 
 
 # Optional OpenOCD SWD programming pins for the STM32F103C8T6 in the transmitter

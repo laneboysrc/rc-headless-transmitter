@@ -1,18 +1,15 @@
 # Headless TX simulator using the Websocket protocol
 
 This tool simulates a *headless transmitter*, connected to a bridge that implements the
-Websocket interface.
+WebSocket interface.
 
-This tool allows testing *configurator* implementations that use the Websocket
-interface.
+This tool allows testing the web-app without hardware.
 
 
 ## Build instructions
 
-To compile all source files into a single HTML file for distribution the following tools are needed:
+Install NodeJS [http://nodejs.org/](http://nodejs.org/)
 
-- Node.js - [http://nodejs.org/](http://nodejs.org/)
-
-After installing these tools, run `npm install` to fetch the required modules.
+Run `npm install` to fetch the required modules.
 
 You can then run `npm start`

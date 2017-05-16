@@ -25,33 +25,35 @@ To be able to connect your Smartphone to the transmitter, we need to translate b
 
 When you want to configure your *headless transmitter*, you turn the *configurator* on, connect your phone to the Wi-Fi accesspoint the *configurator* provides, and lanch the configuration web-app to perform the configuration. When you are done, the changes are automatically saved in the transmitter and persist over power cycles.
 
+The *configurator* is built from an **Orange Pi Zero**, with an extra RF module for the connection to the *headless transmitter*.
+
 The Smartphone has a large amount of persistent memory. This allows us to store configurations for multiple models. When we want to reconfigure the transmitter for another model, we simply download the model configuration configuration into the *headless transmitter*. This only takes a few seconds.
 
-The power consumption of the transmitter is low: A single 800 mAh Li-Ion battery keeps the transmitter running for approximately 15 hours.
+The power consumption of the transmitter is low: A single 800 mAh Li-Ion battery keeps the transmitter running for approximately 15 hours. The *configurator* is only used rarely and can be powered from a suitable power bank.
 
 
 ## Cost
 
-When sourcing the modules from China, a transmitter can be built for less than USD 10. The *configurator* hardware cost is less than USD 15. You only need one *configurator*, regardless of how many *headless transmitters* you have.
+When sourcing the modules from China, a transmitter can be built for less than USD 10. The *configurator* hardware cost is less than USD 20. You only need one *configurator*, regardless of how many *headless transmitters* you have.
 
 
 ## Getting started
 
-Please consult the [INSTALL.md](INSTALL.md) file for detailed instructions.
+Please consult the [INSTALL.md](INSTALL.md) file for instructions.
 
 The [docs/](docs) folder contains various documents explaing details for the architecture.
 
-**FIXME** describe configurator and consolidate
-
-
-You can find schematics for the *headless transmitters* hardware in the [transmitter/electronics/](transmitter/electronics/) folder.
-
-The *headless transmitters* firmware resides in the [transmitter/firmware/](transmitter/firmware/) folder.
+The *headless transmitters* hardware is described in the [transmitter/](transmitter/) folder.
 
 The *configurator* is based on the Orange Pi Zero. Its hardware documentation resides in
 [configurator/orangepizero/HARDWARE.md](configurator/orangepizero/HARDWARE.md).
 
+The *web-app* can be accessed from [https://laneboysrc.github.io/rc-headless-transmitter](https://laneboysrc.github.io/rc-headless-transmitter)
+
+
 ## WORK IN PROGRESS
 
 This project is not finished yet. Refer to the [TODO](TODO.md) list for items that we plan to implement in the future.
+
+At the moment the project has only been tested on Android using Chrome and Firefox, and on PCs running Chrome or Firefox.
 

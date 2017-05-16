@@ -437,7 +437,7 @@ All data is in little endian format, i.e. the least significant byte is transmit
 
 ## WebSocket protocol
 
-The *WebSocket protocol* runs on port **9707** using TLS encryption.
+The *WebSocket protocol* runs on **wss://192.168.4.1/ws** using TLS encryption.
 
 The *WebSocket protocol* implements the same commands as described above.
 

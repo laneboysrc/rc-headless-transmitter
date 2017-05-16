@@ -351,22 +351,17 @@ class WebsocketProtocol {
   _initPotentialBridges() {
 
     // We look for Websocket Bridges on the current host as well as on the
-    // fixed IP address 192.168.4.1 (which is the IP address of the ESP8622
-    // or Raspberry Pi based configurator).
+    // fixed IP address 192.168.4.1 (which is the IP address configurator).
     //
     // This way we can either run a bridge on the development computer, or
-    // point our Wi-Fi to the ESP8622 configurator after loading the app.
+    // point our Wi-Fi to the configurator after loading the app.
     // Note that the app could be pre-cached already on the device, in which
     // case we can start it even if there is no access to the Internet.
     //
     //
-    // Note that we exclude .github.io as potential host, where we will
-    // ultimately host the configurator (it provides HTTPS so we can use
-    // a service worker for caching, giving us full off-line support).
-    //
-    // We do not foresee that we will run a configurator on Github, though
-    // that may change if we e.g. decide to run a simulator so that users
-    // can play around with the system.
+    // Note that we exclude .github.io as potential host, where we host
+    // the web-app (it provides HTTPS so we can use a service worker for
+    // caching, giving us full off-line support).
     //
     // We add secure (wss) versions in all cases, but insecure (ws) versions
     // only when the page is not served via HTTPS. If we try to access ws://
@@ -380,17 +375,21 @@ class WebsocketProtocol {
     const isHTTPS = (window.location.protocol === 'https:');
     const loc = this.bridges.locations;
 
-    loc.push('wss://192.168.4.1:9707/');
+    // The preferred location is 192.168.4.1/ws, port 443. This way we can
+    // ask the user easily to add a security exception for https://192.168.4.1
+    // which will immediately apply for the web-socket.
+    //
+    // Originally we used port 9707, but Firefox differentiates security
+    // exceptions by port number [Chrome does not]
+    loc.push('wss://192.168.4.1/ws');
+
     if (!isHTTPS) {
       loc.push('ws://192.168.4.1:9706/');
     }
 
     let host = window.location.hostname;
     if (! host.endsWith('.github.io')) {
-      loc.push(`wss://${host}:9707/`);
-      if (!isHTTPS) {
-        loc.push(`ws://${host}:9706/`);
-      }
+      loc.push(`ws://${host}:9706/`);
     }
   }
 }

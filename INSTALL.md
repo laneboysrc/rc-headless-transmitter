@@ -1,3 +1,5 @@
+**FIXME** Update and move programming to HACKING.md
+
 # How to get up and running
 
 This project requires **intermediate** skills in electronics and micro-controller firmware. While the electronics are based on off-the-shelf modules, everything needs to be wired correctly on a prototyping board and installed in the transmitter.

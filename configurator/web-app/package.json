@@ -2,14 +2,9 @@
   "name": "configurator-web-app",
   "version": "0.0.1",
   "description": "A browser based configuration tool for the Headless TX",
-  "author": {
-    "name": "LANE Boys RC"
-  },
+  "repository": "https://github.com/laneboysrc/rc-headless-transmitter.git",
+  "author": "laneboysrc@gmail.com",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/laneboysrc/FIXME.git"
-  },
   "scripts": {
     "build": "webpack",
     "production": "webpack",

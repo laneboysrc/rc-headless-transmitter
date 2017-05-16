@@ -25,7 +25,6 @@ class RFProtocol{
     let address = model.getItem('RF_PROTOCOL_HK310_ADDRESS');
     let hopChannels = model.getItem('RF_PROTOCOL_HK310_HOP_CHANNELS');
 
-    // FIXME: parse address and hop channels and put them back into the db
     let adressString = this._address2string(address);
     this.address.value = adressString;
 

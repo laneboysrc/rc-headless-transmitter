@@ -34,6 +34,7 @@
 - Add version date (based on Git) to all software
 
 - How to deal with switches and pots that are not present; or a function that was designed for a multi-pos pot but now is a switch?
+- How to deal with forward/reverse, when the TX TH is without center detent? dangerous!
 
 ## nRF51 UART bridge
 

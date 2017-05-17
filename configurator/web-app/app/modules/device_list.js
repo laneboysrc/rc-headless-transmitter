@@ -8,6 +8,7 @@ var DatabaseObject = require('./database_object');
 class DeviceList {
   constructor() {
     this.loading = document.querySelector('#app-device_list-loading');
+    this.hints = document.querySelector('#app-device_list-hints');
     this.msgBridge = document.querySelector('#app-device_list-loading__bridge');
     this.msgScanning = document.querySelector('#app-device_list-loading__scanning');
     this.list = document.querySelector('#app-device_list-list');
@@ -23,6 +24,8 @@ class DeviceList {
     this.showToast = false;
     this.availableTransmitters = [];
 
+    this.hintTimer = null;
+
     document.addEventListener('dev-bridgeconnected', this._bridgeConnected.bind(this));
     document.addEventListener('dev-connectionlost', this._connectionLost.bind(this));
   }
@@ -37,6 +40,9 @@ class DeviceList {
     else {
       Device.enableCommunication();
     }
+
+    this._cancelHints();
+    this.hintTimer = setTimeout(this._showHints.bind(this), 4000);
 
     Utils.showPage('device_list');
   }
@@ -165,9 +171,19 @@ class DeviceList {
   }
 
   //*************************************************************************
+  _cancelHints() {
+    Utils.hide(this.hints);
+    if (this.hintTimer) {
+      clearTimeout(this.hintTimer);
+      this.hintTimer = null;
+    }
+  }
+
+  //*************************************************************************
   _bridgeConnected() {
     Utils.hide(this.msgBridge);
     Utils.show(this.msgScanning);
+    this._cancelHints();
   }
 
   //*************************************************************************
@@ -192,6 +208,12 @@ class DeviceList {
 
     const text = document.querySelector('#app-device_list-toast__message').content.textContent;
     Utils.showToast(text, 5000);
+  }
+
+  //*************************************************************************
+  _showHints() {
+    this.hintTimer = null;
+    Utils.show(this.hints);
   }
 }
 

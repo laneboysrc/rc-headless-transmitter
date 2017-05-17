@@ -226,7 +226,7 @@ and add
         include snippets/snakeoil.conf;
 
         root /var/www/html;
-        index index.html index.htm index.nginx-debian.html;
+        index index.configurator.html index.html index.htm index.nginx-debian.html;
         location / {
             try_files $uri $uri/ =404;
         }
@@ -257,6 +257,11 @@ Use the new configuration by running
     sudo rm /etc/nginx/sites-enabled/default
     sudo ln -s /etc/nginx/sites-available/configurator /etc/nginx/sites-enabled/configurator
 
+Copy the file stored in `configuator/orangepizero/var/www/html/index.configurator.html` fo the project to `/var/www/html/index.configurator.html`
+
+    sudo cp ~/rc-headless-transmitter/configuator/orangepizero/var/www/html/index.configurator.html /var/www/html/index.configurator.html
+This file gets shown when you browse to `https://192.168.4.1/` and allows users to allow a security exception of the self-signed certificate used in the configurator.
+
 
 # Install node-js
 The configurator bridge software is written in JavaScript and requires NodeJS as runtime.
@@ -282,12 +287,26 @@ Install the dependencies for the bridge and start it:
     pm2 start --name="bridge" npm -- start /dev/ttyS1
     pm2 save
 
+
 # Final setup
-**FIXME**
-* reboot
-* Verify bridge running
-* Connect nRF
-* Web browser allow certificate
+Reboot the Orange Pi Zero:
+
+    sudo reboot
+
+Verify that the bridge software is running:
+
+    pm2 ls
+
+Connect the Wi-Fi of your computer or Smartphone to the SSID `LANE Boys RC`. Use the password you configured in `/etc/hostapd.configurator.conf` earlier.
+
+Open Chrome or Firefox and browse to [https://192.168.4.1](https://192.168.4.1). The browser should show a security error message since we are using a self-signed cerficiate. Add a permanent exception to allow this certificate. You should now see a web page with a success message, showing the LANE Boys RC logo.
+
+Change the Wi-Fi connection back to your normal Internet connection and browse to [https://laneboysrc.github.io/rc-headless-transmitter](https://laneboysrc.github.io/rc-headless-transmitter). Once loaded, you can use the "Install to home screen" feature in your browsers menu to create a desktop icon on your Smartphone for easy future access.
+
+With the web-app still open in the web browser, connect Wi-Fi to the *configurator* bridge (SSID `LANE Boys RC`), then press the `Connect` button. You should briefly see `Connecting to the bridge ...` followed by `Scanning for transmitters ...`. Turn on your *headless transmitter* and it should appear as `Unconfigured Tx` in the list.
+
+Congratulations, you've made it! **Have fun with RC!**
+
 
 ---
 

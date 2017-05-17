@@ -2,7 +2,7 @@ This folder contains files related to the Orange Pi Zero-based configurator brid
 
 Refer to [INSTALL.md](INSTALL.md) of how to configure the Orange Pi Zero.
 
-The [etc/](etc/) folder contains sample configuations as described in [INSTALL.md](INSTALL.md).
+The [etc/](etc/) and [var/](var/) folders contains sample configuations as described in [INSTALL.md](INSTALL.md).
 
 The [mechanics/](mechanics/) folder contains mechanical files to 3D-print a case for the Orange Pi Zero.
 

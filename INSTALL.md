@@ -28,7 +28,7 @@ Turn on the *configurator* and wait until it has booted (green LED turns solid).
 
 On your PC or Smartphone, open [https://laneboysrc.github.io/rc-headless-transmitter](https://laneboysrc.github.io/rc-headless-transmitter) in the web browser.
 
-Now connect Wi-Fi to the SSID of the *configurator*, which is "LANE Boys RC". Use the passphrase you have configured when building the *configurator* (default is "12345678").
+Now connect Wi-Fi to the SSID of the *configurator*, which is "LANE Boys RC". Use the passphrase you have configured when building the *configurator* (default is "12345678", but you hopefully changed that while building your own *configurator* ...).
 
 After pressing the `Connect` button on the web-app, the list of transmitters should show `Unconfigured Tx`. Click on the `Edit` icon next to the name. The transmitter should beep and after a few seconds the web-app will show the settings of the transmitter. You can now proceed with configuring it.
 

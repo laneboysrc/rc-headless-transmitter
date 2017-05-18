@@ -5,7 +5,8 @@
 # after exporting, which does not give udev enough time to modify the
 # permissions.
 # We could run openocd as root, but that is not desireable
-echo "18" > /sys/class/gpio/export
-echo "19" > /sys/class/gpio/export
+echo 18 > /sys/class/gpio/export
+echo 19 > /sys/class/gpio/export
+sleep 1
 
 openocd -f orangepizero-stm32f1.cfg  -f target/stm32f1x.cfg -c "program ../../../bin/tx.hex reset exit"

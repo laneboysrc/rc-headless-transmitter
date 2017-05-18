@@ -14,9 +14,9 @@ The *headless transmitter* comprises of an inexpensive ["Blue pill" board](https
 Please refer to [transmitter/electronics/BOM.txt](transmitter/electronics/BOM.txt) for a full list of components required.
 
 The *configurator* is built with an [Orange Pi Zero](https://www.aliexpress.com/store/product/New-Orange-Pi-Zero-H2-Quad-Core-Open-source-development-board-beyond-Raspberry-Pi/1553371_32760774493.html) and a CORE51822B module. The 256 MByte version of the Orange Pi Zero is enough for our simple application. It is powered by a suitable power bank or other 5V supply.
-Please refer to [configurator/organgepizero/HARDWARE.md](configurator/organgepizero/HARDWARE.md) for a full list of components required.
+Please refer to [configurator/orangepizero/HARDWARE.md](configurator/orangepizero/HARDWARE.md) for a full list of components required.
 
-Follow the instructions in [configurator/organgepizero/INSTALL.md](configurator/organgepizero/INSTALL.md) to install and configure the Armbian Linux distribution and required software on the Orange Pi Zero.
+Follow the instructions in [configurator/orangepizero/INSTALL.md](configurator/orangepizero/INSTALL.md) to install and configure the Armbian Linux distribution and required software on the Orange Pi Zero.
 
 The firmware for the micro-controllers comes pre-compiled in the [bin/](bin/) folder of the project, no need to install development tools and compile it yourself. You can use the Orange Pi Zero to flash it. Refer to [configurator/orangepizero/openocd/README.md](configurator/orangepizero/openocd/README.md) for instructions.
 

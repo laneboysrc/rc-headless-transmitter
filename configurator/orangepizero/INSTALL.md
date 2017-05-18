@@ -267,6 +267,7 @@ This file gets shown when you browse to `https://192.168.4.1/` and allows users 
 The configurator bridge software is written in JavaScript and requires NodeJS as runtime.
 
 To install, run
+
     curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
     sudo apt-get install nodejs
 

@@ -323,6 +323,8 @@ To be able to do so, the project comes with a small script that monitors a simpl
 
 Please refer to [HARDWARE.md](HARDWARE.md) how to connect the push-button.
 
+**IMPORTANT:** do not install the software below unless you have connected a pull-up resistor to GPIO6, as it can shut down your Orange Pi Zero if the IO port is left floating!
+
     cd ~/rc-headless-transmitter/configurator/orangepizero/shutdown-on-button-press/
     npm install
     pm2 start --name="power-button" npm start

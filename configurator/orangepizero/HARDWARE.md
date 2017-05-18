@@ -2,10 +2,17 @@
 Orange Pi Zero (256 MB):
 [https://www.aliexpress.com/store/product/New-Orange-Pi-Zero-H2-Quad-Core-Open-source-development-board-beyond-Raspberry-Pi/1553371_32760774493.html](https://www.aliexpress.com/store/product/New-Orange-Pi-Zero-H2-Quad-Core-Open-source-development-board-beyond-Raspberry-Pi/1553371_32760774493.html)
 
+The CPU on the Orange Pi Zero runs very hot, even when idling. It is recommended that you obtain a suitable heat sink.
+
+
 CORE51822 (B):
 [https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20170515221607&SearchText=core51822+b](https://www.aliexpress.com/wholesale?catId=0&initiative_id=SB_20170515221607&SearchText=core51822+b)
 
 NOTE: other nRF51822 based modules may work as well, but have different pin-outs. You must ensure to match the pin names instead of the module pin numbers!
+
+
+You need a Micro SD card. 4 GB is plenty, but nowadays cards start at 16 GB anyway.
+Do get a good, reliable card! We have good experience with Sandisk Ultra 16 GB (SDSQUNC model, red and silver color).
 
 
 # Connections

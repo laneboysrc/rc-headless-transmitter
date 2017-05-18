@@ -36,10 +36,6 @@
 - How to deal with switches and pots that are not present; or a function that was designed for a multi-pos pot but now is a switch?
 - How to deal with forward/reverse, when the TX TH is without center detent? dangerous!
 
-- Can we remove packages from Orange Pi Zero to reduce power / heat / startup time?
-
-- BOM for Orange Pi Zero: add SD card and heat sink
-
 ## nRF51 UART bridge
 
 - Send `MAX_PACKETS_IN_TRANSIT` upwards

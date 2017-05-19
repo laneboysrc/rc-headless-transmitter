@@ -81,7 +81,7 @@ const common = {
       maximumFileSizeToCacheInBytes: 4194304
     }),
     new webpack.DefinePlugin({
-      VERSION_DIRTY: JSON.stringify(execSync('test -z "$$(git status --porcelain -- .)" || echo "-dirty"').toString('utf-8').trim()),
+      VERSION_DIRTY: JSON.stringify(execSync('test -z "`git status --porcelain -- .`" || echo "-dirty"').toString('utf-8').trim()),
       VERSION_HASH: JSON.stringify(execSync('git log -1 --format="%h" -- .').toString('utf-8').trim()),
       VERSION_DATE: JSON.stringify(execSync('git log -1 --format="%cd" --date=format:"%F %T" -- .').toString('utf-8').trim()),
     })

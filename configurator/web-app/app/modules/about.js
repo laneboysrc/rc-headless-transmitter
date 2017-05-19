@@ -5,7 +5,11 @@ var Utils = require('./utils');
 
 class About {
   constructor() {
-    // Nothing to do
+    const elHash = document.querySelector('#page_about .version .hash');
+    const elDate = document.querySelector('#page_about .version .date');
+
+    elHash.textContent = VERSION_HASH + VERSION_DIRTY;
+    elDate.textContent = VERSION_DATE;
   }
 
   //*************************************************************************

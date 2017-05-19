@@ -434,3 +434,9 @@ span.mdl-list__item-primary-content label {
 #settings-restore {
   font-size: 1rem;
 }
+
+/* About page version number */
+#page_about .version {
+  padding-top: 3rem;
+  color: rgba(0,0,0,.25);;
+}

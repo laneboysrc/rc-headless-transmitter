@@ -4,11 +4,13 @@
 
 const path              = require('path');
 const fs                = require('fs');
+const webpack           = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const swprecachePlugin  = require('sw-precache-webpack-plugin');
 const merge             = require('webpack-merge');
 const validate          = require('webpack-validator');
 const parts             = require('./webpack.support');
+const execSync          = require('child_process').execSync;
 
 
 const PATHS = {
@@ -19,7 +21,6 @@ const PATHS = {
 const appHTML = path.join(PATHS.app, 'html', 'app.html');
 const serviceWorker = path.join(PATHS.build, 'service-worker.js');
 const specialImages = /\W(((laneboysrc-logo-144|laneboysrc-logo-180|laneboysrc-logo-192|favicon-16x16|favicon-32x32)\.png)|((safari-pinned-tab)\.svg))$/;
-
 
 // Common configuration that applies to all modes (development, build ...)
 const common = {
@@ -78,6 +79,11 @@ const common = {
         /\Wmanifest\.json$/
       ],
       maximumFileSizeToCacheInBytes: 4194304
+    }),
+    new webpack.DefinePlugin({
+      VERSION_DIRTY: JSON.stringify(execSync('test -z "$$(git status --porcelain -- .)" || echo "-dirty"').toString('utf-8').trim()),
+      VERSION_HASH: JSON.stringify(execSync('git log -1 --format="%h" -- .').toString('utf-8').trim()),
+      VERSION_DATE: JSON.stringify(execSync('git log -1 --format="%cd" --date=format:"%F %T" -- .').toString('utf-8').trim()),
     })
   ],
 };

@@ -59,6 +59,9 @@ module.exports = {
         "Sortable": true,
 
         "TEST_CONFIG_DATA": true,
-        "CONFIG_VERSIONS": true
+        "CONFIG_VERSIONS": true,
+        "VERSION_HASH": true,
+        "VERSION_DATE": true,
+        "VERSION_DIRTY": true
     }
 };

@@ -31,10 +31,14 @@
 
 - Test lots of active mixer units, check how long calculation takes
 
-- Add version date (based on Git) to firmware
 
 - How to deal with switches and pots that are not present; or a function that was designed for a multi-pos pot but now is a switch?
 - How to deal with forward/reverse, when the TX TH is without center detent? dangerous!
+
+- Add version date (based on Git) to firmware
+
+- Error message when IndexedDB fails
+
 
 ## nRF51 UART bridge
 

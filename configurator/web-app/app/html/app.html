@@ -35,10 +35,10 @@
   <body>
     {% block content %}
       {% for p in ["main", "about", "device_list", "edit_curve", "edit_switch", "limits", "mixer", "mixer_unit", "model_details", "model_list", "rf_protocol", "select_multiple", "select_icon", "select_single", "settings", "transmitter_details", "transmitter_list", "hardware_inputs", "logical_inputs", "hardware_inputs_order"] %}
-        <div id="page_{{ p }}" class="app-page hidden">
-        {% set pg= "app/html/pages/" + p + ".html" %}
-        {% include pg %}
-        </div>
+      <div id="page_{{ p }}" class="app-page hidden">
+      {% set pg= "app/html/pages/" + p + ".html" %}
+      {% include pg %}
+      </div>
       {% endfor %}
     {% endblock %}
 
@@ -46,5 +46,9 @@
 
     {% block javascript %}
     {% endblock %}
+
+    <noscript>
+      Please enable JavaScript in your browser.
+    </noscript>
   </body>
 </html>

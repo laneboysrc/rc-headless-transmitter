@@ -23,6 +23,8 @@ In order to configure those features, you need to use a web-browser on your Smar
 
 To be able to connect your Smartphone to the transmitter, we need to translate between different radio protocols: The transmitter uses a proprietary RF protocol, while the Smartphone supports Wi-Fi. This translation takes place in a small, external box called *configurator*.
 
+[![Video](http://img.youtube.com/vi/0TWwRhdeHpA/0.jpg)](http://www.youtube.com/watch?v=0TWwRhdeHpA)
+
 When you want to configure your *headless transmitter*, you turn the *configurator* on, connect your phone to the Wi-Fi accesspoint the *configurator* provides, and lanch the configuration web-app to perform the configuration. When you are done, the changes are automatically saved in the transmitter and persist over power cycles.
 
 The *configurator* is built from an **Orange Pi Zero**, with an extra RF module for the connection to the *headless transmitter*.

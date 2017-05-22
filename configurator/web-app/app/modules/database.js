@@ -11,12 +11,21 @@ var Database = function (data) {
     this.db = undefined;
 
     var self = this;
+    var request;
 
     console.log('Database: opening database "' + DATABASE_NAME + '"');
-    var request = window.indexedDB.open(DATABASE_NAME, 2);
+    try {
+        request = window.indexedDB.open(DATABASE_NAME, 2);
+    }
+    catch (e) {
+        console.error('indexedDB.open failed:', e);
+        document.querySelector('#database-error').classList.remove('hidden');
+        return;
+    }
 
     request.onerror = function(event) {
         console.error('Database: onerror', event);
+        document.querySelector('#database-error').classList.remove('hidden');
     };
 
     request.onupgradeneeded = function(event) {

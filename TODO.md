@@ -37,8 +37,6 @@
 
 - Add version date (based on Git) to firmware
 
-- Error message when IndexedDB fails
-
 
 ## nRF51 UART bridge
 

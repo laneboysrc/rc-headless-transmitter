@@ -122,6 +122,7 @@ static void apply_mixer_unit(mixer_unit_t *m)
 
         case OP_MULTIPLY:
             *p_channel *= value / CHANNEL_100_PERCENT;
+            break;
 
         case OP_MIN:
             *p_channel = (*p_channel < value) ? *p_channel : value;

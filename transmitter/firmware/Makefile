@@ -241,7 +241,8 @@ clean :
 	$(ECHO)$(RM) $(BUILD_DIRECTORIES)
 
 program : $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).hex
-	$(OPENOCD) $(OPENOCD_FLAGS) -c "program $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).hex reset exit"
+	$(ECHO)$(GDB) -nx -quiet -batch -command gdb.flash.script
+#	 $(OPENOCD) $(OPENOCD_FLAGS) -c "program $(OUTPUT_BINARY_DIRECTORY)/$(PROGRAM).hex reset exit"
 
 flash : program
 

@@ -25,7 +25,7 @@ To be able to connect your Smartphone to the transmitter, we need to translate b
 
 [![Video](http://img.youtube.com/vi/0TWwRhdeHpA/0.jpg)](http://www.youtube.com/watch?v=0TWwRhdeHpA)
 
-When you want to configure your *headless transmitter*, you turn the *configurator* on, connect your phone to the Wi-Fi accesspoint the *configurator* provides, and lanch the configuration web-app to perform the configuration. When you are done, the changes are automatically saved in the transmitter and persist over power cycles.
+When you want to configure your *headless transmitter*, you turn the *configurator* on, connect your phone to the Wi-Fi access-point the *configurator* provides, and launch the configuration web-app to perform the configuration. When you are done, the changes are automatically saved in the transmitter and persist over power cycles.
 
 The *configurator* is built from an **Orange Pi Zero**, with an extra RF module for the connection to the *headless transmitter*.
 
@@ -43,7 +43,7 @@ When sourcing the modules from China, a transmitter can be built for less than U
 
 Please consult the [INSTALL.md](INSTALL.md) file for instructions.
 
-The [docs/](docs) folder contains various documents explaing details for the architecture.
+The [docs/](docs) folder contains various documents explaining details for the architecture.
 
 The *headless transmitters* hardware is described in the [transmitter/](transmitter/) folder.
 

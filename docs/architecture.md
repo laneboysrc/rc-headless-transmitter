@@ -13,14 +13,14 @@
   - backward, less, left: negative values
 
     Note: this is in line with the HobbyKing HK310. However, in the old 27MHz
-    AM car transmitters the behaviour is different
+    AM car transmitters the behavior is different
       - backward, right: positive values
       - forward, left: negative values
 
 * So the "mixer" describes the vehicle, but the input section describes the transmitter
 * The *configurator* can change mixer configuration as well as hardware configuration
 
-* Trims have to be assigneable to a specific input. Trims may be either a pair of push-buttons or a potentiometer, or be mechanical (i.e. not existant from a software point-of-view).
+* Trims have to be assignable to a specific input. Trims may be either a pair of push-buttons or a potentiometer, or be mechanical (i.e. not existent from a software point-of-view).
 
 
 

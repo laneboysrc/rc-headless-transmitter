@@ -37,7 +37,7 @@ Smartphones even allow web-apps to be installed as icon on the home screen and r
 
 ## Principle of operation
 
-The *headless transmitter* performs its operation based on a configuration that is stored in its persistent memory (Flash memory of the microcontroller). The configuration determines which inputs provides what functions, and how the inputs are mixed to form output channels. Please refere to the [architecture documentation](architecture.md) for details.
+The *headless transmitter* performs its operation based on a configuration that is stored in its persistent memory (Flash memory of the micro-controller). The configuration determines which inputs provides what functions, and how the inputs are mixed to form output channels. Please refere to the [architecture documentation](architecture.md) for details.
 
 The firmware is designed such that the configuration can be changed at run-time; the *headless transmitter* firmware applies the configuration dynamically.
 
@@ -62,7 +62,7 @@ The *headless transmitter* offers the following transports natively:
 
 * UART protocol
 
-    The UART (serial port) protocol is available by connecting to the UART provided by the microcontroller. The UART protocol is currently not implemented on the *headless transmitter*, but used internally in the *nrF-to-WebSocket bridge* described below.
+    The UART (serial port) protocol is available by connecting to the UART provided by the micro-controller. The UART protocol is currently not implemented on the *headless transmitter*, but used internally in the *nrF-to-WebSocket bridge* described below.
 
 
 The design goal is to keep the protocol running over the different transports the same, so that the transports appear transparent to the *configurator*.
@@ -91,12 +91,12 @@ Ideally the protocol that a *headless transmitter bridge* provides to the *confi
 
 The cheapest way to build a bridge with a HTTP/WebSocket interface is by using **ESP8266** modules. The older ESP8266 modules have only a UART interface and not a lot of memory, but newer versions provide access to an SPI port that would allow direct interfacing with a nRF24L01 module.
 
-In order to relief the ESP8266 firmware from the real-time requirements of dealing with the nRF24L01 module, the current bridge implementation uses a nRF51822 module with integrated ARM microcontroller to perform the real-time nRF protocol, sending and receiving information over UART to the ESP8266.
+In order to relief the ESP8266 firmware from the real-time requirements of dealing with the nRF24L01 module, the current bridge implementation uses a nRF51822 module with integrated ARM micro-controller to perform the real-time nRF protocol, sending and receiving information over UART to the ESP8266.
 
 Unfortunately the ESP8266 can not implement a HTTPS server using TLS encryption. TLS is required so that the web-app, which is required to be hosted via HTTPS to access off-line features like ServiceWorker, can access it via secure WebSocket.
 We therefore abandoned the ESP8266 implementation. An old, HTTP-based, version can still be found in the project's commit history.
 
-Luckily with the rise of single-board computers (SBC) like the Rasberry Pi, a more powerful alternative is at hand. We opted for the **Orange Pi Zero**. It costs only USD 7 plus shipping (256 MBytes RAM version, good enough for our purpose). It has built-in Wi-Fi that works just fine as Access Point.
+Luckily with the rise of single-board computers (SBC) like the Raspberry Pi, a more powerful alternative is at hand. We opted for the **Orange Pi Zero**. It costs only USD 7 plus shipping (256 MBytes RAM version, good enough for our purpose). It has built-in Wi-Fi that works just fine as Access Point.
 
 On the **Orange Pi Zero** we can install **Armbian**, an **Ubuntu-based OS**, use **NGINX** as web-server serving HTTPS with a self-signed certificate, and run a **NodeJS** program to interface with the nRF51822 module over UART.
 
@@ -125,7 +125,7 @@ Following tradition, the default pass-phrase of a virgin transmitter is the same
 
 ## Making the configurator an App-like experience
 
-Web technology has come a long way in the recent years. Today we can make *web-apps* that have an almost native look-and-feel on Smartphones, yet work cross-platform beause they are technically web pages. Web-apps can store data on the device persistently, they can be installed to -- and launched from -- the home screen just like a native app, and they can even operate off-line thanks to the awesome *service worker* technology.
+Web technology has come a long way in the recent years. Today we can make *web-apps* that have an almost native look-and-feel on Smartphones, yet work cross-platform because they are technically web pages. Web-apps can store data on the device persistently, they can be installed to -- and launched from -- the home screen just like a native app, and they can even operate off-line thanks to the awesome *service worker* technology.
 
 *Note: the current configurator web-app has only be tested on Chrome and Firefox, on Android. It is likely that it requires debugging to run on other platforms. Furthermore, only Chrome currently supports off-line web-apps.*
 
@@ -133,7 +133,7 @@ This comes at a small price: in order to be able to utilize a *service worker*, 
 
 Serving the web-app over HTTPS is quite easy as [Github](https://github.com) kindly provides projects to serve web pages via HTTPS for free ([Github Pages](https://pages.github.com)).
 
-Another compromise we have to make is the use of self-signed certificates on the *nRF-to-websocke* bridge, which trigger security warnings in all modern web browsers. The user will have to go through certain steps to allow this self-signed certificate before the *configurator web-app* can access it.
+Another compromise we have to make is the use of self-signed certificates on the *nRF-to-websocket* bridge, which trigger security warnings in all modern web browsers. The user will have to go through certain steps to allow this self-signed certificate before the *configurator web-app* can access it.
 
 
 ## nRF protocol details
@@ -577,5 +577,5 @@ Some options were not considered:
 
 * Chrome app, UART to nRF bridge
 
-    The main advantage of the Chrome app would be that it offers native serial port support. However, the UART to nRF bridge is non-standard and requires users to build one. This effort would be better directed to one of the *web-app* options, which are more universal. As stated above, the *web-app* may also be packaged as *Chrome app*. Further more, recently Google announced that they will depract *Chrome apps*.
+    The main advantage of the Chrome app would be that it offers native serial port support. However, the UART to nRF bridge is non-standard and requires users to build one. This effort would be better directed to one of the *web-app* options, which are more universal. As stated above, the *web-app* may also be packaged as *Chrome app*. Further more, recently Google announced that they will deprecate *Chrome apps*.
 

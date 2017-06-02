@@ -47,14 +47,18 @@ class RFProtocol{
     var random = new Uint8Array(1);
     var channel;
 
+    var cryptoObj = window.crypto || window.msCrypto; // for IE 11
+
     switch (type) {
     case 'ism':
       random = new Uint8Array(20);
-      window.crypto.getRandomValues(random);
+
+
+      cryptoObj.getRandomValues(random);
 
       for (let i = 0; i < 20; i++) {
         do {
-          window.crypto.getRandomValues(random);
+          cryptoObj.getRandomValues(random);
           channel = random[0] % 70;
 
           // Avoid duplicate channels
@@ -67,7 +71,7 @@ class RFProtocol{
     case 'nrf':
       for (let i = 0; i < 20; i++) {
         do {
-          window.crypto.getRandomValues(random);
+          cryptoObj.getRandomValues(random);
           channel = random[0] % 125;
 
           // Avoid duplicate channels
@@ -84,7 +88,7 @@ class RFProtocol{
 
     // case 'hobbyking':
     default:
-      window.crypto.getRandomValues(random);
+      cryptoObj.getRandomValues(random);
 
       let firstChannel = random[0] % 49;
       for (let i = 0; i < 20; i++) {

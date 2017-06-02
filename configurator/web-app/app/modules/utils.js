@@ -277,21 +277,26 @@ export function setInt32(packet, value, index) {
 
 export function newUUID() {
   let uuid_bytes = new Uint8Array(8);
-  window.crypto.getRandomValues(uuid_bytes);
+  let cryptoObj = window.crypto || window.msCrypto; // for IE 11
+
+  cryptoObj.getRandomValues(uuid_bytes);
   return uuid2string(uuid_bytes);
 }
 
 export function newRandomAddress () {
   let address = new Uint8Array(5);
-  window.crypto.getRandomValues(address);
+  let cryptoObj = window.crypto || window.msCrypto; // for IE 11
+
+  cryptoObj.getRandomValues(address);
   return Array.from(address);
 }
 
 export function newHopChannelLFSR() {
   let lfsrParameters = new Uint8Array(2);
+  let cryptoObj = window.crypto || window.msCrypto; // for IE 11
 
   do {
-    window.crypto.getRandomValues(lfsrParameters);
+    cryptoObj.getRandomValues(lfsrParameters);
     // Ensure the LFSR start value is valid
   } while (lfsrParameters[1] === 0  ||  lfsrParameters[1] > 127);
 

@@ -40,7 +40,7 @@ class CurveView {
     const translateX = this.el.viewBox.baseVal.width / 2;
     const translateY = this.el.viewBox.baseVal.height / 2;
     const g = this.el.querySelector('g');
-    g.transform.baseVal[0].setTranslate(translateX, translateY);
+    g.transform.baseVal.getItem(0).setTranslate(translateX, translateY);
 
     this.reset();
   }

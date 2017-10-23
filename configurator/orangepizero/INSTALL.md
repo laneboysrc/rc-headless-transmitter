@@ -156,7 +156,7 @@ Install the software:
 
 Edit file /etc/dnsmasq.conf:
 
-    sudo nano /etc/dnsmasq.conf:
+    sudo nano /etc/dnsmasq.conf
 and remove the comment (`#` character) from the line
 
     #conf-dir=/etc/dnsmasq.d,.bak
@@ -259,7 +259,7 @@ Use the new configuration by running
 
 Copy the file stored in `configuator/orangepizero/var/www/html/index.configurator.html` fo the project to `/var/www/html/index.configurator.html`
 
-    sudo cp ~/rc-headless-transmitter/configuator/orangepizero/var/www/html/index.configurator.html /var/www/html/index.configurator.html
+    sudo cp ~/rc-headless-transmitter/configurator/orangepizero/var/www/html/index.configurator.html /var/www/html/index.configurator.html
 This file gets shown when you browse to `https://192.168.4.1/` and allows users to allow a security exception of the self-signed certificate used in the configurator.
 
 
@@ -326,9 +326,8 @@ Please refer to [HARDWARE.md](HARDWARE.md) how to connect the push-button.
 
 **IMPORTANT:** do not install the software below unless you have connected a pull-up resistor to GPIO6, as it can shut down your Orange Pi Zero if the IO port is left floating!
 
-    cd ~/rc-headless-transmitter/configurator/orangepizero/shutdown-on-button-press/
-    npm install
-    pm2 start --name="power-button" npm start
+    cd ~/rc-headless-transmitter/configurator/orangepizero
+    pm2 start --name="power-button" shutdown-on-button-press.py
     pm2 save
 
 

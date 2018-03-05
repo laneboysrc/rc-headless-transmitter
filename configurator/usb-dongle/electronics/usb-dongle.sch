@@ -1,0 +1,353 @@
+EESchema Schematic File Version 2
+LIBS:usb-dongle-rescue
+LIBS:WLA-STM32
+LIBS:WLA-nrf24
+LIBS:WLA-power
+LIBS:power
+LIBS:device
+LIBS:conn
+LIBS:regul
+LIBS:opto
+LIBS:contrib
+LIBS:analog_switches
+LIBS:display
+LIBS:interface
+LIBS:references
+LIBS:rfcom
+LIBS:usb-dongle-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title "STM32F1 NRF24L01 USB dongle"
+Date "2018-03-05"
+Rev "1"
+Comp "LANE Boys RC"
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L NRF24L01P U3
+U 1 1 57202BD1
+P 8900 2550
+F 0 "U3" H 8550 3000 60  0000 L CNN
+F 1 "NRF24L01P" H 9200 2050 60  0000 C CNN
+F 2 "WLA:NRF24L01P-PA-LNA" H 8900 2550 60  0001 C CNN
+F 3 "~" H 8900 2550 60  0000 C CNN
+	1    8900 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L VDD #PWR03
+U 1 1 57202CFF
+P 3800 1750
+F 0 "#PWR03" H 3800 1850 30  0001 C CNN
+F 1 "VDD" H 3800 1900 30  0000 C CNN
+F 2 "" H 3800 1750 60  0000 C CNN
+F 3 "" H 3800 1750 60  0000 C CNN
+	1    3800 1750
+	1    0    0    -1  
+$EndComp
+$Comp
+L VCC #PWR04
+U 1 1 57202D18
+P 4800 1750
+F 0 "#PWR04" H 4800 1850 30  0001 C CNN
+F 1 "VCC" H 4800 1900 30  0000 C CNN
+F 2 "" H 4800 1750 60  0000 C CNN
+F 3 "" H 4800 1750 60  0000 C CNN
+	1    4800 1750
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR05
+U 1 1 57202D59
+P 4050 5650
+F 0 "#PWR05" H 4050 5650 30  0001 C CNN
+F 1 "GND" H 4050 5580 30  0001 C CNN
+F 2 "" H 4050 5650 60  0000 C CNN
+F 3 "" H 4050 5650 60  0000 C CNN
+	1    4050 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR06
+U 1 1 57202D68
+P 4250 5650
+F 0 "#PWR06" H 4250 5650 30  0001 C CNN
+F 1 "GND" H 4250 5580 30  0001 C CNN
+F 2 "" H 4250 5650 60  0000 C CNN
+F 3 "" H 4250 5650 60  0000 C CNN
+	1    4250 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR07
+U 1 1 57202D77
+P 4450 5650
+F 0 "#PWR07" H 4450 5650 30  0001 C CNN
+F 1 "GND" H 4450 5580 30  0001 C CNN
+F 2 "" H 4450 5650 60  0000 C CNN
+F 3 "" H 4450 5650 60  0000 C CNN
+	1    4450 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C1
+U 1 1 57202EE1
+P 9600 2050
+F 0 "C1" H 9600 2150 40  0000 L CNN
+F 1 "1u" H 9606 1965 40  0000 L CNN
+F 2 "Capacitors_SMD:C_0805_HandSoldering" H 9638 1900 30  0001 C CNN
+F 3 "~" H 9600 2050 60  0000 C CNN
+	1    9600 2050
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR08
+U 1 1 57202EF0
+P 9600 2350
+F 0 "#PWR08" H 9600 2350 30  0001 C CNN
+F 1 "GND" H 9600 2280 30  0001 C CNN
+F 2 "" H 9600 2350 60  0000 C CNN
+F 3 "" H 9600 2350 60  0000 C CNN
+	1    9600 2350
+	1    0    0    -1  
+$EndComp
+$Comp
+L VCC #PWR09
+U 1 1 57202F26
+P 8900 1650
+F 0 "#PWR09" H 8900 1750 30  0001 C CNN
+F 1 "VCC" H 8900 1800 30  0000 C CNN
+F 2 "" H 8900 1650 60  0000 C CNN
+F 3 "" H 8900 1650 60  0000 C CNN
+	1    8900 1650
+	1    0    0    -1  
+$EndComp
+Text Label 5950 4050 2    60   ~ 0
+CSN
+Text Label 5950 4200 2    60   ~ 0
+SCK
+Text Label 5950 4350 2    60   ~ 0
+MISO
+Text Label 5950 4500 2    60   ~ 0
+MOSI
+Text Label 7750 2400 0    60   ~ 0
+IRQ
+Text Label 7750 2500 0    60   ~ 0
+MISO
+Text Label 7750 2600 0    60   ~ 0
+MOSI
+Text Label 7750 2700 0    60   ~ 0
+SCK
+Text Label 7750 2800 0    60   ~ 0
+CSN
+NoConn ~ 2950 4800
+NoConn ~ 2950 4950
+NoConn ~ 5500 4950
+Text Label 2450 4650 0    60   ~ 0
+LED
+Text Label 2450 2400 0    60   ~ 0
+ADC0
+Text Label 2450 2550 0    60   ~ 0
+PA1/ADC1
+Text Label 2450 2700 0    60   ~ 0
+PA2/ADC2
+Text Label 2450 2850 0    60   ~ 0
+PA3/ADC3
+Text Label 2450 3000 0    60   ~ 0
+PA4/ADC4
+Text Label 2450 3150 0    60   ~ 0
+PA5/ADC5
+Text Label 2450 3300 0    60   ~ 0
+PA6/ADC6
+Text Label 2450 3450 0    60   ~ 0
+PA7/ADC7
+Text Label 5950 2400 2    60   ~ 0
+PB0/ADC8
+Text Label 5950 2550 2    60   ~ 0
+PB1/ADC9
+Text Label 2450 3600 0    60   ~ 0
+IRQ
+Text Label 5950 3750 2    60   ~ 0
+PB10
+Text Label 5950 3900 2    60   ~ 0
+PB11
+Text Label 2450 3750 0    60   ~ 0
+TX
+Text Label 2450 3900 0    60   ~ 0
+RX
+Text Label 2450 4350 0    60   ~ 0
+BUZZER
+NoConn ~ 2950 4050
+NoConn ~ 2950 4200
+$Comp
+L STM32F103C8T6_DEV_BOARD U2
+U 1 1 57202BC2
+P 4250 3600
+F 0 "U2" H 3250 5100 60  0000 L CNN
+F 1 "STM32F103C8T6_DEV_BOARD" H 5200 1900 60  0000 C CNN
+F 2 "WLA:STM32F103C8T6" H 4400 4000 60  0001 C CNN
+F 3 "~" H 4400 4000 60  0000 C CNN
+	1    4250 3600
+	1    0    0    -1  
+$EndComp
+Text Label 7750 2300 0    60   ~ 0
+CE
+Text Label 5950 2700 2    60   ~ 0
+PB3
+Text Label 5950 2850 2    60   ~ 0
+PB4
+Text Label 5950 3000 2    60   ~ 0
+PB5
+Text Label 5950 3150 2    60   ~ 0
+PB6
+Text Label 5950 3300 2    60   ~ 0
+PB7
+Text Label 5950 3450 2    60   ~ 0
+PB8
+Text Label 5950 3600 2    60   ~ 0
+PB9
+Wire Wire Line
+	4050 5500 4050 5650
+Wire Wire Line
+	4250 5500 4250 5650
+Wire Wire Line
+	4450 5500 4450 5650
+Wire Wire Line
+	3800 1750 3800 1850
+Wire Wire Line
+	9600 2200 9600 2350
+Wire Wire Line
+	8900 1650 8900 1750
+Wire Wire Line
+	8900 1750 8900 1850
+Wire Wire Line
+	9600 1750 9600 1900
+Connection ~ 8900 1750
+Wire Wire Line
+	5500 4050 5950 4050
+Wire Wire Line
+	5500 4200 5950 4200
+Wire Wire Line
+	5500 4350 5950 4350
+Wire Wire Line
+	5500 4500 5950 4500
+Wire Wire Line
+	7600 2300 8250 2300
+Wire Wire Line
+	8250 2800 7750 2800
+Wire Wire Line
+	8250 2700 7750 2700
+Wire Wire Line
+	8250 2600 7750 2600
+Wire Wire Line
+	8250 2500 7750 2500
+Wire Wire Line
+	8250 2400 7750 2400
+Wire Wire Line
+	2950 4650 2450 4650
+Wire Wire Line
+	2950 2400 2450 2400
+Wire Wire Line
+	2450 2550 2950 2550
+Wire Wire Line
+	2950 2700 2450 2700
+Wire Wire Line
+	2450 2850 2950 2850
+Wire Wire Line
+	2450 3000 2950 3000
+Wire Wire Line
+	2450 3150 2950 3150
+Wire Wire Line
+	2450 3300 2950 3300
+Wire Wire Line
+	2450 3450 2950 3450
+Wire Wire Line
+	5950 2400 5500 2400
+Wire Wire Line
+	5950 2550 5500 2550
+Wire Wire Line
+	2450 3600 2950 3600
+Wire Wire Line
+	5950 3900 5500 3900
+Wire Wire Line
+	5950 3750 5500 3750
+Wire Wire Line
+	2450 3750 2950 3750
+Wire Wire Line
+	2450 3900 2950 3900
+Wire Wire Line
+	2450 4350 2950 4350
+Wire Wire Line
+	8900 3250 8900 3400
+Wire Wire Line
+	4800 1750 4800 1850
+Wire Wire Line
+	7600 1750 8900 1750
+Wire Wire Line
+	8900 1750 9600 1750
+Wire Wire Line
+	7600 1750 7600 2300
+Wire Wire Line
+	5950 2700 5500 2700
+Wire Wire Line
+	5950 2850 5500 2850
+Wire Wire Line
+	5950 3000 5500 3000
+Wire Wire Line
+	5950 3150 5500 3150
+Wire Wire Line
+	5950 3300 5500 3300
+Wire Wire Line
+	5950 3450 5500 3450
+Wire Wire Line
+	5500 3600 5950 3600
+NoConn ~ 5950 2700
+NoConn ~ 5950 2850
+NoConn ~ 5950 3000
+NoConn ~ 5950 3150
+NoConn ~ 5950 3300
+NoConn ~ 5950 3450
+$Comp
+L VCC #PWR024
+U 1 1 589BC63C
+P 4250 1750
+F 0 "#PWR024" H 4250 1850 30  0001 C CNN
+F 1 "VCC" H 4250 1900 30  0000 C CNN
+F 2 "" H 4250 1750 60  0000 C CNN
+F 3 "" H 4250 1750 60  0000 C CNN
+	1    4250 1750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 1750 4250 1850
+$Comp
+L VCC #PWR030
+U 1 1 58D2422E
+P 4600 1750
+F 0 "#PWR030" H 4600 1850 30  0001 C CNN
+F 1 "VCC" H 4600 1900 30  0000 C CNN
+F 2 "" H 4600 1750 60  0000 C CNN
+F 3 "" H 4600 1750 60  0000 C CNN
+	1    4600 1750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4600 1750 4600 1850
+$Comp
+L GND #PWR?
+U 1 1 5A9CC92B
+P 8900 3400
+F 0 "#PWR?" H 8900 3400 30  0001 C CNN
+F 1 "GND" H 8900 3330 30  0001 C CNN
+F 2 "" H 8900 3400 60  0000 C CNN
+F 3 "" H 8900 3400 60  0000 C CNN
+	1    8900 3400
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC

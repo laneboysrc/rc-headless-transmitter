@@ -133,26 +133,36 @@
 			[
 				"*.o",
 				"*.a",
-				"*.d",
+				"*.d"
 			],
 			"path": "transmitter"
 		},
 		{
-			"path": "configurator",
-			"folder_exclude_patterns": ["_build", "node_modules"],
-			"follow_symlinks": false
+			"folder_exclude_patterns":
+			[
+				"_build",
+				"node_modules"
+			],
+			"follow_symlinks": false,
+			"path": "configurator"
 		},
 		{
-			"path": "docs",
+			"path": "docs"
 		},
 		{
 			"file_exclude_patterns":
 			[
-				"*.sublime-workspace",
+				"*.sublime-workspace"
 			],
-			"path": ".",
+			"folder_exclude_patterns":
+			[
+				"*"
+			],
 			"name": "[root]",
-			"folder_exclude_patterns": ["*"]
+			"path": "."
+		},
+		{
+			"path": "configurator/nrf51-nrf-uart-bridge/firmware/nrf51_sdk"
 		}
 	],
 	"settings":

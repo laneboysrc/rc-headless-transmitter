@@ -367,6 +367,7 @@ void PROTOCOL_HK310_disable_binding(void)
 void PROTOCOL_HK310_init(void)
 {
     stick_packet[7] = 0x55;         // Packet ID for stick data
+    stick_packet[8] = 0x67;         // Unkown constant in stick data sent by HK310
 
     failsafe_packet[7] = 0xaa;      // Packet ID for failsafe data
     failsafe_packet[8] = 0x5a;      // Failsafe on

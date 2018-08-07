@@ -22,6 +22,7 @@ class RFProtocol{
   init() {
     let model = Device.MODEL;
 
+    let protocol_index = model.getItemNumber('RF_PROTOCOL_TYPE');
     let address = model.getItem('RF_PROTOCOL_HK310_ADDRESS');
     let hopChannels = model.getItem('RF_PROTOCOL_HK310_HOP_CHANNELS');
 
@@ -30,6 +31,9 @@ class RFProtocol{
 
     let hopString = hopChannels.join(' ');
     this.hopChannels.value = hopString;
+
+    const protocol_elements = document.querySelectorAll('input[name="protocol"]');
+    protocol_elements[protocol_index].parentNode.MaterialRadio.check();
 
     Utils.showPage('rf_protocol');
   }
@@ -181,6 +185,16 @@ class RFProtocol{
       data.push(parseInt(match[i], radix));
     }
     return data;
+  }
+
+  //*************************************************************************
+  rf_protocol_changed(event) {
+    Utils.cancelBubble(event);
+
+    let list = document.querySelector('#app-rf_protocol');
+    let value = list.querySelector('input[type="radio"]:checked').value;
+
+    Device.MODEL.setItem('RF_PROTOCOL_TYPE', value);
   }
 }
 

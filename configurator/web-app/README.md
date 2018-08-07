@@ -19,7 +19,7 @@ Note: there are also local modules taken from [../common-modules/](../common-mod
 
 You can then run `npm start` to start the continous build process and development web server. You can then access the build on `localhost:8080`.
 
-Use `npm production` to build the single-page web-app for deployment. The files will be written to `../../gh-pages`
+Use `npm run production` to build the single-page web-app for deployment. The files will be written to `../../gh-pages`
 
 
 ## More information

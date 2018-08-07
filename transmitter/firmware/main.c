@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
@@ -16,12 +17,35 @@
 #include <music.h>
 #include <nrf24l01p.h>
 #include <persistent_storage.h>
-#include <protocol_hk310.h>
 #include <sound.h>
 #include <spi.h>
 #include <systick.h>
 #include <uart.h>
 #include <watchdog.h>
+
+#include <protocol_hk310.h>
+#include <protocol_laneboysrc4ch.h>
+
+typedef struct {
+    void (*init_function)(void);
+    void (*enable_binding_function)(void);
+    void (*disable_binding_function)(void);
+} rf_protocol_handlers_t;
+
+static rf_protocol_handlers_t current_rf_protocol;
+
+static const rf_protocol_handlers_t rf_protocol_handlers[] = {
+    {
+        .init_function = PROTOCOL_HK310_init,
+        .enable_binding_function = PROTOCOL_HK310_enable_binding,
+        .disable_binding_function = PROTOCOL_HK310_disable_binding,
+    },
+    {
+        .init_function = PROTOCOL_LANEBOYSRC4CH_init,
+        .enable_binding_function = PROTOCOL_LANEBOYSRC4CH_enable_binding,
+        .disable_binding_function = PROTOCOL_LANEBOYSRC4CH_disable_binding,
+    },
+};
 
 
 // ****************************************************************************
@@ -61,8 +85,10 @@ static void clock_init(void)
 // ****************************************************************************
 static void disable_binding(void)
 {
-    MUSIC_play(&song_deactivate);
-    PROTOCOL_HK310_disable_binding();
+    if (current_rf_protocol.disable_binding_function) {
+        current_rf_protocol.disable_binding_function();
+        MUSIC_play(&song_deactivate);
+    }
 }
 
 
@@ -88,18 +114,22 @@ int main(void)
     INPUTS_init();
     MIXER_init();
     CONFIGURATOR_init();
-    PROTOCOL_HK310_init();
+
+    memcpy(&current_rf_protocol, &rf_protocol_handlers[config.model.rf_protocol_type], sizeof(rf_protocol_handlers_t));
+    current_rf_protocol.init_function();
+
+    if (current_rf_protocol.enable_binding_function) {
+        current_rf_protocol.enable_binding_function();
+    }
+
+    if (config.tx.bind_timeout_ms) {
+        SYSTICK_set_callback(disable_binding, config.tx.bind_timeout_ms);
+    }
 
     printf("\n\n\n**********\nTransmitter initialized\n");
 
     LED_on();
     SOUND_play(C5, 100, NULL);
-
-    PROTOCOL_HK310_enable_binding();
-    if (config.tx.bind_timeout_ms) {
-        SYSTICK_set_callback(disable_binding, config.tx.bind_timeout_ms);
-    }
-
 
     while (1) {
         WATCHDOG_reset();

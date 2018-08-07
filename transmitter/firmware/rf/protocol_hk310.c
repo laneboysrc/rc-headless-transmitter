@@ -28,6 +28,12 @@
 #define BIND_CHANNEL 81
 #define FAILSAFE_PRESCALER_COUNT 17
 
+#define STICKDATA_PACKETID_3CH 0x55
+#define FAILSAFE_PACKETID_3CH 0xaa
+#define STICKDATA_PACKETID_4CH 0x56
+#define FAILSAFE_PACKETID_4CH 0xab
+
+
 typedef enum {
     SEND_STICK1 = 0,
     SEND_STICK2,
@@ -62,6 +68,7 @@ static uint8_t failsafe_counter = 0;
 
 static const protocol_hk310_t *cfg = &config.model.rf.protocol_hk310;
 
+static bool fourChannelEnabled = false;
 
 // ****************************************************************************
 static void pulse_to_stickdata(unsigned int pulse_ns, uint8_t *packet_ptr)
@@ -111,8 +118,8 @@ static void build_bind_packets(void)
 
     // Put the constants in place: bind packet 0 identifier
     bind_packet[0][0] = 0xff;
-    bind_packet[0][1] = 0xaa;
-    bind_packet[0][2] = 0x55;
+    bind_packet[0][1] = fourChannelEnabled ? 0xab : 0xaa;
+    bind_packet[0][2] = fourChannelEnabled ? 0x56 : 0x55;
 
     // Put the constants in place: bind packet 1..3 index
     bind_packet[1][2] = 0x00;
@@ -332,6 +339,18 @@ static void hk310_protocol_frame_callback(void)
     pulse_to_stickdata(channel_to_pulse_ns(failsafe[1]), &failsafe_packet[2]);
     pulse_to_stickdata(channel_to_pulse_ns(failsafe[2]), &failsafe_packet[4]);
 
+    if (fourChannelEnabled) {
+        uint8_t temp_stickdata[2];
+
+        pulse_to_stickdata(channel_to_pulse_ns(rf_channels[3]), temp_stickdata);
+        stick_packet[6] = temp_stickdata[0];
+        stick_packet[9] = temp_stickdata[1];
+
+        pulse_to_stickdata(channel_to_pulse_ns(failsafe[3]), temp_stickdata);
+        failsafe_packet[6] = temp_stickdata[0];
+        failsafe_packet[9] = temp_stickdata[1];
+    }
+
     hop_index = (hop_index + 1) % NUMBER_OF_HOP_CHANNELS;
     failsafe_counter = (failsafe_counter + 1) % FAILSAFE_PRESCALER_COUNT;
 
@@ -364,15 +383,25 @@ void PROTOCOL_HK310_disable_binding(void)
 
 
 // ****************************************************************************
-void PROTOCOL_HK310_init(void)
-{
-    stick_packet[7] = 0x55;         // Packet ID for stick data
-    stick_packet[8] = 0x67;         // Unkown constant in stick data sent by HK310
+void PROTOCOL_HK310_init(void) {
+    PROTOCOL_HK310_init_ex(3);
+}
 
-    failsafe_packet[7] = 0xaa;      // Packet ID for failsafe data
-    failsafe_packet[8] = 0x5a;      // Failsafe on
+// ****************************************************************************
+void PROTOCOL_HK310_init_ex(uint8_t number_of_channels)
+{
+    fourChannelEnabled = false;
+    if (number_of_channels == 4) {
+        fourChannelEnabled = true;
+    }
+
+    stick_packet[7] = fourChannelEnabled ? STICKDATA_PACKETID_4CH : STICKDATA_PACKETID_3CH;
+    failsafe_packet[7] = fourChannelEnabled ? FAILSAFE_PACKETID_4CH : FAILSAFE_PACKETID_3CH;
 
     build_bind_packets();
+
+    stick_packet[8] = 0x67;         // Unkown constant in stick data sent by HK310
+    failsafe_packet[8] = 0x5a;      // Failsafe (always) on
 
 
     // GPIO PA8 setup for falling-edge IRQ, with a pull-down

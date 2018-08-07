@@ -13,12 +13,75 @@
 #include <protocol_hk310.h>
 #include <systick.h>
 
-// NOTE: We keep the CE pin constantly high.
-// While StandbyII mode (CE=1) consumes 320uA and StandbyI mode (CE=0) only
-// 26uA, the difference is not important enough in our application to
-// warrant having an additional IO pin in use, and an additional wire to
-// drag around.
+/* ****************************************************************************
 
+RF protocol compatible with the HobbyKing HK310 transmitter, HKR3000 and XR3100
+receivers. Using Nordic NRF24L01P.
+
+NRF24 RF configuration:
+- 10 byte payload size
+- 5 byte address size
+- 2 byte CRC
+- 20 hop channels
+- One hop every 5 ms
+- Transmitter sends three packets every 5 ms: two stick (or failsafe) packets,
+  one bind packet
+- Uni-directional data transfer (transmitter only transmits, receiver only
+  receives; no acknowledgement or telemetry)
+
+
+Stick data packet format:
+
+0     1     2     3     4     5     6    7    8    9
+ST-l  ST-h  TH-l  TH-h  CH3-l CH3-h ???  0x55 0x67 ???
+                                         ^^^^
+                                         Packet id
+
+Failsafe data packet format:
+
+0     1     2     3     4     5     6    7    8    9
+ST-l  ST-h  TH-l  TH-h  CH3-l CH3-h ???  0xaa 0x5a ???   (failsafe on)
+                                              0x5b       (failsafe off)
+                                         ^^^^
+                                         Packet id
+
+Bytes 6 and 9 are ignored by the receiver
+Note that we always send failsafe data, there is no way to turn failsafe off.
+
+Stick values are sent as direct timer values for an 8051 timer with a 750 ns
+clock. To calculate milliseconds of servo pulse duration, use the following
+formula:
+
+    servo_pules_in_us = (0xffff - stickdata) * 3 / 4;
+
+
+Binding procedure:
+The transmitter regularly sends data on the fixed channel 0x51 (81 decimal),
+with address 12:23:23:45:78 (hex).
+The transmitter cycles through four type of bind packets:
+
+ff aa 55 a1 a2 a3 a4 a5 .. ..
+cc cc 00 ha hb hc hd he hf hg
+cc cc 01 hh hi hj hk hl hm hn
+cc cc 02 ho hp hq hr hs ht ..
+
+ff aa 55      Special marker for the first bind packet
+a[1-5]        The 5 address bytes
+cc cc         The 16 bit sum of bytes a1..a5
+h[a-t]        20 channels for frequency hopping
+..            Not used
+
+
+The code also supports the LANE Boyx RC 4-channel adaptation of this protocol.
+See "protcol_laneboysrc4ch.c" for details.
+
+
+NOTE: We keep the CE pin of the nRF24L01P high at all times.
+The nRF24L01P consumes 320uA in StandbyII mode (CE=1) and 26uA in StandbyI mode
+(CE=0). The difference is not significant enough in our application to warrant
+using an additional IO pin and routing an additional wire.
+
+*/
 
 // ****************************************************************************
 #define FRAME_TIME_MS 5        // One frame every 5 ms

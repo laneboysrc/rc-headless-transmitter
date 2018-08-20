@@ -111,38 +111,6 @@ class WebsocketProtocol {
   }
 
   //*************************************************************************
-  makeReadPacket(offset, count) {
-    if (count > 29) {
-      count = 29;
-    }
-
-    let packet = new Uint8Array([Device.CFG_READ, 0, 0, count]);
-    Utils.setUint16(packet, offset, 1);
-    return packet;
-  }
-
-  //*************************************************************************
-  makeWritePacket(offset, data) {
-    let packet = new Uint8Array(3 + data.length);
-    packet[0] = Device.CFG_WRITE;
-    Utils.setUint16(packet, offset, 1);
-    packet.set(data, 3);
-
-    return packet;
-  }
-
-  //*************************************************************************
-  makeCopyPacket(src, dst, count) {
-    let packet = new Uint8Array(1 + 2 + 2 + 2);
-    packet[0] = Device.CFG_COPY;
-    Utils.setUint16(packet, src, 1);
-    Utils.setUint16(packet, dst, 1 + 2);
-    Utils.setUint16(packet, count, 1 + 2 + 2);
-
-    return packet;
-  }
-
-  //*************************************************************************
   _sendCfgPacket() {
     if (this.inTransit.length >= this.maxPacketsInTransit) {
       return;

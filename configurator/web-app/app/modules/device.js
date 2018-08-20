@@ -194,7 +194,7 @@ class Device {
       }
 
       readChunks.forEach(chunk => {
-        let readPacket = WebsocketProtocol.makeReadPacket(chunk.o, chunk.c);
+        let readPacket = _makeReadPacket(chunk.o, chunk.c);
 
         WebsocketProtocol.send(readPacket)
         .then(response)
@@ -244,7 +244,7 @@ class Device {
 
       writeChunks.forEach(chunk => {
         const dataOffset = chunk.o - offset;
-        let writePacket = WebsocketProtocol.makeWritePacket(
+        let writePacket = _makeWritePacket(
           chunk.o, data.slice(dataOffset, dataOffset + chunk.c));
 
         WebsocketProtocol.send(writePacket)
@@ -265,7 +265,7 @@ class Device {
     }
 
     return new Promise((resolve, reject) => {
-      let copyPacket = WebsocketProtocol.makeCopyPacket(src, dst, count);
+      let copyPacket = _makeCopyPacket(src, dst, count);
 
       WebsocketProtocol.send(copyPacket)
       .then(() => {
@@ -708,6 +708,37 @@ class Device {
     });
   }
 
+  //*************************************************************************
+  _makeReadPacket(offset, count) {
+    if (count > 29) {
+      count = 29;
+    }
+
+    let packet = new Uint8Array([Device.CFG_READ, 0, 0, count]);
+    Utils.setUint16(packet, offset, 1);
+    return packet;
+  }
+
+  //*************************************************************************
+  _makeWritePacket(offset, data) {
+    let packet = new Uint8Array(3 + data.length);
+    packet[0] = Device.CFG_WRITE;
+    Utils.setUint16(packet, offset, 1);
+    packet.set(data, 3);
+
+    return packet;
+  }
+
+  //*************************************************************************
+  _makeCopyPacket(src, dst, count) {
+    let packet = new Uint8Array(1 + 2 + 2 + 2);
+    packet[0] = Device.CFG_COPY;
+    Utils.setUint16(packet, src, 1);
+    Utils.setUint16(packet, dst, 1 + 2);
+    Utils.setUint16(packet, count, 1 + 2 + 2);
+
+    return packet;
+  }
 
   //*************************************************************************
   _onOpen() {

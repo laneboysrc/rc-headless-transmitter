@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
 
 #include <libopencm3/stm32/rcc.h>
@@ -30,7 +31,7 @@ enum {
 
 static usbd_device *webusb_device;
 
-uint8_t usbd_control_buffer[128];
+uint8_t usbd_control_buffer[64];
 
 
 static const struct usb_device_descriptor device_descriptor = {
@@ -140,10 +141,18 @@ static int webusb_control_request(usbd_device *usbd_dev, struct usb_setup_data *
     (void) len;
     (void) complete;
 
+    printf("webusb_control_request() bmRequestType=%02x bRequest=%d\n", req->bmRequestType, req->bRequest);
+
     switch (req->bRequest) {
+        // return USBD_REQ_HANDLED;
+        // return USBD_REQ_NOTSUPP;
+
+        case 72:
+            printf("    len=%d buf=\"%s\"\n", *len, *buf);
+            return USBD_REQ_HANDLED;
 
         default:
-            return USBD_REQ_NOTSUPP;
+            return USBD_REQ_NEXT_CALLBACK;
     }
 }
 
@@ -155,6 +164,8 @@ static void webusb_receive_callback(usbd_device *usbd_dev, uint8_t ep)
     int len ;
 
     (void) ep;
+
+    printf("webusb_receive_callback()\n");
 
     len = usbd_ep_read_packet(usbd_dev, 0x01, buf, 64);
 
@@ -170,9 +181,11 @@ static void webusb_set_config(usbd_device *usbd_dev, uint16_t wValue)
 {
     (void) wValue;
 
+    printf("webusb_set_config()\n");
+
     usbd_ep_setup(usbd_dev, 0x01, USB_ENDPOINT_ATTR_BULK, 64, webusb_receive_callback);
     usbd_ep_setup(usbd_dev, 0x82, USB_ENDPOINT_ATTR_BULK, 64, NULL);
-    usbd_register_control_callback(usbd_dev, USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE, USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT, webusb_control_request);
+    usbd_register_control_callback(usbd_dev, 0, 0, webusb_control_request);
 }
 
 

@@ -13,6 +13,8 @@
 #include <webusb.h>
 
 
+static volatile uint8_t blink_flag;
+
 // ****************************************************************************
 static void clock_init(void)
 {
@@ -30,7 +32,7 @@ static void clock_init(void)
 // ****************************************************************************
 static void led_blink(void)
 {
-    gpio_toggle(GPIOC, GPIO13);
+    blink_flag = 1;
     SYSTICK_set_callback(led_blink, 500);
 }
 
@@ -51,6 +53,12 @@ int main(void)
 
     while (1) {
         WATCHDOG_reset();
+
+        if (blink_flag) {
+            blink_flag = 0;
+            gpio_toggle(GPIOC, GPIO13);
+            printf("Tick %ld\n", milliseconds);
+        }
 
         WEBUSB_poll();
 

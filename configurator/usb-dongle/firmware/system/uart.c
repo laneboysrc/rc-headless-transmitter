@@ -84,16 +84,16 @@ void usart1_isr(void)
     if (((USART_CR1(USART1) & USART_CR1_TXEIE) != 0) &&
         ((USART_SR(USART1) & USART_SR_TXE) != 0)) {
 
-        uint8_t data;
+        // uint8_t data;
 
-        // If there is still data in the transmit buffer send the next byte,
-        // otherwise disable the TXE interrupt as it is no longer needed.
-        if (RING_BUFFER_read_uint8(&tx_ring_buffer, &data)) {
-            usart_send(USART1, data);
-        }
-        else {
-            USART_CR1(USART1) &= ~USART_CR1_TXEIE;
-        }
+        // // If there is still data in the transmit buffer send the next byte,
+        // // otherwise disable the TXE interrupt as it is no longer needed.
+        // if (RING_BUFFER_read_uint8(&tx_ring_buffer, &data)) {
+        //     usart_send(USART1, data);
+        // }
+        // else {
+        //     USART_CR1(USART1) &= ~USART_CR1_TXEIE;
+        // }
     }
 }
 
@@ -105,16 +105,16 @@ void usart3_isr(void)
     if (((USART_CR1(USART3) & USART_CR1_TXEIE) != 0) &&
         ((USART_SR(USART3) & USART_SR_TXE) != 0)) {
 
-        // uint8_t data;
+        uint8_t data;
 
-        // // If there is still data in the transmit buffer send the next byte,
-        // // otherwise disable the TXE interrupt as it is no longer needed.
-        // if (RING_BUFFER_read_uint8(&tx_ring_buffer, &data)) {
-        //     usart_send(USART3, data);
-        // }
-        // else {
-        //     USART_CR1(USART3) &= ~USART_CR1_TXEIE;
-        // }
+        // If there is still data in the transmit buffer send the next byte,
+        // otherwise disable the TXE interrupt as it is no longer needed.
+        if (RING_BUFFER_read_uint8(&tx_ring_buffer, &data)) {
+            usart_send(USART3, data);
+        }
+        else {
+            USART_CR1(USART3) &= ~USART_CR1_TXEIE;
+        }
     }
 }
 
@@ -141,7 +141,7 @@ int _write(int file, char *ptr, int len)
         written = RING_BUFFER_write(&tx_ring_buffer, (uint8_t *)ptr, len);
 
         // Enable the TXE interrupt
-        USART_CR1(USART1) |= USART_CR1_TXEIE;
+        USART_CR1(USART3) |= USART_CR1_TXEIE;
 
         return written;
     }

@@ -1,0 +1,7 @@
+(sym_lib_table
+  (lib (name usb-dongle-rescue)(type Legacy)(uri ${KIPRJMOD}/usb-dongle-rescue.lib)(options "")(descr ""))
+  (lib (name WLA-STM32)(type Legacy)(uri /home/laneboysrc/projects/kicad-libraries/WLA-STM32.lib)(options "")(descr ""))
+  (lib (name WLA-nrf24)(type Legacy)(uri /home/laneboysrc/projects/kicad-libraries/WLA-nrf24.lib)(options "")(descr ""))
+  (lib (name WLA-power)(type Legacy)(uri /home/laneboysrc/projects/kicad-libraries/WLA-power.lib)(options "")(descr ""))
+  (lib (name WLA-nrf51822-module)(type Legacy)(uri /home/laneboysrc/projects/kicad-libraries/WLA-nrf51822-module.lib)(options "")(descr ""))
+)

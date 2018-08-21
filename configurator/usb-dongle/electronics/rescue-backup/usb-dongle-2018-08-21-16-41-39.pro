@@ -1,4 +1,4 @@
-update=Tue 21 Aug 2018 04:41:45 PM +08
+update=Mon 05 Mar 2018 11:17:45 AM +08
 version=1
 last_client=kicad
 [pcbnew]
@@ -49,4 +49,20 @@ NetIExt=net
 EquName1=devcms
 [eeschema]
 version=1
-LibDir=
+LibDir=/home/laneboysrc/projects/kicad-libraries
+[eeschema/libraries]
+LibName1=usb-dongle-rescue
+LibName2=WLA-STM32
+LibName3=WLA-nrf24
+LibName4=WLA-power
+LibName5=power
+LibName6=device
+LibName7=conn
+LibName8=regul
+LibName9=opto
+LibName10=contrib
+LibName11=analog_switches
+LibName12=display
+LibName13=interface
+LibName14=references
+LibName15=rfcom

@@ -187,21 +187,21 @@ void WEBUSB_poll(void)
 // ****************************************************************************
 void WEBUSB_init(void)
 {
-    volatile uint32_t i;
+    // volatile uint32_t i;
 
-    gpio_set(GPIOC, GPIO11);
-    gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO11);
+    // gpio_set(GPIOC, GPIO11);
+    // gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO11);
 
     SERIAL_NUMBER_get(serial_number);
 
     webusb_device = usbd_init(&st_usbfs_v1_usb_driver, &device_descriptor, &configuration_descriptor, usb_strings, 3, usbd_control_buffer, sizeof(usbd_control_buffer));
     usbd_register_set_config_callback(webusb_device, webusb_set_config);
 
-    for (i = 0; i < 0x800000; i++) {
-        __asm__("nop");
-    }
+    // for (i = 0; i < 0x800000; i++) {
+    //     __asm__("nop");
+    // }
 
-    gpio_clear(GPIOC, GPIO11);
+    // gpio_clear(GPIOC, GPIO11);
 
     // nvic_enable_irq(NVIC_USB_LP_CAN_RX0_IRQ);
 }

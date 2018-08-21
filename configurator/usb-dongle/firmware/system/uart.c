@@ -26,6 +26,7 @@ int _write(int file, char *ptr, int len);
 void UART_init(void)
 {
     rcc_periph_clock_enable(RCC_USART1);
+    rcc_periph_clock_enable(RCC_USART3);
 
     RING_BUFFER_init(&tx_ring_buffer, tx_buffer, BUFFER_SIZE);
 
@@ -35,6 +36,11 @@ void UART_init(void)
 
     gpio_set_mode(GPIOA, GPIO_MODE_INPUT,
                     GPIO_CNF_INPUT_FLOAT, GPIO_USART1_RX);
+
+    // Setup GPIO pin GPIO_USART3_TX on PB10
+    gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ,
+                    GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART3_TX);
+
 
     usart_set_baudrate(USART1, 115200);
     usart_set_databits(USART1, 8);
@@ -48,6 +54,17 @@ void UART_init(void)
 
     nvic_enable_irq(NVIC_USART1_IRQ);
     usart_enable(USART1);
+
+
+    usart_set_baudrate(USART3, 115200);
+    usart_set_databits(USART3, 8);
+    usart_set_stopbits(USART3, USART_STOPBITS_1);
+    usart_set_parity(USART3, USART_PARITY_NONE);
+    usart_set_flow_control(USART3, USART_FLOWCONTROL_NONE);
+    usart_set_mode(USART3, USART_MODE_TX);
+
+    nvic_enable_irq(NVIC_USART3_IRQ);
+    usart_enable(USART3);
 }
 
 
@@ -77,6 +94,27 @@ void usart1_isr(void)
         else {
             USART_CR1(USART1) &= ~USART_CR1_TXEIE;
         }
+    }
+}
+
+
+// ****************************************************************************
+void usart3_isr(void)
+{
+    // Check if we were called because of TXE
+    if (((USART_CR1(USART3) & USART_CR1_TXEIE) != 0) &&
+        ((USART_SR(USART3) & USART_SR_TXE) != 0)) {
+
+        // uint8_t data;
+
+        // // If there is still data in the transmit buffer send the next byte,
+        // // otherwise disable the TXE interrupt as it is no longer needed.
+        // if (RING_BUFFER_read_uint8(&tx_ring_buffer, &data)) {
+        //     usart_send(USART3, data);
+        // }
+        // else {
+        //     USART_CR1(USART3) &= ~USART_CR1_TXEIE;
+        // }
     }
 }
 

@@ -28,6 +28,14 @@ static void clock_init(void)
 
 
 // ****************************************************************************
+static void led_blink(void)
+{
+    gpio_toggle(GPIOC, GPIO13);
+    SYSTICK_set_callback(led_blink, 500);
+}
+
+
+// ****************************************************************************
 int main(void)
 {
     clock_init();
@@ -35,8 +43,11 @@ int main(void)
     UART_init();
     WEBUSB_init();
     WATCHDOG_start();
-
     printf("\n\n\n**********\nUSB dongle initialized\n");
+
+    SYSTICK_set_callback(led_blink, 500);
+    gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
+    gpio_set(GPIOC, GPIO13);
 
     while (1) {
         WATCHDOG_reset();

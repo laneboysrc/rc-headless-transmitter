@@ -164,3 +164,131 @@ function webusb_device_disconnected(connection_event) {
     }
 }
 
+const SLIP_MAX_MESSAGE_SIZE = 128;
+const SLIP_END = 192;
+const SLIP_ESC = 219;
+const SLIP_ESC_END = 220;
+const SLIP_ESC_ESC = 221;
+
+const SLIP_IDLE = 0;
+const SLIP_ESC = 1;
+const SLIP_OVERFLOW = 2;
+const SLIP_MESSAGE_RECEIVED = 3;
+
+function slip_encode(data) {
+    let encoded = new Uint8Array(SLIP_MAX_MESSAGE_SIZE);
+    let encoded_index = 0;
+
+    function _encode(data, callback)
+    {
+        if (!callback  ||  data.length == 0) {
+            return;
+        }
+
+        let length = data.length;
+        let index = 0;
+
+        callback(SLIP_END);
+
+        while (length) {
+            switch (data[index]) {
+                case SLIP_END:
+                    callback(SLIP_ESC);
+                    callback(SLIP_ESC_END);
+                    break;
+
+                case SLIP_ESC:
+                    callback(SLIP_ESC);
+                    callback(SLIP_ESC_ESC);
+                    break;
+
+                default:
+                    callback(data[index]);
+            }
+
+            --length;
+            ++index;
+        }
+
+        callback(SLIP_END);
+    }
+
+    function _callback(data) {
+        encoded[encoded_index] = data;
+        encoded_index += 1;
+        if (encoded_index > SLIP_MAX_MESSAGE_SIZE) {
+            throw "SLIP_MAX_MESSAGE_SIZE exceeded";
+        }
+    }
+
+    _encode(data, _callback);
+    return encoded.slice(0, encoded_index);
+}
+
+
+let slip_state = SLIP_IDLE;
+let slip_message_size = 0;
+let slip_buffer = new Uint8Array(SLIP_MAX_MESSAGE_SIZE);
+
+function slip_decode(new_input)
+{
+    // If we are getting called after we received already a complete message,
+    // re-initialize for receiving a new message
+    if (slip_state == SLIP_MESSAGE_RECEIVED) {
+        slip_state = SLIP_IDLE;
+        slip_message_size = 0;
+    }
+
+    // If the SLIP message is too long wait until it finishes, then start
+    // capturing the next message. This means long messages are simply ignored.
+    if (slip_state == SLIP_OVERFLOW) {
+        if (new_input == SLIP_END) {
+            slip_state = SLIP_IDLE;
+            slip_message_size = 0;
+        }
+        return undefined;
+    }
+
+    switch (new_input) {
+        case SLIP_END:
+            // We return True only if we received a message
+            if (slip_message_size) {
+                slip_state = SLIP_MESSAGE_RECEIVED;
+                return slip_buffer.slice(0, slip_message_size);
+            }
+            return undefined;
+
+        case SLIP_ESC:
+            slip_state = SLIP_ESC;
+            break;
+
+        default:
+            if (slip_state == SLIP_ESC) {
+                slip_state = SLIP_IDLE;
+                switch (new_input) {
+                    case SLIP_ESC_ESC:
+                        new_input = SLIP_ESC;
+                        break;
+
+                    case SLIP_ESC_END:
+                        new_input = SLIP_END;
+                        break;
+
+                    // Protocol violation; handle it gracefully by ignoring ESC
+                    default:
+                        break;
+                }
+            }
+
+            if (slip_message_size < SLIP_MAX_MESSAGE_SIZE) {
+                slip_buffer[slip_message_size] = new_input;
+                ++slip_message_size;
+            }
+            else {
+                slip_state = SLIP_OVERFLOW;
+            }
+            break;
+    }
+
+    return undefined;
+}

@@ -57,16 +57,10 @@ int main(void)
         if (blink_flag) {
             blink_flag = 0;
             gpio_toggle(GPIOC, GPIO13);
-            printf("Tick %ld\n", milliseconds);
+            // printf("Tick %ld\n", milliseconds);
         }
 
         WEBUSB_poll();
-
-        // Put the CPU to sleep until an interrupt triggers. This reduces
-        // power consumption drastically.
-        // Since the systick runs at 1 millisecond period, the main loop sleeps
-        // for at most 1 ms.
-        // __WFI();
     }
 
     return 0;

@@ -2,6 +2,14 @@
 
 var Utils = require('./utils');
 
+const VENDOR_ID = 0x6666;
+const TEST_INTERFACE = 0;
+const TEST_EP_OUT = 1;
+const TEST_EP_IN = 2;
+const EP_SIZE = 64;
+
+const filters = [{ 'vendorId': VENDOR_ID }];
+
 
 class WebusbTransport {
   constructor() {
@@ -11,25 +19,50 @@ class WebusbTransport {
     this.inTransit = [];
     this.timeout = null;
     this.opening = false;
+
+    navigator.usb.addEventListener('connect', this._onopen.bind(this));
+    navigator.usb.addEventListener('disconnect', this._onclose.bind(this));
   }
 
   //*************************************************************************
-  open() {
+  async open() {
     if (this.usb_device) {
       return;
     }
 
     this.opening = true;
 
-    this._onopen();
+    let devices = await navigator.usb.getDevices();
+    if (devices.length <= 0) {
+      return;
+    }
+
+    let device = devices[0];
+    try {
+      await device.open();
+      if (device.configuration === null) {
+        await device.selectConfiguration(1);
+      }
+
+      await device.claimInterface(TEST_INTERFACE);
+    }
+    catch (e) {
+      console.error('Failed to open the device', e);
+      return;
+    }
+
+    console.log('Connected to device with serial number ' + device.serialNumber);
+
+    this.usb_device = device;
   }
 
   //*************************************************************************
-  close() {
+  async close() {
     this.opening = false;
     if (this.usb_device) {
       console.log('Webusb close', this.usb_device.url);
-      this.usb_device.close();
+      await this.usb_device.close();
+      this.usb_device = undefined;
     }
     else {
       console.log('Webusb close (this.usb_device is false)');

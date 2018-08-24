@@ -25,8 +25,8 @@ const specialImages = /\W(((laneboysrc-logo-144|laneboysrc-logo-180|laneboysrc-l
 // Common configuration that applies to all modes (development, build ...)
 const common = {
   entry: {
-    app: PATHS.app
-    // app: ['babel-polyfill', PATHS.app]
+    // app: PATHS.app
+    app: ['babel-polyfill', PATHS.app]
   },
   output: {
     path: PATHS.build,
@@ -52,7 +52,7 @@ const common = {
         exclude: /node_modules/,
         loader: 'babel',
         query: {
-          presets: ['es2015']
+          presets: ['env']
         }
       }
     ]

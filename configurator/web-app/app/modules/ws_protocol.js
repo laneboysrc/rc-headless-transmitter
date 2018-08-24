@@ -220,7 +220,7 @@ class WebsocketProtocol {
     console.log('Websocket opened', this.ws.url);
     this.opening = false;
     this._cancelTimeout();
-    Utils.sendCustomEvent('ws-open');
+    Utils.sendCustomEvent('transport-open');
   }
 
   //*************************************************************************
@@ -228,7 +228,7 @@ class WebsocketProtocol {
     console.log('Websocket error', this.ws.url);
 
     if (!this.opening) {
-      Utils.sendCustomEvent('ws-error', e);
+      Utils.sendCustomEvent('transport-error', e);
     }
   }
 
@@ -260,7 +260,7 @@ class WebsocketProtocol {
     }
     else {
       this.opening = false;
-      Utils.sendCustomEvent('ws-close');
+      Utils.sendCustomEvent('transport-close');
     }
   }
 

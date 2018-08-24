@@ -41,7 +41,6 @@ class Device {
     this.TX = undefined;
     this.UNDO = undefined;
     this.connected = false;
-    this.wsOpen = false;
     this.live = {};
     this.retryTimer = undefined;
 
@@ -59,23 +58,36 @@ class Device {
 
     this.connectedCallback = null;
 
-    document.addEventListener('ws-open', this._onOpen.bind(this));
-    document.addEventListener('ws-close', this._onClose.bind(this));
+    this.transport = WebsocketProtocol;
+    this.transportOpen = false;
+
+    document.addEventListener('transport-open', this._onOpen.bind(this));
+    document.addEventListener('transport-close', this._onClose.bind(this));
+  }
+
+  //*************************************************************************
+  setTransport(transport) {
+    if (this.transportOpen) {
+      this.transport.close();
+      this.transportOpen = false;
+    }
+
+    this.transport = transport;
   }
 
   //*************************************************************************
   enableCommunication() {
     console.log('enableCommunication');
-    this.wsOpen = true;
-    WebsocketProtocol.open();
+    this.transportOpen = true;
+    this.transport.open();
   }
 
   //*************************************************************************
   disableCommunication() {
     console.log('disableCommunication');
     // stop WS, kill restart timer
-    WebsocketProtocol.close();
-    this.wsOpen = false;
+    this.transport.close();
+    this.transportOpen = false;
 
     if (this.retryTimer) {
       clearTimeout(this.retryTimer);
@@ -108,7 +120,7 @@ class Device {
       function cleanup() {
         clearTimeout(timer);
         self.connectedCallback = null;
-        document.removeEventListener('ws-close', onclose);
+        document.removeEventListener('transport-close', onclose);
       }
 
       function onmessage() {
@@ -124,16 +136,16 @@ class Device {
 
       function ontimeout() {
         let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
-        WebsocketProtocol.send(disconnectPacket);
+        this.transport.send(disconnectPacket);
 
         cleanup();
         reject(new Error('Connection timeout'));
       }
 
       self.connectedCallback = onmessage;
-      document.addEventListener('ws-close', onclose);
+      document.addEventListener('transport-close', onclose);
       timer = setTimeout(ontimeout, TIMEOUT_MS);
-      WebsocketProtocol.send(connectPacket);
+      this.transport.send(connectPacket);
     });
   }
 
@@ -147,7 +159,7 @@ class Device {
       }
 
       let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
-      WebsocketProtocol.send(disconnectPacket);
+      this.transport.send(disconnectPacket);
       self.connected = false;
       resolve();
     });
@@ -196,7 +208,7 @@ class Device {
       readChunks.forEach(chunk => {
         let readPacket = _makeReadPacket(chunk.o, chunk.c);
 
-        WebsocketProtocol.send(readPacket)
+        this.transport.send(readPacket)
         .then(response)
         .catch(error => {
           reject(error);
@@ -247,7 +259,7 @@ class Device {
         let writePacket = _makeWritePacket(
           chunk.o, data.slice(dataOffset, dataOffset + chunk.c));
 
-        WebsocketProtocol.send(writePacket)
+        this.transport.send(writePacket)
         .then(response)
         .catch(error => {
           reject(error);
@@ -267,7 +279,7 @@ class Device {
     return new Promise((resolve, reject) => {
       let copyPacket = _makeCopyPacket(src, dst, count);
 
-      WebsocketProtocol.send(copyPacket)
+      this.transport.send(copyPacket)
       .then(() => {
         resolve();
       })
@@ -751,7 +763,7 @@ class Device {
     // console.log('Device ws: ', event, event.detail);
     this.connected = false;
     this.live = {};
-    if (this.wsOpen) {
+    if (this.transportOpen) {
       Utils.sendCustomEvent('dev-connectionlost');
 
       // Retry in 2 seconds
@@ -764,8 +776,8 @@ class Device {
   _onRetryTimeout() {
     this.retryTimer = undefined;
 
-    if (this.wsOpen) {
-      WebsocketProtocol.open();
+    if (this.transportOpen) {
+      this.transport.open();
     }
   }
 }

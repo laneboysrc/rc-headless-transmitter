@@ -22,6 +22,7 @@ class Main {
   connect(event) {
     Utils.cancelBubble(event);
     Device.setTransport(WebsocketTransport);
+    // Device.setTransport(WebusbTransport);
     location.hash = Utils.buildURL(['device_list']);
   }
 

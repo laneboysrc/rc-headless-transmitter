@@ -1,14 +1,13 @@
 'use strict';
 
 var Utils = require('./utils');
+var Slip = require('./slip');
 
 const VENDOR_ID = 0x6666;
 const TEST_INTERFACE = 0;
 const TEST_EP_OUT = 1;
 const TEST_EP_IN = 2;
 const EP_SIZE = 64;
-
-const filters = [{ 'vendorId': VENDOR_ID }];
 
 
 class WebusbTransport {
@@ -17,11 +16,11 @@ class WebusbTransport {
     this.maxPacketsInTransit = 1;
     this.pending = [];
     this.inTransit = [];
-    this.timeout = null;
     this.opening = false;
+    this.slip = undefined;
 
-    navigator.usb.addEventListener('connect', this._onopen.bind(this));
-    navigator.usb.addEventListener('disconnect', this._onclose.bind(this));
+    // navigator.usb.addEventListener('connect', this._onopen.bind(this));
+    navigator.usb.addEventListener('disconnect', this._ondisconnected.bind(this));
   }
 
   //*************************************************************************
@@ -34,6 +33,11 @@ class WebusbTransport {
 
     let devices = await navigator.usb.getDevices();
     if (devices.length <= 0) {
+      console.log('No USB device present or authorized');
+      // FIXME: we need to do something here, like trying repeatedly until
+      // we get closed or a device becomes available
+      // Maybe best would be to install a "connect" event listener.
+      // We also need to worry about the pair button.
       return;
     }
 
@@ -54,13 +58,17 @@ class WebusbTransport {
     console.log('Connected to device with serial number ' + device.serialNumber);
 
     this.usb_device = device;
+    this.opening = false;
+    this.slip = new Slip();
+    this._receivePackets();
+    Utils.sendCustomEvent('transport-open');
   }
 
   //*************************************************************************
   async close() {
     this.opening = false;
     if (this.usb_device) {
-      console.log('Webusb close', this.usb_device.url);
+      console.log('Webusb close');
       await this.usb_device.close();
       this.usb_device = undefined;
     }
@@ -125,7 +133,7 @@ class WebusbTransport {
   }
 
   //*************************************************************************
-  _sendCfgPacket() {
+  async _sendCfgPacket() {
     if (this.inTransit.length >= this.maxPacketsInTransit) {
       return;
     }
@@ -134,7 +142,40 @@ class WebusbTransport {
       let request = this.pending.shift();
       this.inTransit.push(request);
 
-      // this.usb_device.send(request.packet);
+      try {
+        let result = await this.usb_device.transferOut(TEST_EP_OUT, request.packet);
+        if (result.status != 'ok') {
+          console.error('transferOut() failed:', result.status);
+        }
+      }
+      catch (e) {
+        console.error('transferOut() exception:', e);
+        return;
+      }
+    }
+  }
+
+  //*************************************************************************
+  async _receivePackets() {
+    for (;;) {
+      try {
+        let result = await this.usb_device.transferIn(TEST_EP_IN, EP_SIZE);
+        if (result.status == 'ok') {
+          for (let byte of result.data) {
+            const message = this.slip.decode(byte);
+            if (message) {
+              this._onmessage(message);
+            }
+          }
+        }
+        else {
+          console.log('transferIn() failed:', result.status);
+        }
+      }
+      catch (e) {
+        console.log('Device disconnected, shutting down _receivePackets');
+        return;
+      }
     }
   }
 
@@ -213,45 +254,15 @@ class WebusbTransport {
     }
   }
 
+
   //*************************************************************************
-  _cancelTimeout() {
-    if (! this.timeout) {
+  _ondisconnected(connection_event) {
+    console.log('WebUSB disconnection event', connection_event);
+
+    const disconnected_device = connection_event.device;
+    if (!this.usb_device  ||  disconnected_device != this.usb_device) {
       return;
     }
-
-    window.clearTimeout(this.timeout);
-    this.timeout = null;
-  }
-
-  //*************************************************************************
-  _ontimeout() {
-    console.log('Webusb timeout');
-    this.timeout = null;
-    this.usb_device.close();
-  }
-
-  //*************************************************************************
-  _onopen() {
-    console.log('Webusb opened');
-    this.opening = false;
-    this._cancelTimeout();
-    Utils.sendCustomEvent('transport-open');
-  }
-
-  //*************************************************************************
-  _onerror(e) {
-    console.log('Webusb error');
-
-    if (!this.opening) {
-      Utils.sendCustomEvent('transport-error', e);
-    }
-  }
-
-  //*************************************************************************
-  _onclose() {
-    console.log('Websocket closed');
-
-    this._cancelTimeout();
 
     // Go through this.pending[] and this.inTransit[] and reject all promises
 
@@ -273,11 +284,7 @@ class WebusbTransport {
   }
 
   //*************************************************************************
-  _onmessage(e) {
-    // e.data contains received string
-
-    let data = e.data;
-
+  _onmessage(data) {
     // Filter out TX_INFO and TX_FREE_TO_CONNECT, which are sent
     // by the Tx without and request.
     if (data[0] === Device.TX_INFO) {

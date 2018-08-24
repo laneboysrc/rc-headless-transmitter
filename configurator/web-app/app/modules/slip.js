@@ -139,4 +139,3 @@ class Slip {
 }
 
 module.exports = Slip;
-window['Slip'] = new Slip();

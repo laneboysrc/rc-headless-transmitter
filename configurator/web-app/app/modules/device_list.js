@@ -158,6 +158,18 @@ class DeviceList {
   }
 
   //*************************************************************************
+  async webusb() {
+    const filters = [{ 'vendorId': 0x6666 }];
+
+    try {
+      await navigator.usb.requestDevice({ 'filters': filters });
+    }
+    catch (e) {
+      console.log('navigator.usb.requestDevice() failed: ' + e);
+    }
+  }
+
+  //*************************************************************************
   _resetPage() {
     // Empty the list of transmitters
     this.availableTransmitters = [];

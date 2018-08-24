@@ -170,14 +170,14 @@ const SLIP_ESC = 219;
 const SLIP_ESC_END = 220;
 const SLIP_ESC_ESC = 221;
 
-const SLIP_IDLE = 0;
-const SLIP_ESC = 1;
-const SLIP_OVERFLOW = 2;
-const SLIP_MESSAGE_RECEIVED = 3;
+const SLIP_STATE_IDLE = 0;
+const SLIP_STATE_ESC = 1;
+const SLIP_STATE_OVERFLOW = 2;
+const SLIP_STATE_MESSAGE_RECEIVED = 3;
 
 function slip_encode(data) {
     let encoded = new Uint8Array(SLIP_MAX_MESSAGE_SIZE);
-    let encoded_index = 0;
+    let encoded_length = 0;
 
     function _encode(data, callback)
     {
@@ -214,19 +214,19 @@ function slip_encode(data) {
     }
 
     function _callback(data) {
-        encoded[encoded_index] = data;
-        encoded_index += 1;
-        if (encoded_index > SLIP_MAX_MESSAGE_SIZE) {
+        encoded[encoded_length] = data;
+        encoded_length += 1;
+        if (encoded_length > SLIP_MAX_MESSAGE_SIZE) {
             throw "SLIP_MAX_MESSAGE_SIZE exceeded";
         }
     }
 
     _encode(data, _callback);
-    return encoded.slice(0, encoded_index);
+    return encoded.slice(0, encoded_length);
 }
 
 
-let slip_state = SLIP_IDLE;
+let slip_state = SLIP_STATE_IDLE;
 let slip_message_size = 0;
 let slip_buffer = new Uint8Array(SLIP_MAX_MESSAGE_SIZE);
 
@@ -234,16 +234,16 @@ function slip_decode(new_input)
 {
     // If we are getting called after we received already a complete message,
     // re-initialize for receiving a new message
-    if (slip_state == SLIP_MESSAGE_RECEIVED) {
-        slip_state = SLIP_IDLE;
+    if (slip_state == SLIP_STATE_MESSAGE_RECEIVED) {
+        slip_state = SLIP_STATE_IDLE;
         slip_message_size = 0;
     }
 
     // If the SLIP message is too long wait until it finishes, then start
     // capturing the next message. This means long messages are simply ignored.
-    if (slip_state == SLIP_OVERFLOW) {
+    if (slip_state == SLIP_STATE_OVERFLOW) {
         if (new_input == SLIP_END) {
-            slip_state = SLIP_IDLE;
+            slip_state = SLIP_STATE_IDLE;
             slip_message_size = 0;
         }
         return undefined;
@@ -253,18 +253,18 @@ function slip_decode(new_input)
         case SLIP_END:
             // We return True only if we received a message
             if (slip_message_size) {
-                slip_state = SLIP_MESSAGE_RECEIVED;
+                slip_state = SLIP_STATE_MESSAGE_RECEIVED;
                 return slip_buffer.slice(0, slip_message_size);
             }
             return undefined;
 
         case SLIP_ESC:
-            slip_state = SLIP_ESC;
+            slip_state = SLIP_STATE_ESC;
             break;
 
         default:
-            if (slip_state == SLIP_ESC) {
-                slip_state = SLIP_IDLE;
+            if (slip_state == SLIP_STATE_ESC) {
+                slip_state = SLIP_STATE_IDLE;
                 switch (new_input) {
                     case SLIP_ESC_ESC:
                         new_input = SLIP_ESC;
@@ -285,7 +285,7 @@ function slip_decode(new_input)
                 ++slip_message_size;
             }
             else {
-                slip_state = SLIP_OVERFLOW;
+                slip_state = SLIP_STATE_OVERFLOW;
             }
             break;
     }

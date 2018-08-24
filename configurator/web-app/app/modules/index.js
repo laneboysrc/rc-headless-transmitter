@@ -176,7 +176,7 @@ if (!Array.prototype.includes) {
 }
 
 // Singletons
-require('./ws_protocol');
+require('./websocket_transport');
 require('./config');
 require('./database');
 require('./device');

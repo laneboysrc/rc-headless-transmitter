@@ -21,7 +21,7 @@ class Main {
   //*************************************************************************
   connect(event) {
     Utils.cancelBubble(event);
-    Device.setTransport(WebsocketProtocol);
+    Device.setTransport(WebsocketTransport);
     location.hash = Utils.buildURL(['device_list']);
   }
 

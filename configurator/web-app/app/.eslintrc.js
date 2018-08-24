@@ -32,7 +32,7 @@ module.exports = {
         "DatabaseObject": true,
         "MDLHelper": true,
         "Utils": true,
-        "WebsocketProtocol": true,
+        "WebsocketTransport": true,
 
         "About": true,
         "DeviceList": true,

@@ -58,7 +58,7 @@ class Device {
 
     this.connectedCallback = null;
 
-    this.transport = WebsocketProtocol;
+    this.transport = WebsocketTransport;
     this.transportOpen = false;
 
     document.addEventListener('transport-open', this._onOpen.bind(this));

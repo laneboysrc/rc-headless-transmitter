@@ -3,7 +3,7 @@
 var Utils = require('./utils');
 
 
-class WebsocketProtocol {
+class WebsocketTransport {
   constructor() {
     this.ws = undefined;
     this.maxPacketsInTransit = 1;
@@ -387,4 +387,4 @@ class WebsocketProtocol {
 //   return response;
 // }
 
-window['WebsocketProtocol'] = new WebsocketProtocol();
+window['WebsocketTransport'] = new WebsocketTransport();

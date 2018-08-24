@@ -8,6 +8,7 @@
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/stm32/f1/nvic.h>
 
+#include <led.h>
 #include <ring_buffer.h>
 #include <serial_number.h>
 #include <systick.h>
@@ -153,11 +154,13 @@ static int webusb_control_request(usbd_device *usbd_dev, struct usb_setup_data *
     (void) complete;
 
     printf("webusb_control_request() bmRequestType=%02x bRequest=%d\n", req->bmRequestType, req->bRequest);
+    LED_pulse();
 
     switch (req->bRequest) {
         // return USBD_REQ_HANDLED;
         // return USBD_REQ_NOTSUPP;
 
+        // For testing only
         case 72:
             printf("    len=%d buf=\"%s\"\n", *len, *buf);
             return USBD_REQ_HANDLED;
@@ -179,8 +182,9 @@ static void webusb_receive_callback(usbd_device *usbd_dev, uint8_t ep)
     len = usbd_ep_read_packet(usbd_dev, 0x01, buf, 64);
     buf[len] = 0;
 
-    printf("webusb_receive_callback() len=%d data=\"%s\"\n", len, buf);
+    // printf("webusb_receive_callback() len=%d data=\"%s\"\n", len, buf);
     fwrite(buf, len, 1, stderr);
+    LED_pulse();
 }
 
 
@@ -195,6 +199,7 @@ void WEBUSB_putc(char c)
 static void webusb_set_config_callback(usbd_device *usbd_dev, uint16_t wValue)
 {
     printf("webusb_set_config_callback() config=%d\n", wValue);
+    LED_pulse();
 
     usbd_ep_setup(usbd_dev, 0x01, USB_ENDPOINT_ATTR_BULK, 64, webusb_receive_callback);
     usbd_ep_setup(usbd_dev, 0x82, USB_ENDPOINT_ATTR_BULK, 64, NULL);
@@ -206,6 +211,7 @@ static void webusb_set_config_callback(usbd_device *usbd_dev, uint16_t wValue)
 static void webusb_reset_callback(void)
 {
     printf("webusb_reset_callback()\n");
+    LED_pulse();
 
     RING_BUFFER_init(&usb_tx_ring_buffer, usb_tx_buffer, USB_TX_BUFFER_SIZE);
     ep_length = 0;
@@ -224,6 +230,7 @@ void WEBUSB_poll(void)
 
         result = usbd_ep_write_packet(webusb_device, 0x82, ep_buffer, ep_length);
         if (result) {
+            LED_pulse();
             ep_length = 0;
         }
     }

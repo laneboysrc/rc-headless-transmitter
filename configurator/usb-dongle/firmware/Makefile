@@ -46,6 +46,7 @@ OPENCM3_LIBNAME		:= opencm3_stm32f1
 # Source files, include paths, library paths and libraries
 C_SOURCE_FILES += $(abspath main.c)
 C_SOURCE_FILES += $(abspath system/error_handler.c)
+C_SOURCE_FILES += $(abspath system/led.c)
 C_SOURCE_FILES += $(abspath system/serial_number.c)
 C_SOURCE_FILES += $(abspath system/systick.c)
 C_SOURCE_FILES += $(abspath system/uart.c)

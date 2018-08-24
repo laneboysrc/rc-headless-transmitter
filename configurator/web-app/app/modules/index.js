@@ -177,6 +177,7 @@ if (!Array.prototype.includes) {
 
 // Singletons
 require('./websocket_transport');
+require('./webusb_transport');
 require('./config');
 require('./database');
 require('./device');

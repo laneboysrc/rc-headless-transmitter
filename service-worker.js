@@ -37,7 +37,7 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
 'use strict';
 
-var precacheConfig = [["MaterialIcons-Regular.eot","e79bfd88537def476913f3ed52f4f4b3"],["MaterialIcons-Regular.ttf","a37b0c01c0baf1888ca812cc0508f6e2"],["MaterialIcons-Regular.woff","012cf6a10129e2275d79d6adac7f3b02"],["MaterialIcons-Regular.woff2","570eb83859dc23dd0eec423a49e147fe"],["app.css","d0167e7235b5d89b456bcb0532b841c3"],["app.html","3e583f0d7016593e5f889205e9b3b36f"],["app.js","b39145ef7a661a53f1ff4763d3f9852f"],["favicon.ico","c075db99de1539d3d1b88becc775aa00"],["index.html","8bf71e255439e4a37dd3e9647784b010"],["laneboysrc-banner.png","c534a1c3b6932fff4cad06582f5c1b7b"],["laneboysrc-blog.jpg","16fc1061e7afa58c5edb20e40c9af5c7"],["laneboysrc-logo-128-t.png","bcd46ed93a63b404aaddca3c924548b4"],["laneboysrc-logo-128.jpg","34e3576f33de23f61c42570f5e8c8553"],["laneboysrc-yt.jpg","f8f9fd8209f5c841dc144ee39303cbfb"]];
+var precacheConfig = [["MaterialIcons-Regular.eot","e79bfd88537def476913f3ed52f4f4b3"],["MaterialIcons-Regular.ttf","a37b0c01c0baf1888ca812cc0508f6e2"],["MaterialIcons-Regular.woff","012cf6a10129e2275d79d6adac7f3b02"],["MaterialIcons-Regular.woff2","570eb83859dc23dd0eec423a49e147fe"],["app.css","7c65a1bbb2f1d5f00b2ab41d35c19ed0"],["app.html","9f533998b3e6a2a2598b8630e573c34f"],["app.js","77dadd1ee3fb5933153046c7a3a57267"],["favicon.ico","c075db99de1539d3d1b88becc775aa00"],["index.html","8bf71e255439e4a37dd3e9647784b010"],["laneboysrc-banner.png","c534a1c3b6932fff4cad06582f5c1b7b"],["laneboysrc-blog.jpg","16fc1061e7afa58c5edb20e40c9af5c7"],["laneboysrc-logo-128-t.png","bcd46ed93a63b404aaddca3c924548b4"],["laneboysrc-logo-128.jpg","34e3576f33de23f61c42570f5e8c8553"],["laneboysrc-yt.jpg","f8f9fd8209f5c841dc144ee39303cbfb"]];
 var cacheName = 'sw-precache-v2-configurator-' + (self.registration ? self.registration.scope : '');
 
 
@@ -134,7 +134,10 @@ self.addEventListener('install', function(event) {
           Array.from(urlsToCacheKeys.values()).map(function(cacheKey) {
             // If we don't have a key matching url in the cache already, add it.
             if (!cachedUrls.has(cacheKey)) {
-              return cache.add(new Request(cacheKey, {credentials: 'same-origin'}));
+              return cache.add(new Request(cacheKey, {
+                credentials: 'same-origin',
+                redirect: 'follow'
+              }));
             }
           })
         );

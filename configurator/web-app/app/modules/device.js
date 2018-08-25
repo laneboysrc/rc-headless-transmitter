@@ -206,7 +206,7 @@ class Device {
       }
 
       readChunks.forEach(chunk => {
-        let readPacket = _makeReadPacket(chunk.o, chunk.c);
+        let readPacket = self._makeReadPacket(chunk.o, chunk.c);
 
         this.transport.send(readPacket)
         .then(response)
@@ -256,7 +256,7 @@ class Device {
 
       writeChunks.forEach(chunk => {
         const dataOffset = chunk.o - offset;
-        let writePacket = _makeWritePacket(
+        let writePacket = self._makeWritePacket(
           chunk.o, data.slice(dataOffset, dataOffset + chunk.c));
 
         this.transport.send(writePacket)
@@ -276,8 +276,10 @@ class Device {
       return Promise.reject(new Error('Device.copy: not connected'));
     }
 
+    let self = this;
+
     return new Promise((resolve, reject) => {
-      let copyPacket = _makeCopyPacket(src, dst, count);
+      let copyPacket = self._makeCopyPacket(src, dst, count);
 
       this.transport.send(copyPacket)
       .then(() => {

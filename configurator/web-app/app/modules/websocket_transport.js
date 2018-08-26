@@ -118,7 +118,6 @@ class WebsocketTransport {
 
     if (this.pending.length) {
       let request = this.pending.shift();
-      console.log(request.packet);
       this.inTransit.push(request);
       this.ws.send(Utils.hexlify(request.packet));
     }
@@ -280,7 +279,6 @@ class WebsocketTransport {
         DeviceList.transmitterFreeToConnect(data);
       }
       else {
-        console.log(data);
         this._resolvePromises(data);
       }
       this._sendCfgPacket();

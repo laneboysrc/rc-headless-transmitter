@@ -118,6 +118,7 @@ class WebsocketTransport {
 
     if (this.pending.length) {
       let request = this.pending.shift();
+      console.log(request.packet);
       this.inTransit.push(request);
       this.ws.send(Utils.hexlify(request.packet));
     }
@@ -267,7 +268,6 @@ class WebsocketTransport {
   //*************************************************************************
   _onmessage(e) {
     // e.data contains received string
-
     if (!(e.data instanceof Blob)) {
       let data = Utils.unhexlify(e.data);
 
@@ -280,6 +280,7 @@ class WebsocketTransport {
         DeviceList.transmitterFreeToConnect(data);
       }
       else {
+        console.log(data);
         this._resolvePromises(data);
       }
       this._sendCfgPacket();
@@ -296,7 +297,7 @@ class WebsocketTransport {
     reader.addEventListener('loadend', function () {
       let data = new Uint8Array(reader.result);
 
-      // console.log(Utils.byte2string(data[0]))
+      // console.log(Utils.byte2string(data[0]));
 
       // Filter out TX_INFO and TX_FREE_TO_CONNECT, which are sent
       // by the Tx without and request.

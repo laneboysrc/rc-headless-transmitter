@@ -136,7 +136,7 @@ class Device {
 
       function ontimeout() {
         let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
-        this.transport.send(disconnectPacket);
+        self.transport.send(disconnectPacket);
 
         cleanup();
         reject(new Error('Connection timeout'));
@@ -145,7 +145,7 @@ class Device {
       self.connectedCallback = onmessage;
       document.addEventListener('transport-close', onclose);
       timer = setTimeout(ontimeout, TIMEOUT_MS);
-      this.transport.send(connectPacket);
+      self.transport.send(connectPacket);
     });
   }
 
@@ -159,7 +159,7 @@ class Device {
       }
 
       let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
-      this.transport.send(disconnectPacket);
+      self.transport.send(disconnectPacket);
       self.connected = false;
       resolve();
     });
@@ -207,12 +207,11 @@ class Device {
 
       readChunks.forEach(chunk => {
         let readPacket = self._makeReadPacket(chunk.o, chunk.c);
-
-        this.transport.send(readPacket)
-        .then(response)
-        .catch(error => {
-          reject(error);
-        });
+        self.transport.send(readPacket)
+          .then(response)
+          .catch(error => {
+            reject(error);
+          });
       });
     });
   }
@@ -259,7 +258,7 @@ class Device {
         let writePacket = self._makeWritePacket(
           chunk.o, data.slice(dataOffset, dataOffset + chunk.c));
 
-        this.transport.send(writePacket)
+        self.transport.send(writePacket)
         .then(response)
         .catch(error => {
           reject(error);
@@ -281,7 +280,7 @@ class Device {
     return new Promise((resolve, reject) => {
       let copyPacket = self._makeCopyPacket(src, dst, count);
 
-      this.transport.send(copyPacket)
+      self.transport.send(copyPacket)
       .then(() => {
         resolve();
       })

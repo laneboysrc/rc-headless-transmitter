@@ -5,7 +5,7 @@ var Utils = require('./utils');
 
 class Main {
   constructor() {
-    // Nothing to do
+    this.transport = document.querySelector('#main-transport');
   }
 
   //*************************************************************************
@@ -21,8 +21,13 @@ class Main {
   //*************************************************************************
   connect(event) {
     Utils.cancelBubble(event);
-    Device.setTransport(WebsocketTransport);
-    // Device.setTransport(WebusbTransport);
+
+    if (this.transport.checked) {
+      Device.setTransport(WebusbTransport);
+    }
+    else {
+      Device.setTransport(WebsocketTransport);
+    }
     location.hash = Utils.buildURL(['device_list']);
   }
 

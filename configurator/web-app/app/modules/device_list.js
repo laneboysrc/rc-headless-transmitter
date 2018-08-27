@@ -162,11 +162,12 @@ class DeviceList {
   }
 
   //*************************************************************************
-  async webusb() {
+  async webusbPair() {
     const filters = [{ 'vendorId': 0x6666 }];
 
     try {
       await navigator.usb.requestDevice({ 'filters': filters });
+      this.transport.open();
     }
     catch (e) {
       console.log('navigator.usb.requestDevice() failed: ' + e);

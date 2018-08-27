@@ -19,8 +19,10 @@ class WebusbTransport {
     this.opening = false;
     this.slip = undefined;
 
-    // navigator.usb.addEventListener('connect', this._onopen.bind(this));
-    navigator.usb.addEventListener('disconnect', this._ondisconnected.bind(this));
+    if (typeof navigator.usb !== 'undefined') {
+      // navigator.usb.addEventListener('connect', this._onopen.bind(this));
+      navigator.usb.addEventListener('disconnect', this._ondisconnected.bind(this));
+    }
   }
 
   //*************************************************************************

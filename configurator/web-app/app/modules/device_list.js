@@ -184,6 +184,7 @@ class DeviceList {
     Utils.hide(this.msgScanning);
     Utils.hide(this.list);
     Utils.hide(this.txLoading);
+    Utils.hide(this.webusbPair);
 
     if (Device.transport === WebusbTransport) {
       Utils.show(this.webusbPair);

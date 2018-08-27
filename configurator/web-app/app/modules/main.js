@@ -5,6 +5,7 @@ var Utils = require('./utils');
 
 class Main {
   constructor() {
+    this.transportCard = document.querySelector('#main-transport_card');
     this.transport = document.querySelector('#main-transport');
   }
 
@@ -14,6 +15,12 @@ class Main {
     Device.TX = undefined;
     Device.UNDO = undefined;
     Device.disableCommunication();
+
+    // Hide the transport selection switch when WebUSB is not supported by
+    // this browser. The default of the switch is "Wi-Fi".
+    if (typeof navigator.usb === 'undefined') {
+      Utils.hide(this.transportCard);
+    }
 
     Utils.showPage('main');
   }

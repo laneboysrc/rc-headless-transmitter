@@ -42,13 +42,24 @@
             <li>Ensure that the self-signed certificate is accepted. Click <a href="https://192.168.4.1/" target="_blank" rel="noopener">here</a> to check.</li>
           </ul>
         </div>
+      </div>
+    </section>
 
-        <div class="mdl-card__supporting-text">
-        <button class="mdl-button mdl-js-button mdl-button--colored mdl-js-ripple-effect mdl-list__item-secondary-action" onclick="DeviceList.webusb()">
-          Pair USB device
-        </button>
+    <!-- WebUSB pairing Card -->
+    <section class="section--center mdl-grid hidden" id="app-device_list-webusb_pair">
+      <div class="mdl-card mdl-shadow--8dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">USB device pairing</h2>
         </div>
-
+        <div class="mdl-card__supporting-text">
+          Before you can use the USB bridge you must pair it to this device.
+          Press the button below and select the bridge from the list that appears.
+        </div>
+        <div class="mdl-card__supporting-text">
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick="DeviceList.webusb()">
+            Pair USB device
+          </button>
+        </div>
       </div>
     </section>
 

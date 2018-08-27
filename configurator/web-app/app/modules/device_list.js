@@ -9,6 +9,7 @@ class DeviceList {
   constructor() {
     this.loading = document.querySelector('#app-device_list-loading');
     this.hints = document.querySelector('#app-device_list-hints');
+    this.webusbPair = document.querySelector('#app-device_list-webusb_pair');
     this.msgBridge = document.querySelector('#app-device_list-loading__bridge');
     this.msgScanning = document.querySelector('#app-device_list-loading__scanning');
     this.list = document.querySelector('#app-device_list-list');
@@ -42,7 +43,10 @@ class DeviceList {
     }
 
     this._cancelHints();
-    this.hintTimer = setTimeout(this._showHints.bind(this), 4000);
+
+    if (Device.transport === WebsocketTransport) {
+      this.hintTimer = setTimeout(this._showHints.bind(this), 4000);
+    }
 
     Utils.showPage('device_list');
   }
@@ -180,6 +184,10 @@ class DeviceList {
     Utils.hide(this.msgScanning);
     Utils.hide(this.list);
     Utils.hide(this.txLoading);
+
+    if (Device.transport === WebusbTransport) {
+      Utils.show(this.webusbPair);
+    }
   }
 
   //*************************************************************************

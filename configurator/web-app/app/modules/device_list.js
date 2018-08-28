@@ -9,7 +9,7 @@ class DeviceList {
   constructor() {
     this.loading = document.querySelector('#app-device_list-loading');
     this.hints = document.querySelector('#app-device_list-hints');
-    this.webusbPair = document.querySelector('#app-device_list-webusb_pair');
+    this.webusbPairCard = document.querySelector('#app-device_list-webusb_pair');
     this.msgBridge = document.querySelector('#app-device_list-loading__bridge');
     this.msgScanning = document.querySelector('#app-device_list-loading__scanning');
     this.list = document.querySelector('#app-device_list-list');
@@ -163,7 +163,7 @@ class DeviceList {
 
   //*************************************************************************
   async webusbPair() {
-    const filters = [{ 'vendorId': 0x6666 }];
+    const filters = [{ 'vendorId': 0x6666, 'productId': 0xeaf1 }];
 
     try {
       await navigator.usb.requestDevice({ 'filters': filters });
@@ -185,10 +185,10 @@ class DeviceList {
     Utils.hide(this.msgScanning);
     Utils.hide(this.list);
     Utils.hide(this.txLoading);
-    Utils.hide(this.webusbPair);
+    Utils.hide(this.webusbPairCard);
 
     if (Device.transport === WebusbTransport) {
-      Utils.show(this.webusbPair);
+      Utils.show(this.webusbPairCard);
     }
   }
 

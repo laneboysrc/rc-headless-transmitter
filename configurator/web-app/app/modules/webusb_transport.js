@@ -3,10 +3,10 @@
 var Utils = require('./utils');
 var Slip = require('./slip');
 
-const VENDOR_ID = 0x6666;
-const TEST_INTERFACE = 0;
-const TEST_EP_OUT = 1;
-const TEST_EP_IN = 2;
+
+const BRIDGE_INTERFACE = 0;
+const BRIDGE_EP_OUT = 1;
+const BRIDGE_EP_IN = 2;
 const EP_SIZE = 64;
 
 
@@ -35,11 +35,7 @@ class WebusbTransport {
 
     let devices = await navigator.usb.getDevices();
     if (devices.length <= 0) {
-      console.log('No USB device present or authorized');
-      // FIXME: we need to do something here, like trying repeatedly until
-      // we get closed or a device becomes available
-      // Maybe best would be to install a "connect" event listener.
-      // We also need to worry about the pair button.
+      console.log('No USB bridge present or authorized');
       return;
     }
 
@@ -50,7 +46,7 @@ class WebusbTransport {
         await device.selectConfiguration(1);
       }
 
-      await device.claimInterface(TEST_INTERFACE);
+      await device.claimInterface(BRIDGE_INTERFACE);
     }
     catch (e) {
       console.error('Failed to open the device', e);
@@ -70,19 +66,19 @@ class WebusbTransport {
   async close() {
     this.opening = false;
     if (this.usb_device) {
-      console.log('Webusb close');
+      console.log('Close the USB bridge');
       await this.usb_device.close();
       this.usb_device = undefined;
     }
     else {
-      console.log('Webusb close (this.usb_device is false)');
+      console.log('WebusbTransport.close() (this.usb_device is false)');
     }
   }
 
   //*************************************************************************
   send(packet) {
     if (!(packet instanceof Uint8Array)) {
-      throw new Error('WS: packet is not of type Uint8Array');
+      throw new Error('WebusbTransport: packet is not of type Uint8Array');
     }
 
     return new Promise((resolve, reject) => {
@@ -145,37 +141,13 @@ class WebusbTransport {
       this.inTransit.push(request);
 
       try {
-        let result = await this.usb_device.transferOut(TEST_EP_OUT, request.packet);
+        let result = await this.usb_device.transferOut(BRIDGE_EP_OUT, request.packet);
         if (result.status != 'ok') {
           console.error('transferOut() failed:', result.status);
         }
       }
       catch (e) {
         console.error('transferOut() exception:', e);
-        return;
-      }
-    }
-  }
-
-  //*************************************************************************
-  async _receivePackets() {
-    for (;;) {
-      try {
-        let result = await this.usb_device.transferIn(TEST_EP_IN, EP_SIZE);
-        if (result.status == 'ok') {
-          for (let byte of result.data) {
-            const message = this.slip.decode(byte);
-            if (message) {
-              this._onmessage(message);
-            }
-          }
-        }
-        else {
-          console.log('transferIn() failed:', result.status);
-        }
-      }
-      catch (e) {
-        console.log('Device disconnected, shutting down _receivePackets');
         return;
       }
     }
@@ -256,10 +228,9 @@ class WebusbTransport {
     }
   }
 
-
   //*************************************************************************
   _ondisconnected(connection_event) {
-    console.log('WebUSB disconnection event', connection_event);
+    console.log('_ondisconnected', connection_event);
 
     const disconnected_device = connection_event.device;
     if (!this.usb_device  ||  disconnected_device != this.usb_device) {
@@ -283,6 +254,31 @@ class WebusbTransport {
     this.usb_device = undefined;
     this.opening = false;
     Utils.sendCustomEvent('transport-close');
+  }
+
+  //*************************************************************************
+  async _receivePackets() {
+    for (;;) {
+      try {
+        let result = await this.usb_device.transferIn(BRIDGE_EP_IN, EP_SIZE);
+        if (result.status == 'ok') {
+          for (let byte of result.data) {
+            const message = this.slip.decode(byte);
+            if (message) {
+              console.log('WebusbTransport._receivePackets()', message);
+              this._onmessage(message);
+            }
+          }
+        }
+        else {
+          console.log('transferIn() failed:', result.status);
+        }
+      }
+      catch (e) {
+        console.log('Device disconnected, shutting down WebusbTransport._receivePackets()');
+        return;
+      }
+    }
   }
 
   //*************************************************************************

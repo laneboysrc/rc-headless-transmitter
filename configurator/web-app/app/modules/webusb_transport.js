@@ -139,9 +139,8 @@ class WebusbTransport {
     if (this.pending.length) {
       let request = this.pending.shift();
       this.inTransit.push(request);
-
       try {
-        let result = await this.usb_device.transferOut(BRIDGE_EP_OUT, request.packet);
+        let result = await this.usb_device.transferOut(BRIDGE_EP_OUT, this.slip.encode(request.packet));
         if (result.status != 'ok') {
           console.error('transferOut() failed:', result.status);
         }
@@ -262,10 +261,11 @@ class WebusbTransport {
       try {
         let result = await this.usb_device.transferIn(BRIDGE_EP_IN, EP_SIZE);
         if (result.status == 'ok') {
-          for (let byte of result.data) {
+          let buffer = new Uint8Array(result.data.buffer);
+          for (let byte of buffer) {
             const message = this.slip.decode(byte);
             if (message) {
-              console.log('WebusbTransport._receivePackets()', message);
+              // console.log('WebusbTransport._receivePackets()', message);
               this._onmessage(message);
             }
           }

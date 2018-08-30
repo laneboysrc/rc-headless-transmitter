@@ -171,7 +171,7 @@ class Device {
 
   //*************************************************************************
   read(offset, count) {
-    console.log(`Device.read o=${offset} c=${count}`)
+    console.log(`Device.read o=${offset} c=${count}`);
 
     if (!this.connected) {
       return Promise.reject(new Error('Device.read: not connected'));
@@ -222,7 +222,7 @@ class Device {
 
   //*************************************************************************
   write(offset, data) {
-    console.log(`Device.write o=${offset} c=${data.length}`)
+    console.log(`Device.write o=${offset} c=${data.length}`);
 
     if (!this.connected) {
       return Promise.reject(new Error('Device.write: not connected'));
@@ -273,7 +273,7 @@ class Device {
 
   //*************************************************************************
   copy(src, dst, count) {
-    console.log(`Device.copy src=${src} dst=${dst} c=${count}`)
+    console.log(`Device.copy src=${src} dst=${dst} c=${count}`);
 
     if (!this.connected) {
       return Promise.reject(new Error('Device.copy: not connected'));
@@ -711,11 +711,11 @@ class Device {
       //
       // This optimization improves performance on slow clients like
       // Smartphones.
-      if (packet[0] === Device.CFG_WRITE) {
+      if (packet[0] === this.CFG_WRITE) {
         for (let i = 0; i < this.pending.length; i++) {
           let request = this.pending[i];
 
-          if (request.packet[0] !== Device.CFG_WRITE) {
+          if (request.packet[0] !== this.CFG_WRITE) {
             continue;
           }
 
@@ -735,7 +735,7 @@ class Device {
 
           // CFG_WRITE offset and length match, resolve the old request and
           // remove it from the list of pending requests
-          let data = [Device.TX_WRITE_SUCCESSFUL, request.packet[1],
+          let data = [this.TX_WRITE_SUCCESSFUL, request.packet[1],
             request.packet[2], request.packet.length - 3];
           request.promise.resolve(data);
 
@@ -758,7 +758,7 @@ class Device {
     // Filter out TX_INFO and TX_FREE_TO_CONNECT, which are sent
     // by the Tx without and request.
     if (data[0] === this.TX_INFO) {
-      Device.onLiveMessage(data);
+      this.onLiveMessage(data);
     }
     else if (data[0] === this.TX_FREE_TO_CONNECT) {
       DeviceList.transmitterFreeToConnect(data);
@@ -786,7 +786,7 @@ class Device {
   _packetsMatch(request, response) {
 
     // Read
-    if (response[0] === Device.TX_REQUESTED_DATA  &&  request.packet[0] === Device.CFG_READ) {
+    if (response[0] === this.TX_REQUESTED_DATA  &&  request.packet[0] === this.CFG_READ) {
       for (let j = 1; j < 3; j++) {
         if (response[j] !== request.packet[j]) {
           return false;
@@ -799,7 +799,7 @@ class Device {
     }
 
     // Write
-    if (response[0] === Device.TX_WRITE_SUCCESSFUL  &&  request.packet[0] === Device.CFG_WRITE) {
+    if (response[0] === this.TX_WRITE_SUCCESSFUL  &&  request.packet[0] === this.CFG_WRITE) {
       for (let i = 1; i < 3; i++) {
         if (response[i] !== request.packet[i]) {
           return false;
@@ -812,7 +812,7 @@ class Device {
     }
 
     // Copy
-    if (response[0] === Device.TX_COPY_SUCCESSFUL  &&  request.packet[0] === Device.CFG_COPY) {
+    if (response[0] === this.TX_COPY_SUCCESSFUL  &&  request.packet[0] === this.CFG_COPY) {
       for (let i = 1; i < 7; i++) {
         if (response[i] !== request.packet[i]) {
           return false;
@@ -841,7 +841,7 @@ class Device {
       let request = this.inTransit[i];
 
       // Remove packets where we don't expect a particular response
-      if (request.packet[0] !== Device.CFG_WRITE  &&  request.packet[0] !== Device.CFG_READ  &&  request.packet[0] !== Device.CFG_COPY) {
+      if (request.packet[0] !== this.CFG_WRITE  &&  request.packet[0] !== this.CFG_READ  &&  request.packet[0] !== this.CFG_COPY) {
         request.promise.resolve(data);
         this.inTransit.splice(i, 1);
         --i;

@@ -123,6 +123,7 @@ class WebusbTransport {
         }
       }
       catch (e) {
+        console.log(e);
         console.log('Device disconnected, shutting down WebusbTransport._receivePackets()');
         return;
       }

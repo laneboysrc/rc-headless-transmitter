@@ -61,6 +61,10 @@ class Device {
     this.transport = WebsocketTransport;
     this.transportOpen = false;
 
+    this.maxPacketsInTransit = 1;
+    this.pending = [];
+    this.inTransit = [];
+
     document.addEventListener('transport-open', this._onOpen.bind(this));
     document.addEventListener('transport-close', this._onClose.bind(this));
   }
@@ -77,14 +81,14 @@ class Device {
 
   //*************************************************************************
   enableCommunication() {
-    console.log('enableCommunication');
+    console.log('Device.enableCommunication');
     this.transportOpen = true;
     this.transport.open();
   }
 
   //*************************************************************************
   disableCommunication() {
-    console.log('disableCommunication');
+    console.log('Device.disableCommunication');
     // stop WS, kill restart timer
     this.transport.close();
     this.transportOpen = false;
@@ -136,7 +140,7 @@ class Device {
 
       function ontimeout() {
         let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
-        self.transport.send(disconnectPacket);
+        self.send(disconnectPacket);
 
         cleanup();
         reject(new Error('Connection timeout'));
@@ -145,7 +149,7 @@ class Device {
       self.connectedCallback = onmessage;
       document.addEventListener('transport-close', onclose);
       timer = setTimeout(ontimeout, TIMEOUT_MS);
-      self.transport.send(connectPacket);
+      self.send(connectPacket);
     });
   }
 
@@ -155,11 +159,11 @@ class Device {
 
     return new Promise((resolve, reject) => {
       if (!self.connected) {
-        reject(new Error('Device.disconnect: not connected'));
+        reject(new Error('disconnect: not connected'));
       }
 
       let disconnectPacket = new Uint8Array([self.CFG_DISCONNECT]);
-      self.transport.send(disconnectPacket);
+      self.send(disconnectPacket);
       self.connected = false;
       resolve();
     });
@@ -181,7 +185,7 @@ class Device {
 
       function response(packet) {
         if (packet[0] !== self.TX_REQUESTED_DATA) {
-          console.log('read(): not a READ response');
+          console.log('Device.read: not a READ response');
           return;
         }
 
@@ -207,7 +211,7 @@ class Device {
 
       readChunks.forEach(chunk => {
         let readPacket = self._makeReadPacket(chunk.o, chunk.c);
-        self.transport.send(readPacket)
+        self.send(readPacket)
           .then(response)
           .catch(error => {
             reject(error);
@@ -258,7 +262,7 @@ class Device {
         let writePacket = self._makeWritePacket(
           chunk.o, data.slice(dataOffset, dataOffset + chunk.c));
 
-        self.transport.send(writePacket)
+        self.send(writePacket)
         .then(response)
         .catch(error => {
           reject(error);
@@ -280,7 +284,7 @@ class Device {
     return new Promise((resolve, reject) => {
       let copyPacket = self._makeCopyPacket(src, dst, count);
 
-      self.transport.send(copyPacket)
+      self.send(copyPacket)
       .then(() => {
         resolve();
       })
@@ -517,50 +521,50 @@ class Device {
 
     let validHardwareTypes = [];
     switch (logicalInputType) {
-      case 1:   // Analog logical input
-        //  Analog, returns to center
-        //  Analog, center detent
-        //  Analog
-        //  Analog, positive only
-        validHardwareTypes = [1, 2, 3, 4];
-        break;
+    case 1:   // Analog logical input
+      //  Analog, returns to center
+      //  Analog, center detent
+      //  Analog
+      //  Analog, positive only
+      validHardwareTypes = [1, 2, 3, 4];
+      break;
 
-      case 2:   // Switch logical input
-        if (firstHardwareInputType === 7) {
-          // Push-button
-          validHardwareTypes = [7];
-        }
-        else if (positionCount === 3) {
-          //  On/Off/On switch
-          validHardwareTypes = [6];
-        }
-        else {
-          //  On/Off switch
-          validHardwareTypes = [5];
-        }
-        break;
-
-      case 3:   // BCD Switch logical input
-        //  On/Off switch
-        validHardwareTypes = [5];
-        break;
-
-      case 4:   // Momentary Switch logical input
+    case 2:   // Switch logical input
+      if (firstHardwareInputType === 7) {
         // Push-button
         validHardwareTypes = [7];
-        break;
+      }
+      else if (positionCount === 3) {
+        //  On/Off/On switch
+        validHardwareTypes = [6];
+      }
+      else {
+        //  On/Off switch
+        validHardwareTypes = [5];
+      }
+      break;
 
-      case 5:   // Trim logical input
-        if (hardwareInputsCount === 1) {
-          // Analog, center detent
-          // Analog
-          validHardwareTypes = [2, 3];
-        }
-        else {
-          // Push-button
-          validHardwareTypes = [7];
-        }
-        break;
+    case 3:   // BCD Switch logical input
+      //  On/Off switch
+      validHardwareTypes = [5];
+      break;
+
+    case 4:   // Momentary Switch logical input
+      // Push-button
+      validHardwareTypes = [7];
+      break;
+
+    case 5:   // Trim logical input
+      if (hardwareInputsCount === 1) {
+        // Analog, center detent
+        // Analog
+        validHardwareTypes = [2, 3];
+      }
+      else {
+        // Push-button
+        validHardwareTypes = [7];
+      }
+      break;
     }
 
     return validHardwareTypes.includes(type);
@@ -595,7 +599,7 @@ class Device {
   //     load hw.[schemaName] into Device.[schemaName]
   //     add Device.[schemaName] to our database
   load(configVersion, schemaName) {
-    // console.log(`DeviceList._loadDevice configVersion=${configVersion} schemaName=${schemaName}`)
+    // console.log(`Device.load configVersion=${configVersion} schemaName=${schemaName}`)
 
     const schema = CONFIG_VERSIONS[configVersion][schemaName];
     var newDev = {};
@@ -695,13 +699,173 @@ class Device {
   }
 
   //*************************************************************************
+  send(packet) {
+    if (!(packet instanceof Uint8Array)) {
+      throw new Error('WS: packet is not of type Uint8Array');
+    }
+
+    return new Promise((resolve, reject) => {
+      // Check if a write packet with exactly the same offset and length
+      // exists in pending[]. If yes remove (and resolve) the earlier write
+      // requests before adding the new write packet.
+      //
+      // This optimization improves performance on slow clients like
+      // Smartphones.
+      if (packet[0] === Device.CFG_WRITE) {
+        for (let i = 0; i < this.pending.length; i++) {
+          let request = this.pending[i];
+
+          if (request.packet[0] !== Device.CFG_WRITE) {
+            continue;
+          }
+
+          // Check length
+          if (request.packet.length !== packet.length) {
+            continue;
+          }
+
+          // Check offset
+          if (request.packet[1] !== packet[1]) {
+            continue;
+          }
+
+          if (request.packet[2] !== packet[2]) {
+            continue;
+          }
+
+          // CFG_WRITE offset and length match, resolve the old request and
+          // remove it from the list of pending requests
+          let data = [Device.TX_WRITE_SUCCESSFUL, request.packet[1],
+            request.packet[2], request.packet.length - 3];
+          request.promise.resolve(data);
+
+          this.pending.splice(i, 1);
+          --i;
+        }
+      }
+
+      this.pending.push({
+        packet: packet,
+        promise: {resolve: resolve, reject: reject}
+      });
+
+      this._sendCfgPacket();
+    });
+  }
+
+  //*************************************************************************
+  onTransportMessage(data) {
+    // Filter out TX_INFO and TX_FREE_TO_CONNECT, which are sent
+    // by the Tx without and request.
+    if (data[0] === this.TX_INFO) {
+      Device.onLiveMessage(data);
+    }
+    else if (data[0] === this.TX_FREE_TO_CONNECT) {
+      DeviceList.transmitterFreeToConnect(data);
+    }
+    else {
+      this._resolvePromises(data);
+    }
+    this._sendCfgPacket();
+  }
+
+  //*************************************************************************
+  _sendCfgPacket() {
+    if (this.inTransit.length >= this.maxPacketsInTransit) {
+      return;
+    }
+
+    if (this.pending.length) {
+      let request = this.pending.shift();
+      this.inTransit.push(request);
+      this.transport.send(request.packet);
+    }
+  }
+
+  //*************************************************************************
+  _packetsMatch(request, response) {
+
+    // Read
+    if (response[0] === Device.TX_REQUESTED_DATA  &&  request.packet[0] === Device.CFG_READ) {
+      for (let j = 1; j < 3; j++) {
+        if (response[j] !== request.packet[j]) {
+          return false;
+        }
+      }
+      if ((response.length - 3) !== request.packet[3]) {
+        return false;
+      }
+      return true;
+    }
+
+    // Write
+    if (response[0] === Device.TX_WRITE_SUCCESSFUL  &&  request.packet[0] === Device.CFG_WRITE) {
+      for (let i = 1; i < 3; i++) {
+        if (response[i] !== request.packet[i]) {
+          return false;
+        }
+      }
+      if ((request.packet.length - 3) !== response[3]) {
+        return false;
+      }
+      return true;
+    }
+
+    // Copy
+    if (response[0] === Device.TX_COPY_SUCCESSFUL  &&  request.packet[0] === Device.CFG_COPY) {
+      for (let i = 1; i < 7; i++) {
+        if (response[i] !== request.packet[i]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  //*************************************************************************
+  _resolvePromises(data) {
+    // Handle special Websocket only command that indicates the maximum number
+    // of bytes that can be in transit (= packet buffer size in the bridge)
+    if (data[0] === this.WS_MAX_PACKETS_IN_TRANSIT) {
+      if (data[1] > 1) {
+        this.maxPacketsInTransit = data[1];
+        console.log('maxPacketsInTransit=' + this.maxPacketsInTransit);
+      }
+      return;
+    }
+
+    // Go through all packets in transit
+    for (let i = 0; i < this.inTransit.length; i++) {
+      let request = this.inTransit[i];
+
+      // Remove packets where we don't expect a particular response
+      if (request.packet[0] !== Device.CFG_WRITE  &&  request.packet[0] !== Device.CFG_READ  &&  request.packet[0] !== Device.CFG_COPY) {
+        request.promise.resolve(data);
+        this.inTransit.splice(i, 1);
+        --i;
+        continue;
+      }
+
+      // Match packets to a specifc response
+      if (this._packetsMatch(request, data)) {
+        request.promise.resolve(data);
+        this.inTransit.splice(i, 1);
+        // After the first packet matches, stop looking for further ones
+        return;
+      }
+    }
+  }
+
+  //*************************************************************************
   // load hw.[newDev.schemaName] into newDev
   // add newDev to our database
   _loadDeviceData (newDev) {
     const schema = CONFIG_VERSIONS[newDev.configVersion][newDev.schemaName];
     return new Promise((resolve) => {
       this.read(schema.o, schema.s).then(data => {
-        // console.log('_loadDeviceData read from device')
+        // console.log('Device._loadDeviceData read from device')
         newDev.data = data;
 
         var dbEntry = new DatabaseObject(newDev);
@@ -761,6 +925,19 @@ class Device {
 
   //*************************************************************************
   _onClose() {
+    // Go through this.pending[] and this.inTransit[] and reject all promises
+    let request = this.inTransit.shift();
+    while (request) {
+      request.promise.reject('Transport closed');
+      request = this.inTransit.shift();
+    }
+
+    request = this.pending.shift();
+    while (request) {
+      request.promise.reject('Transport closed');
+      request = this.pending.shift();
+    }
+
     // console.log('Device ws: ', event, event.detail);
     this.connected = false;
     this.live = {};

@@ -259,14 +259,22 @@ class MDLHelper {
   }
 
   _onKeypress(event) {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       this._sliderDialogOk(event);
     }
   }
 
   _onDecrement() {
     const e = this.sliderDialogElements;
-    e.slider.MaterialSlider.change(parseInt(e.slider.value) - 1);
+    if (e.slider.max > 5000) {
+      e.slider.MaterialSlider.change(parseInt(e.slider.value) - 100);
+    }
+    else if (e.slider.max > 200) {
+      e.slider.MaterialSlider.change(parseInt(e.slider.value) - 10);
+    }
+    else {
+      e.slider.MaterialSlider.change(parseInt(e.slider.value) - 1);
+    }
     e.number.value = e.slider.value;
 
     var newEvent = new Event('input', {
@@ -278,7 +286,15 @@ class MDLHelper {
 
   _onIncrement() {
     const e = this.sliderDialogElements;
-    e.slider.MaterialSlider.change(parseInt(e.slider.value) + 1);
+    if (e.slider.max > 5000) {
+      e.slider.MaterialSlider.change(parseInt(e.slider.value) + 100);
+    }
+    else if (e.slider.max > 200) {
+      e.slider.MaterialSlider.change(parseInt(e.slider.value) + 10);
+    }
+    else {
+      e.slider.MaterialSlider.change(parseInt(e.slider.value) + 1);
+    }
     e.number.value = e.slider.value;
 
     var newEvent = new Event('input', {

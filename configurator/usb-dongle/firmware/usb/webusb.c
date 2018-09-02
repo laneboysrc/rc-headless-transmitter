@@ -1,6 +1,7 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <libopencm3/stm32/rcc.h>
@@ -36,6 +37,8 @@ enum {
 #define USB_TX_BUFFER_SIZE 256
 
 
+bool usb_configured = false;
+
 static usbd_device *webusb_device;
 uint8_t usbd_control_buffer[64];
 
@@ -55,7 +58,7 @@ static const struct usb_device_descriptor device_descriptor = {
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
 
-    .bMaxPacketSize0 = 64,
+    .bMaxPacketSize0 = sizeof(usbd_control_buffer),
     .idVendor = 0x6666,
     .idProduct = 0xeaf1,
     .bcdDevice = 0x0101,
@@ -126,7 +129,6 @@ static const struct usb_interface interfaces[] = {
 static const struct usb_config_descriptor configuration_descriptor = {
     .bLength = USB_DT_CONFIGURATION_SIZE,
     .bDescriptorType = USB_DT_CONFIGURATION,
-    .wTotalLength = 0,
     .bNumInterfaces = USB_NUMBER_OF_INTERFACES,
     .bConfigurationValue = 1,
     .iConfiguration = 0,
@@ -204,6 +206,11 @@ static void webusb_set_config_callback(usbd_device *usbd_dev, uint16_t wValue)
     usbd_ep_setup(usbd_dev, 0x01, USB_ENDPOINT_ATTR_BULK, 64, webusb_receive_callback);
     usbd_ep_setup(usbd_dev, 0x82, USB_ENDPOINT_ATTR_BULK, 64, NULL);
     usbd_register_control_callback(usbd_dev, 0, 0, webusb_control_request);
+
+    RING_BUFFER_init(&usb_tx_ring_buffer, usb_tx_buffer, USB_TX_BUFFER_SIZE);
+    ep_length = 0;
+
+    usb_configured = true;
 }
 
 
@@ -213,25 +220,26 @@ static void webusb_reset_callback(void)
     printf("webusb_reset_callback()\n");
     LED_pulse();
 
-    RING_BUFFER_init(&usb_tx_ring_buffer, usb_tx_buffer, USB_TX_BUFFER_SIZE);
-    ep_length = 0;
+    usb_configured = false;
 }
 
 
 // ****************************************************************************
 void WEBUSB_poll(void)
 {
-    if (ep_length == 0  &&  ! RING_BUFFER_is_empty(&usb_tx_ring_buffer)) {
-        ep_length = RING_BUFFER_read(&usb_tx_ring_buffer, ep_buffer, 64);
-    }
+    if (usb_configured) {
+        if (ep_length == 0  &&  ! RING_BUFFER_is_empty(&usb_tx_ring_buffer)) {
+            ep_length = RING_BUFFER_read(&usb_tx_ring_buffer, ep_buffer, 64);
+        }
 
-    if (ep_length) {
-        uint16_t result;
+        if (ep_length) {
+            uint16_t result;
 
-        result = usbd_ep_write_packet(webusb_device, 0x82, ep_buffer, ep_length);
-        if (result) {
-            LED_pulse();
-            ep_length = 0;
+            result = usbd_ep_write_packet(webusb_device, 0x82, ep_buffer, ep_length);
+            if (result) {
+                LED_pulse();
+                ep_length = 0;
+            }
         }
     }
 

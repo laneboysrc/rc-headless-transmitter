@@ -79,8 +79,13 @@
 #define NRF24_POWER_n6dBm     2
 #define NRF24_POWER_0dBm      3
 
+
+typedef void (* nrf24_int_callback_t)(void);
+
 //******************************************************************************
 void NRF24_init(void);
+
+void NRF24_enable_interrupt(nrf24_int_callback_t callback);
 
 uint8_t NRF24_read_register(uint8_t reg);
 void NRF24_write_register(uint8_t reg, uint8_t value);

@@ -31,7 +31,7 @@
           <h2 class="mdl-card__title-text">RF protocol</h2>
         </div>
         <div class="mdl-card__supporting-text mdl-card--expand  ">
-          Select the RF protocol to use. Currently only the HobbyKing HKR3000 and the LANEBoysRC-4CH protocoles are supported.
+          Select the RF protocol to use.
         </div>
         <div class="mdl-card__actions mdl-card--border">
           <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="app-rf_protocol-protocol__protocol_hkr3000">
@@ -41,6 +41,10 @@
           <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="app-rf_protocol-protocol__protocol_laneboysrc4ch">
             <input class="mdl-radio__button" id="app-rf_protocol-protocol__protocol_laneboysrc4ch" name="protocol" type="radio" value="1" onclick="RFProtocol.rf_protocol_changed()">
             <span class="mdl-radio__label">LANEBoysRC-4CH</span>
+          </label>
+          <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="app-rf_protocol-protocol__protocol_laneboysrc8ch">
+            <input class="mdl-radio__button" id="app-rf_protocol-protocol__protocol_laneboysrc8ch" name="protocol" type="radio" value="2" onclick="RFProtocol.rf_protocol_changed()">
+            <span class="mdl-radio__label">LANEBoysRC-8CH</span>
           </label>
         </div>
       </div>

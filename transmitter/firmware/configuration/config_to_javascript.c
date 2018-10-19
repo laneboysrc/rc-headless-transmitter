@@ -894,6 +894,8 @@ void CONFIG_dump_javascript_information(void)
 
     sync_printf("            rf_protocol_type_t: {\n");
     sync_printf(t, "HobbyKing HKR3000", RF_PROTOCOL_HK310);
+    sync_printf(t, "LANE Boys RC 4CH", RF_PROTOCOL_LANEBOYSRC4CH);
+    sync_printf(t, "LANE Boys RC 8CH", RF_PROTOCOL_LANEBOYSRC8CH);
     sync_printf("            },\n");
 
     sync_printf("            operation_type_t: {\n");

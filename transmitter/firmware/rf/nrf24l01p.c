@@ -2,6 +2,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/exti.h>
+#include <libopencmsis/core_cm3.h>
+
 #include <nrf24l01p.h>
 #include <spi.h>
 
@@ -9,7 +13,7 @@
 // ****************************************************************************
 static uint8_t spi_buffer[NRF24_MAX_PAYLOAD_SIZE + 1];
 static uint8_t rf_setup;
-
+static nrf24_int_callback_t int_callback = NULL;
 
 // ****************************************************************************
 // Send a one-byte command to the nRF24.
@@ -188,6 +192,32 @@ void NRF24_set_power(uint8_t power)
     NRF24_write_register(NRF24_RF_SETUP, rf_setup);
 }
 
+
+// ****************************************************************************
+// Interrupt handler for EXTI8 (our nRF IRQ goes to PA8, hence EXTI8)
+void exti9_5_isr(void)
+{
+    exti_reset_request(EXTI8);
+    if (int_callback) {
+        (*int_callback)();
+    }
+}
+
+
+// ****************************************************************************
+void NRF24_enable_interrupt(nrf24_int_callback_t callback)
+{
+    int_callback = callback;
+
+    // GPIO PA8 setup for falling-edge IRQ, with a pull-down
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO8);
+    gpio_clear(GPIOA, GPIO8);
+
+    exti_select_source(EXTI8, GPIOA);
+    exti_set_trigger(EXTI8, EXTI_TRIGGER_FALLING);
+    exti_enable_request(EXTI8);
+    nvic_enable_irq(NVIC_EXTI9_5_IRQ);
+}
 
 // ****************************************************************************
 void NRF24_init(void)

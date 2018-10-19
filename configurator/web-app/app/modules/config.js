@@ -425,7 +425,8 @@ var CONFIG_VERSIONS = {
             },
             rf_protocol_type_t: {
                 'HobbyKing HKR3000': 0,
-                'RF_PROTOCOL_LANEBOYSRC4CH': 1,
+                'LANE Boys RC 4CH': 1,
+                'LANE Boys RC 8CH': 2,
             },
             operation_type_t: {
                 '=': 0,

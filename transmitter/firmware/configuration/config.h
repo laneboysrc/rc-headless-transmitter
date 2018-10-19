@@ -11,7 +11,8 @@
 
 typedef enum {
     RF_PROTOCOL_HK310,
-    RF_PROTOCOL_LANEBOYSRC4CH
+    RF_PROTOCOL_LANEBOYSRC4CH,
+    RF_PROTOCOL_LANEBOYSRC8CH
 } rf_protocol_type_t;
 
 typedef struct {

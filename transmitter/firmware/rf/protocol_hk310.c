@@ -2,10 +2,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <libopencm3/stm32/gpio.h>
-#include <libopencm3/stm32/exti.h>
-#include <libopencmsis/core_cm3.h>
-
 #include <channels.h>
 #include <config.h>
 #include <configurator.h>
@@ -423,15 +419,6 @@ static void hk310_protocol_frame_callback(void)
 
 
 // ****************************************************************************
-// Interrupt handler for EXTI8 (our nRF IRQ goes to PA8, hence EXTI8)
-void exti9_5_isr(void)
-{
-    exti_reset_request(EXTI8);
-    nrf_transmit_done_callback();
-}
-
-
-// ****************************************************************************
 void PROTOCOL_HK310_enable_binding(void)
 {
     bind_enabled = true;
@@ -466,16 +453,7 @@ void PROTOCOL_HK310_init_ex(uint8_t number_of_channels)
     stick_packet[8] = 0x67;         // Unkown constant in stick data sent by HK310
     failsafe_packet[8] = 0x5a;      // Failsafe (always) on
 
-
-    // GPIO PA8 setup for falling-edge IRQ, with a pull-down
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO8);
-    gpio_clear(GPIOA, GPIO8);
-
-    exti_select_source(EXTI8, GPIOA);
-    exti_set_trigger(EXTI8, EXTI_TRIGGER_FALLING);
-    exti_enable_request(EXTI8);
-    nvic_enable_irq(NVIC_EXTI9_5_IRQ);
-
+    NRF24_enable_interrupt(nrf_transmit_done_callback);
 
     // nRF24 initialization
     NRF24_write_register(NRF24_SETUP_AW, NRF24_ADDRESS_WIDTH_5_BYTES);

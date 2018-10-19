@@ -25,6 +25,7 @@
 
 #include <protocol_hk310.h>
 #include <protocol_laneboysrc4ch.h>
+#include <protocol_laneboysrc8ch.h>
 
 typedef struct {
     void (*init_function)(void);
@@ -44,6 +45,11 @@ static const rf_protocol_handlers_t rf_protocol_handlers[] = {
         .init_function = PROTOCOL_LANEBOYSRC4CH_init,
         .enable_binding_function = PROTOCOL_LANEBOYSRC4CH_enable_binding,
         .disable_binding_function = PROTOCOL_LANEBOYSRC4CH_disable_binding,
+    },
+    {
+        .init_function = PROTOCOL_LANEBOYSRC8CH_init,
+        .enable_binding_function = PROTOCOL_LANEBOYSRC8CH_enable_binding,
+        .disable_binding_function = PROTOCOL_LANEBOYSRC8CH_disable_binding,
     },
 };
 

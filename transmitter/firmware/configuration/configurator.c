@@ -7,7 +7,6 @@
 #include <configurator.h>
 #include <inputs.h>
 #include <music.h>
-#include <persistent_storage.h>
 #include <systick.h>
 
 #define CONFIGURATOR_ADDRESS_SIZE 5
@@ -378,7 +377,7 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
 
         if (configuration_changed) {
             configuration_changed = false;
-            PERSISTENT_STORAGE_save_config();
+            CONFIG_save();
         }
         return;
     }

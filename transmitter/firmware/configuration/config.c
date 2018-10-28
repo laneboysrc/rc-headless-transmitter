@@ -71,9 +71,8 @@ const config_t config_flash = {
             {.type = TRANSMITTER_INPUT_NOT_USED},           // 12: PB6
             {.type = TRANSMITTER_INPUT_NOT_USED},           // 13: PB7
             {.type = TRANSMITTER_INPUT_NOT_USED},           // 14: PB8
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // 15: PB9
-            {.type = TRANSMITTER_INPUT_NOT_USED},           // 16: PB10
-            {.type = TRANSMITTER_INPUT_NOT_USED}            // 17: PB11
+            {.type = TRANSMITTER_INPUT_NOT_USED},           // 15: PB10
+            {.type = TRANSMITTER_INPUT_NOT_USED}            // 16: PB11
         },
         .logical_inputs = {
             {.type = ANALOG, .hardware_inputs = {0}, .labels = {AIL}},

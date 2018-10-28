@@ -823,7 +823,6 @@ static void compute_hardware_inputs(void)
         uint32_t gpioport = t->pcb_input.gpioport;
         uint16_t gpio = t->pcb_input.gpio;
 
-
         switch (t->type) {
             case ANALOG_WITH_CENTER_AUTO_RETURN:
             case ANALOG_WITH_CENTER:
@@ -1106,7 +1105,7 @@ int32_t INPUTS_get_trim(input_label_t input)
 // ****************************************************************************
 void INPUTS_dump_adc(void)
 {
-#if 1
+#if 0
     static uint32_t last_ms = 0;
 
     if ((milliseconds - last_ms) < 1000) {
@@ -1115,7 +1114,7 @@ void INPUTS_dump_adc(void)
     last_ms = milliseconds;
 #endif
 
-#if 1
+#if 0
     printf("BAT: %lumV  ", INPUTS_get_battery_voltage());
     for (int i = 0; i < 4; i++) {
         printf("CH%d:%4ld%% (%4u->%4u)  ", i, CHANNEL_TO_PERCENT(normalized_inputs[i]), adc_array_raw[i], adc_array_calibrated[i]);
@@ -1134,15 +1133,15 @@ void INPUTS_dump_adc(void)
     printf("adc_index = %d\n", adc_index);
 #endif
 
-#if 0
+#if 1
     do {
         static uint8_t last_switch_value = 99;
         uint8_t value;
 
-        value = INPUTS_get_switch_value(SW1);
+        value = INPUTS_get_switch_value(AUX);
         if (value != last_switch_value) {
             last_switch_value = value;
-            printf("SW1: %d\n", value);
+            printf("AUX: %d\n", value);
         }
     } while (0);
 #endif

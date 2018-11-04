@@ -101,19 +101,30 @@ static const protocol_hk310_t *cfg = &config.model.rf.protocol_hk310;
 // ****************************************************************************
 static uint16_t channel_to_stickdata(int32_t ch)
 {
-    // ch goes from -10000 to +10000. We need to convert that to 0..4095.
-    ch = ch + CHANNEL_100_PERCENT;
-    ch = (ch << 12) / (2 * CHANNEL_100_PERCENT);
+    int32_t pulse_ns;
+/*
+    Desired us range:
+        476         1000       1500    2000     2523
 
-    // Clamping to ensure sanity ...
-    if (ch < 0) {
-        ch = 0;
-    }
-    if (ch >= (1 << 12)) {
-        ch = (1 << 12) - 1;
+    ns with reference to 476 us minimum:
+        0           524000       1024000    1524000    2048000
+
+    Translated 12 bit values:
+        0           1048       2048    2048     4095
+
+    => 12 bit value = ns / 500
+*/
+
+    pulse_ns = ch * 500 * 1000 / CHANNEL_100_PERCENT;
+    pulse_ns += 1500 * 1000;
+    pulse_ns -= 476 * 1000;
+
+    if (pulse_ns < 0) {
+        pulse_ns = 0;
     }
 
-    return (uint16_t)ch;
+    pulse_ns /= 500;
+    return (uint16_t)pulse_ns;
 }
 
 

@@ -245,6 +245,7 @@ void WEBUSB_poll(void)
 
         p = CONFIGURATOR_send_request(TRANSPORT_USB, dummy_hop_index, 1);
         if (p != NULL  &&  p->payload_size > 0) {
+            // FIXME: slip encoding required!
             RING_BUFFER_write(&usb_tx_ring_buffer, p->payload, p->payload_size);
         }
         ++dummy_hop_index;

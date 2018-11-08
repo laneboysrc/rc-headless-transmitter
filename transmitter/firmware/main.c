@@ -69,16 +69,13 @@ void nmi_handler(void) {
 // ****************************************************************************
 static void clock_init(void)
 {
-    // Enable divide-by-0 and unaligned fault handling
-    // FIXME: does not work
-    SCB->CCR |= SCB_CCR_DIV_0_TRP | SCB_CCR_UNALIGN_TRP;
-
     // Enable the Clock Security System
     rcc_css_enable();
 
     // NOTE: the transmitter will not boot when the crystal is not working as
     // there is no timeout waiting for the HSE in rcc_clock_setup_in_hse_8mhz_out_24mhz().
-    rcc_clock_setup_in_hse_8mhz_out_24mhz();
+    // rcc_clock_setup_in_hse_8mhz_out_24mhz();
+    rcc_clock_setup_in_hsi_out_48mhz();
 
     // Enable clocks for GPIO port A (for GPIO_USART1_TX) and C (LED)
     // IMPORTANT: you can not 'or' them into one call due to bit-mangling
@@ -164,7 +161,7 @@ int main(void)
         // power consumption drastically.
         // Since the systick runs at 1 millisecond period, the main loop sleeps
         // for at most 1 ms.
-        __WFI();
+        // __WFI();
     }
 
     return 0;

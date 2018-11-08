@@ -459,6 +459,7 @@ void CONFIGURATOR_event(configurator_transport_t transport, uint8_t event, const
                 if (milliseconds > last_successful_transmission_ms + CONNECTION_TIMEOUT_MS) {
                     MUSIC_play(&song_disconnecting);
                     connected = false;
+                    connected_transport = TRANSPORT_NONE;
                     printf("%lu !!!!! DISCONNECTED DUE TO TIMEOUT\n", milliseconds);
                 }
             }
@@ -468,7 +469,9 @@ void CONFIGURATOR_event(configurator_transport_t transport, uint8_t event, const
             // printf("RX %d\n", length);
             printf("%lu ", milliseconds);
             if (connected) {
-                parse_command_connected(rx_packet, length);
+                if (transport == connected_transport) {
+                    parse_command_connected(rx_packet, length);
+                }
             }
             else {
                 parse_command_not_connected(rx_packet, length);

@@ -196,6 +196,6 @@ typedef enum {
 
 
 void CONFIGURATOR_init(void);
-configurator_packet_t * CONFIGURATOR_send_request(configurator_transport_t transport, uint8_t hop_index, uint8_t transmission_index);
+configurator_packet_t *CONFIGURATOR_send_request(configurator_transport_t transport, uint8_t hop_index, uint8_t transmission_index);
 void CONFIGURATOR_event(configurator_transport_t transport, uint8_t nrf_status, const uint8_t * packet, uint8_t packet_length);
 bool CONFIGURATOR_is_connected(configurator_transport_t transport);

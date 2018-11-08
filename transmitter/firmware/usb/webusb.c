@@ -9,6 +9,7 @@
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/stm32/f1/nvic.h>
 
+#include <configurator.h>
 #include <led.h>
 #include <ring_buffer.h>
 #include <serial_number.h>
@@ -177,16 +178,12 @@ static enum usbd_request_return_codes webusb_control_request(usbd_device *usbd_d
 static void webusb_receive_callback(usbd_device *usbd_dev, uint8_t ep)
 {
     char buf[64+1];
-    uint16_t len ;
+    uint16_t len;
 
     (void) ep;
 
     len = usbd_ep_read_packet(usbd_dev, 0x01, buf, 64);
-    buf[len] = 0;
-
-    // printf("webusb_receive_callback() len=%d data=\"%s\"\n", len, buf);
-    fwrite(buf, len, 1, stderr);
-    // LED_pulse();
+    CONFIGURATOR_event(TRANSPORT_USB, CONFIGURATOR_EVENT_RX, (uint8_t *)buf, len);
 }
 
 
@@ -227,7 +224,11 @@ static void webusb_reset_callback(void)
 // ****************************************************************************
 void WEBUSB_poll(void)
 {
+
     if (usb_configured) {
+        static uint8_t dummy_hop_index = 0;
+        configurator_packet_t *p;
+
         if (ep_length == 0  &&  ! RING_BUFFER_is_empty(&usb_tx_ring_buffer)) {
             ep_length = RING_BUFFER_read(&usb_tx_ring_buffer, ep_buffer, 64);
         }
@@ -241,6 +242,12 @@ void WEBUSB_poll(void)
                 ep_length = 0;
             }
         }
+
+        p = CONFIGURATOR_send_request(TRANSPORT_USB, dummy_hop_index, 1);
+        if (p != NULL  &&  p->payload_size > 0) {
+            RING_BUFFER_write(&usb_tx_ring_buffer, p->payload, p->payload_size);
+        }
+        ++dummy_hop_index;
     }
 
     usbd_poll(webusb_device);

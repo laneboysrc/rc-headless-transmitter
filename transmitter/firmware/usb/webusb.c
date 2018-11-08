@@ -142,7 +142,7 @@ static char serial_number[9];
 
 static const char *usb_strings[] = {
     "LANE Boys RC",
-    "Configurator USB dongle",
+    "Transmitter",
     serial_number
 };
 

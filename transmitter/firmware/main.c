@@ -22,6 +22,7 @@
 #include <systick.h>
 #include <uart.h>
 #include <watchdog.h>
+#include <webusb.h>
 
 #include <protocol_hk310.h>
 #include <protocol_laneboysrc4ch.h>
@@ -120,6 +121,7 @@ int main(void)
     INPUTS_init();
     MIXER_init();
     CONFIGURATOR_init();
+    WEBUSB_init();
 
     memcpy(&current_rf_protocol, &rf_protocol_handlers[config.model.rf_protocol_type], sizeof(rf_protocol_handlers_t));
     current_rf_protocol.init_function();
@@ -155,6 +157,8 @@ int main(void)
 
         // INPUTS_dump_adc();
         PERSISTENT_STORAGE_background_flash_write();
+
+        WEBUSB_poll();
 
         // Put the CPU to sleep until an interrupt triggers. This reduces
         // power consumption drastically.

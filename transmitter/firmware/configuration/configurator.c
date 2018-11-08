@@ -30,6 +30,7 @@
 static const uint8_t configurator_address[] = {0x4c, 0x42, 0x72, 0x63, 0x78};
 
 static bool connected = false;
+static configurator_transport_t connected_transport = TRANSPORT_NONE;
 static configurator_packet_t packet;
 
 static bool send_response = false;
@@ -373,6 +374,7 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
 
         MUSIC_play(&song_disconnecting);
         connected = false;
+        connected_transport = TRANSPORT_NONE;
         printf("CFG_DISCONNECT\n");
 
         if (configuration_changed) {
@@ -402,7 +404,7 @@ static void parse_command_connected(const uint8_t * rx_packet, uint8_t length) {
 
 
 // ****************************************************************************
-configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t transmission_index)
+configurator_packet_t * CONFIGURATOR_send_request(configurator_transport_t transport, uint8_t hop_index, uint8_t transmission_index)
 {
     // If we are not connected we send configurator packets only on the first
     // hop channel (= every 100 ms)
@@ -423,6 +425,10 @@ configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t tra
     else {
         configurator_packet_t *p;
 
+        if (connected_transport != transport) {
+            return NULL;
+        }
+
         if (send_response) {
             p = make_response_packet();
         }
@@ -436,8 +442,10 @@ configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t tra
 
 
 // ****************************************************************************
-void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length)
+void CONFIGURATOR_event(configurator_transport_t transport, uint8_t event, const uint8_t * rx_packet, uint8_t length)
 {
+    (void) transport;
+
     switch (event) {
         case CONFIGURATOR_EVENT_TX_SUCCESS:
             // printf("TX SUCCESS\n");
@@ -464,6 +472,9 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
             }
             else {
                 parse_command_not_connected(rx_packet, length);
+                if (connected) {
+                    connected_transport = transport;
+                }
             }
             break;
 
@@ -474,9 +485,17 @@ void CONFIGURATOR_event(uint8_t event, const uint8_t * rx_packet, uint8_t length
 
 
 // ****************************************************************************
-bool CONFIGURATOR_is_connected(void)
+bool CONFIGURATOR_is_connected(configurator_transport_t transport)
 {
-    return connected;
+    if (transport == TRANSPORT_ANY) {
+        return connected;
+    }
+
+    if (connected && (connected_transport == transport)) {
+        return true;
+    }
+
+    return false;
 }
 
 

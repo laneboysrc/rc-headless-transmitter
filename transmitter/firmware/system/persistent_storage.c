@@ -71,7 +71,7 @@ void PERSISTENT_STORAGE_background_flash_write(void)
         // and more or less halts the CPU. So we can't reliably send RF
         // packets every 5 ms anymore, causing the configurator to loose
         // the hop sequence and therefore the connection.
-        if (CONFIGURATOR_is_connected()) {
+        if (CONFIGURATOR_is_connected(TRANSPORT_ANY)) {
             return;
         }
 

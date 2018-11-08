@@ -268,7 +268,7 @@ static configurator_action_t send_configurator_packet(uint8_t current_hop_index,
 {
     const configurator_packet_t *p;
 
-    p = CONFIGURATOR_send_request(current_hop_index, transmission_index);
+    p = CONFIGURATOR_send_request(TRANSPORT_RF, current_hop_index, transmission_index);
     if (p == NULL  ||  p->payload_size == 0) {
         return CONFIGURATOR_NOTHING_TO_DO;
     }
@@ -301,11 +301,11 @@ static configurator_action_t send_configurator_packet(uint8_t current_hop_index,
 static void receive_configurator_packet(uint8_t status)
 {
     if (status & NRF24_TX_DS) {
-        CONFIGURATOR_event(CONFIGURATOR_EVENT_TX_SUCCESS, NULL, 0);
+        CONFIGURATOR_event(TRANSPORT_RF, CONFIGURATOR_EVENT_TX_SUCCESS, NULL, 0);
     }
 
     if (status & NRF24_MAX_RT) {
-        CONFIGURATOR_event(CONFIGURATOR_EVENT_TIMEOUT, NULL, 0);
+        CONFIGURATOR_event(TRANSPORT_RF, CONFIGURATOR_EVENT_TIMEOUT, NULL, 0);
         NRF24_flush_tx_fifo();
     }
 
@@ -318,7 +318,7 @@ static void receive_configurator_packet(uint8_t status)
                 uint8_t rx[32];
 
                 NRF24_read_payload(rx, count);
-                CONFIGURATOR_event(CONFIGURATOR_EVENT_RX, rx, count);
+                CONFIGURATOR_event(TRANSPORT_RF, CONFIGURATOR_EVENT_RX, rx, count);
             }
             else {
                 NRF24_flush_rx_fifo();

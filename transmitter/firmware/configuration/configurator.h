@@ -18,6 +18,15 @@ typedef struct {
 #define CONFIGURATOR_EVENT_RX 2
 
 
+typedef enum {
+    TRANSPORT_NONE,
+    TRANSPORT_RF,
+    TRANSPORT_USB,
+    TRANSPORT_UART,
+    TRANSPORT_ANY
+} configurator_transport_t;
+
+
 // This structure defines the values that can be sent with TX_INFO packets to
 // the configurator.
 // To ensure uniqueness of names, all items are prefixed with "SRC_" for
@@ -187,6 +196,6 @@ typedef enum {
 
 
 void CONFIGURATOR_init(void);
-configurator_packet_t * CONFIGURATOR_send_request(uint8_t hop_index, uint8_t transmission_index);
-void CONFIGURATOR_event(uint8_t nrf_status, const uint8_t * packet, uint8_t packet_length);
-bool CONFIGURATOR_is_connected(void);
+configurator_packet_t * CONFIGURATOR_send_request(configurator_transport_t transport, uint8_t hop_index, uint8_t transmission_index);
+void CONFIGURATOR_event(configurator_transport_t transport, uint8_t nrf_status, const uint8_t * packet, uint8_t packet_length);
+bool CONFIGURATOR_is_connected(configurator_transport_t transport);

@@ -161,7 +161,7 @@ int main(void)
         // power consumption drastically.
         // Since the systick runs at 1 millisecond period, the main loop sleeps
         // for at most 1 ms.
-        // __WFI();
+        __WFI();
     }
 
     return 0;

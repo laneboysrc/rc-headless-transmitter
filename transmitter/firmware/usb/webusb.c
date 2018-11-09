@@ -273,7 +273,7 @@ void WEBUSB_poll(void)
         }
     }
 
-    usbd_poll(webusb_device);
+    // usbd_poll(webusb_device);
 }
 
 
@@ -291,4 +291,17 @@ void WEBUSB_init(void)
     webusb_device = usbd_init(&st_usbfs_v1_usb_driver, &device_descriptor, &configuration_descriptor, usb_strings, 3, usbd_control_buffer, sizeof(usbd_control_buffer));
     usbd_register_reset_callback(webusb_device, webusb_reset_callback);
     usbd_register_set_config_callback(webusb_device, webusb_set_config_callback);
+
+    nvic_enable_irq(NVIC_USB_LP_CAN_RX0_IRQ);
+    nvic_enable_irq(NVIC_USB_HP_CAN_TX_IRQ);
+}
+
+void usb_hp_can_tx_isr(void)
+{
+    usbd_poll(webusb_device);
+}
+
+void usb_lp_can_rx0_isr(void)
+{
+    usbd_poll(webusb_device);
 }

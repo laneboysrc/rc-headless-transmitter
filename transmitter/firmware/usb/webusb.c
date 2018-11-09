@@ -13,6 +13,7 @@
 #include <led.h>
 #include <ring_buffer.h>
 #include <serial_number.h>
+#include <slip.h>
 #include <systick.h>
 #include <webusb.h>
 
@@ -49,6 +50,8 @@ static RING_BUFFER_T usb_tx_ring_buffer;
 static uint8_t ep_buffer[64];
 static uint16_t ep_length = 0;
 
+static slip_t slip;
+static uint8_t slip_buffer[128];
 
 static const struct usb_device_descriptor device_descriptor = {
     .bLength = USB_DT_DEVICE_SIZE,
@@ -147,6 +150,10 @@ static const char *usb_strings[] = {
     serial_number
 };
 
+static void tx_putc(uint8_t byte)
+{
+    RING_BUFFER_write_uint8(&usb_tx_ring_buffer, byte);
+}
 
 // ****************************************************************************
 static enum usbd_request_return_codes webusb_control_request(usbd_device *usbd_dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
@@ -177,13 +184,28 @@ static enum usbd_request_return_codes webusb_control_request(usbd_device *usbd_d
 // ****************************************************************************
 static void webusb_receive_callback(usbd_device *usbd_dev, uint8_t ep)
 {
-    char buf[64+1];
+    char buf[64];
     uint16_t len;
 
     (void) ep;
 
     len = usbd_ep_read_packet(usbd_dev, 0x01, buf, 64);
-    CONFIGURATOR_event(TRANSPORT_USB, CONFIGURATOR_EVENT_RX, (uint8_t *)buf, len);
+
+    printf("%lu USB receive %d\n", milliseconds, len);
+
+    for (int i = 0; i < len; i++) {
+        if (SLIP_decode(&slip,  buf[i])) {
+
+            if (slip.buffer[0] == 0x31) {
+                uint8_t dummy = 0x00;
+                SLIP_encode(&dummy, 1, tx_putc);
+            }
+
+
+            CONFIGURATOR_event(TRANSPORT_USB, CONFIGURATOR_EVENT_RX, slip.buffer, slip.message_size);
+            SLIP_init(&slip);
+        }
+    }
 }
 
 
@@ -222,12 +244,10 @@ static void webusb_reset_callback(void)
 
 
 // ****************************************************************************
+
 void WEBUSB_poll(void)
 {
-
     if (usb_configured) {
-        static uint8_t dummy_hop_index = 0;
-        configurator_packet_t *p;
 
         if (ep_length == 0  &&  ! RING_BUFFER_is_empty(&usb_tx_ring_buffer)) {
             ep_length = RING_BUFFER_read(&usb_tx_ring_buffer, ep_buffer, 64);
@@ -243,12 +263,24 @@ void WEBUSB_poll(void)
             }
         }
 
-        p = CONFIGURATOR_send_request(TRANSPORT_USB, dummy_hop_index, 1);
-        if (p != NULL  &&  p->payload_size > 0) {
-            // FIXME: slip encoding required!
-            RING_BUFFER_write(&usb_tx_ring_buffer, p->payload, p->payload_size);
+
+        if (RING_BUFFER_is_empty(&usb_tx_ring_buffer)) {
+            static uint32_t next = 1000;
+
+            if (milliseconds > next) {
+                static uint8_t dummy_hop_index = 0;
+                configurator_packet_t *p;
+
+                next += 5;
+
+                p = CONFIGURATOR_send_request(TRANSPORT_USB, dummy_hop_index, 1);
+                if (p != NULL  &&  p->payload_size > 0) {
+                    // printf("%lu USB send %d\n", milliseconds, p->payload_size);
+                    SLIP_encode(p->payload, p->payload_size, tx_putc);
+                }
+                ++dummy_hop_index;
+            }
         }
-        ++dummy_hop_index;
     }
 
     usbd_poll(webusb_device);
@@ -259,6 +291,10 @@ void WEBUSB_poll(void)
 void WEBUSB_init(void)
 {
     RING_BUFFER_init(&usb_tx_ring_buffer, usb_tx_buffer, USB_TX_BUFFER_SIZE);
+
+    slip.buffer = slip_buffer;
+    slip.buffer_size = sizeof(slip_buffer);
+    SLIP_init(&slip);
 
     SERIAL_NUMBER_get(serial_number);
 

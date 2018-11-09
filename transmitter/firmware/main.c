@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <libopencm3/stm32/flash.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
@@ -67,6 +68,55 @@ void nmi_handler(void) {
 
 
 // ****************************************************************************
+static void clock_setup_in_hse_8mhz_out_48mhz(void)
+{
+    // Enable internal high-speed oscillator
+    rcc_osc_on(RCC_HSI);
+    rcc_wait_for_osc_ready(RCC_HSI);
+
+    // Select HSI as SYSCLK source for now
+    rcc_set_sysclk_source(RCC_CFGR_SW_SYSCLKSEL_HSICLK);
+
+    // Enable external high-speed oscillator, running at 8MHz
+    rcc_osc_on(RCC_HSE);
+    rcc_wait_for_osc_ready(RCC_HSE);
+    rcc_set_sysclk_source(RCC_CFGR_SW_SYSCLKSEL_HSECLK);
+
+    // Set prescalers for AHB, ADC, ABP1, ABP2 and USB
+    rcc_set_hpre(RCC_CFGR_HPRE_SYSCLK_NODIV);    /* Set. 48MHz Max. 72MHz */
+    rcc_set_adcpre(RCC_CFGR_ADCPRE_PCLK2_DIV4);  /* Set. 12MHz Max. 14MHz */
+    rcc_set_ppre1(RCC_CFGR_PPRE1_HCLK_DIV2);     /* Set. 24MHz Max. 36MHz */
+    rcc_set_ppre2(RCC_CFGR_PPRE2_HCLK_DIV2);     /* Set. 24MHz Max. 72MHz */
+    rcc_set_usbpre(RCC_CFGR_USBPRE_PLL_CLK_NODIV);  /* Set 48MHz Max. 48MHz */
+
+    // Sysclk runs with 48 MHz, so we need 1 waitstate.
+    flash_set_ws(FLASH_ACR_LATENCY_1WS);
+
+    // Set the PLL multiplication factor to 6.
+    // 8MHz (external) * 6 (multiplier) = 48MHz
+    rcc_set_pll_multiplication_factor(RCC_CFGR_PLLMUL_PLL_CLK_MUL6);
+
+    // Select HSE as PLL source
+    rcc_set_pll_source(RCC_CFGR_PLLSRC_HSE_CLK);
+
+    // External frequency undivided before entering PLL (only valid/needed for HSE)
+    rcc_set_pllxtpre(RCC_CFGR_PLLXTPRE_HSE_CLK);
+
+    // Enable PLL oscillator and wait for it to stabilize
+    rcc_osc_on(RCC_PLL);
+    rcc_wait_for_osc_ready(RCC_PLL);
+
+    // Select PLL as SYSCLK source
+    rcc_set_sysclk_source(RCC_CFGR_SW_SYSCLKSEL_PLLCLK);
+
+    // Set the peripheral clock frequencies used
+    rcc_ahb_frequency = 48000000;
+    rcc_apb1_frequency = 24000000;
+    rcc_apb2_frequency = 24000000;
+}
+
+
+// ****************************************************************************
 static void clock_init(void)
 {
     // Enable the Clock Security System
@@ -75,7 +125,8 @@ static void clock_init(void)
     // NOTE: the transmitter will not boot when the crystal is not working as
     // there is no timeout waiting for the HSE in rcc_clock_setup_in_hse_8mhz_out_24mhz().
     // rcc_clock_setup_in_hse_8mhz_out_24mhz();
-    rcc_clock_setup_in_hsi_out_48mhz();
+    // rcc_clock_setup_in_hsi_out_48mhz();
+    clock_setup_in_hse_8mhz_out_48mhz();
 
     // Enable clocks for GPIO port A (for GPIO_USART1_TX) and C (LED)
     // IMPORTANT: you can not 'or' them into one call due to bit-mangling

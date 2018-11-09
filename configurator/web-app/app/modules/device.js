@@ -763,9 +763,7 @@ class Device {
     else if (data[0] === this.TX_FREE_TO_CONNECT) {
       DeviceList.transmitterFreeToConnect(data);
     }
-    else {
-      this._resolvePromises(data);
-    }
+    this._resolvePromises(data);
     this._sendCfgPacket();
   }
 

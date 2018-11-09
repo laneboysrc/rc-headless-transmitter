@@ -150,11 +150,6 @@ static const char *usb_strings[] = {
     serial_number
 };
 
-static void tx_putc(uint8_t byte)
-{
-    RING_BUFFER_write_uint8(&usb_tx_ring_buffer, byte);
-}
-
 // ****************************************************************************
 static enum usbd_request_return_codes webusb_control_request(usbd_device *usbd_dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
 {
@@ -202,10 +197,10 @@ static void webusb_receive_callback(usbd_device *usbd_dev, uint8_t ep)
 
 
 // ****************************************************************************
-void WEBUSB_putc(char c)
-{
-    RING_BUFFER_write(&usb_tx_ring_buffer, (uint8_t *)&c, 1);
-}
+// void WEBUSB_putc(char c)
+// {
+//     RING_BUFFER_write(&usb_tx_ring_buffer, (uint8_t *)&c, 1);
+// }
 
 
 // ****************************************************************************
@@ -238,6 +233,10 @@ static void webusb_reset_callback(void)
 
 
 // ****************************************************************************
+static void tx_putc(uint8_t byte)
+{
+    RING_BUFFER_write_uint8(&usb_tx_ring_buffer, byte);
+}
 
 void WEBUSB_poll(void)
 {

@@ -164,7 +164,6 @@ static enum usbd_request_return_codes webusb_control_request(usbd_device *usbd_d
     (void) complete;
 
     printf("webusb_control_request() bmRequestType=%02x bRequest=%d\n", req->bmRequestType, req->bRequest);
-    // LED_pulse();
 
     switch (req->bRequest) {
         // return USBD_REQ_HANDLED;
@@ -195,13 +194,6 @@ static void webusb_receive_callback(usbd_device *usbd_dev, uint8_t ep)
 
     for (int i = 0; i < len; i++) {
         if (SLIP_decode(&slip,  buf[i])) {
-
-            if (slip.buffer[0] == 0x31) {
-                uint8_t dummy = 0x00;
-                SLIP_encode(&dummy, 1, tx_putc);
-            }
-
-
             CONFIGURATOR_event(TRANSPORT_USB, CONFIGURATOR_EVENT_RX, slip.buffer, slip.message_size);
             SLIP_init(&slip);
         }
@@ -220,7 +212,6 @@ void WEBUSB_putc(char c)
 static void webusb_set_config_callback(usbd_device *usbd_dev, uint16_t wValue)
 {
     printf("webusb_set_config_callback() config=%d\n", wValue);
-    // LED_pulse();
 
     usbd_ep_setup(usbd_dev, 0x01, USB_ENDPOINT_ATTR_BULK, 64, webusb_receive_callback);
     usbd_ep_setup(usbd_dev, 0x82, USB_ENDPOINT_ATTR_BULK, 64, NULL);
@@ -237,7 +228,10 @@ static void webusb_set_config_callback(usbd_device *usbd_dev, uint16_t wValue)
 static void webusb_reset_callback(void)
 {
     printf("webusb_reset_callback()\n");
-    // LED_pulse();
+
+    if (CONFIGURATOR_is_connected(TRANSPORT_USB)) {
+        CONFIGURATOR_event(TRANSPORT_USB, CONFIGURATOR_EVENT_TIMEOUT, NULL, 0);
+    }
 
     usb_configured = false;
 }
@@ -258,27 +252,23 @@ void WEBUSB_poll(void)
 
             result = usbd_ep_write_packet(webusb_device, 0x82, ep_buffer, ep_length);
             if (result) {
-                // LED_pulse();
                 ep_length = 0;
             }
         }
 
 
         if (RING_BUFFER_is_empty(&usb_tx_ring_buffer)) {
-            static uint32_t next = 1000;
+            static uint32_t next = 500;
 
             if (milliseconds > next) {
-                static uint8_t dummy_hop_index = 0;
                 configurator_packet_t *p;
 
                 next += 5;
 
-                p = CONFIGURATOR_send_request(TRANSPORT_USB, dummy_hop_index, 1);
+                p = CONFIGURATOR_send_request(TRANSPORT_USB, 0, 1);
                 if (p != NULL  &&  p->payload_size > 0) {
-                    // printf("%lu USB send %d\n", milliseconds, p->payload_size);
                     SLIP_encode(p->payload, p->payload_size, tx_putc);
                 }
-                ++dummy_hop_index;
             }
         }
     }

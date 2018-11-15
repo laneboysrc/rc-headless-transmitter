@@ -71,7 +71,7 @@ static void adc_init(void)
     adc_power_off(ADC1);
 
     rcc_periph_reset_pulse(RST_ADC1);
-    rcc_set_adcpre(RCC_CFGR_ADCPRE_PCLK2_DIV2);     // 12MHz ADC clock
+    // rcc_set_adcpre(RCC_CFGR_ADCPRE_PCLK2_DIV2);     // 12MHz ADC clock
 
     /* We configure to scan the entire group each time conversion is requested. */
     adc_enable_scan_mode(ADC1);

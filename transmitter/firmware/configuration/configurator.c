@@ -94,26 +94,41 @@ static configurator_packet_t * make_info_packet(void)
     static uint8_t frame_count = 0;
     uint8_t i;
     uint8_t start_adc_channel;
+    uint8_t adc_count;
 
     memcpy(packet.address, session_address, CONFIGURATOR_ADDRESS_SIZE);
     packet.channel = session_hop_channels[session_hop_index];
     packet.payload[0] = TX_INFO;
+    packet.payload_size = 1;
+    packet.send_without_ack = false;
+    packet.send_another_packet = false;
 
     // FIXME: send all items that are in use by the transmitter
     switch (frame_count) {
         case 0:
         default:
             frame_count = 1;
+            // Send raw ADC value 1..4
             start_adc_channel = 1;
+            adc_count = 4;
             break;
 
         case 1:
-            frame_count = 0;
+            frame_count = 2;
+            // Send raw ADC value 5..8
             start_adc_channel = 5;
+            adc_count = 4;
+            break;
+
+        case 2:
+            frame_count = 0;
+            // Send raw ADC value 9
+            start_adc_channel = 9;
+            adc_count = 1;
             break;
     }
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < adc_count; i++) {
         uint16_t label = ADC0_RAW + start_adc_channel + i;
         int32_t value = INPUTS_get_raw_adc_value(start_adc_channel + i);
         uint8_t offset = 1 + (i * 6);
@@ -125,12 +140,9 @@ static configurator_packet_t * make_info_packet(void)
         packet.payload[offset + 3] = value >> 8;
         packet.payload[offset + 4] = value >> 16;
         packet.payload[offset + 5] = value >> 24;
+
+        packet.payload_size += 6;
     }
-
-    packet.payload_size = 25;
-
-    packet.send_without_ack = false;
-    packet.send_another_packet = false;
 
     return &packet;
 }

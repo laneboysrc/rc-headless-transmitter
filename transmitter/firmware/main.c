@@ -80,7 +80,6 @@ static void clock_setup_in_hse_8mhz_out_48mhz(void)
     // Enable external high-speed oscillator, running at 8MHz
     rcc_osc_on(RCC_HSE);
     rcc_wait_for_osc_ready(RCC_HSE);
-    rcc_set_sysclk_source(RCC_CFGR_SW_SYSCLKSEL_HSECLK);
 
     // We configure the PLL as system clock source, using the 8 MHz crystal
     // on the blue pill board, running at 48 MHz (multiply by 6).
@@ -88,7 +87,7 @@ static void clock_setup_in_hse_8mhz_out_48mhz(void)
     // The APB1 and APB2 clock are also set to 24 MHz (no divider).
     // USB runs from the PLL at 48 MHz.
     // The ADC runs at APB2 clock divide by 2 => 12 MHz.
-    rcc_set_hpre(RCC_CFGR_PPRE1_HCLK_DIV2);         // 24MHz (max 72MHz)
+    rcc_set_hpre(RCC_CFGR_HPRE_SYSCLK_DIV2);        // 24MHz (max 72MHz)
     rcc_set_ppre1(RCC_CFGR_PPRE1_HCLK_NODIV);       // 24MHz (max 36MHz)
     rcc_set_ppre2(RCC_CFGR_PPRE2_HCLK_NODIV);       // 24MHz (max 72MHz)
     rcc_set_adcpre(RCC_CFGR_ADCPRE_PCLK2_DIV2);     // 12MHz (max 14MHz)
@@ -125,7 +124,7 @@ static void clock_setup_in_hse_8mhz_out_48mhz(void)
 static void clock_init(void)
 {
     // Enable the Clock Security System
-    rcc_css_enable();
+    // rcc_css_enable();
 
     // NOTE: the transmitter will not boot when the crystal is not working as
     // there is no timeout waiting for the HSE in rcc_clock_setup_in_hse_8mhz_out_24mhz().

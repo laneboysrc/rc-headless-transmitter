@@ -82,12 +82,17 @@ static void clock_setup_in_hse_8mhz_out_48mhz(void)
     rcc_wait_for_osc_ready(RCC_HSE);
     rcc_set_sysclk_source(RCC_CFGR_SW_SYSCLKSEL_HSECLK);
 
-    // Set prescalers for AHB, ADC, ABP1, ABP2 and USB
-    rcc_set_hpre(RCC_CFGR_HPRE_SYSCLK_NODIV);    /* Set. 48MHz Max. 72MHz */
-    rcc_set_adcpre(RCC_CFGR_ADCPRE_PCLK2_DIV4);  /* Set. 12MHz Max. 14MHz */
-    rcc_set_ppre1(RCC_CFGR_PPRE1_HCLK_DIV2);     /* Set. 24MHz Max. 36MHz */
-    rcc_set_ppre2(RCC_CFGR_PPRE2_HCLK_DIV2);     /* Set. 24MHz Max. 72MHz */
-    rcc_set_usbpre(RCC_CFGR_USBPRE_PLL_CLK_NODIV);  /* Set 48MHz Max. 48MHz */
+    // We configure the PLL as system clock source, using the 8 MHz crystal
+    // on the blue pill board, running at 48 MHz (multiply by 6).
+    // We divide the system clock by 2 to get a 24 MHz AHB clock.
+    // The APB1 and APB2 clock are also set to 24 MHz (no divider).
+    // USB runs from the PLL at 48 MHz.
+    // The ADC runs at APB2 clock divide by 2 => 12 MHz.
+    rcc_set_hpre(RCC_CFGR_PPRE1_HCLK_DIV2);         // 24MHz (max 72MHz)
+    rcc_set_ppre1(RCC_CFGR_PPRE1_HCLK_NODIV);       // 24MHz (max 36MHz)
+    rcc_set_ppre2(RCC_CFGR_PPRE2_HCLK_NODIV);       // 24MHz (max 72MHz)
+    rcc_set_adcpre(RCC_CFGR_ADCPRE_PCLK2_DIV2);     // 12MHz (max 14MHz)
+    rcc_set_usbpre(RCC_CFGR_USBPRE_PLL_CLK_NODIV);  // 48MHz
 
     // Sysclk runs with 48 MHz, so we need 1 waitstate.
     flash_set_ws(FLASH_ACR_LATENCY_1WS);
@@ -110,7 +115,7 @@ static void clock_setup_in_hse_8mhz_out_48mhz(void)
     rcc_set_sysclk_source(RCC_CFGR_SW_SYSCLKSEL_PLLCLK);
 
     // Set the peripheral clock frequencies used
-    rcc_ahb_frequency = 48000000;
+    rcc_ahb_frequency = 24000000;
     rcc_apb1_frequency = 24000000;
     rcc_apb2_frequency = 24000000;
 }

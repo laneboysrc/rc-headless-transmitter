@@ -52,7 +52,7 @@ void SOUND_init(void)
     // Note: if APB1 presecaler is not set to 1, then the TIM2 clock is twice
     // the APB1 clock
     // If it is set to 1, TIM2 clock == APB1 clock
-    sound_timer_frequency = rcc_apb1_frequency * 2 / SOUND_TIMER_PRESCALER;
+    sound_timer_frequency = rcc_apb1_frequency / SOUND_TIMER_PRESCALER;
 
     timer_set_oc_mode(TIM2, TIM_OC1, TIM_OCM_PWM1);
     timer_enable_oc_preload(TIM2, TIM_OC1);

@@ -1133,7 +1133,7 @@ void INPUTS_dump_adc(void)
     printf("adc_index = %d\n", adc_index);
 #endif
 
-#if 1
+#if 0
     do {
         static uint8_t last_switch_value = 99;
         uint8_t value;
@@ -1155,6 +1155,19 @@ void INPUTS_dump_adc(void)
         if (value != last_value) {
             last_value = value;
             printf("trim(ST): %ld\n", value);
+        }
+    } while (0);
+#endif
+
+#if 0
+    do {
+        static int32_t last_value = 99;
+        int32_t value;
+
+        value = rf_channels[0];
+        if (value != last_value) {
+            last_value = value;
+            printf("rf_channels[0]: %ld\n", value);
         }
     } while (0);
 #endif

@@ -110,7 +110,7 @@ static uint16_t channel_to_stickdata(int32_t ch)
         0           524000       1024000    1524000    2048000
 
     Translated 12 bit values:
-        0           1048       2048    2048     4095
+        0           1048       2048    3048     4095
 
     => 12 bit value = ns / 500
 */

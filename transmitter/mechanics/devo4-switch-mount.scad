@@ -6,13 +6,13 @@ $fs = 0.5;
 
 x = 24.6;
 y = 10;
-h = 4;
+h = 3;
 sw_x = 6;
 sw_w = 9;
 sw_y = 3.5;
 screw_distance = 19;
-screw_d = 1.5;
-screw_y = 2;
+screw_d = 1.6;
+screw_y = 2.5;
 
 screw_x = (x - screw_distance) / 2;
 

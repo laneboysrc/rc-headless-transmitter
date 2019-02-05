@@ -79,9 +79,9 @@ Some, or all, *PCB inputs* are connected to control devices such as sticks, pots
 * Analog with center detent: -100..0..100
 * Analog without center detent: -100..100
 * Analog without center detent, positive only: 0..100
-* Switch on/off: Open / GND (pull-up)
+* Switch on/off: Open / Vcc (pull-down)
 * Switch 3-position:  GND / Open / Vcc
-* Momentary: Open / GND (pull-up)
+* Momentary: Open / Vcc (pull-down)
 
 The analog type *Hardware inputs* can only be assigned to *PCB inputs* of type analog/digital.
 

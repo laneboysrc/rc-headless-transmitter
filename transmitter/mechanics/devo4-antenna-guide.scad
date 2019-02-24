@@ -6,15 +6,15 @@ $fn = 50;
 
 d_ring = 16;
 d_outer = 20;
-h = 11;
+h = 8;
 h_rim = 2;
-z_rim = 4;
+z_rim = 2;
 
 d_screw = 6;
-screw_y = 7.5;
+screw_y = 6;
 
-d_antenna = 7;
-d_antenna_recess = 12;
+d_antenna = 11;
+d_antenna_recess = 11;
 h_antenna = 3;
 
 

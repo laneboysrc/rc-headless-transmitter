@@ -46,6 +46,7 @@ class HardwareInputs {
       let isAnalog = (hardwareInputType >= 1  &&  hardwareInputType <= 4);
       let isAnalogWithCenter = (hardwareInputType >= 1  &&  hardwareInputType <= 2);
       let canCalibrate = Device.MODEL && isAnalog;
+      canCalibrate = true;
 
       Utils.setVisibility('.app-hardware_inputs-calibrate', canCalibrate, t);
       Utils.setVisibility('.app-hardware_inputs-calibrate__left', isAnalog, t);
@@ -54,6 +55,11 @@ class HardwareInputs {
       mdl.setAttribute('.app-hardware_inputs-calibrate__left', 'data-index', i, t);
       mdl.setAttribute('.app-hardware_inputs-calibrate__center', 'data-index', i, t);
       mdl.setAttribute('.app-hardware_inputs-calibrate__right', 'data-index', i, t);
+
+      let progress = t.querySelector('.app-hardware_inputs-value');
+      componentHandler.upgradeElement(progress);
+      mdl.setAttribute('.app-hardware_inputs-value', 'data-index', i, t);
+      progress.MaterialProgress.setProgress(50);
 
       this.list.appendChild(t);
     }

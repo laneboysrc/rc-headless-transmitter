@@ -351,6 +351,14 @@ span.mdl-list__item-primary-content label {
   display: block;
 }
 
+.app-hardware_inputs-calibrate > div {
+    margin-bottom: 1rem;
+}
+
+.app-hardware_inputs-calibrate .mdl-progress {
+  width: 100%;
+}
+
 .app-select_multiple__info {
   font-size: 0.75rem;
   color: #757575;

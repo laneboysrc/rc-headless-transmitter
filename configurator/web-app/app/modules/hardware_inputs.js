@@ -3,6 +3,7 @@
 var Utils = require('./utils');
 var MDLHelper = require('./mdl_helper');
 
+const UPDATE_TIMEOUT = 50;
 
 class HardwareInputs {
   constructor() {
@@ -46,7 +47,6 @@ class HardwareInputs {
       let isAnalog = (hardwareInputType >= 1  &&  hardwareInputType <= 4);
       let isAnalogWithCenter = (hardwareInputType >= 1  &&  hardwareInputType <= 2);
       let canCalibrate = Device.MODEL && isAnalog;
-      canCalibrate = true;
 
       Utils.setVisibility('.app-hardware_inputs-calibrate', canCalibrate, t);
       Utils.setVisibility('.app-hardware_inputs-calibrate__left', isAnalog, t);
@@ -57,14 +57,25 @@ class HardwareInputs {
       mdl.setAttribute('.app-hardware_inputs-calibrate__right', 'data-index', i, t);
 
       let progress = t.querySelector('.app-hardware_inputs-value');
-      componentHandler.upgradeElement(progress);
-      mdl.setAttribute('.app-hardware_inputs-value', 'data-index', i, t);
-      progress.MaterialProgress.setProgress(50);
+      if (isAnalog) {
+        componentHandler.upgradeElement(progress);
+        let hardwareInputs = Device.TX.getSchema()['HARDWARE_INPUTS'];
+        let txOffset = i * hardwareInputs.s;
+        let adcChannel = Device.TX.getItem('HARDWARE_INPUTS_PCB_INPUT_ADC_CHANNEL', {offset: txOffset});
+        mdl.setAttribute('.app-hardware_inputs-value', 'data-index', i, t);
+        mdl.setAttribute('.app-hardware_inputs-value', 'data-adc', adcChannel, t);
+        progress.MaterialProgress.setProgress(50);
+      }
+      else {
+        progress.parentNode.removeChild(progress);
+      }
+
 
       this.list.appendChild(t);
     }
 
     Utils.showPage('hardware_inputs');
+    setTimeout(this._updateHardwareInputValues.bind(this), UPDATE_TIMEOUT);
   }
 
   //*************************************************************************
@@ -108,24 +119,24 @@ class HardwareInputs {
     Utils.cancelBubble(event);
     let hardwareInputIndex = parseInt(button.getAttribute('data-index'));
 
-    console.log('HardwareInputs.calibrate()', hardwareInputIndex, position)
+    console.log('HardwareInputs.calibrate()', hardwareInputIndex, position);
 
     switch (position) {
-      case 'left':
-        position = 0;
-        break;
+    case 'left':
+      position = 0;
+      break;
 
-      case 'center':
-        position = 1;
-        break;
+    case 'center':
+      position = 1;
+      break;
 
-      case 'right':
-        position = 2;
-        break;
+    case 'right':
+      position = 2;
+      break;
 
-      default:
-        console.log('HardwareInputs.calibrate(): unknown position value', position);
-        break;
+    default:
+      console.log('HardwareInputs.calibrate(): unknown position value', position);
+      break;
     }
 
     let hardwareInputs = Device.TX.getSchema()['HARDWARE_INPUTS'];
@@ -139,6 +150,26 @@ class HardwareInputs {
       Device.TX.setItem('HARDWARE_INPUTS_CALIBRATION', value, options);
     }
   }
+
+  _updateHardwareInputValues() {
+    if (!Utils.isPageVisible('hardware_inputs')) {
+      console.warn('Page no longer visible, shutting update down');
+      return;
+    }
+
+    let elements = document.querySelectorAll('.app-hardware_inputs-value');
+    elements.forEach(progress => {
+      let adcChannel = progress.getAttribute('data-adc');
+      let value = Device.getLiveValue(`ADC${adcChannel} (raw)`);
+      if (value != null) {
+        progress.MaterialProgress.setProgress(value * 100 / 4096);
+      }
+    });
+
+    setTimeout(this._updateHardwareInputValues.bind(this), UPDATE_TIMEOUT);
+  }
+
 }
+
 
 window['HardwareInputs'] = new HardwareInputs();

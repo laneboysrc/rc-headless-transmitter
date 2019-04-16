@@ -193,6 +193,14 @@ export function setVisibility(elementOrSelector, value, root) {
   }
 }
 
+export function isPageVisible(pageName) {
+  const page = document.querySelector(`#page_${pageName}`);
+  if (page) {
+    return !page.classList.contains('hidden');
+  }
+  return false;
+}
+
 export function hide(elementOrSelector, root) {
   setVisibility(elementOrSelector, false, root);
 }

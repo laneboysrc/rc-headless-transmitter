@@ -1,3 +1,0 @@
-(fp_lib_table
-  (lib (name WLA)(type KiCad)(uri $KIPRJMOD/../../../kicad-libraries/WLA.pretty)(options "")(descr ""))
-)

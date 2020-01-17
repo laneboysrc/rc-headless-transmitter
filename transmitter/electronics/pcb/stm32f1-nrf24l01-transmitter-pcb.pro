@@ -1,4 +1,4 @@
-update=Thu 09 Feb 2017 08:17:51 AM SGT
+update=Fri Jan 17 14:12:10 2020
 version=1
 last_client=kicad
 [pcbnew]
@@ -39,7 +39,7 @@ LibName15=led
 LibName16=dip_sockets
 LibName17=pga_sockets
 LibName18=valves
-LibDir=../../../kicad-libraries
+LibDir=../../../../kicad-libraries
 [general]
 version=1
 [cvpcb]
@@ -49,22 +49,4 @@ NetIExt=net
 EquName1=devcms
 [eeschema]
 version=1
-LibDir=../../../kicad-libraries
-[eeschema/libraries]
-LibName1=stm32f1-nrf24l01-transmitter-rescue
-LibName2=WLA-STM32
-LibName3=WLA-nrf24
-LibName4=WLA-power
-LibName5=power
-LibName6=device
-LibName7=conn
-LibName8=regul
-LibName9=opto
-LibName10=contrib
-LibName11=analog_switches
-LibName12=display
-LibName13=graphic
-LibName14=interface
-LibName15=logo
-LibName16=references
-LibName17=rfcom
+LibDir=

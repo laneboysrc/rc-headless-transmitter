@@ -1,23 +1,5 @@
-EESchema Schematic File Version 2
-LIBS:stm32f1-nrf24l01-transmitter-rescue
-LIBS:WLA-STM32
-LIBS:WLA-nrf24
-LIBS:WLA-power
-LIBS:power
-LIBS:device
-LIBS:conn
-LIBS:regul
-LIBS:opto
-LIBS:contrib
-LIBS:analog_switches
-LIBS:display
-LIBS:graphic
-LIBS:interface
-LIBS:logo
-LIBS:references
-LIBS:rfcom
-LIBS:stm32f1-nrf24l01-transmitter-cache
-EELAYER 25 0
+EESchema Schematic File Version 4
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -32,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L NRF24L01P U3
+L stm32f1-nrf24l01-transmitter-rescue:NRF24L01P U3
 U 1 1 57202BD1
 P 9650 1650
 F 0 "U3" H 9300 2100 60  0000 L CNN
@@ -43,7 +25,7 @@ F 3 "~" H 9650 1650 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LIPO_CHARGER_+_PROTECTION U1
+L stm32f1-nrf24l01-transmitter-rescue:LIPO_CHARGER_+_PROTECTION U1
 U 1 1 57202BEA
 P 3000 6650
 F 0 "U1" H 2000 7200 60  0000 L CNN
@@ -54,7 +36,7 @@ F 3 "~" H 3000 6650 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L BATTERY BT1
+L stm32f1-nrf24l01-transmitter-rescue:BATTERY BT1
 U 1 1 57202BF9
 P 1300 6650
 F 0 "BT1" H 1300 6850 50  0000 C CNN
@@ -65,7 +47,7 @@ F 3 "~" H 1300 6650 60  0000 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR01
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR01
 U 1 1 57202C42
 P 6450 7300
 F 0 "#PWR01" H 6450 7300 30  0001 C CNN
@@ -76,7 +58,7 @@ F 3 "" H 6450 7300 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VDD #PWR02
+L stm32f1-nrf24l01-transmitter-rescue:VDD #PWR02
 U 1 1 57202CE6
 P 6450 6400
 F 0 "#PWR02" H 6450 6500 30  0001 C CNN
@@ -87,7 +69,7 @@ F 3 "" H 6450 6400 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VDD #PWR03
+L stm32f1-nrf24l01-transmitter-rescue:VDD #PWR03
 U 1 1 57202CFF
 P 4550 850
 F 0 "#PWR03" H 4550 950 30  0001 C CNN
@@ -98,7 +80,7 @@ F 3 "" H 4550 850 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VCC #PWR04
+L stm32f1-nrf24l01-transmitter-rescue:VCC #PWR04
 U 1 1 57202D18
 P 5550 850
 F 0 "#PWR04" H 5550 950 30  0001 C CNN
@@ -109,7 +91,7 @@ F 3 "" H 5550 850 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR05
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR05
 U 1 1 57202D59
 P 4800 4750
 F 0 "#PWR05" H 4800 4750 30  0001 C CNN
@@ -120,7 +102,7 @@ F 3 "" H 4800 4750 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR06
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR06
 U 1 1 57202D68
 P 5000 4750
 F 0 "#PWR06" H 5000 4750 30  0001 C CNN
@@ -131,7 +113,7 @@ F 3 "" H 5000 4750 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR07
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR07
 U 1 1 57202D77
 P 5200 4750
 F 0 "#PWR07" H 5200 4750 30  0001 C CNN
@@ -142,7 +124,7 @@ F 3 "" H 5200 4750 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C-RESCUE-stm32f1-nrf24l01-transmitter C1
+L stm32f1-nrf24l01-transmitter-rescue:C-RESCUE-stm32f1-nrf24l01-transmitter C1
 U 1 1 57202EE1
 P 10350 1150
 F 0 "C1" H 10350 1250 40  0000 L CNN
@@ -153,7 +135,7 @@ F 3 "~" H 10350 1150 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR08
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR08
 U 1 1 57202EF0
 P 10350 1450
 F 0 "#PWR08" H 10350 1450 30  0001 C CNN
@@ -164,7 +146,7 @@ F 3 "" H 10350 1450 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VCC #PWR09
+L stm32f1-nrf24l01-transmitter-rescue:VCC #PWR09
 U 1 1 57202F26
 P 9650 750
 F 0 "#PWR09" H 9650 850 30  0001 C CNN
@@ -193,7 +175,7 @@ SCK
 Text Label 8500 1900 0    60   ~ 0
 CSN
 $Comp
-L R-RESCUE-stm32f1-nrf24l01-transmitter R1
+L stm32f1-nrf24l01-transmitter-rescue:R-RESCUE-stm32f1-nrf24l01-transmitter R1
 U 1 1 572032A2
 P 7550 5850
 F 0 "R1" V 7630 5850 40  0000 C CNN
@@ -204,7 +186,7 @@ F 3 "~" H 7550 5850 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L CONN_2 P2
+L stm32f1-nrf24l01-transmitter-rescue:CONN_2 P2
 U 1 1 572032B1
 P 7200 5350
 F 0 "P2" V 7150 5350 40  0000 C CNN
@@ -215,7 +197,7 @@ F 3 "" H 7200 5350 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L VCC #PWR010
+L stm32f1-nrf24l01-transmitter-rescue:VCC #PWR010
 U 1 1 572032C0
 P 7550 5100
 F 0 "#PWR010" H 7550 5200 30  0001 C CNN
@@ -233,7 +215,7 @@ LED
 Text Label 3200 3750 0    60   ~ 0
 LED
 $Comp
-L R-RESCUE-stm32f1-nrf24l01-transmitter R2
+L stm32f1-nrf24l01-transmitter-rescue:R-RESCUE-stm32f1-nrf24l01-transmitter R2
 U 1 1 57203444
 P 8750 5450
 F 0 "R2" V 8830 5450 40  0000 C CNN
@@ -244,7 +226,7 @@ F 3 "~" H 8750 5450 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R-RESCUE-stm32f1-nrf24l01-transmitter R3
+L stm32f1-nrf24l01-transmitter-rescue:R-RESCUE-stm32f1-nrf24l01-transmitter R3
 U 1 1 57203451
 P 8750 6050
 F 0 "R3" V 8830 6050 40  0000 C CNN
@@ -255,7 +237,7 @@ F 3 "~" H 8750 6050 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VDD #PWR011
+L stm32f1-nrf24l01-transmitter-rescue:VDD #PWR011
 U 1 1 57203459
 P 8750 5100
 F 0 "#PWR011" H 8750 5200 30  0001 C CNN
@@ -266,7 +248,7 @@ F 3 "" H 8750 5100 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR012
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR012
 U 1 1 572034AB
 P 8750 6400
 F 0 "#PWR012" H 8750 6400 30  0001 C CNN
@@ -303,7 +285,7 @@ PB1/ADC9
 Text Label 3200 2700 0    60   ~ 0
 IRQ
 $Comp
-L CONN_3 K1
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K1
 U 1 1 57203BE7
 P 1300 1250
 F 0 "K1" V 1250 1250 50  0000 C CNN
@@ -314,7 +296,7 @@ F 3 "" H 1300 1250 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K2
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K2
 U 1 1 57203BF4
 P 1300 1650
 F 0 "K2" V 1250 1650 50  0000 C CNN
@@ -325,7 +307,7 @@ F 3 "" H 1300 1650 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K3
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K3
 U 1 1 57203C22
 P 1300 2050
 F 0 "K3" V 1250 2050 50  0000 C CNN
@@ -336,7 +318,7 @@ F 3 "" H 1300 2050 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K4
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K4
 U 1 1 57203C28
 P 1300 2450
 F 0 "K4" V 1250 2450 50  0000 C CNN
@@ -347,7 +329,7 @@ F 3 "" H 1300 2450 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K5
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K5
 U 1 1 57203C2E
 P 1300 2850
 F 0 "K5" V 1250 2850 50  0000 C CNN
@@ -358,7 +340,7 @@ F 3 "" H 1300 2850 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K6
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K6
 U 1 1 57203C34
 P 1300 3250
 F 0 "K6" V 1250 3250 50  0000 C CNN
@@ -369,7 +351,7 @@ F 3 "" H 1300 3250 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K7
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K7
 U 1 1 57203C3A
 P 1300 3650
 F 0 "K7" V 1250 3650 50  0000 C CNN
@@ -380,7 +362,7 @@ F 3 "" H 1300 3650 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K8
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K8
 U 1 1 57203C40
 P 1300 4050
 F 0 "K8" V 1250 4050 50  0000 C CNN
@@ -391,7 +373,7 @@ F 3 "" H 1300 4050 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K9
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K9
 U 1 1 57203C46
 P 1300 4450
 F 0 "K9" V 1250 4450 50  0000 C CNN
@@ -402,7 +384,7 @@ F 3 "" H 1300 4450 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L VCC #PWR013
+L stm32f1-nrf24l01-transmitter-rescue:VCC #PWR013
 U 1 1 57203C4E
 P 1850 1000
 F 0 "#PWR013" H 1850 1100 30  0001 C CNN
@@ -413,7 +395,7 @@ F 3 "" H 1850 1000 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L CONN_3 K10
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K10
 U 1 1 57203E9D
 P 1300 4850
 F 0 "K10" V 1250 4850 50  0000 C CNN
@@ -424,7 +406,7 @@ F 3 "" H 1300 4850 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_3 K11
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K11
 U 1 1 57203EA3
 P 1300 5250
 F 0 "K11" V 1250 5250 50  0000 C CNN
@@ -435,7 +417,7 @@ F 3 "" H 1300 5250 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR014
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR014
 U 1 1 57203F33
 P 1950 5500
 F 0 "#PWR014" H 1950 5500 30  0001 C CNN
@@ -472,7 +454,7 @@ PB10
 Text Label 6700 3000 2    60   ~ 0
 PB11
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR015
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR015
 U 1 1 57204AD8
 P 10050 6100
 F 0 "#PWR015" H 10050 6100 30  0001 C CNN
@@ -495,7 +477,7 @@ RX
 Text Notes 7150 4850 0    60   ~ 0
 Front panel LED
 $Comp
-L SPEAKER SP1
+L stm32f1-nrf24l01-transmitter-rescue:SPEAKER SP1
 U 1 1 5720518F
 P 10650 3450
 F 0 "SP1" H 10550 3700 70  0000 C CNN
@@ -506,7 +488,7 @@ F 3 "~" H 10650 3450 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR016
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR016
 U 1 1 572051AD
 P 9800 4250
 F 0 "#PWR016" H 9800 4250 30  0001 C CNN
@@ -517,7 +499,7 @@ F 3 "" H 9800 4250 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R-RESCUE-stm32f1-nrf24l01-transmitter R4
+L stm32f1-nrf24l01-transmitter-rescue:R-RESCUE-stm32f1-nrf24l01-transmitter R4
 U 1 1 572052B4
 P 9250 3650
 F 0 "R4" V 9330 3650 40  0000 C CNN
@@ -530,7 +512,7 @@ $EndComp
 Text Label 8750 3150 0    60   ~ 0
 BUZZER
 $Comp
-L VDD #PWR017
+L stm32f1-nrf24l01-transmitter-rescue:VDD #PWR017
 U 1 1 572053AF
 P 9800 3100
 F 0 "#PWR017" H 9800 3200 30  0001 C CNN
@@ -543,7 +525,7 @@ $EndComp
 Text Label 3200 3450 0    60   ~ 0
 BUZZER
 $Comp
-L CONN_2 P1
+L stm32f1-nrf24l01-transmitter-rescue:CONN_2 P1
 U 1 1 57205598
 P 1300 5900
 F 0 "P1" V 1250 5900 40  0000 C CNN
@@ -556,7 +538,7 @@ $EndComp
 Text Notes 9500 2850 0    60   ~ 0
 Alarm buzzer
 $Comp
-L SPST SW1
+L stm32f1-nrf24l01-transmitter-rescue:SPST SW1
 U 1 1 572058EC
 P 4950 5850
 F 0 "SW1" H 4950 5950 70  0000 C CNN
@@ -567,7 +549,7 @@ F 3 "~" H 4950 5850 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L PWR_FLAG #FLG018
+L stm32f1-nrf24l01-transmitter-rescue:PWR_FLAG #FLG018
 U 1 1 572059A3
 P 6750 6450
 F 0 "#FLG018" H 6750 6545 30  0001 C CNN
@@ -580,7 +562,7 @@ $EndComp
 NoConn ~ 3700 3150
 NoConn ~ 3700 3300
 $Comp
-L PWR_FLAG #FLG019
+L stm32f1-nrf24l01-transmitter-rescue:PWR_FLAG #FLG019
 U 1 1 572067E0
 P 3000 5750
 F 0 "#FLG019" H 3000 5845 30  0001 C CNN
@@ -591,7 +573,7 @@ F 3 "" H 3000 5750 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L PWR_FLAG #FLG020
+L stm32f1-nrf24l01-transmitter-rescue:PWR_FLAG #FLG020
 U 1 1 572067EF
 P 1300 6300
 F 0 "#FLG020" H 1300 6395 30  0001 C CNN
@@ -602,7 +584,7 @@ F 3 "" H 1300 6300 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L PWR_FLAG #FLG021
+L stm32f1-nrf24l01-transmitter-rescue:PWR_FLAG #FLG021
 U 1 1 57206A98
 P 1550 6300
 F 0 "#FLG021" H 1550 6395 30  0001 C CNN
@@ -613,7 +595,7 @@ F 3 "" H 1550 6300 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR022
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR022
 U 1 1 57206B26
 P 9650 2500
 F 0 "#PWR022" H 9650 2500 30  0001 C CNN
@@ -624,7 +606,7 @@ F 3 "" H 9650 2500 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L CONN_2 P4
+L stm32f1-nrf24l01-transmitter-rescue:CONN_2 P4
 U 1 1 572059D9
 P 5950 6850
 F 0 "P4" V 5900 6850 40  0000 C CNN
@@ -635,7 +617,7 @@ F 3 "" H 5950 6850 60  0000 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L CONN_2 P3
+L stm32f1-nrf24l01-transmitter-rescue:CONN_2 P3
 U 1 1 572059F5
 P 5650 6850
 F 0 "P3" V 5600 6850 40  0000 C CNN
@@ -648,7 +630,7 @@ $EndComp
 Text Notes 3200 3550 0    60   ~ 0
 TIM2_CH1
 $Comp
-L STM32F103C8T6_DEV_BOARD U2
+L stm32f1-nrf24l01-transmitter-rescue:STM32F103C8T6_DEV_BOARD U2
 U 1 1 57202BC2
 P 5000 2700
 F 0 "U2" H 4000 4200 60  0000 L CNN
@@ -661,7 +643,7 @@ $EndComp
 Text Label 8500 1400 0    60   ~ 0
 CE
 $Comp
-L C-RESCUE-stm32f1-nrf24l01-transmitter C2
+L stm32f1-nrf24l01-transmitter-rescue:C-RESCUE-stm32f1-nrf24l01-transmitter C2
 U 1 1 5747F7DC
 P 9050 6050
 F 0 "C2" H 9050 6150 40  0000 L CNN
@@ -672,7 +654,7 @@ F 3 "~" H 9050 6050 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR023
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR023
 U 1 1 5747F906
 P 9050 6400
 F 0 "#PWR023" H 9050 6400 30  0001 C CNN
@@ -697,7 +679,7 @@ PB8
 Text Label 6700 2700 2    60   ~ 0
 PB9
 $Comp
-L CONN_2 P5
+L stm32f1-nrf24l01-transmitter-rescue:CONN_2 P5
 U 1 1 589BC0A8
 P 10150 3450
 F 0 "P5" V 10100 3450 40  0000 C CNN
@@ -708,7 +690,7 @@ F 3 "" H 10150 3450 60  0000 C CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L CONN_3 K12
+L stm32f1-nrf24l01-transmitter-rescue:CONN_3 K12
 U 1 1 589BCD46
 P 10500 5600
 F 0 "K12" V 10450 5600 50  0000 C CNN
@@ -731,7 +713,7 @@ Wire Wire Line
 Wire Wire Line
 	10350 1350 10350 1450
 Wire Wire Line
-	9650 750  9650 950 
+	9650 750  9650 850 
 Wire Wire Line
 	10350 850  10350 950 
 Connection ~ 9650 850 
@@ -766,11 +748,11 @@ Wire Wire Line
 Wire Wire Line
 	8750 5100 8750 5200
 Wire Wire Line
-	8750 5700 8750 5800
+	8750 5700 8750 5750
 Wire Wire Line
 	8750 6300 8750 6400
 Wire Wire Line
-	8750 5750 9300 5750
+	8750 5750 9050 5750
 Connection ~ 8750 5750
 Wire Wire Line
 	3700 1500 3200 1500
@@ -797,7 +779,7 @@ Wire Wire Line
 Wire Wire Line
 	1950 5350 1650 5350
 Wire Wire Line
-	1950 1350 1950 5500
+	1950 1350 1950 1750
 Wire Wire Line
 	1650 4950 1950 4950
 Connection ~ 1950 5350
@@ -843,7 +825,7 @@ Wire Wire Line
 Wire Wire Line
 	9800 4100 9800 4250
 Wire Wire Line
-	9800 3550 9800 3700
+	9800 3550 9800 3650
 Wire Wire Line
 	9250 3900 9500 3900
 Wire Wire Line
@@ -851,15 +833,15 @@ Wire Wire Line
 Wire Wire Line
 	9250 3150 8750 3150
 Wire Wire Line
-	9800 3100 9800 3350
+	9800 3100 9800 3250
 Wire Wire Line
 	3200 3450 3700 3450
 Wire Wire Line
 	1650 5800 3000 5800
 Wire Wire Line
-	3000 5750 3000 5850
+	3000 5750 3000 5800
 Wire Wire Line
-	1300 6950 1700 6950
+	1300 6950 1550 6950
 Wire Wire Line
 	1300 6350 1700 6350
 Connection ~ 3000 5800
@@ -895,7 +877,7 @@ Wire Wire Line
 Wire Wire Line
 	1850 5250 1650 5250
 Wire Wire Line
-	1850 1000 1850 5250
+	1850 1000 1850 1250
 Wire Wire Line
 	1650 4850 1850 4850
 Connection ~ 1850 4850
@@ -927,13 +909,13 @@ Wire Wire Line
 	1650 1250 1850 1250
 Connection ~ 1850 1250
 Wire Wire Line
-	6300 6750 6750 6750
+	6300 6750 6450 6750
 Wire Wire Line
-	6450 6400 6450 6750
+	6450 6400 6450 6600
 Wire Wire Line
 	6300 6950 6450 6950
 Wire Wire Line
-	6450 6950 6450 7300
+	6450 6950 6450 7100
 Wire Wire Line
 	6750 6750 6750 6450
 Connection ~ 6450 6750
@@ -946,11 +928,11 @@ Wire Wire Line
 Wire Wire Line
 	5450 6350 5300 6350
 Wire Wire Line
-	5300 6350 5300 6750
+	5300 6350 5300 6600
 Wire Wire Line
 	5550 850  5550 950 
 Wire Wire Line
-	8350 850  10350 850 
+	8350 850  9650 850 
 Wire Wire Line
 	8350 850  8350 1400
 Wire Wire Line
@@ -982,7 +964,7 @@ Wire Wire Line
 	5300 7100 6450 7100
 Connection ~ 6450 7100
 Wire Wire Line
-	9550 3250 10350 3250
+	9550 3250 9800 3250
 Wire Wire Line
 	10350 3250 10350 3350
 Connection ~ 9800 3250
@@ -1002,7 +984,7 @@ NoConn ~ 6700 2250
 NoConn ~ 6700 2400
 NoConn ~ 6700 2550
 $Comp
-L VCC #PWR024
+L stm32f1-nrf24l01-transmitter-rescue:VCC #PWR024
 U 1 1 589BC63C
 P 5000 850
 F 0 "#PWR024" H 5000 950 30  0001 C CNN
@@ -1015,7 +997,7 @@ $EndComp
 Wire Wire Line
 	5000 850  5000 950 
 $Comp
-L Q_NPN_CBE Q1
+L stm32f1-nrf24l01-transmitter-rescue:Q_NPN_CBE Q1
 U 1 1 589EC521
 P 9700 3900
 F 0 "Q1" H 9900 3950 50  0000 L CNN
@@ -1026,7 +1008,7 @@ F 3 "" H 9700 3900 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C3
+L stm32f1-nrf24l01-transmitter-rescue:C C3
 U 1 1 589ECC74
 P 9550 3400
 F 0 "C3" H 9575 3500 50  0000 L CNN
@@ -1037,7 +1019,7 @@ F 3 "" H 9550 3400 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR025
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR025
 U 1 1 589ECD1A
 P 9550 3650
 F 0 "#PWR025" H 9550 3650 30  0001 C CNN
@@ -1050,7 +1032,7 @@ $EndComp
 Wire Wire Line
 	9550 3550 9550 3650
 $Comp
-L CONN_2 P6
+L stm32f1-nrf24l01-transmitter-rescue:CONN_2 P6
 U 1 1 58CFE9D2
 P 7700 3950
 F 0 "P6" V 7650 3950 40  0000 C CNN
@@ -1061,7 +1043,7 @@ F 3 "" H 7700 3950 60  0000 C CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L R-RESCUE-stm32f1-nrf24l01-transmitter R5
+L stm32f1-nrf24l01-transmitter-rescue:R-RESCUE-stm32f1-nrf24l01-transmitter R5
 U 1 1 58D0049F
 P 7350 3400
 F 0 "R5" V 7430 3400 40  0000 C CNN
@@ -1072,7 +1054,7 @@ F 3 "~" H 7350 3400 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C4
+L stm32f1-nrf24l01-transmitter-rescue:C C4
 U 1 1 58D005D2
 P 7000 4000
 F 0 "C4" H 7025 4100 50  0000 L CNN
@@ -1083,7 +1065,7 @@ F 3 "" H 7000 4000 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR026
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR026
 U 1 1 58D00698
 P 7350 4350
 F 0 "#PWR026" H 7350 4350 30  0001 C CNN
@@ -1094,7 +1076,7 @@ F 3 "" H 7350 4350 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR027
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR027
 U 1 1 58D00709
 P 7000 4350
 F 0 "#PWR027" H 7000 4350 30  0001 C CNN
@@ -1119,7 +1101,7 @@ Analog meter (PWM)
 Wire Wire Line
 	1750 6150 1750 6000
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR028
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR028
 U 1 1 58D05116
 P 3000 7550
 F 0 "#PWR028" H 3000 7550 30  0001 C CNN
@@ -1134,7 +1116,7 @@ Wire Wire Line
 Wire Wire Line
 	3000 7450 3000 7550
 $Comp
-L GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR029
+L stm32f1-nrf24l01-transmitter-rescue:GND-RESCUE-stm32f1-nrf24l01-transmitter #PWR029
 U 1 1 58D0663D
 P 1750 6150
 F 0 "#PWR029" H 1750 6150 30  0001 C CNN
@@ -1145,7 +1127,7 @@ F 3 "" H 1750 6150 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L VCC #PWR030
+L stm32f1-nrf24l01-transmitter-rescue:VCC #PWR030
 U 1 1 58D2422E
 P 5350 850
 F 0 "#PWR030" H 5350 950 30  0001 C CNN
@@ -1162,4 +1144,70 @@ Text Notes 7500 3400 0    39   ~ 0
 Resistor value depends on meter. \n3k9 is for the Airtronics meter, \nwhich is full scale 400mV / 670 Ohm.\n3k9 gives 483mV at 3.3V.
 Text Notes 6900 2700 0    60   ~ 0
 TIM4_CH4
+Wire Wire Line
+	9650 850  9650 950 
+Wire Wire Line
+	9650 850  10350 850 
+Wire Wire Line
+	8750 5750 8750 5800
+Wire Wire Line
+	1950 5350 1950 5500
+Wire Wire Line
+	1950 4950 1950 5350
+Wire Wire Line
+	1950 4550 1950 4950
+Wire Wire Line
+	1950 4150 1950 4550
+Wire Wire Line
+	1950 3750 1950 4150
+Wire Wire Line
+	1950 3350 1950 3750
+Wire Wire Line
+	1950 2950 1950 3350
+Wire Wire Line
+	1950 2550 1950 2950
+Wire Wire Line
+	1950 2150 1950 2550
+Wire Wire Line
+	1950 1750 1950 2150
+Wire Wire Line
+	3000 5800 3000 5850
+Wire Wire Line
+	1550 6950 1700 6950
+Wire Wire Line
+	1850 4850 1850 5250
+Wire Wire Line
+	1850 4450 1850 4850
+Wire Wire Line
+	1850 3650 1850 4050
+Wire Wire Line
+	1850 3250 1850 3650
+Wire Wire Line
+	1850 4050 1850 4450
+Wire Wire Line
+	1850 2850 1850 3250
+Wire Wire Line
+	1850 2450 1850 2850
+Wire Wire Line
+	1850 2050 1850 2450
+Wire Wire Line
+	1850 1650 1850 2050
+Wire Wire Line
+	1850 1250 1850 1650
+Wire Wire Line
+	6450 6750 6750 6750
+Wire Wire Line
+	9050 5750 9300 5750
+Wire Wire Line
+	6450 6600 6450 6750
+Wire Wire Line
+	5300 6600 5300 6750
+Wire Wire Line
+	6450 7100 6450 7300
+Wire Wire Line
+	9800 3250 9800 3350
+Wire Wire Line
+	9800 3250 10350 3250
+Wire Wire Line
+	9800 3650 9800 3700
 $EndSCHEMATC

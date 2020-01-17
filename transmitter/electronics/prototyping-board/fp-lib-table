@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name WLA)(type KiCad)(uri /home/laneboysrc/projects/rc-headless-transmitter/transmitter/electronics/WLA.pretty)(options "")(descr ""))
+)

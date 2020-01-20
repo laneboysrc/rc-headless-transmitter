@@ -229,7 +229,7 @@ U 1 1 5720518F
 P 14600 4350
 F 0 "SP1" H 14500 4600 70  0000 C CNN
 F 1 "SPEAKER" H 14500 4100 70  0001 C CNN
-F 2 "Buzzer_Beeper:Buzzer_12x9.5RM7.6" H 14600 4350 60  0001 C CNN
+F 2 "Buzzer_Beeper:MagneticBuzzer_PUI_AT-0927-TT-6-R" H 14600 4350 60  0001 C CNN
 F 3 "~" H 14600 4350 60  0000 C CNN
 	1    14600 4350
 	1    0    0    -1  
@@ -871,8 +871,6 @@ F 3 "~" H 14100 2050 50  0001 C CNN
 	1    0    0    1   
 $EndComp
 Wire Wire Line
-	13150 2350 13150 2650
-Wire Wire Line
 	13600 2250 13900 2250
 Wire Wire Line
 	13900 2150 13000 2150
@@ -880,8 +878,6 @@ Wire Wire Line
 	13000 2050 13900 2050
 Wire Wire Line
 	13000 1950 13900 1950
-Wire Wire Line
-	13000 1850 13300 1850
 Text Label 13000 2150 0    50   ~ 0
 CSN
 Text Label 13000 1750 0    50   ~ 0
@@ -929,8 +925,6 @@ Wire Wire Line
 	5350 8350 5350 8750
 Wire Wire Line
 	5350 8750 5650 8750
-Text Notes 14250 2350 0    50   ~ 0
-Note that 4 pins of J22 and J? are \nmade to overlap, so that we can either\nmount a JST XH connector for wires to\nan external module, or a pin header for \ndirect NRF module mounting.
 $Comp
 L Mechanical:MountingHole H1
 U 1 1 5E38CF71
@@ -1413,51 +1407,12 @@ F 3 "https://www.fairchildsemi.com/datasheets/BS/BSS138.pdf" H 13650 4850 50  00
 $EndComp
 Wire Wire Line
 	12800 4850 13450 4850
-$Comp
-L Connector_Generic:Conn_01x04 J28
-U 1 1 5EF456C6
-P 14100 2750
-F 0 "J28" H 14180 2742 50  0000 L CNN
-F 1 "NRF24 module" H 14180 2651 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 14100 2750 50  0001 C CNN
-F 3 "~" H 14100 2750 50  0001 C CNN
-	1    14100 2750
-	1    0    0    -1  
-$EndComp
-Text Label 13800 2750 0    50   ~ 0
-CE
-Wire Wire Line
-	13450 2850 13900 2850
 Wire Wire Line
 	12150 1300 12600 1300
 Wire Wire Line
 	13600 1300 13600 2250
 Wire Wire Line
-	13000 1750 13450 1750
-Connection ~ 13450 1750
-Wire Wire Line
-	13450 1750 13900 1750
-Wire Wire Line
-	13450 1750 13450 2850
-Wire Wire Line
-	13300 2950 13300 1850
-Wire Wire Line
-	13300 2950 13900 2950
-Connection ~ 13300 1850
-Wire Wire Line
-	13300 1850 13900 1850
-Wire Wire Line
-	13600 2250 13600 2750
-Wire Wire Line
-	13600 2750 13900 2750
-Connection ~ 13600 2250
-Wire Wire Line
-	13150 2350 13900 2350
-Wire Wire Line
-	13150 2650 13900 2650
-Connection ~ 13150 2650
-Wire Wire Line
-	13150 2650 13150 3000
+	13600 2350 13900 2350
 Text Notes 12650 1000 0    79   ~ 16
 NRF24L01-PA-LNA module
 Wire Wire Line
@@ -1503,12 +1458,12 @@ $EndComp
 $Comp
 L power:GND #PWR034
 U 1 1 5F2A3EFA
-P 13150 3000
-F 0 "#PWR034" H 13150 2750 50  0001 C CNN
-F 1 "GND" H 13155 2827 50  0000 C CNN
-F 2 "" H 13150 3000 50  0001 C CNN
-F 3 "" H 13150 3000 50  0001 C CNN
-	1    13150 3000
+P 13600 3000
+F 0 "#PWR034" H 13600 2750 50  0001 C CNN
+F 1 "GND" H 13605 2827 50  0000 C CNN
+F 2 "" H 13600 3000 50  0001 C CNN
+F 3 "" H 13600 3000 50  0001 C CNN
+	1    13600 3000
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -2071,12 +2026,12 @@ Wire Wire Line
 Text Notes 11150 3250 0    79   ~ 16
 RESET
 $Comp
-L Connector_Generic:Conn_01x04 J25
+L Connector_Generic:Conn_01x03 J25
 U 1 1 5FABE4DE
 P 12400 9050
-F 0 "J25" H 12318 8625 50  0000 C CNN
-F 1 "SWD" H 12318 8716 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 12400 9050 50  0001 C CNN
+F 0 "J25" H 12400 8700 50  0000 C CNN
+F 1 "SWD" H 12400 8800 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 12400 9050 50  0001 C CNN
 F 3 "~" H 12400 9050 50  0001 C CNN
 	1    12400 9050
 	1    0    0    1   
@@ -2100,21 +2055,6 @@ Wire Wire Line
 	12200 9050 11550 9050
 Wire Wire Line
 	11550 8950 12200 8950
-$Comp
-L power:+3V3 #PWR030
-U 1 1 5FB26DF6
-P 12100 8600
-F 0 "#PWR030" H 12100 8450 50  0001 C CNN
-F 1 "+3V3" H 12115 8773 50  0000 C CNN
-F 2 "" H 12100 8600 50  0001 C CNN
-F 3 "" H 12100 8600 50  0001 C CNN
-	1    12100 8600
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	12200 8850 12100 8850
-Wire Wire Line
-	12100 8850 12100 8600
 Text Label 11550 8950 0    50   ~ 0
 SWDIO
 Text Label 11550 9050 0    50   ~ 0
@@ -2132,4 +2072,12 @@ F 3 "" H 12150 6550 60  0000 C CNN
 	1    12150 6550
 	1    0    0    1   
 $EndComp
+Wire Wire Line
+	13600 2350 13600 3000
+Wire Wire Line
+	13000 1750 13900 1750
+Wire Wire Line
+	13000 1850 13900 1850
+Text Label 13200 1300 0    50   ~ 0
+3V3_RF
 $EndSCHEMATC

@@ -1,3 +1,4 @@
 (fp_lib_table
   (lib (name WLA)(type KiCad)(uri /home/laneboysrc/projects/rc-headless-transmitter/transmitter/electronics/WLA.pretty)(options "")(descr ""))
+  (lib (name tact-switch)(type KiCad)(uri ${KIPRJMOD}/tact-switch.pretty)(options "")(descr ""))
 )

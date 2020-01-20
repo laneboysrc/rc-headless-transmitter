@@ -1,0 +1,15 @@
+Graupner Varioprop E8
+
+                  s2
+
+   s1
+
+
+                  s3
+
+x: 80+
+y: 48
+s2/s3 to edge: 24
+s2.y - s3.y: 39
+s1.x - s2/s3.x: 60
+

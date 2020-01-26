@@ -13,3 +13,28 @@ s2/s3 to edge: 24
 s2.y - s3.y: 39
 s1.x - s2/s3.x: 60
 
+
+
+
+Esky
+
+s1      T            s2                 s3
+
+
+
+
+                     s4                 s5
+
+x: 104+
+y: 41
+s1.y/s2.y/s3.y to edge: 3
+s3.x/s5.x to edge: 9
+s1.x - s2.x: 40
+s2.x - s3.x: 55
+s2.y - s4.y: 28
+t.x= 12
+t.y = 3
+t.y2 = 12
+t.x(right) - s2.x = 18
+
+

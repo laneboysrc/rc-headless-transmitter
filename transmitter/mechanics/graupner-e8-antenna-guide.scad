@@ -14,8 +14,12 @@ d_antenna = 10;
 
 tol = 0.3;
 
+chamfer = 1;
+slot_w = 1;
+
 plug();
-translate([d_outer*1.5, 0, 0]) drill_guide();
+translate([d_outer*1.5, 0, 0]) 
+drill_guide();
 
 module plug() {
     difference() {
@@ -40,5 +44,6 @@ module drill_guide() {
         translate(epsz) cylinder(d=d_outer-2*tol, h=guide_h+eps2);
         translate([0, 0, hole_y]) rotate([90, 0, 0]) cylinder(d=d_screw, h=d_outer+t);
         rotate([0, 0, 45]) translate([-w/2, -w/2, -eps]) cube([w, w, guide_h+eps2]);
+        rotate([0, 0, 45]) translate(epsz) cube([d_outer, slot_w, guide_h+eps2]);
     }
 }

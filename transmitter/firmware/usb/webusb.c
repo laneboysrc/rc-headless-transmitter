@@ -16,13 +16,22 @@
 #include <slip.h>
 #include <systick.h>
 #include <webusb.h>
+#include <webusb_bos.h>
 
 enum {
     USB_INTERFACE_WEBUSB,
     USB_NUMBER_OF_INTERFACES
 };
 
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+
 #define VENDOR_INTERFACE_CLASS 0xff
+
+#define USB_DT_BOS 0x0f
+#define WEBUSB_REQUEST_GET_URL 2
+#define WINUSB_REQUEST_DESCRIPTOR 7
 
 #define USB_STRING_LANGUAGE 0
 #define USB_STRING_MANUFACTURER 1
@@ -150,28 +159,62 @@ static const char *usb_strings[] = {
     serial_number
 };
 
+
 // ****************************************************************************
 static enum usbd_request_return_codes webusb_control_request(usbd_device *usbd_dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
 {
+    uint8_t recipient = req->bmRequestType & USB_REQ_TYPE_RECIPIENT;
+    uint8_t requestType = req->bmRequestType & USB_REQ_TYPE_TYPE;
+
     (void) usbd_dev;
-    (void) buf;
-    (void) len;
     (void) complete;
 
-    printf("webusb_control_request() bmRequestType=%02x bRequest=%d\n", req->bmRequestType, req->bRequest);
-
-    switch (req->bRequest) {
-        // return USBD_REQ_HANDLED;
-        // return USBD_REQ_NOTSUPP;
-
-        // For testing only
-        case 72:
-            printf("    len=%d buf=\"%s\"\n", *len, *buf);
-            return USBD_REQ_HANDLED;
-
-        default:
-            return USBD_REQ_NEXT_CALLBACK;
+    // We only handle device requests here
+    if (recipient != USB_REQ_TYPE_DEVICE) {
+        return USBD_REQ_NEXT_CALLBACK;
     }
+
+    // Handle the USB 2.1 BOS (Binary Object Store) descriptor for WebUSB and WINUSB
+    if (requestType == USB_REQ_TYPE_STANDARD) {
+        if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
+            if ((req->wValue >> 8) == USB_DT_BOS) {
+                int descr_idx = req->wValue & 0xff;
+                if (descr_idx == 0) {
+                    // printf("BOS %d\n", *len);
+                    *buf = (uint8_t *) &bos_descriptor;
+                    *len = MIN(*len, sizeof(bos_descriptor));
+                    return USBD_REQ_HANDLED;
+                }
+            }
+        }
+    }
+
+    // Handle supplementary information from the vendor request for WebUSB and WINUSB
+    if (requestType == USB_REQ_TYPE_VENDOR) {
+        // printf("VEN %d len=%d\n", req->bRequest, *len);
+        switch(req->bRequest) {
+            case VENDOR_CODE_WEBUSB:
+                if (req->wIndex == WEBUSB_REQUEST_GET_URL) {
+                    *buf = (uint8_t *) &landing_page_descriptor;
+                    *len = MIN(*len, sizeof(landing_page_descriptor));
+                    return USBD_REQ_HANDLED;
+                }
+                break;
+
+            case VENDOR_CODE_MS:
+                if (req->wIndex == WINUSB_REQUEST_DESCRIPTOR) {
+                    *buf = (uint8_t *) &ms_os_20_descriptor;
+                    *len = MIN(*len, sizeof(ms_os_20_descriptor_t));
+                    return USBD_REQ_HANDLED;
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    return USBD_REQ_NEXT_CALLBACK;
 }
 
 
@@ -185,7 +228,7 @@ static void webusb_receive_callback(usbd_device *usbd_dev, uint8_t ep)
 
     len = usbd_ep_read_packet(usbd_dev, 0x01, buf, 64);
 
-    printf("%lu USB receive %d\n", milliseconds, len);
+    // printf("%lu USB receive %d\n", milliseconds, len);
 
     for (int i = 0; i < len; i++) {
         if (SLIP_decode(&slip,  buf[i])) {
@@ -290,6 +333,11 @@ void WEBUSB_init(void)
     webusb_device = usbd_init(&st_usbfs_v1_usb_driver, &device_descriptor, &configuration_descriptor, usb_strings, 3, usbd_control_buffer, sizeof(usbd_control_buffer));
     usbd_register_reset_callback(webusb_device, webusb_reset_callback);
     usbd_register_set_config_callback(webusb_device, webusb_set_config_callback);
+
+    // We register the control callback here so that we are able to intercept
+    // device descriptor requests, so that we can handle the BOS Binary Object
+    // Store descriptor.
+    usbd_register_control_callback(webusb_device, 0, 0, webusb_control_request);
 
     nvic_enable_irq(NVIC_USB_LP_CAN_RX0_IRQ);
     nvic_enable_irq(NVIC_USB_HP_CAN_TX_IRQ);

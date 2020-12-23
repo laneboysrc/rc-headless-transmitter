@@ -24,9 +24,9 @@ d_guide_top = 18+tol;
 d_guide_bottom = 20+tol;
 d_guide_outside = 24;
 
-//plug();
+plug();
 //translate([d_outer*1.5, 0, 0]) 
-mirror([0, 0, 1]) drill_guide();
+//mirror([0, 0, 1]) drill_guide();
 
 module plug() {
     difference() {
